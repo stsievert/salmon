@@ -9,4 +9,3 @@ services:
     image: redislabs/rejson
     ports:
       - '6379:6379'
-

@@ -3,27 +3,35 @@ from pathlib import Path
 from time import sleep
 import random
 import json
+import yaml
 
 import numpy as np
 import pandas as pd
 
 import requests
+from requests.auth import HTTPBasicAuth, HTTPDigestAuth
 
 URL = "http://127.0.0.1:8000"
 
 
-def _get(endpoint, URL=URL):
-    r = requests.get(URL + endpoint)
-    assert r.status_code == 200
+def _get_auth():
+    p = Path(__file__).parent.parent / "creds.yaml"
+    creds = yaml.safe_load(p.read_text())
+    return (creds["username"], creds["password"])
+
+
+def _get(endpoint, URL=URL, status_code=200, **kwargs):
+    r = requests.get(URL + endpoint, **kwargs)
+    assert r.status_code == status_code
     return r
 
 
-def _post(endpoint, data=None, URL=URL):
-    data = data or {}
-    if "exp" not in data:
+def _post(endpoint, data=None, URL=URL, status_code=200, **kwargs):
+    #  data = data or {}
+    if isinstance(data, dict) and "exp" not in data:
         data = json.dumps(data)
-    r = requests.post(URL + endpoint, data=data)
-    assert r.status_code == 200
+    r = requests.post(URL + endpoint, data=data, **kwargs)
+    assert r.status_code == status_code
     return r
 
 
@@ -31,10 +39,16 @@ def test_basic():
     """
     Requires `docker-compose up` in salmon directory
     """
-    _post("/reset")
+    username, password = _get_auth()
+    print(username, password)
+    _get("/reset", status_code=401)
+    _get("/reset?force=1", auth=(username, password))
     _get("/init_exp")
     exp = Path(__file__).parent / "data" / "exp.yaml"
-    _post("/init_file", data={"exp": exp.read_bytes()})
+    _post(
+        "/init_file",
+        data={"exp": exp.read_bytes(), "username": username, "password": password},
+    )
     puid = np.random.randint(2 ** 20, 2 ** 32 - 1)
     answers = []
     for k in range(20):
