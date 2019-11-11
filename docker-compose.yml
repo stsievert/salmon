@@ -1,0 +1,12 @@
+version: '3'
+services:
+  frontend:
+    build: frontend
+    ports:
+      - "8000:8000"
+
+  redis:
+    image: redislabs/rejson
+    ports:
+      - '6379:6379'
+
