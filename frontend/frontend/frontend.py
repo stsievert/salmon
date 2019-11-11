@@ -87,8 +87,8 @@ def upload():
 
 
 @app.post("/init_file")
-async def init_file(exp: UploadFile = File(default="")):
-    config = yaml.load(await exp.read(), Loader=yaml.SafeLoader)
+async def init_file(exp: bytes = File(default="")):
+    config = yaml.load(exp, Loader=yaml.SafeLoader)
     exp_config: Dict = {
         "instructions": "Default instructions (can include <i>arbitrary</i> HTML)"
     }
@@ -134,6 +134,13 @@ def process_answer(ans: Answer):
     return {"success": True}
 
 
+@app.post("/reset")
+def reset():
+    rj.flushdb()
+    rj.jsonset("responses", root, [])
+    rj.jsonset("start_time", root, time())
+    return True
+
 @app.get("/get_responses")
 async def get_responses() -> Dict[str, Any]:
     exp_config = await _ensure_initialized()
@@ -154,3 +161,5 @@ async def get_responses() -> Dict[str, Any]:
     return JSONResponse(
         out, headers={"Content-Disposition": 'attachment; filename="responses.json"'}
     )
+
+
