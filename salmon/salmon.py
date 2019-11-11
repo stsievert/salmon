@@ -103,7 +103,7 @@ async def get_query_page(request: Request):
 
 @app.get("/get_query")
 async def get_query() -> Dict[str, int]:
-    _ensure_initialized()
+    await _ensure_initialized()
     n = exp_data["n"]
     h, l, r = list(np.random.choice(n, size=3, replace=False))
     return {"head": int(h), "left": int(l), "right": int(r)}
