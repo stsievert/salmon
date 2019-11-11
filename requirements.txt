@@ -1,0 +1,4 @@
+fastapi[all]
+uvicorn
+jinja2
+pandas

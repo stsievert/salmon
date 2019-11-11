@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- Required meta tags -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+<title>Salmon</title>
+<style>
+* {
+    max-width: inherit;
+    max-height: inherit;
+}
+.cell {
+    padding: 25px;
+    border: 1px solid #D8D8D8;
+    max-height: 100%;
+    max-width: 100%;
+}
+.answer {
+    background-color: #f1f1f1;
+    cursor: pointer;
+    margin: 2px;
+}
+.head {
+    background-color: #ffffff;
+    margin-bottom: 10px;
+    max-width: 70%;
+}
+.center {
+  text-align: center;
+}
+</style>
+</head>
+<body>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+<br>
+<div class="container">
+  <div class="outline justify-content-center">
+    <div class="row justify-content-center">
+    <br>
+    <p> {{instructions | safe}} </p>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-lg-10 justify-content-center center cell head" id="q-head">
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="cell answer col col-lg-5 center cell answer" id="q-left"></div>
+      <div class="cell answer col col-lg-5 center cell answer" id="q-right"></div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-lg-4">
+          Participant ID: <span id="puid">{{ puid }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+
+<script>
+head = -1;
+left = -1;
+right = -1;
+puid = $("#puid").html();
+targets = {{ targets | safe }};
+function send(winner) {
+  console.log(winner);
+  $.post("/process_answer",
+  JSON.stringify({
+      "head": head,
+      "left": left,
+      "right": right,
+      "winner": winner,
+      "puid": puid,
+  }),
+  function(data, status){
+  });
+}
+function getquery(){
+  $.get("/get_query", function(data){
+      head = data["head"];
+      right = data["right"];
+      left = data["left"];
+      $("#q-left").html(targets[left]);
+      $("#q-right").html(targets[right]);
+      $("#q-head").html(targets[head]);
+  });
+}
+
+getquery();
+
+$("#q-right").click(function(){
+    send(right);
+    getquery();
+});
+$("#q-left").click(function(){
+    send(left);
+    getquery();
+});
+</script>
+
+</html>
