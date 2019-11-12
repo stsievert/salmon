@@ -58,7 +58,7 @@ def test_basic():
         sleep(10e-3)
         _post("/process_answer", data=ans)
 
-    r = _get("/get_responses")
+    r = _get("/get_responses", auth=(username, password))
     for server_ans, actual_ans in zip(r.json(), answers):
         assert set(actual_ans).issubset(server_ans)
         assert all(

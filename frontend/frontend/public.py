@@ -46,6 +46,9 @@ async def _ensure_initialized():
 
 @app.get("/")
 async def get_query_page(request: Request):
+    """
+    Load the query page and present a "triplet query".
+    """
     exp_config = await _ensure_initialized()
     items = {
         "puid": np.random.randint(2 ** 20, 2 ** 32 - 1),
@@ -58,6 +61,14 @@ async def get_query_page(request: Request):
 
 @app.get("/get_query")
 async def get_query() -> Dict[str, int]:
+    """
+    Get the objects for a triplet query
+
+    Returns
+    -------
+    `d : Dict[str, int]`. Indices for different objects.
+
+    """
     exp_config = await _ensure_initialized()
     n = exp_config["n"]
     h, l, r = list(np.random.choice(n, size=3, replace=False))
@@ -74,6 +85,21 @@ class Answer(BaseModel):
 
 @app.post("/process_answer")
 def process_answer(ans: Answer):
+    """
+    Process the answer, and append the received answer (alongside participant
+    UID) to the database.
+
+    Arguments
+    ---------
+    * `head, left, right : int, int, int`. The result of ``get_query``
+    * `winner : int`. The item the user selected as most similar to ``head``
+    * `puid : int`.  The participant UID
+
+    Returns
+    -------
+    `d : Dict[str, bool]`. On success, `d == {"success": True}`
+
+    """
     d = ujson.loads(ans.json())
     d.update({"time_received": time()})
     rj.jsonarrappend("responses", root, d)

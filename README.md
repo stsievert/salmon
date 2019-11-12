@@ -14,8 +14,13 @@
 
 ![](ami/networking-rule.png)
 
-After finished launching and initializing, go to `[url]:8000/init_exp` and
-`[url]:8000/docs` where `[url]` is the public DNS or pubic IP.
+After finished launching and initializing, go to
+
+* `[url]:8000/init_exp` to initialize an experiment
+* `[url]:8000/docs` to view documentation. This lists the API endpoints as
+  `/foo`, which means that going to `[url]:8000/foo` will perform an action.
+
+`[url]` is the Amazon public DNS or public IP.
 
 ### Developer
 

@@ -42,17 +42,20 @@ def _authorize(credentials: HTTPBasicCredentials = Depends(security)):
 
 
 @app.get("/init_exp")
-def upload():
+def upload_form():
     """
     Upload a YAML file that specifies an experiment.
 
     Inputs
     ------
+    * `file : File`. A file describing the experiment, described below.
+    * `username:str`.
+    * `password:str`.
+
 
     Notes
     -----
-    This YAML files needs to
-    have keys
+    This YAML files needs to have keys
 
     * targets (list, required)
     * instructions (str, optional)
@@ -68,6 +71,7 @@ def upload():
           - <b>bold</i> object 3
           - <i>object</i> 4
           - <img src="https://en.wikipedia.org/wiki/File:2010_Winter_Olympics_Bode_Miller_in_downhill.jpg" />
+        - instructions: "Foobar!"
 
     """
     body = """
@@ -87,7 +91,6 @@ def upload():
 async def init_file(
     username: str = Form(""), password: str = Form(""), exp: bytes = File(default="")
 ):
-    print("username=", username, password)
     _authorize(HTTPBasicCredentials(username=username, password=password))
     config = yaml.load(exp, Loader=yaml.SafeLoader)
     exp_config: Dict = {
@@ -109,6 +112,10 @@ async def init_file(
 
 @app.get("/reset")
 def reset(force:int=0, authorized=Depends(_authorize)):
+    """
+    Delete all data from the database. This requires authentication.
+
+    """
     if not force:
         msg = (
             "Do you really want to delete *all* data? This will delete all "
@@ -128,7 +135,25 @@ def reset(force:int=0, authorized=Depends(_authorize)):
 
 
 @app.get("/get_responses")
-async def get_responses() -> Dict[str, Any]:
+async def get_responses(authorized:bool = Depends(_authorize)) -> Dict[str, Any]:
+    """
+    Get the recorded responses. This JSON file is readable by Pandas:
+    <https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_json.html>
+
+    Returns
+    -------
+    `json_file : str`. This file will have keys
+
+    * `head`, `left`, `right`, `winner` as integers describing the arms
+      (and `_object` as their HTML string)
+    * `puid` as the participant unique ID
+    * `time_received_since_start`, an integer describing the time in
+      seconds since launch start
+    * `time_received`: the time in seconds since Jan. 1st 1970.
+
+    This file will be downloaded.
+
+    """
     exp_config = await _ensure_initialized()
     responses = rj.jsonget("responses")
     targets = exp_config["targets"]
