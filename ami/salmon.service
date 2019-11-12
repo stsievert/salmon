@@ -1,0 +1,8 @@
+[Unit]
+Description=Salmon service
+
+[Service]
+ExecStart=/bin/bash /home/ubuntu/salmon.sh
+
+[Install]
+WantedBy=multi-user.target
