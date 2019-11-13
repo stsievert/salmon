@@ -5,7 +5,7 @@ import hashlib, uuid
 
 from rejson import Client, Path
 
-from fastapi import File, UploadFile, FastAPI, Depends, HTTPException, Form
+from fastapi import File, UploadFile, Depends, HTTPException, Form
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.status import HTTP_401_UNAUTHORIZED
@@ -22,7 +22,6 @@ EXPECTED_PWORD = "331a5156c7f0a529ed1de8d9aba35da95655c341df0ca0bbb2b69b3be319ec
 
 
 def _salt(password: str) -> str:
-    print(password)
     pword = bytes(password, "utf8")
     salt = b"\x87\xa4\xb0\xc6k\xb7\xcf!\x8a\xc8z\xc6Q\x8b_\x00i\xc4\xbd\x01\x15\xabjn\xda\x07ZN}\xfd\xe1\x0e"
     m = hashlib.sha256()
@@ -31,7 +30,6 @@ def _salt(password: str) -> str:
 
 
 def _authorize(credentials: HTTPBasicCredentials = Depends(security)):
-    print("username, pword=", credentials.username, credentials.password)
     if credentials.username != "foo" or _salt(credentials.password) != EXPECTED_PWORD:
         raise HTTPException(
             status_code=HTTP_401_UNAUTHORIZED,
@@ -41,21 +39,31 @@ def _authorize(credentials: HTTPBasicCredentials = Depends(security)):
     return True
 
 
-@app.get("/init_exp")
+@app.get("/init_exp", tags=["private"])
 def upload_form():
     """
-    Upload a YAML file that specifies an experiment.
+    Upload a YAML file that specifies an experiment. See
+    <a href='#operations-private-process_form_init_exp_post'>
+    the POST description</a> for more detail on the file.
 
-    Inputs
-    ------
-    * `file : File`. A file describing the experiment, described below.
-    * `username:str`.
-    * `password:str`.
+    """
+    body = """
+    <body>
+    <form action="/init_exp" enctype="multipart/form-data" method="post">
+    <input name="exp" type="file">
+    <input type="submit">
+    </form>
+    </body>
+    """
+    return HTMLResponse(content=body)
 
 
-    Notes
-    -----
-    This YAML files needs to have keys
+@app.post("/init_exp", tags=["private"])
+async def process_form(
+    exp: bytes = File(default=""), authorized: bool = Depends(_authorize)
+):
+    """
+    The uploaded file needs to have the following keys:
 
     * targets (list, required)
     * instructions (str, optional)
@@ -72,26 +80,8 @@ def upload_form():
           - <i>object</i> 4
           - <img src="https://en.wikipedia.org/wiki/File:2010_Winter_Olympics_Bode_Miller_in_downhill.jpg" />
         - instructions: "Foobar!"
-
     """
-    body = """
-    <body>
-    <form action="/init_file" enctype="multipart/form-data" method="post">
-    <input name="exp" type="file">
-    <input name="username" type="text">
-    <input name="password" type="text">
-    <input type="submit">
-    < /form>
-    </body>
-    """
-    return HTMLResponse(content=body)
 
-
-@app.post("/init_file")
-async def init_file(
-    username: str = Form(""), password: str = Form(""), exp: bytes = File(default="")
-):
-    _authorize(HTTPBasicCredentials(username=username, password=password))
     config = yaml.load(exp, Loader=yaml.SafeLoader)
     exp_config: Dict = {
         "instructions": "Default instructions (can include <i>arbitrary</i> HTML)"
@@ -106,12 +96,13 @@ async def init_file(
             "Visit '[url]/get_responses' to download responses.",
             "Visit '[url]/reset' to reset the experiment and delete all data.",
             "Visit '[url]/docs' or '[url]/redoc' to see API documentation",
-        ]
+        ],
     }
 
 
-@app.get("/reset")
-def reset(force:int=0, authorized=Depends(_authorize)):
+@app.delete("/reset", tags=["private"])
+@app.get("/reset", tags=["private"])
+def reset(force: int = 0, authorized=Depends(_authorize), tags=["private"]):
     """
     Delete all data from the database. This requires authentication.
 
@@ -134,8 +125,8 @@ def reset(force:int=0, authorized=Depends(_authorize)):
     return {"success": False}
 
 
-@app.get("/get_responses")
-async def get_responses(authorized:bool = Depends(_authorize)) -> Dict[str, Any]:
+@app.get("/get_responses", tags=["private"])
+async def get_responses(authorized: bool = Depends(_authorize)) -> Dict[str, Any]:
     """
     Get the recorded responses. This JSON file is readable by Pandas:
     <https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_json.html>

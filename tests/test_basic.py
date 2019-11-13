@@ -35,19 +35,31 @@ def _post(endpoint, data=None, URL=URL, status_code=200, **kwargs):
     return r
 
 
+def _delete(endpoint, data=None, URL=URL, status_code=200, **kwargs):
+    #  data = data or {}
+    if isinstance(data, dict) and "exp" not in data:
+        data = json.dumps(data)
+    r = requests.delete(URL + endpoint, data=data, **kwargs)
+    assert r.status_code == status_code
+    return r
+
+
 def test_basic():
     """
     Requires `docker-compose up` in salmon directory
     """
     username, password = _get_auth()
     print(username, password)
+    _delete("/reset", status_code=401)
+    r = _delete("/reset?force=1", auth=(username, password))
+    assert r.json() == {"success": True}
     _get("/reset", status_code=401)
-    _get("/reset?force=1", auth=(username, password))
+    r = _get("/reset?force=1", auth=(username, password))
+    assert r.json() == {"success": True}
     _get("/init_exp")
     exp = Path(__file__).parent / "data" / "exp.yaml"
     _post(
-        "/init_file",
-        data={"exp": exp.read_bytes(), "username": username, "password": password},
+        "/init_exp", data={"exp": exp.read_bytes()}, auth=(username, password),
     )
     puid = np.random.randint(2 ** 20, 2 ** 32 - 1)
     answers = []
