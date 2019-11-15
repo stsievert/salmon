@@ -4,7 +4,9 @@ services:
   - docker
 
 before_install:
-  - docker-compose up
+  - docker-compose start
+  - docker ps
+
 
 script:
   - pytest tests
