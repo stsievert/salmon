@@ -1,4 +1,5 @@
 from typing import Dict, Any, List
+import os
 import yaml
 from time import time
 import hashlib, uuid
@@ -30,6 +31,8 @@ def _salt(password: str) -> str:
 
 
 def _authorize(credentials: HTTPBasicCredentials = Depends(security)):
+    if os.environ.get("SALMON_NO_AUTH", False):
+        return True
     if credentials.username != "foo" or _salt(credentials.password) != EXPECTED_PWORD:
         raise HTTPException(
             status_code=HTTP_401_UNAUTHORIZED,
