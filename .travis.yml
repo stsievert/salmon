@@ -1,0 +1,17 @@
+language: python
+python: 3.7
+
+env:
+  - SALMON_NO_AUTH=1
+
+services:
+  - docker
+
+before_install:
+  - docker-compose up &
+  - until curl 127.0.0.1:8000 > /dev/null 2>&1; do :; done  # wait for container to start
+  - docker ps
+
+script:
+  - pip install -r frontend/requirements.txt
+  - pytest tests

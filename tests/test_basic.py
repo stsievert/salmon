@@ -7,6 +7,7 @@ import yaml
 
 import numpy as np
 import pandas as pd
+from typing import Tuple
 
 import requests
 from requests.auth import HTTPBasicAuth, HTTPDigestAuth
@@ -14,10 +15,14 @@ from requests.auth import HTTPBasicAuth, HTTPDigestAuth
 URL = "http://127.0.0.1:8000"
 
 
-def _get_auth():
+def _get_auth() -> Tuple[str, str]:
     p = Path(__file__).parent.parent / "creds.yaml"
-    creds = yaml.safe_load(p.read_text())
-    return (creds["username"], creds["password"])
+    if p.exists():
+        creds = yaml.safe_load(p.read_text())
+        return (creds["username"], creds["password"])
+
+    os.environ["SALMON_NO_AUTH"] = "1"
+    return ("username", "password")
 
 
 def _get(endpoint, URL=URL, status_code=200, **kwargs):
