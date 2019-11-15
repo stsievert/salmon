@@ -16,12 +16,13 @@ URL = "http://127.0.0.1:8000"
 
 
 def _get_auth() -> Tuple[str, str]:
-    os.environ["SALMON_NO_AUTH"] = "1"
     p = Path(__file__).parent.parent / "creds.yaml"
     if p.exists():
         creds = yaml.safe_load(p.read_text())
         return (creds["username"], creds["password"])
-    return "", ""
+
+    os.environ["SALMON_NO_AUTH"] = "1"
+    return ("username", "password")
 
 
 def _get(endpoint, URL=URL, status_code=200, **kwargs):

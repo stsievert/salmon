@@ -6,6 +6,7 @@ services:
 
 before_install:
   - docker-compose up &
+  - until curl 127.0.0.1:8000 > /dev/null 2>&1; do :; done
   - docker ps
 
 script:
