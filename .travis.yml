@@ -9,5 +9,5 @@ before_install:
   - docker ps
 
 script:
-  - pip install -r requirements.txt
+  - pip install -r frontend/requirements.txt
   - pytest tests
