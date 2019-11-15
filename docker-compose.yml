@@ -2,6 +2,8 @@ version: '3'
 services:
   frontend:
     build: frontend
+    environment:
+      - SALMON_NO_AUTH  # pass through to backend
     ports:
       - "8000:8000"
 
