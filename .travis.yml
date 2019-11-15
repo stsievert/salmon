@@ -14,4 +14,4 @@ before_install:
 
 script:
   - pip install -r frontend/requirements.txt
-  - export SALMON_NO_AUTH=1; pytest tests
+  - pytest tests
