@@ -1,9 +1,0 @@
-version: 2.1
-jobs:
-  build:
-    docker:
-      - image: alpine:3.7
-    steps:
-      - run:
-          name: Build docs
-          command: /bin/sh .circleci/build_docs.sh
