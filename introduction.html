@@ -1,0 +1,182 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Getting started &#8212; Salmon v0.1-alpha documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Welcome to Salmon’s documentation!" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="getting-started">
+<h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>On your local machine? Run <code class="docutils literal notranslate"><span class="pre">https://github.com/stsievert/salmon.git</span></code>.</p>
+<p>Want to use AWS? See below.</p>
+</div>
+<div class="section" id="launching-salmon">
+<h2>Launching Salmon<a class="headerlink" href="#launching-salmon" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="developer">
+<h3>Developer<a class="headerlink" href="#developer" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li><p>Install docker</p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">docker-compose</span> <span class="pre">up</span></code></p></li>
+<li><p>Go to <code class="docutils literal notranslate"><span class="pre">localhost:8000/init_exp</span></code></p></li>
+</ol>
+</div>
+<div class="section" id="experimentalist">
+<h3>Experimentalist<a class="headerlink" href="#experimentalist" title="Permalink to this headline">¶</a></h3>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This process is only ready for testing. It is <strong>not</strong> ready for deployment.</p>
+</div>
+<ol class="arabic simple">
+<li><p>Sign into Amazon AWS (<a class="reference external" href="http://aws.amazon.com/">http://aws.amazon.com/</a>)</p></li>
+<li><p>Select the “Oregon” region (or <code class="docutils literal notranslate"><span class="pre">us-west-2</span></code>) in the upper right.</p></li>
+<li><p>Go to Amazon EC2</p></li>
+<li><p>Launch a new instance (the big blue button).</p></li>
+<li><p>Select AMI <code class="docutils literal notranslate"><span class="pre">ami-06ec58f46ec2d18ea</span></code> titled “Salmon”
+(appears in Community AMIs after searching “Salmon”).</p></li>
+<li><p>On the rules page, make a custom TCP rule to open ports 1000-9999 from
+anywhere. Here’s a image description:</p></li>
+</ol>
+<img alt="_images/networking-rule.png" src="_images/networking-rule.png" />
+<p>Then after this AMI is finished launching and initializing, go to</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">[url]:8000/init_exp</span></code> to initialize an experiment</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[url]:8000/docs</span></code> to view documentation. This lists the API endpoints as
+<code class="docutils literal notranslate"><span class="pre">/foo</span></code>, which means that going to <code class="docutils literal notranslate"><span class="pre">[url]:8000/foo</span></code> will perform an action.</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">[url]</span></code> is the Amazon public DNS or public IP.</p>
+</div>
+</div>
+<div class="section" id="experiment-launch">
+<h2>Experiment Launch<a class="headerlink" href="#experiment-launch" title="Permalink to this headline">¶</a></h2>
+<p>Visit <code class="docutils literal notranslate"><span class="pre">[url]:8000/init_exp</span></code> to initialize an experiment. This will ask for
+the following:</p>
+<ul class="simple">
+<li><p>a file describing the experiment</p></li>
+<li><p>a username and password</p></li>
+</ul>
+<p>Here’s an example experiment file:</p>
+<div class="highlight-yaml notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="c1"># filename: exp.yaml</span>
+<span class="nt">targets</span><span class="p">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">object 1</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;i&gt;&lt;b&gt;arbitrary HTML?&lt;/b&gt;&lt;/i&gt;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;img alt=&quot;bode miller&quot; src=&quot;https://www.denverpost.com/wp-content/uploads/2005/02/bode-miller-one-ski.jpg&quot; /&gt;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;img alt=&quot;hoby cat&quot; src=&quot;https://cdn.hobiecat.com/digital_asset_profiles/wildcat-action-12-full_jpg_1600x1600__generated.jpg&quot; /&gt;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;img alt=&quot;bode miller&quot; src=&quot;https://nbcolympictalk.files.wordpress.com/2013/11/bode-miller.jpg&quot; /&gt;</span>
+</pre></div>
+</td></tr></table></div>
+<p>This file follows the <a class="reference external" href="https://yaml.org/">YAML specification</a>.
+Each target is a piece of HTML, and will be rendered correctly on the
+experiment page.</p>
+<p>If you visit <code class="docutils literal notranslate"><span class="pre">[url]</span></code>, you will see a query page:</p>
+<a class="reference internal image-reference" href="_images/query_page.png"><img alt="_images/query_page.png" class="align-center" src="_images/query_page.png" style="width: 500px;" /></a>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Salmon</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#launching-salmon">Launching Salmon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#experiment-launch">Experiment Launch</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Welcome to Salmon’s documentation!</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Scott Sievert.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/introduction.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
