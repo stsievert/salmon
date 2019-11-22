@@ -6,4 +6,4 @@ jobs:
     steps:
       - run:
           name: Build docs
-          command: bash .circleci/build_docs.sh
+          command: /bin/sh .circleci/build_docs.sh
