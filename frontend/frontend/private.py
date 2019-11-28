@@ -86,8 +86,11 @@ async def process_form(
     """
 
     config = yaml.load(exp, Loader=yaml.SafeLoader)
+    print(config)
     exp_config: Dict = {
-        "instructions": "Default instructions (can include <i>arbitrary</i> HTML)"
+        "instructions": "Default instructions (can include <i>arbitrary</i> HTML)",
+        "max_responses": -1,
+        "debrief": "Thanks!"
     }
     exp_config.update(config)
     exp_config["n"] = len(exp_config["targets"])
