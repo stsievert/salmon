@@ -3,6 +3,7 @@ import os
 import yaml
 from time import time
 import hashlib, uuid
+from functools import lru_cache
 
 from rejson import Client, Path
 
@@ -87,8 +88,11 @@ async def process_form(
     """
 
     config = yaml.load(exp, Loader=yaml.SafeLoader)
+    print(config)
     exp_config: Dict = {
-        "instructions": "Default instructions (can include <i>arbitrary</i> HTML)"
+        "instructions": "Default instructions (can include <i>arbitrary</i> HTML)",
+        "max_responses": -1,
+        "debrief": "Thanks!",
     }
     exp_config.update(config)
     exp_config["n"] = len(exp_config["targets"])
@@ -140,11 +144,11 @@ async def get_responses(authorized: bool = Depends(_authorize)) -> Dict[str, Any
     `json_file : str`. This file will have keys
 
     * `head`, `left`, `right`, `winner` as integers describing the arms
-      (and `_object` as their HTML string)
+      (and `_object`/`_src` as their HTML string/HTML `src` tag)
     * `puid` as the participant unique ID
     * `time_received_since_start`, an integer describing the time in
       seconds since launch start
-    * `time_received`: the time in seconds since Jan. 1st 1970.
+    * `time_received`: the time in seconds since Jan. 1st, 1970.
 
     This file will be downloaded.
 
@@ -156,14 +160,27 @@ async def get_responses(authorized: bool = Depends(_authorize)) -> Dict[str, Any
     start = rj.jsonget("start_time")
     for datum in responses:
         out.append(datum)
-        out[-1].update(
-            {
-                key + "_object": targets[datum[key]]
-                for key in ["left", "right", "head", "winner"]
-            }
-        )
+        objects = {
+            key + "_object": targets[datum[key]]
+            for key in ["left", "right", "head", "winner"]
+        }
+        filenames = {
+            key + "_src": _get_filename(targets[datum[key]])
+            for key in ["left", "right", "head", "winner"]
+        }
+        out[-1].update(objects)
+        out[-1].update(filenames)
         out[-1].update({"time_received_since_start": datum["time_received"] - start})
 
     return JSONResponse(
         out, headers={"Content-Disposition": 'attachment; filename="responses.json"'}
     )
+
+
+@lru_cache()
+def _get_filename(html: str) -> str:
+    _tags = [x for x in html.split(" ") if "=" in x]
+    tags = {x.split("=")[0]: x.split("=")[1] for x in _tags}
+    if "src" in tags:
+        return tags["src"][1:-1]
+    return html

@@ -11,24 +11,24 @@
 <title>Salmon</title>
 <style>
 * {
-    max-width: inherit;
-    max-height: inherit;
+  max-width: inherit;
+  max-height: inherit;
 }
 .cell {
-    padding: 25px;
-    border: 1px solid #D8D8D8;
-    max-height: 100%;
-    max-width: 100%;
+  padding: 25px;
+  border: 1px solid #D8D8D8;
+  max-height: 100%;
+  max-width: 100%;
 }
 .answer {
-    background-color: #f1f1f1;
-    cursor: pointer;
-    margin: 2px;
+  background-color: #f1f1f1;
+  cursor: pointer;
+  margin: 2px;
 }
 .head {
-    background-color: #ffffff;
-    margin-bottom: 10px;
-    max-width: 70%;
+  background-color: #ffffff;
+  margin-bottom: 10px;
+  max-width: 70%;
 }
 .center {
   text-align: center;
@@ -36,13 +36,12 @@
 </style>
 </head>
 <body>
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 <br>
 <div class="container">
   <div class="outline justify-content-center">
@@ -58,9 +57,18 @@
       <div class="cell answer col col-lg-5 center cell answer" id="q-left"></div>
       <div class="cell answer col col-lg-5 center cell answer" id="q-right"></div>
     </div>
-    <div class="row justify-content-center">
-      <div class="col-lg-4">
-          Participant ID: <span id="puid">{{ puid }}</span>
+  </div>
+</div>
+
+<!-- "Thanks for participating!" modal -->
+<div class="modal fade" id="debriefModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+          {{ debrief | safe }}
+      </div>
+      <div class="modal-body">
+          Participant ID: {{ puid }}
       </div>
     </div>
   </div>
@@ -68,20 +76,24 @@
 </body>
 
 <script>
+// TODO: response time, network delay
 head = -1;
 left = -1;
 right = -1;
 puid = $("#puid").html();
 targets = {{ targets | safe }};
+max_responses = {{ max_responses }};
+num_responses = 0;
+
 function send(winner) {
-  console.log(winner);
+  num_responses = num_responses + 1;
   $.post("/process_answer",
   JSON.stringify({
-      "head": head,
-      "left": left,
-      "right": right,
-      "winner": winner,
-      "puid": puid,
+    "head": head,
+    "left": left,
+    "right": right,
+    "winner": winner,
+    "puid": puid,
   }),
   function(data, status){
   });
@@ -97,16 +109,22 @@ function getquery(){
   });
 }
 
-getquery();
-
-$("#q-right").click(function(){
-    send(right);
+function iterate(winner) {
+  send(winner);
+  if ((max_responses > 0) && (num_responses >= max_responses)){
+    $('#debriefModal').modal("show")
+  }
+  else {
     getquery();
+  }
+}
+
+getquery();
+$("#q-right").click(function(){
+  iterate(right);
 });
 $("#q-left").click(function(){
-    send(left);
-    getquery();
+  iterate(left);
 });
 </script>
-
 </html>
