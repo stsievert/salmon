@@ -21,7 +21,6 @@ def _get_auth() -> Tuple[str, str]:
         creds = yaml.safe_load(p.read_text())
         return (creds["username"], creds["password"])
 
-    os.environ["SALMON_NO_AUTH"] = "1"
     return ("username", "password")
 
 
@@ -94,6 +93,10 @@ def test_basic():
         "left",
         "head_object",
         "left_object",
+        "head_src",
+        "winner_src",
+        "right_src",
+        "left_src",
         "puid",
     }
     assert expected_cols.issubset(set(df.columns))
