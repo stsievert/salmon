@@ -147,7 +147,7 @@ async def get_responses(authorized: bool = Depends(_authorize)) -> Dict[str, Any
     * `puid` as the participant unique ID
     * `time_received_since_start`, an integer describing the time in
       seconds since launch start
-    * `time_received`: the time in seconds since Jan. 1st 1970.
+    * `time_received`: the time in seconds since Jan. 1st, 1970.
 
     This file will be downloaded.
 
