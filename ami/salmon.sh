@@ -1,6 +1,6 @@
 # Get salmon
-rm -rf salmon
-git clone https://github.com/stsievert/salmon.git
+sudo rm -rf /home/ubuntu/salmon
+git clone https://github.com/stsievert/salmon.git /home/ubuntu/salmon
 cd /home/ubuntu/salmon
 
 # Get latest tag
@@ -26,9 +26,13 @@ sudo apt-get install -y docker-ce docker-ce-cli containerd.io
 sudo curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 
-cd /home/ubuntu/salmon; sudo docker-compose up
 
-# Instructions for deploying to EC2: https://askubuntu.com/questions/919054/how-do-i-run-a-single-command-at-startup-using-systemd
+cd /home/ubuntu/salmon;
+sudo docker-compose stop
+sudo docker-compose build
+sudo docker-compose up
+
+# Instructions for deploying to EC2: hhttps://askubuntu.com/questions/919054/how-do-i-run-a-single-command-at-startup-using-systemd
 # sudo mv salmon.service /lib/systemd/system/
 # sudo chmod u+x salmon.sh
 # sudo systemctl enable salmon

@@ -2,7 +2,7 @@
 Description=Salmon service
 
 [Service]
-ExecStart=/bin/bash /home/ubuntu/salmon.sh
+ExecStart=sudo /bin/bash /home/ubuntu/salmon/ami/salmon.sh
 
 [Install]
 WantedBy=multi-user.target
