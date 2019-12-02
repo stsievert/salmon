@@ -1,7 +1,6 @@
 # Get salmon
 rm -rf /home/ubuntu/salmon
 git clone https://github.com/stsievert/salmon.git /home/ubuntu/salmon
-
 cd /home/ubuntu/salmon
 
 # Get latest tag
