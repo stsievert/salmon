@@ -151,7 +151,6 @@ async def get_responses(authorized: bool = Depends(_authorize)) -> Dict[str, Any
     * `time_received`: the time in seconds since Jan. 1st, 1970.
 
     This file will be downloaded.
-
     """
     exp_config = await _ensure_initialized()
     responses = rj.jsonget("responses")
