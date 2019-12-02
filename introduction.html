@@ -59,10 +59,22 @@
 <li><p>Select the “Oregon” region (or <code class="docutils literal notranslate"><span class="pre">us-west-2</span></code>) in the upper right.</p></li>
 <li><p>Go to Amazon EC2</p></li>
 <li><p>Launch a new instance (the big blue button).</p></li>
-<li><p>Select AMI <code class="docutils literal notranslate"><span class="pre">ami-06ec58f46ec2d18ea</span></code> titled “Salmon”
-(appears in Community AMIs after searching “Salmon”).</p></li>
-<li><p>On the rules page, make a custom TCP rule to open ports 1000-9999 from
-anywhere. Here’s a image description:</p></li>
+<li><p>Select your machine type. <a class="reference external" href="http://ec2instances.info/">http://ec2instances.info/</a> is a great site to
+compare costs/abilities/etc. Salmon probably requires 4 cores and 2GB of
+memory per core.</p></li>
+<li><p>Select AMI <code class="docutils literal notranslate"><span class="pre">ami-0d940f63db8fadcaf</span></code> titled “Salmon” (appears in Community
+AMIs after searching “Salmon” under the <code class="docutils literal notranslate"><span class="pre">us-west-2</span></code> or “Oregon” region).</p></li>
+<li><p>Continue to the last screen, “security rules”. Note: do not hit the big blue
+button that says “Launch instance”, hit the grey button that says “Next:
+Configure instance details”.</p>
+<ul class="simple">
+<li><p>I might add storage (read: disk space or hard drive space) on the “Add
+storage” page. 32GB should be fine, but not if you have a lot of targets
+or participants.</p></li>
+</ul>
+</li>
+<li><p>On the “Configure security groups”, make a custom TCP rule to open ports
+1000-9999 from anywhere. Here’s a image description:</p></li>
 </ol>
 <img alt="_images/networking-rule.png" src="_images/networking-rule.png" />
 <p>Then after this AMI is finished launching and initializing, go to</p>
@@ -83,19 +95,25 @@ the following:</p>
 <li><p>a username and password</p></li>
 </ul>
 <p>Here’s an example experiment file:</p>
-<div class="highlight-yaml notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4
-5
-6
-7</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="c1"># filename: exp.yaml</span>
+<div class="highlight-yaml notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="c1"># filename: exp.yaml</span>
 <span class="nt">targets</span><span class="p">:</span>
-    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">object 1</span>
-    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;i&gt;&lt;b&gt;arbitrary HTML?&lt;/b&gt;&lt;/i&gt;</span>
-    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;img alt=&quot;bode miller&quot; src=&quot;https://www.denverpost.com/wp-content/uploads/2005/02/bode-miller-one-ski.jpg&quot; /&gt;</span>
-    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;img alt=&quot;hoby cat&quot; src=&quot;https://cdn.hobiecat.com/digital_asset_profiles/wildcat-action-12-full_jpg_1600x1600__generated.jpg&quot; /&gt;</span>
-    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;img alt=&quot;bode miller&quot; src=&quot;https://nbcolympictalk.files.wordpress.com/2013/11/bode-miller.jpg&quot; /&gt;</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">object 1</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;i&gt;&lt;b&gt;arbitrary HTML&lt;/b&gt;&lt;/i&gt;</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;img alt=&quot;bode miller&quot; src=&quot;https://www.denverpost.com/wp-content/uploads/2005/02/bode-miller-one-ski.jpg&quot; /&gt;</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;img alt=&quot;hoby cat&quot; src=&quot;https://cdn.hobiecat.com/digital_asset_profiles/wildcat-action-12-full_jpg_1600x1600__generated.jpg&quot; /&gt;</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;img alt=&quot;bode miller&quot; src=&quot;https://nbcolympictalk.files.wordpress.com/2013/11/bode-miller.jpg&quot; /&gt;</span>
+<span class="nt">instructions</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">These are &lt;b&gt;instructions&lt;/b&gt;!</span>
+<span class="nt">debrief</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Thanks for participating!</span>
+<span class="nt">max_responses</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">3</span>
 </pre></div>
 </td></tr></table></div>
 <p>This file follows the <a class="reference external" href="https://yaml.org/">YAML specification</a>.
