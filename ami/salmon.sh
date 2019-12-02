@@ -1,6 +1,7 @@
 # Get salmon
-rm -rf salmon
-git clone https://github.com/stsievert/salmon.git
+rm -rf /home/ubuntu/salmon
+git clone https://github.com/stsievert/salmon.git /home/ubuntu/salmon
+
 cd /home/ubuntu/salmon
 
 # Get latest tag
@@ -28,7 +29,7 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 cd /home/ubuntu/salmon; sudo docker-compose up
 
-# Instructions for deploying to EC2: https://askubuntu.com/questions/919054/how-do-i-run-a-single-command-at-startup-using-systemd
+# Instructions for deploying to EC2: hhttps://askubuntu.com/questions/919054/how-do-i-run-a-single-command-at-startup-using-systemd
 # sudo mv salmon.service /lib/systemd/system/
 # sudo chmod u+x salmon.sh
 # sudo systemctl enable salmon
