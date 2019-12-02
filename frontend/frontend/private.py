@@ -54,10 +54,12 @@ def upload_form():
     """
     body = """
     <body>
+    <div style="text-align: center; padding: 10px;">
     <form action="/init_exp" enctype="multipart/form-data" method="post">
-    <input name="exp" type="file">
-    <input type="submit">
+    <p>YAML file:<input name="exp" type="file"></p>
+    <p><input type="submit" value="Launch experiment"></p>
     </form>
+    </div>
     </body>
     """
     return HTMLResponse(content=body)
