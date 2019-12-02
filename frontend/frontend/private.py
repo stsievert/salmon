@@ -143,7 +143,7 @@ async def get_responses(authorized: bool = Depends(_authorize)) -> Dict[str, Any
     `json_file : str`. This file will have keys
 
     * `head`, `left`, `right`, `winner` as integers describing the arms
-      (and `_object` as their HTML string)
+      (and `_object`/`_src` as their HTML string/HTML `src` tag)
     * `puid` as the participant unique ID
     * `time_received_since_start`, an integer describing the time in
       seconds since launch start
