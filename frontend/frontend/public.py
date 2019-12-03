@@ -4,6 +4,7 @@ from time import time
 import yaml
 from copy import copy
 from textwrap import dedent
+import threading
 
 from fastapi import FastAPI, HTTPException, Form
 from starlette.templating import Jinja2Templates
@@ -102,6 +103,10 @@ class Answer(BaseModel):
     puid: int = -1
 
 
+def _write(data: dict, filename: str):
+    with open(filename, "w") as f:
+        ujson.dump(data, f)
+
 @app.post("/process_answer", tags=["public"])
 def process_answer(ans: Answer):
     """
@@ -117,5 +122,9 @@ def process_answer(ans: Answer):
     """
     d = ujson.loads(ans.json())
     d.update({"time_received": time()})
+    fname = f"{d['puid']}-{time()}.json"
+    x = threading.Thread(target=_write, args=(d, fname))
+    x.start()
+
     rj.jsonarrappend("responses", root, d)
     return {"success": True}

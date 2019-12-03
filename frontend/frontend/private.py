@@ -12,7 +12,7 @@ from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.status import HTTP_401_UNAUTHORIZED
 
-from .public import _ensure_initialized, app
+from .public import _ensure_initialized, app, _write
 from .utils import ServerException
 
 security = HTTPBasic()
@@ -99,6 +99,7 @@ async def process_form(
     exp_config.update(config)
     exp_config["n"] = len(exp_config["targets"])
     rj.jsonset("exp_config", root, exp_config)
+    _write(exp_config, "exp_config.json")
     return {
         "success": True,
         "documentation": [
