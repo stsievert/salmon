@@ -68,7 +68,7 @@
           {{ debrief | safe }}
       </div>
       <div class="modal-body">
-          Participant ID: {{ puid }}
+          Participant ID: <span id="puid">{{ puid }}</span>
       </div>
     </div>
   </div>
@@ -81,6 +81,7 @@ head = -1;
 left = -1;
 right = -1;
 puid = $("#puid").html();
+console.log(puid);
 targets = {{ targets | safe }};
 max_responses = {{ max_responses }};
 num_responses = 0;
