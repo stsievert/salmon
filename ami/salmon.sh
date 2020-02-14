@@ -1,30 +1,42 @@
-# Get salmon
-rm -rf salmon
-git clone https://github.com/stsievert/salmon.git
-cd /home/ubuntu/salmon
+if [ -d "/home/ubuntu/salmon" ]; then
+    # Control will enter here if $DIRECTORY exists.
+    # This is the case when machine is launching for first time
+    #
+    # Get salmon
+    git clone https://github.com/stsievert/salmon.git /home/ubuntu/salmon
+    cd /home/ubuntu/salmon
 
+    # Install fresh verison of Docker
+    # https://docs.docker.com/install/linux/docker-ce/ubuntu/
+    sudo apt-get remove -y docker docker-engine docker.io containerd runc
+    sudo apt-get update
+    sudo apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+    sudo add-apt-repository \
+      "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+      $(lsb_release -cs) \
+      stable"
+    sudo apt-get update
+    sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+
+    # install docker compose
+    # https://docs.docker.com/compose/install/
+    sudo curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    sudo chmod +x /usr/local/bin/docker-compose
+else
+    cd /home/ubuntu/salmon
+    git pull
+    cp ami/salmon.sh /home/ubuntu
+    sudo chmod u+x salmon.sh
+    sudo systemctl enable salmon
+fi
+
+## When restarting the CPU...
 # Get latest tag
+cd /home/ubuntu/salmon
 git fetch --tags # Get new tags from remote
 latestTag=$(git describe --tags `git rev-list --tags --max-count=1`) # Get latest tag name
 git checkout $latestTag # Checkout latest tag
-
-# Install fresh verison of Docker
-# https://docs.docker.com/install/linux/docker-ce/ubuntu/
-sudo apt-get remove -y docker docker-engine docker.io containerd runc
-sudo apt-get update
-sudo apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-sudo add-apt-repository \
-  "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-  $(lsb_release -cs) \
-  stable"
-sudo apt-get update
-sudo apt-get install -y docker-ce docker-ce-cli containerd.io
-
-# install docker compose
-# https://docs.docker.com/compose/install/
-sudo curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
 
 cd /home/ubuntu/salmon; sudo docker-compose up
 
