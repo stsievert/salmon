@@ -57,7 +57,7 @@ def _extract_zipfile(raw_zipfile, directory="targets"):
                     continue
                 info.filename = os.path.basename(info.filename)
                 myzip.extract(info, path=str(imgs))
-    return list(imgs.glob("**/*"))
+    return list(sorted(list(imgs.glob("**/*"))))
 
 
 def _format_target(file: Path):
@@ -66,14 +66,16 @@ def _format_target(file: Path):
     p = file.relative_to(static)
     logger.info(str(p))
     url = "/" + str(p)
-    if any(ext in url for ext in ["png", "gif", "jpg", "bmp", "jpeg", "svg"]):
+    if any(ext in url.lower() for ext in ["png", "gif", "jpg", "bmp", "jpeg", "svg"]):
         return f"<img src='{url}' />"
     elif any(ext in url for ext in ["mov", "mp4"]):
         return dedent(
-            f"""<video>
-            <source src="{url}" type="video/mp4">
+            f"""
+            <video autoplay controls>
+            <source src='{url}' type='video/mp4' />
             Your browser does not support the video tag.
-            </video>"""
+            </video>
+            """
         )
     else:
         raise ValueError(
