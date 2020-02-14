@@ -8,7 +8,7 @@ import pathlib
 from datetime import datetime, timedelta
 import json
 from io import StringIO
-from pprint import pprint
+import pprint
 from functools import lru_cache
 
 import numpy as np
@@ -69,7 +69,15 @@ def upload_form():
     the POST description</a> for more detail on the file.
 
     """
-    body = """
+    warning = ""
+    if rj.jsonget("exp_config"):
+        warning = """
+        <div style="color: #f00;">
+        <p>Warning: an experiment is already set!
+           Visit [url]:8000/reset to reset the expeirment</p>
+        </div>
+        """
+    body = f"""
     <body>
     <div style="text-align: center; padding: 10px;">
     <form action="/init_exp" enctype="multipart/form-data" method="post">
@@ -79,6 +87,7 @@ def upload_form():
     </ul>
     <input type="submit">
     </form>
+    {warning}
     </div>
     </body>
     """
@@ -122,20 +131,22 @@ async def process_form(
         "debrief": "Thanks!",
     }
     exp_config.update(config)
-    exp_config["n"] = len(exp_config["targets"])
+
     if targets_file:
         fnames = _extract_zipfile(targets_file)
         targets = [_format_target(f) for f in fnames]
         exp_config["targets"] = targets
-    else:
-        targets = exp_config.pop("targets")
+
+    exp_config["n"] = len(exp_config["targets"])
+
     rj.jsonset("exp_config", root, exp_config)
     rj.jsonset("responses", root, [])
     _time = time()
     rj.jsonset("start_time", root, _time)
     rj.jsonset("start_datetime", root, datetime.now().isoformat())
-    logger.warning("Experiment initialized with exp_config=%s", exp_config)
-    logger.warning("exp_config['targets'] = %s", targets)
+
+    nice_config = pprint.pformat(exp_config)
+    logger.warning("Experiment initialized with\nexp_config=%s", nice_config)
     return RedirectResponse(url="/dashboard")
 
 
@@ -163,7 +174,9 @@ def reset(force: int = 0, authorized=Depends(_authorize), tags=["private"]):
         )
         rj.flushdb()
         rj.jsonset("responses", root, [])
-        rj.jsonset("start_time", root, time())
+        rj.jsonset("start_time", root, -1)
+        rj.jsonset("start_datetime", root, "-1")
+        rj.jsonset("exp_config", root, {})
         return {"success": True}
 
     return {"success": False}
@@ -205,20 +218,26 @@ async def _get_responses():
 
     for datum in responses:
         out.append(datum)
-        out[-1].update(
-            {
-                key + "_object": targets[datum[key]]
-                for key in ["left", "right", "head", "winner"]
-            }
-        )
         datetime_received = timedelta(seconds=datum["time_received"]) + datetime(
             1970, 1, 1
         )
-        datum = {
-            "time_received_since_start": datum["time_received"] - start,
-            "datetime_received": datetime_received.isoformat(),
+        new_data = {
+            key + "_object": targets[datum[key]]
+            for key in ["left", "right", "head", "winner"]
         }
-        out[-1].update(datum)
+        new_data.update(
+            {
+                key + "_filename": _get_filename(new_data[f"{key}_object"])
+                for key in ["left", "right", "head", "winner"]
+            }
+        )
+        new_data.update(
+            {
+                "time_received_since_start": datum["time_received"] - start,
+                "datetime_received": datetime_received.isoformat(),
+            }
+        )
+        out[-1].update(new_data)
     return out
 
 
@@ -293,6 +312,7 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
             "hist_time_responses": hist_time_responses,
             "hist_human_delay": hist_human_delay,
             "hist_network_latency": hist_network_latency,
+            "filenames": [_get_filename(html) for html in targets],
         },
     )
 
@@ -309,3 +329,11 @@ async def get_logs(request: Request, authorized: bool = Depends(_authorize)):
         with open(str(file), "r") as f:
             out[file.name] = f.readlines()
     return JSONResponse(out)
+
+
+def _get_filename(html):
+    if "<img" in html or "<video" in html:
+        i = html.find("src=")
+        j = html[i:].find(" ")
+        return html[i + 5 : i + j - 1].replace("/static/targets/", "")
+    return html

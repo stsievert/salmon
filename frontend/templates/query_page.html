@@ -59,43 +59,26 @@
     </div>
   </div>
 </div>
-<<<<<<< HEAD
-<div class="modal fade" id="puid-overlay" tabindex="-1" role="dialog" aria-labelledby="puidOverlayLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-          <h5>Participant ID</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-          <p>{{ puid }}</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
+
 <div class="container">
   <div class="outline justify-content-center">
     <div class="fixed-bottom">
       <div style="padding: 5px; margin: 5px; color: #aaa;">
           <span id="num-queries">0</span>/{{ max_queries }}
-=======
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- "Thanks for participating!" modal -->
 <div class="modal fade" id="debriefModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <div class="modal-body">
-          {{ debrief | safe }}
-      </div>
-      <div class="modal-body">
-          Participant ID: <span id="puid">{{ puid }}</span>
->>>>>>> master
-      </div>
+     <div class="modal-body">
+         {{ debrief | safe }}
+     </div>
+     <div class="modal-body">
+         Participant ID: <span id="puid">{{ puid }}</span>
     </div>
   </div>
 </div>
@@ -106,9 +89,7 @@ head = -1;
 left = -1;
 right = -1;
 puid = $("#puid").html();
-console.log(puid);
 targets = {{ targets | safe }};
-<<<<<<< HEAD
 function getTime(){
   var d = new Date();
     // getTime returns time in milliseconds since 1970-01-01, [1]
@@ -124,34 +105,21 @@ var max_queries = {{ max_queries }};
 var num_queries = 0;  // queries submitted
 
 function send(winner) {
-  console.log(winner);
   num_queries = num_queries + 1;
   $("#num-queries").html("" + num_queries);
   $.post("/process_answer",
-  JSON.stringify({
-      "head": head,
-      "left": left,
-      "right": right,
-      "winner": winner,
-      "puid": puid,
-      "response_time": getTime() - start,
-      "network_latency": latency,
-max_responses = {{ max_queries }};
-num_responses = 0;
-
-function send(winner) {
-  num_responses = num_responses + 1;
-  $.post("/process_answer",
-  JSON.stringify({
-    "head": head,
-    "left": left,
-    "right": right,
-    "winner": winner,
-    "puid": puid,
-  }),
-  function(data, status){
-  });
+    JSON.stringify({
+        "head": head,
+        "left": left,
+        "right": right,
+        "winner": winner,
+        "puid": puid,
+        "response_time": getTime() - start,
+        "network_latency": latency,
+    })
+  );
 }
+
 
 function getquery(){
   $.get("/get_query", function(data){
@@ -164,8 +132,6 @@ function getquery(){
       $("#q-left").html(targets[left]);
       $("#q-right").html(targets[right]);
       $("#q-head").html(targets[head]);
-      max_responses = max_responses + 1;
-      max_queries = max_queries + 1;
   });
 }
 
@@ -176,7 +142,9 @@ latency = end_latency - start_latency;
 
 function iterate(winner) {
   send(winner);
-  if ((max_responses > 0) && (num_responses >= max_responses)){
+  console.log(num_queries);
+  console.log(max_queries);
+  if ((max_queries > 0) && (num_queries >= max_queries)){
     $('#debriefModal').modal("show")
   }
   else {

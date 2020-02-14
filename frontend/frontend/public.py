@@ -19,7 +19,7 @@ from rejson import Client, Path
 import numpy as np
 import pandas as pd
 
-from .utils import ServerException, get_logger
+from .utils import ServerException, get_logger, sha256
 
 logger = get_logger(__name__)
 
@@ -39,7 +39,6 @@ app.mount("/static", StaticFiles(directory=str(pkg_dir / "static")), name="stati
 templates = Jinja2Templates(directory="templates")
 
 
-@lru_cache()
 def _get_config():
     return rj.jsonget("exp_config")
 
@@ -61,8 +60,10 @@ async def get_query_page(request: Request):
     Load the query page and present a "triplet query".
     """
     exp_config = await _ensure_initialized()
+    uid = "salmon-{}".format(np.random.randint(2**32 - 1))
+    puid = sha256(uid)[:16]
     items = {
-        "puid": np.random.randint(2 ** 20, 2 ** 32 - 1),
+        "puid": puid,
         "instructions": exp_config["instructions"],
         "targets": exp_config["targets"],
         "max_queries": exp_config["max_queries"],
@@ -103,7 +104,7 @@ class Answer(BaseModel):
     left: int
     right: int
     winner: int
-    puid: int = -1
+    puid: str = ""
     response_time: float = -1
     network_latency: float = -1
 

@@ -6,6 +6,8 @@ from pathlib import Path
 from zipfile import ZipFile
 import os
 from textwrap import dedent
+import hashlib
+from typing import Any
 
 from fastapi import HTTPException
 
@@ -41,7 +43,7 @@ class ServerException(HTTPException):
 
 def _extract_zipfile(raw_zipfile, directory="targets"):
     p = Path(__file__).absolute().parent  # directory to this file
-    imgs = p / "static" / "imgs"
+    imgs = p / "static" / "targets"
 
     if imgs.exists():
         for _f in imgs.glob("**/*"):
@@ -83,3 +85,12 @@ def _format_target(file: Path):
             "Supported extensions are ['png', 'gif', 'jpg', 'bmp', "
             "'jpeg', 'svg', 'mov' or 'mp4']"
         )
+
+def sha256(x: Any) -> str:
+    if not isinstance(x, (str, bytes)):
+        x = str(x)
+    if isinstance(x, str):
+        x = x.encode(encoding="ascii")
+    m = hashlib.sha256()
+    m.update(x)
+    return m.hexdigest()

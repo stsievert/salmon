@@ -60,13 +60,13 @@
       <tr>
           <th><b>Target item</b></th>
           <th><b>Rendered HTML</b></th>
-          <th><b>Raw HTML</b></th>
+          <th><b>Filename/URL/Raw HTML</b></th>
       </tr>
       {% for target in targets %}
       <tr>
         <td>{{ loop.index0 }}</td>
         <td>{{ target | safe }}</td>
-        <td>{{ target }}</td>
+        <td>{{ filenames[loop.index0] }}</td>
       </tr>
       {% endfor %}
       </table>

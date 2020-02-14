@@ -68,7 +68,7 @@ def test_basic():
         "/init_exp", data={"exp": exp.read_bytes()}, auth=(username, password),
     )
     exp_config = yaml.safe_load(exp.read_bytes())
-    puid = np.random.randint(2 ** 20, 2 ** 32 - 1)
+    puid = "puid-foo"
     answers = []
     for k in range(20):
         _start = time()
@@ -90,18 +90,18 @@ def test_basic():
     expected_cols = {
         "time_received_since_start",
         "time_received",
-        "winner",
         "head",
         "right",
+        "left",
+        "winner",
         "winner_object",
         "right_object",
-        "left",
         "head_object",
         "left_object",
-        "head_src",
-        "winner_src",
-        "right_src",
-        "left_src",
+        "winner_filename",
+        "right_filename",
+        "left_filename",
+        "head_filename",
         "puid",
         "response_time",
         "network_latency",
