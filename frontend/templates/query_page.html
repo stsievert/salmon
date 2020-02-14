@@ -112,36 +112,36 @@ function send(winner) {
   console.log(winner);
   num_queries = num_queries + 1;
   $("#num-queries").html("" + num_queries);
+  $.post("/process_answer",
+  JSON.stringify({
+      "head": head,
+      "left": left,
+      "right": right,
+      "winner": winner,
+      "puid": puid,
+      "response_time": getTime() - start,
+      "network_latency": latency,
+  }),
+  function(data, status){
+  });
+}
+function getquery(){
   if (num_queries < max_queries) {
-    $.post("/process_answer",
-    JSON.stringify({
-        "head": head,
-        "left": left,
-        "right": right,
-        "winner": winner,
-        "puid": puid,
-        "response_time": getTime() - start,
-        "network_latency": latency,
-    }),
-    function(data, status){
+    $.get("/get_query", function(data){
+        head = data["head"];
+        right = data["right"];
+        left = data["left"];
+        start = getTime();
+        end_latency = getTime();
+        latency = end_latency - start_latency;
+        $("#q-left").html(targets[left]);
+        $("#q-right").html(targets[right]);
+        $("#q-head").html(targets[head]);
     });
   } else {
     console.log("Here");
     $("#puid-overlay").modal("show");//show();
   }
-}
-function getquery(){
-  $.get("/get_query", function(data){
-      head = data["head"];
-      right = data["right"];
-      left = data["left"];
-      start = getTime();
-      end_latency = getTime();
-      latency = end_latency - start_latency;
-      $("#q-left").html(targets[left]);
-      $("#q-right").html(targets[right]);
-      $("#q-head").html(targets[head]);
-  });
 }
 
 start_latency = getTime();
