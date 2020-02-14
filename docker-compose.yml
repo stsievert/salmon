@@ -12,3 +12,6 @@ services:
     image: redislabs/rejson
     ports:
       - '6379:6379'
+# To get bash on one of these machines:
+# docker exec -it <containerIdOrName> bash
+

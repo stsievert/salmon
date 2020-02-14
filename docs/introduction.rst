@@ -9,10 +9,11 @@ On your local machine? Run this following code in a terminal:
 
    $ git clone https://github.com/stsievert/salmon.git
 
-Want to use AWS? See below.
-
 Launching Salmon
 ----------------
+
+Developer
+^^^^^^^^^
 
 First, `install Docker`_ and `install Git`_. After that, run the following code:
 
@@ -34,6 +35,8 @@ If you make changes to this code, use this to
 	$ docker-compose build
 	$ docker-compose up
 
+Want to use AWS? See below.
+
 
 Experimentalist
 ^^^^^^^^^^^^^^^
@@ -46,7 +49,7 @@ Experimentalist
 2. Select the "Oregon" region (or ``us-west-2``) in the upper right.
 3. Go to Amazon EC2
 4. Launch a new instance (the big blue button).
-5. Select AMI ``ami-03f4f80d86403e6bc`` titled "Salmon"
+5. Select AMI ``ami-06ec58f46ec2d18ea`` titled "Salmon"
    (appears in Community AMIs after searching "Salmon").
 6. On the rules page, make a custom TCP rule to open ports 1000-9999 from
    anywhere. Here's a image description:

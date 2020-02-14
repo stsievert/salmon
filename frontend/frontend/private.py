@@ -9,8 +9,10 @@ from datetime import datetime, timedelta
 import json
 from io import StringIO
 from pprint import pprint
+from functools import lru_cache
 
 import numpy as np
+
 from rejson import Client, Path
 import pandas as pd
 import altair as alt
@@ -48,6 +50,7 @@ def _authorize(credentials: HTTPBasicCredentials = Depends(security)) -> bool:
     logger.info("Seeing if authorized access")
     if os.environ.get("SALMON_NO_AUTH", False):
         return True
+
     if credentials.username != "foo" or _salt(credentials.password) != EXPECTED_PWORD:
         logger.info("Not authorized")
         raise HTTPException(
@@ -68,6 +71,7 @@ def upload_form():
     """
     body = """
     <body>
+    <div style="text-align: center; padding: 10px;">
     <form action="/init_exp" enctype="multipart/form-data" method="post">
     <ul>
       <li>Experiment parameters (YAML file): <input name="exp" type="file"></li>
@@ -75,6 +79,7 @@ def upload_form():
     </ul>
     <input type="submit">
     </form>
+    </div>
     </body>
     """
     return HTMLResponse(content=body)
@@ -110,9 +115,11 @@ async def process_form(
     """
 
     config = yaml.load(exp, Loader=yaml.SafeLoader)
+    print(config)
     exp_config: Dict = {
         "instructions": "Default instructions (can include <i>arbitrary</i> HTML)",
         "max_queries": None,
+        "debrief": "Thanks!",
     }
     exp_config.update(config)
     exp_config["n"] = len(exp_config["targets"])
@@ -180,11 +187,11 @@ async def _get_responses():
     `json_file : str`. This file will have keys
 
     * `head`, `left`, `right`, `winner` as integers describing the arms
-      (and `_object` as their HTML string)
+      (and `_object`/`_src` as their HTML string/HTML `src` tag)
     * `puid` as the participant unique ID
     * `time_received_since_start`, an integer describing the time in
       seconds since launch start
-    * `time_received`: the time in seconds since Jan. 1st 1970.
+    * `time_received`: the time in seconds since Jan. 1st, 1970.
 
     This file will be downloaded.
 

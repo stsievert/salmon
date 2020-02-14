@@ -2,9 +2,22 @@ if [ -d "/home/ubuntu/salmon" ]; then
     # Control will enter here if $DIRECTORY exists.
     # This is the case when machine is launching for first time
     #
-    # Get salmon
+    # Install a working copy of Salmon. This copy on this machine will not be updated
+    # (if they want an update, they can start a new machine)
+    #
     git clone https://github.com/stsievert/salmon.git /home/ubuntu/salmon
     cd /home/ubuntu/salmon
+    git fetch --tags # Get new tags from remote
+    latestTag=$(git describe --tags `git rev-list --tags --max-count=1`) # Get latest tag name
+    git checkout $latestTag # Checkout latest tag
+
+    # Make sure the latest salmon.sh is used
+    cp ami/salmon.sh /home/ubuntu
+    cp ami/salmon.service /home/ubuntu
+    sudo mv /home/ubuntu/salmon.service /lib/systemd/system/
+    sudo chmod u+x /home/ubuntu/salmon.sh
+    sudo systemctl enable salmon
+
 
     # Install fresh verison of Docker
     # https://docs.docker.com/install/linux/docker-ce/ubuntu/
@@ -23,26 +36,15 @@ if [ -d "/home/ubuntu/salmon" ]; then
     # https://docs.docker.com/compose/install/
     sudo curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
     sudo chmod +x /usr/local/bin/docker-compose
-else
-    cd /home/ubuntu/salmon
-    git pull
-    cp ami/salmon.sh /home/ubuntu
-    sudo chmod u+x salmon.sh
-    sudo systemctl enable salmon
-fi
 
-## When restarting the CPU...
-# Get latest tag
-cd /home/ubuntu/salmon
-git fetch --tags # Get new tags from remote
-latestTag=$(git describe --tags `git rev-list --tags --max-count=1`) # Get latest tag name
-git checkout $latestTag # Checkout latest tag
+    cd /home/ubuntu/salmon; sudo docker-compose build
+fi
 
 cd /home/ubuntu/salmon; sudo docker-compose up
 
-# Instructions for deploying to EC2: https://askubuntu.com/questions/919054/how-do-i-run-a-single-command-at-startup-using-systemd
+# Instructions for deploying to EC2: hhttps://askubuntu.com/questions/919054/how-do-i-run-a-single-command-at-startup-using-systemd
 # sudo mv salmon.service /lib/systemd/system/
 # sudo chmod u+x salmon.sh
 # sudo systemctl enable salmon
 #
-## View logs with `systemctl -l status salmon`
+## View logs with `systemctl -l status salmon
