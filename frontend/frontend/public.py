@@ -47,7 +47,7 @@ async def _ensure_initialized():
     if "exp_config" not in rj:
         raise ServerException("No data has been uploaded")
     exp_config = _get_config()
-    expected_keys = ["targets", "instructions", "n"]
+    expected_keys = ["targets", "instructions", "n", "max_queries"]
     if not set(exp_config) == set(expected_keys):
         msg = "Experiment keys are not correct. Expected {}, got {}"
         raise ServerException(msg.format(expected_keys, list(exp_config.keys())))
@@ -64,6 +64,7 @@ async def get_query_page(request: Request):
         "puid": np.random.randint(2 ** 20, 2 ** 32 - 1),
         "instructions": exp_config["instructions"],
         "targets": exp_config["targets"],
+        "max_queries": exp_config["max_queries"],
     }
     items.update(request=request)
     return templates.TemplateResponse("query_page.html", items)

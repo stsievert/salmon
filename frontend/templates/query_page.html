@@ -58,14 +58,35 @@
       <div class="cell answer col col-lg-5 center cell answer" id="q-left"></div>
       <div class="cell answer col col-lg-5 center cell answer" id="q-right"></div>
     </div>
-    <div class="row justify-content-center">
-      <div class="col-lg-4">
-          Participant ID: <span id="puid">{{ puid }}</span>
+  </div>
+</div>
+<div class="modal fade" id="puid-overlay" tabindex="-1" role="dialog" aria-labelledby="puidOverlayLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+          <h5>Participant ID</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <p>{{ puid }}</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
 </div>
-</body>
+<div class="container">
+  <div class="outline justify-content-center">
+    <div class="fixed-bottom">
+      <div style="padding: 5px; margin: 5px; color: #aaa;">
+          <span id="num-queries">0</span>/{{ max_queries }}
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
 head = -1;
@@ -84,21 +105,30 @@ var start = -1;
 var start_latency = -1;
 var end_latency = -1;
 var latency = -1;
+var max_queries = {{ max_queries }};
+var num_queries = 0;  // queries submitted
 
 function send(winner) {
   console.log(winner);
-  $.post("/process_answer",
-  JSON.stringify({
-      "head": head,
-      "left": left,
-      "right": right,
-      "winner": winner,
-      "puid": puid,
-      "response_time": getTime() - start,
-      "network_latency": latency,
-  }),
-  function(data, status){
-  });
+  num_queries = num_queries + 1;
+  $("#num-queries").html("" + num_queries);
+  if (num_queries < max_queries) {
+    $.post("/process_answer",
+    JSON.stringify({
+        "head": head,
+        "left": left,
+        "right": right,
+        "winner": winner,
+        "puid": puid,
+        "response_time": getTime() - start,
+        "network_latency": latency,
+    }),
+    function(data, status){
+    });
+  } else {
+    console.log("Here");
+    $("#puid-overlay").modal("show");//show();
+  }
 }
 function getquery(){
   $.get("/get_query", function(data){

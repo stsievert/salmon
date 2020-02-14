@@ -85,10 +85,11 @@ async def process_form(
     """
     The uploaded file needs to have the following keys:
 
-    * targets (list, required)
-    * instructions (str, optional)
+    * targets (List)
+    * instructions (Optional[str])
+    * max_queries (Optional[int])
 
-    Targets/instructions can render certain HTML tags.
+    Targets/instructions can render most HTML tags.
 
     Example
     -------
@@ -100,11 +101,13 @@ async def process_form(
           - <i>object</i> 4
           - <img src="https://en.wikipedia.org/wiki/File:2010_Winter_Olympics_Bode_Miller_in_downhill.jpg" />
         - instructions: "Foobar!"
+        - max_queries: 25
     """
 
     config = yaml.load(exp, Loader=yaml.SafeLoader)
     exp_config: Dict = {
-        "instructions": "Default instructions (can include <i>arbitrary</i> HTML)"
+        "instructions": "Default instructions (can include <i>arbitrary</i> HTML)",
+        "max_queries": None,
     }
     exp_config.update(config)
     exp_config["n"] = len(exp_config["targets"])
