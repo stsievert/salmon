@@ -6,3 +6,6 @@ redis
 rejson
 requests
 pytest
+aiofiles
+altair
+matplotlib

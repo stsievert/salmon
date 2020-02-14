@@ -4,6 +4,8 @@ from time import sleep
 import random
 import json
 import yaml
+import yaml
+from time import time
 
 import numpy as np
 import pandas as pd
@@ -66,13 +68,16 @@ def test_basic():
     _post(
         "/init_exp", data={"exp": exp.read_bytes()}, auth=(username, password),
     )
+    exp_config = yaml.safe_load(exp.read_bytes())
     puid = np.random.randint(2 ** 20, 2 ** 32 - 1)
     answers = []
     for k in range(20):
+        _start = time()
         q = _get("/get_query").json()
         ans = {"winner": random.choice([q["left"], q["right"]]), "puid": puid, **q}
         answers.append(ans)
         sleep(10e-3)
+        ans["response_time"] = time() - _start
         _post("/process_answer", data=ans)
 
     r = _get("/get_responses", auth=(username, password))
@@ -95,5 +100,14 @@ def test_basic():
         "head_object",
         "left_object",
         "puid",
+        "response_time",
+        "network_latency",
+        "datetime_received",
     }
-    assert expected_cols.issubset(set(df.columns))
+    n = len(exp_config["targets"])
+    assert (0 == df["head"].min()) and (df["head"].max() == n - 1)
+    assert (0 == df["left"].min()) and (df["left"].max() == n - 1)
+    assert (0 == df["right"].min()) and (df["right"].max() == n - 1)
+    assert 10e-3 < df.response_time.min()
+    assert expected_cols == set(df.columns)
+    assert df.puid.nunique() == 1

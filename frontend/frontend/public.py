@@ -4,6 +4,7 @@ from time import time
 import yaml
 from copy import copy
 from textwrap import dedent
+import pathlib
 
 from fastapi import FastAPI, HTTPException, Form
 from starlette.templating import Jinja2Templates
@@ -17,12 +18,12 @@ from rejson import Client, Path
 import numpy as np
 import pandas as pd
 
-from .utils import ServerException
+from .utils import ServerException, get_logger
+
+logger = get_logger(__name__)
 
 root = Path.rootPath()
 rj = Client(host="redis", port=6379, decode_responses=True)
-rj.jsonset("responses", root, [])
-rj.jsonset("start_time", root, time())
 
 app = FastAPI(
     title="Salmon",
@@ -32,7 +33,8 @@ app = FastAPI(
         """
     ),
 )
-app.mount("/static", StaticFiles(directory="templates"), name="static")
+pkg_dir = pathlib.Path(__file__).absolute().parent
+app.mount("/static", StaticFiles(directory=str(pkg_dir / "static")), name="static")
 templates = Jinja2Templates(directory="templates")
 
 
@@ -80,6 +82,7 @@ async def get_query() -> Dict[str, int]:
     exp_config = await _ensure_initialized()
     n = exp_config["n"]
     h, l, r = list(np.random.choice(n, size=3, replace=False))
+    logger.info("Query [h, l, r]=[%d, %d, %d] served", h, l, r)
     return {"head": int(h), "left": int(l), "right": int(r)}
 
 
@@ -92,11 +95,14 @@ class Answer(BaseModel):
     'puid' is the "participant unique ID", and is optional.
 
     """
+
     head: int
     left: int
     right: int
     winner: int
     puid: int = -1
+    response_time: float = -1
+    network_latency: float = -1
 
 
 @app.post("/process_answer", tags=["public"])
@@ -113,6 +119,7 @@ def process_answer(ans: Answer):
 
     """
     d = ujson.loads(ans.json())
+    logger.info("Answer received: %s", d)
     d.update({"time_received": time()})
     rj.jsonarrappend("responses", root, d)
     return {"success": True}
