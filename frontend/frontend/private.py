@@ -8,6 +8,7 @@ import pathlib
 from datetime import datetime, timedelta
 import json
 from io import StringIO
+from pprint import pprint
 
 import numpy as np
 from rejson import Client, Path
@@ -23,7 +24,7 @@ from starlette.responses import HTMLResponse, JSONResponse, RedirectResponse
 from starlette.status import HTTP_401_UNAUTHORIZED
 
 from .public import _ensure_initialized, app, templates
-from .utils import ServerException, get_logger
+from .utils import ServerException, get_logger, _extract_zipfile, _format_target
 from .plotting import time_histogram, _any_outliers
 
 security = HTTPBasic()
@@ -68,7 +69,10 @@ def upload_form():
     body = """
     <body>
     <form action="/init_exp" enctype="multipart/form-data" method="post">
-    <input name="exp" type="file">
+    <ul>
+      <li>Experiment parameters (YAML file): <input name="exp" type="file"></li>
+      <li>Images/movies (ZIP file, optional): <input name="targets_file" type="file"></li>
+    </ul>
     <input type="submit">
     </form>
     </body>
@@ -80,6 +84,7 @@ def upload_form():
 async def process_form(
     request: Request,
     exp: bytes = File(default=""),
+    targets_file: bytes = File(default=""),
     authorized: bool = Depends(_authorize),
 ):
     """
@@ -111,12 +116,17 @@ async def process_form(
     }
     exp_config.update(config)
     exp_config["n"] = len(exp_config["targets"])
+    if targets_file:
+        fnames = _extract_zipfile(targets_file)
+        targets = [_format_target(f) for f in fnames]
+        exp_config["targets"] = targets
+    else:
+        targets = exp_config.pop("targets")
     rj.jsonset("exp_config", root, exp_config)
     rj.jsonset("responses", root, [])
     _time = time()
     rj.jsonset("start_time", root, _time)
     rj.jsonset("start_datetime", root, datetime.now().isoformat())
-    targets = exp_config.pop("targets")
     logger.warning("Experiment initialized with exp_config=%s", exp_config)
     logger.warning("exp_config['targets'] = %s", targets)
     return RedirectResponse(url="/dashboard")
