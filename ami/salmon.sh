@@ -12,11 +12,11 @@ if [ -d "/home/ubuntu/salmon" ]; then
     git checkout $latestTag # Checkout latest tag
 
     # Make sure the latest salmon.sh is used
-    cp ami/salmon.sh /home/ubuntu
-    cp ami/salmon.service /home/ubuntu
-    sudo mv /home/ubuntu/salmon.service /lib/systemd/system/
+    cd /home/ubuntu/salmon/ami
+    sudo mv salmon.service /lib/systemd/system/
     sudo chmod u+x /home/ubuntu/salmon.sh
     sudo systemctl enable salmon
+    cd /home/ubuntu/salmon
 
 
     # Install fresh verison of Docker
