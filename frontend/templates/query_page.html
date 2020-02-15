@@ -24,6 +24,8 @@
   background-color: #f1f1f1;
   cursor: pointer;
   margin: 2px;
+  margin-left: 10px;
+  margin-right: 10px;
 }
 .head {
   background-color: #ffffff;
@@ -32,6 +34,16 @@
 }
 .center {
   text-align: center;
+}
+.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.answer:hover {
+  border-color: #0c0;
+  border-style: solid;
+  border-width: 2px;
 }
 </style>
 </head>
@@ -53,7 +65,7 @@
       <div class="col-lg-10 justify-content-center center cell head" id="q-head">
       </div>
     </div>
-    <div class="row justify-content-center">
+    <div class="row justify-content-center" id="choices">
       <div class="cell answer col col-lg-5 center cell answer" id="q-left"></div>
       <div class="cell answer col col-lg-5 center cell answer" id="q-right"></div>
     </div>
@@ -84,7 +96,9 @@
 </div>
 
 <script>
-// TODO: response time, network delay
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 head = -1;
 left = -1;
 right = -1;
@@ -104,8 +118,10 @@ var latency = -1;
 var max_queries = {{ max_queries }};
 var num_queries = 0;  // queries submitted
 
-function send(winner) {
+async function send(winner, id) {
   num_queries = num_queries + 1;
+  $('#q-left').addClass("disabled");
+  $('#q-right').addClass("disabled");
   $("#num-queries").html("" + num_queries);
   $.post("/process_answer",
     JSON.stringify({
@@ -126,12 +142,13 @@ function getquery(){
       head = data["head"];
       right = data["right"];
       left = data["left"];
-      start = getTime();
-      end_latency = getTime();
-      latency = end_latency - start_latency;
       $("#q-left").html(targets[left]);
       $("#q-right").html(targets[right]);
       $("#q-head").html(targets[head]);
+      end_latency = getTime();
+      latency = end_latency - start_latency;
+      $('#q-left').removeClass("disabled");
+      $('#q-right').removeClass("disabled");
   });
 }
 
@@ -140,10 +157,8 @@ getquery();
 end_latency = getTime();
 latency = end_latency - start_latency;
 
-function iterate(winner) {
-  send(winner);
-  console.log(num_queries);
-  console.log(max_queries);
+function iterate(winner, id) {
+  send(winner, id);
   if ((max_queries > 0) && (num_queries >= max_queries)){
     $('#debriefModal').modal("show")
   }
@@ -154,12 +169,12 @@ function iterate(winner) {
 
 getquery();
 $("#q-right").click(function(){
-    start_latency = getTime();
-    iterate(right);
+  start_latency = getTime();
+  iterate(right, "#q-right");
 });
 $("#q-left").click(function(){
   start_latency = getTime();
-  iterate(left);
+  iterate(left, "#q-left");
 });
 </script>
 </html>
