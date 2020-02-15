@@ -13,9 +13,10 @@ if [ -d "/home/ubuntu/salmon" ]; then
 
     # Make sure the latest salmon.sh is used
     cd /home/ubuntu/salmon/ami
-    sudo mv salmon.service /lib/systemd/system/
-    sudo chmod u+x /home/ubuntu/salmon.sh
+    sudo cp salmon.service /lib/systemd/system/
+    sudo chmod u+x salmon.sh
     sudo systemctl enable salmon
+    sudo systemctl start salmon
     cd /home/ubuntu/salmon
 
 
@@ -42,9 +43,11 @@ fi
 
 cd /home/ubuntu/salmon; sudo docker-compose up
 
-# Instructions for deploying to EC2: hhttps://askubuntu.com/questions/919054/how-do-i-run-a-single-command-at-startup-using-systemd
-# sudo mv salmon.service /lib/systemd/system/
+# Instructions for deploying to EC2: https://askubuntu.com/questions/919054/how-do-i-run-a-single-command-at-startup-using-systemd
+# sudo cp salmon.service /lib/systemd/system/
 # sudo chmod u+x salmon.sh
+# sudo systemctl start salmon
 # sudo systemctl enable salmon
 #
-## View logs with `systemctl -l status salmon
+## View logs with
+# systemctl -l status salmon
