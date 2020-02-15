@@ -4,6 +4,7 @@ from time import time
 import yaml
 from copy import copy
 from textwrap import dedent
+import pathlib
 import threading
 
 from fastapi import FastAPI, HTTPException, Form
@@ -18,12 +19,12 @@ from rejson import Client, Path
 import numpy as np
 import pandas as pd
 
-from .utils import ServerException
+from .utils import ServerException, get_logger, sha256
+
+logger = get_logger(__name__)
 
 root = Path.rootPath()
 rj = Client(host="redis", port=6379, decode_responses=True)
-rj.jsonset("responses", root, [])
-rj.jsonset("start_time", root, time())
 
 app = FastAPI(
     title="Salmon",
@@ -33,11 +34,11 @@ app = FastAPI(
         """
     ),
 )
-app.mount("/static", StaticFiles(directory="templates"), name="static")
+pkg_dir = pathlib.Path(__file__).absolute().parent
+app.mount("/static", StaticFiles(directory=str(pkg_dir / "static")), name="static")
 templates = Jinja2Templates(directory="templates")
 
 
-@lru_cache()
 def _get_config():
     return rj.jsonget("exp_config")
 
@@ -46,7 +47,7 @@ async def _ensure_initialized():
     if "exp_config" not in rj:
         raise ServerException("No data has been uploaded")
     exp_config = _get_config()
-    expected_keys = ["targets", "instructions", "n", "max_responses", "debrief"]
+    expected_keys = ["targets", "instructions", "n", "max_queries", "debrief"]
     if not set(exp_config) == set(expected_keys):
         msg = "Experiment keys are not correct. Expected {}, got {}"
         raise ServerException(msg.format(expected_keys, list(exp_config.keys())))
@@ -59,11 +60,13 @@ async def get_query_page(request: Request):
     Load the query page and present a "triplet query".
     """
     exp_config = await _ensure_initialized()
+    uid = "salmon-{}".format(np.random.randint(2**32 - 1))
+    puid = sha256(uid)[:16]
     items = {
-        "puid": np.random.randint(2 ** 20, 2 ** 32 - 1),
+        "puid": puid,
         "instructions": exp_config["instructions"],
         "targets": exp_config["targets"],
-        "max_responses": exp_config["max_responses"],
+        "max_queries": exp_config["max_queries"],
         "debrief": exp_config["debrief"],
     }
     items.update(request=request)
@@ -83,6 +86,7 @@ async def get_query() -> Dict[str, int]:
     exp_config = await _ensure_initialized()
     n = exp_config["n"]
     h, l, r = list(np.random.choice(n, size=3, replace=False))
+    logger.info("Query [h, l, r]=[%d, %d, %d] served", h, l, r)
     return {"head": int(h), "left": int(l), "right": int(r)}
 
 
@@ -100,7 +104,9 @@ class Answer(BaseModel):
     left: int
     right: int
     winner: int
-    puid: int = -1
+    puid: str = ""
+    response_time: float = -1
+    network_latency: float = -1
 
 
 def _write(data: dict, filename: str):
@@ -121,6 +127,7 @@ def process_answer(ans: Answer):
 
     """
     d = ujson.loads(ans.json())
+    logger.info("Answer received: %s", d)
     d.update({"time_received": time()})
     fname = f"{d['puid']}-{time()}.json"
     x = threading.Thread(target=_write, args=(d, fname))

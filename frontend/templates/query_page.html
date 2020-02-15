@@ -24,6 +24,8 @@
   background-color: #f1f1f1;
   cursor: pointer;
   margin: 2px;
+  margin-left: 10px;
+  margin-right: 10px;
 }
 .head {
   background-color: #ffffff;
@@ -32,6 +34,16 @@
 }
 .center {
   text-align: center;
+}
+.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.answer:hover {
+  border-color: #0c0;
+  border-style: solid;
+  border-width: 2px;
 }
 </style>
 </head>
@@ -53,9 +65,19 @@
       <div class="col-lg-10 justify-content-center center cell head" id="q-head">
       </div>
     </div>
-    <div class="row justify-content-center">
+    <div class="row justify-content-center" id="choices">
       <div class="cell answer col col-lg-5 center cell answer" id="q-left"></div>
       <div class="cell answer col col-lg-5 center cell answer" id="q-right"></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="outline justify-content-center">
+    <div class="fixed-bottom">
+      <div style="padding: 5px; margin: 5px; color: #aaa;">
+          <span id="num-queries">0</span>/{{ max_queries }}
+      </div>
     </div>
   </div>
 </div>
@@ -64,41 +86,57 @@
 <div class="modal fade" id="debriefModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <div class="modal-body">
-          {{ debrief | safe }}
-      </div>
-      <div class="modal-body">
-          Participant ID: <span id="puid">{{ puid }}</span>
-      </div>
+     <div class="modal-body">
+         {{ debrief | safe }}
+     </div>
+     <div class="modal-body">
+         Participant ID: <span id="puid">{{ puid }}</span>
     </div>
   </div>
 </div>
-</body>
 
 <script>
-// TODO: response time, network delay
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 head = -1;
 left = -1;
 right = -1;
 puid = $("#puid").html();
-console.log(puid);
 targets = {{ targets | safe }};
-max_responses = {{ max_responses }};
-num_responses = 0;
-
-function send(winner) {
-  num_responses = num_responses + 1;
-  $.post("/process_answer",
-  JSON.stringify({
-    "head": head,
-    "left": left,
-    "right": right,
-    "winner": winner,
-    "puid": puid,
-  }),
-  function(data, status){
-  });
+function getTime(){
+  var d = new Date();
+    // getTime returns time in milliseconds since 1970-01-01, [1]
+    // [1]: https://www.w3schools.com/jsref/jsref_gettime.asp
+  return d.getTime() / 1000;
 }
+
+var start = -1;
+var start_latency = -1;
+var end_latency = -1;
+var latency = -1;
+var max_queries = {{ max_queries }};
+var num_queries = 0;  // queries submitted
+
+async function send(winner, id) {
+  num_queries = num_queries + 1;
+  $('#q-left').addClass("disabled");
+  $('#q-right').addClass("disabled");
+  $("#num-queries").html("" + num_queries);
+  $.post("/process_answer",
+    JSON.stringify({
+        "head": head,
+        "left": left,
+        "right": right,
+        "winner": winner,
+        "puid": puid,
+        "response_time": getTime() - start,
+        "network_latency": latency,
+    })
+  );
+}
+
+
 function getquery(){
   $.get("/get_query", function(data){
       head = data["head"];
@@ -107,12 +145,21 @@ function getquery(){
       $("#q-left").html(targets[left]);
       $("#q-right").html(targets[right]);
       $("#q-head").html(targets[head]);
+      end_latency = getTime();
+      latency = end_latency - start_latency;
+      $('#q-left').removeClass("disabled");
+      $('#q-right').removeClass("disabled");
   });
 }
 
-function iterate(winner) {
-  send(winner);
-  if ((max_responses > 0) && (num_responses >= max_responses)){
+start_latency = getTime();
+getquery();
+end_latency = getTime();
+latency = end_latency - start_latency;
+
+function iterate(winner, id) {
+  send(winner, id);
+  if ((max_queries > 0) && (num_queries >= max_queries)){
     $('#debriefModal').modal("show")
   }
   else {
@@ -122,10 +169,12 @@ function iterate(winner) {
 
 getquery();
 $("#q-right").click(function(){
-  iterate(right);
+  start_latency = getTime();
+  iterate(right, "#q-right");
 });
 $("#q-left").click(function(){
-  iterate(left);
+  start_latency = getTime();
+  iterate(left, "#q-left");
 });
 </script>
 </html>

@@ -6,5 +6,5 @@ targets:
   - <img alt="hoby cat" src="https://cdn.hobiecat.com/digital_asset_profiles/wildcat-action-12-full_jpg_1600x1600__generated.jpg" />
   - <img alt="bode miller" src="https://nbcolympictalk.files.wordpress.com/2013/11/bode-miller.jpg" />
 instructions: These are <b>instructions</b>!
+max_queries: 10
 debrief: Thanks for participating!
-max_responses: 3

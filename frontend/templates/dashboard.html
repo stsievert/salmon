@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- Required meta tags -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+<title>Salmon</title>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', path='/root.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', path='/github.css') }}">
+<style>
+.error {
+    color: red;
+}
+</style>
+</head>
+<body>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+<br>
+<div class="container">
+  <div class="outline justify-content-center">
+    <div class="row justify-content-center">
+      <h2>Basic information</h2>
+    </div>
+    <div class="row justify-content-center">
+      <ul>
+        <li><a href="/">Query page</a></li>
+        <li>Number of responses: {{num_responses }}</li>
+        <li>Number of participants: {{ num_participants }}</li>
+        <li><a href="/get_responses">Get responses</a></li>
+        <li><a href="/logs">Get logs</a></li>
+        <li><a href="/docs">API Documentation</a></li>
+      </ul>
+    </div>
+    <div class="row justify-content-center">
+      <h2>Plots</h2>
+    </div>
+    <div class="row justify-content-center">
+      <div id="plot">{{ hist_time_responses | safe }}</div>
+    </div>
+    <div class="row justify-content-center">
+      <span id="plot">{{ hist_human_delay | safe }}</span>
+      <span id="plot">{{ hist_network_latency | safe }}</span>
+    </div>
+    <div class="row justify-content-center">
+      <h2>Targets</h2>
+    </div>
+    <div class="row justify-content-center markdown-body">
+      <p>
+      <table style="max-width:80%; align: center;">
+      <tr>
+          <th><b>Target item</b></th>
+          <th><b>Rendered HTML</b></th>
+          <th><b>Filename/URL/Raw HTML</b></th>
+      </tr>
+      {% for target in targets %}
+      <tr>
+        <td>{{ loop.index0 }}</td>
+        <td>{{ target | safe }}</td>
+        <td>{{ filenames[loop.index0] }}</td>
+      </tr>
+      {% endfor %}
+      </table>
+      </p>
+    </div>
+  </div>
+</div>
+</body>
+
+</html>

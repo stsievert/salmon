@@ -3,19 +3,39 @@ Getting started
 
 Installation
 ------------
-On your local machine? Run ``https://github.com/stsievert/salmon.git``.
+On your local machine? Run this following code in a terminal:
 
-Want to use AWS? See below.
+.. code:: shell
 
+   $ git clone https://github.com/stsievert/salmon.git
 
 Launching Salmon
 ----------------
 
 Developer
 ^^^^^^^^^
-1. Install docker
-2. Run ``docker-compose up``
-3. Go to ``localhost:8000/init_exp``
+
+First, `install Docker`_ and `install Git`_. After that, run the following code:
+
+.. _install Docker: https://www.docker.com/products/docker-desktop
+.. _install Git: https://git-scm.com/downloads
+
+.. code:: shell
+
+   $ cd salmon
+   $ docker-compose build
+   $ docker-compose up
+   $ # visit http://localhost:8000/init_exp or http://localhost:8000/docs
+
+If you make changes to this code, use this to
+
+.. code:: shell
+
+	$ docker-compose stop
+	$ docker-compose build
+	$ docker-compose up
+
+Want to use AWS? See below.
 
 
 Experimentalist
@@ -39,10 +59,24 @@ Experimentalist
 Then after this AMI is finished launching and initializing, go to
 
 * ``[url]:8000/init_exp`` to initialize an experiment
-* ``[url]:8000/docs`` to view documentation. This lists the API endpoints as
-  ``/foo``, which means that going to ``[url]:8000/foo`` will perform an action.
+* ``[url]:8000/dashboard`` to view all relevant links, including links to the
+   * The **query page.** This is the URL that shows the relevant triplets. This
+     is the URL to be sent to a crowdsourcing service.
+   * **API documentation**. This includes information on how to launch an
+     experiment, and what files need to be uploaded. View the documentation for
+     the POST request ``/init_exp`` for more detail.
+   * **Responses**. To get all human responses.
+   * **Logs**. This is very useful for debugging.
 
-``[url]`` is the Amazon public DNS or public IP.
+.. warning::
+
+   If you have an issue with the machine running Salmon, be sure to include the
+   logs when contacting the Salmon developers. They'd also appreciate it if
+   you left the machine running.
+
+``[url]`` is the Amazon public DNS or public IP. This means that going to
+``[url]:8000/foo`` might mean going to
+``http://ec2-35-164-240-184.us-west-2.compute.amazonaws.com:8000/foo``.
 
 Experiment Launch
 -----------------
@@ -70,3 +104,7 @@ If you visit ``[url]``, you will see a query page:
 .. image:: imgs/query_page.png
    :align: center
    :width: 500px
+
+.. note::
+
+   This image is almost certainly out of date.
