@@ -10,6 +10,7 @@ import json
 from io import StringIO
 import pprint
 from functools import lru_cache
+import traceback
 
 import numpy as np
 
@@ -24,6 +25,8 @@ from starlette.requests import Request
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from starlette.responses import HTMLResponse, JSONResponse, RedirectResponse
 from starlette.status import HTTP_401_UNAUTHORIZED
+from fastapi.responses import PlainTextResponse
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from .public import _ensure_initialized, app, templates
 from .utils import ServerException, get_logger, _extract_zipfile, _format_target
@@ -94,6 +97,45 @@ def upload_form():
     return HTMLResponse(content=body)
 
 
+async def _get_config(exp: bytes, targets_file: bytes) -> Dict[str, Any]:
+    config = yaml.load(exp, Loader=yaml.SafeLoader)
+    logger.info(config)
+    exp_config: Dict = {
+        "instructions": "Default instructions (can include <i>arbitrary</i> HTML)",
+        "max_queries": None,
+        "debrief": "Thanks!",
+    }
+    exp_config.update(config)
+
+    if targets_file:
+        fnames = _extract_zipfile(targets_file)
+        targets = [_format_target(f) for f in fnames]
+        exp_config["targets"] = targets
+
+    exp_config["n"] = len(exp_config["targets"])
+    logger.info(exp_config)
+    return exp_config
+
+
+def exception_to_string(excp):
+    stack = traceback.extract_stack()[:-3] + traceback.extract_tb(
+        excp.__traceback__
+    )  # add limit=??
+    pretty = traceback.format_list(stack)
+    return "Error!\n\n\nSummary:\n\n{} {}\n\nFull traceback:\n\n".format(
+        excp.__class__, excp
+    ) + "".join(pretty)
+
+
+class ExpParsingError(StarletteHTTPException):
+    pass
+
+
+@app.exception_handler(ExpParsingError)
+async def http_exception_handler(request, exc):
+    return PlainTextResponse(exc.detail, status_code=exc.status_code)
+
+
 @app.post("/init_exp", tags=["private"])
 async def process_form(
     request: Request,
@@ -122,22 +164,11 @@ async def process_form(
         - instructions: "Foobar!"
         - max_queries: 25
     """
-
-    config = yaml.load(exp, Loader=yaml.SafeLoader)
-    print(config)
-    exp_config: Dict = {
-        "instructions": "Default instructions (can include <i>arbitrary</i> HTML)",
-        "max_queries": None,
-        "debrief": "Thanks!",
-    }
-    exp_config.update(config)
-
-    if targets_file:
-        fnames = _extract_zipfile(targets_file)
-        targets = [_format_target(f) for f in fnames]
-        exp_config["targets"] = targets
-
-    exp_config["n"] = len(exp_config["targets"])
+    try:
+        exp_config = await _get_config(exp, targets_file)
+    except Exception as e:
+        msg = exception_to_string(e)
+        raise ExpParsingError(status_code=500, detail=msg)
 
     rj.jsonset("exp_config", root, exp_config)
     rj.jsonset("responses", root, [])

@@ -7,4 +7,6 @@ login:
 	docker run -i -t salmon_frontend /bin/bash
 
 watch:
+	# for debugging on ec2, `sudo make watch`
 	docker-compose logs -f
+
