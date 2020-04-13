@@ -32,12 +32,13 @@ def _get(endpoint, URL=URL, status_code=200, **kwargs):
     return r
 
 
-def _post(endpoint, data=None, URL=URL, status_code=200, **kwargs):
+def _post(endpoint, data=None, URL=URL, status_code=200, error=False, **kwargs):
     #  data = data or {}
     if isinstance(data, dict) and "exp" not in data:
         data = json.dumps(data)
     r = requests.post(URL + endpoint, data=data, **kwargs)
-    assert r.status_code == status_code
+    if not error:
+        assert r.status_code == status_code
     return r
 
 
@@ -114,3 +115,17 @@ def test_basic():
     assert 10e-3 < df.response_time.min()
     assert expected_cols == set(df.columns)
     assert df.puid.nunique() == 1
+
+def test_bad_file_upload():
+    username, password = _get_auth()
+    print(username, password)
+    _get("/init_exp")
+    exp = Path(__file__).parent / "data" / "bad_exp.yaml"
+    r = _post(
+        "/init_exp", data={"exp": exp.read_bytes()}, auth=(username, password),
+        error=True,
+    )
+    assert r.status_code == 500
+    assert "Error!" in r.text
+    assert "yaml" in r.text
+    assert "-\tfoo" in r.text
