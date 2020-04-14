@@ -9,3 +9,4 @@ pytest
 aiofiles
 altair
 matplotlib
+joblib

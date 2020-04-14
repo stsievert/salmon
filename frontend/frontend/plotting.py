@@ -35,3 +35,29 @@ def _any_outliers(x, low=True, high=True):
         return _high or _low
     else:
         raise ValueError(f"high={high}, low={low}")
+
+async def time_human_delay(delay):
+    w = 3
+    fig, ax = plt.subplots(figsize=(w, w))
+    ax.hist(delay, bins="auto")
+    ax.set_xlabel("Response time (s)")
+    ax.set_ylabel("Count")
+    ax.grid(alpha=0.5)
+    ax.set_title("Human delay in answering")
+    ax.set_xlim(0, None)
+    if _any_outliers(delay, low=False):
+        upper = np.percentile(delay, 95)
+        ax.set_xlim(None, max(10, upper))
+    return fig, ax
+
+
+async def network_latency(latency):
+    w = 3
+    fig, ax = plt.subplots(figsize=(w, w))
+    ax.hist(latency, bins="auto")
+    ax.set_xlabel("Network latency (s)")
+    ax.set_ylabel("Count")
+    ax.grid(alpha=0.5)
+    ax.set_title("Network latency between questions")
+    ax.set_xlim(0, None)
+    return fig, ax
