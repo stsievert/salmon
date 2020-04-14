@@ -10,6 +10,7 @@ from time import time
 import numpy as np
 import pandas as pd
 from typing import Tuple
+from joblib import Parallel, delayed
 
 import requests
 from requests.auth import HTTPBasicAuth, HTTPDigestAuth
@@ -115,6 +116,10 @@ def test_basic():
     assert 10e-3 < df.response_time.min()
     assert expected_cols == set(df.columns)
     assert df.puid.nunique() == 1
+
+    r = _get("/get_responses", auth=(username, password))
+    assert r.status_code == 200
+    assert "exception" not in r.text
 
 
 def test_bad_file_upload():

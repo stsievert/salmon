@@ -1,3 +1,4 @@
+import sys
 from typing import Dict, Any, List
 import os
 import yaml
@@ -30,7 +31,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from .public import _ensure_initialized, app, templates
 from .utils import ServerException, get_logger, _extract_zipfile, _format_target
-from .plotting import time_histogram, _any_outliers
+from .plotting import time_histogram, _any_outliers, time_human_delay, network_latency
 
 security = HTTPBasic()
 
@@ -293,38 +294,39 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
     )
 
     if len(responses) >= 2:
-        r = await time_histogram(df.time_received_since_start)
-        fig, ax = r
-        ax.set_title("Time responses received")
-        with StringIO() as f:
-            plt.savefig(f, format="svg", bbox_inches="tight")
-            hist_time_responses = f.getvalue()
-
-        w = 3
-        fig, ax = plt.subplots(figsize=(w, w))
-        ax.hist(df.response_time, bins="auto")
-        ax.set_xlabel("Response time (s)")
-        ax.set_ylabel("Count")
-        ax.grid(alpha=0.5)
-        ax.set_title("Human delay in answering")
-        ax.set_xlim(0, None)
-        if _any_outliers(df.response_time, low=False):
-            upper = np.percentile(df.response_time.values, 95)
-            ax.set_xlim(None, max(10, upper))
-        with StringIO() as f:
-            plt.savefig(f, format="svg", bbox_inches="tight")
-            hist_human_delay = f.getvalue()
-
-        fig, ax = plt.subplots(figsize=(w, w))
-        ax.hist(df.network_latency.values, bins="auto")
-        ax.set_xlabel("Network latency (s)")
-        ax.set_ylabel("Count")
-        ax.grid(alpha=0.5)
-        ax.set_title("Network latency between questions")
-        ax.set_xlim(0, None)
-        with StringIO() as f:
-            plt.savefig(f, format="svg", bbox_inches="tight")
-            hist_network_latency = f.getvalue()
+        try:
+            r = await time_histogram(df.time_received_since_start)
+        except:
+            name, descr, tr = sys.exc_info()
+            hist_time_responses = f"{name} exception: {descr}"
+        else:
+            fig, ax = r
+            ax.set_title("Time responses received")
+            with StringIO() as f:
+                fig.savefig(f, format="svg", bbox_inches="tight")
+                hist_time_responses = f.getvalue()
+            name, descr = "NameError", "because why?"
+            hist_time_responses = f"Time responses received:\n{name} exception: {descr}"
+        try:
+            r = await time_human_delay(df.response_time.to_numpy())
+        except:
+            name, descr, tr = sys.exc_info()
+            hist_human_delay = f"Histogram of human response time:\n{name} exception: {descr}"
+        else:
+            fig, ax = r
+            with StringIO() as f:
+                fig.savefig(f, format="svg", bbox_inches="tight")
+                hist_human_delay = f.getvalue()
+        try:
+            r = await network_latency(df.network_latency.to_numpy())
+        except Exception as e:
+            name, descr, traceback = sys.exc_info()
+            hist_network_latency = f"Network latency:\n{name} exception: {descr}"
+        else:
+            fig, ax = r
+            with StringIO() as f:
+                fig.savefig(f, format="svg", bbox_inches="tight")
+                hist_network_latency = f.getvalue()
     else:
         msg = (
             "Histogram of {} will appear here after at least 2 responses are collected"
