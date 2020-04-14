@@ -118,12 +118,14 @@ function getTime(){
 
 var start = -1;
 var start_latency = -1;
+var response_start = -1;
 var end_latency = -1;
 var latency = -1;
 var max_queries = {{ max_queries }};
 var num_queries = 0;  // queries submitted
 
 async function send(winner, id) {
+  var response_time = getTime() - response_start;
   num_queries = num_queries + 1;
   $('#q-left').addClass("disabled");
   $('#q-right').addClass("disabled");
@@ -135,7 +137,7 @@ async function send(winner, id) {
         "right": right,
         "winner": winner,
         "puid": puid,
-        "response_time": getTime() - start,
+        "response_time": response_time,
         "network_latency": latency,
     })
   );
@@ -152,6 +154,7 @@ function getquery(){
       $("#q-head").html(targets[head]);
       end_latency = getTime();
       latency = end_latency - start_latency;
+      response_start = getTime();
       $('#q-left').removeClass("disabled");
       $('#q-right').removeClass("disabled");
   });
@@ -188,8 +191,8 @@ document.onkeydown = function checkKey(e) {
   // console.log(e.keyCode);
   // console.log(e.keyCode == "37");
 
-  left_disabled =$("#q-left").hasClass("answer-sent");
-  right_disabled =$("#q-right").hasClass("answer-sent");
+  left_disabled = $("#q-left").hasClass("answer-sent");
+  right_disabled = $("#q-right").hasClass("answer-sent");
   console.log(left_disabled || right_disabled);
   if (left_disabled || right_disabled){
     return
@@ -213,7 +216,7 @@ document.onkeydown = function checkKey(e) {
   setTimeout(function(){
     $(winner_id).removeClass("disabled");
     $(winner_id).removeClass("answer-sent");
-  }, 200);  // 215ms is median reaction time for humans
+  }, 150);  // 215ms is median reaction time for humans
 }
 </script>
 </html>

@@ -106,6 +106,7 @@ async def _get_config(exp: bytes, targets_file: bytes) -> Dict[str, Any]:
         "debrief": "Thanks!",
     }
     exp_config.update(config)
+    exp_config["targets"] = [str(x) for x in exp_config["targets"]]
 
     if targets_file:
         fnames = _extract_zipfile(targets_file)
@@ -164,6 +165,7 @@ async def process_form(
         - instructions: "Foobar!"
         - max_queries: 25
     """
+    logger.info("salmon.__version__ = %s", app.version)
     try:
         exp_config = await _get_config(exp, targets_file)
     except Exception as e:
@@ -363,6 +365,7 @@ async def get_logs(request: Request, authorized: bool = Depends(_authorize)):
 
 
 def _get_filename(html):
+    html = str(html)
     if "<img" in html or "<video" in html:
         i = html.find("src=")
         j = html[i:].find(" ")
