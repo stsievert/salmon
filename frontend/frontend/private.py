@@ -12,6 +12,7 @@ from io import StringIO
 import pprint
 from functools import lru_cache
 import traceback
+from textwrap import dedent
 
 import numpy as np
 
@@ -75,26 +76,28 @@ def upload_form():
     """
     warning = ""
     if rj.jsonget("exp_config"):
-        warning = """
-        <div style="color: #f00;">
-        <p>Warning: an experiment is already set!
-           Visit [url]:8000/reset to reset the expeirment</p>
+        warning = dedent(
+            """<div style="color: #f00;">
+            <p>Warning: an experiment is already set!
+               Visit [url]:8000/reset to reset the expeirment</p>
+            </div>
+            """
+        )
+    body = dedent(
+        f"""<body>
+        <div style="text-align: center; padding: 10px;">
+        <form action="/init_exp" enctype="multipart/form-data" method="post">
+        <ul>
+          <li>Experiment parameters (YAML file): <input name="exp" type="file"></li>
+          <li>Images/movies (ZIP file, optional): <input name="targets_file" type="file"></li>
+        </ul>
+        <input type="submit">
+        </form>
+        {warning}
         </div>
+        </body>
         """
-    body = f"""
-    <body>
-    <div style="text-align: center; padding: 10px;">
-    <form action="/init_exp" enctype="multipart/form-data" method="post">
-    <ul>
-      <li>Experiment parameters (YAML file): <input name="exp" type="file"></li>
-      <li>Images/movies (ZIP file, optional): <input name="targets_file" type="file"></li>
-    </ul>
-    <input type="submit">
-    </form>
-    {warning}
-    </div>
-    </body>
-    """
+    )
     return HTMLResponse(content=body)
 
 
@@ -305,13 +308,14 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
             with StringIO() as f:
                 fig.savefig(f, format="svg", bbox_inches="tight")
                 hist_time_responses = f.getvalue()
-            name, descr = "NameError", "because why?"
             hist_time_responses = f"Time responses received:\n{name} exception: {descr}"
         try:
             r = await time_human_delay(df.response_time.to_numpy())
         except:
             name, descr, tr = sys.exc_info()
-            hist_human_delay = f"Histogram of human response time:\n{name} exception: {descr}"
+            hist_human_delay = (
+                f"Histogram of human response time:\n{name} exception: {descr}"
+            )
         else:
             fig, ax = r
             with StringIO() as f:
