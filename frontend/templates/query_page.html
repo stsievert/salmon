@@ -45,6 +45,11 @@
   border-style: solid;
   border-width: 2px;
 }
+.answer-sent {
+  border-color: #0c0;
+  border-style: solid;
+  border-width: 2px;
+}
 </style>
 </head>
 <body>
@@ -176,5 +181,39 @@ $("#q-left").click(function(){
   start_latency = getTime();
   iterate(left, "#q-left");
 });
+
+
+document.onkeydown = function checkKey(e) {
+  e = e || window.event;
+  // console.log(e.keyCode);
+  // console.log(e.keyCode == "37");
+
+  left_disabled =$("#q-left").hasClass("answer-sent");
+  right_disabled =$("#q-right").hasClass("answer-sent");
+  console.log(left_disabled || right_disabled);
+  if (left_disabled || right_disabled){
+    return
+  }
+  start_latency = getTime();
+  if (e.keyCode == '37') { // left arrow
+    iterate(left, "#q-left");
+    winner_id = "#q-left";
+  }
+  else if (e.keyCode == '39') { // right arrow
+    iterate(right, "#q-right");
+    winner_id = "#q-right";
+  }
+  else if (e.keyCode == '38') { // up arrow
+  }
+  else if (e.keyCode == '40') { // down arrow
+  }
+
+  $(winner_id).addClass("answer-sent");
+  $(winner_id).addClass("disabled");
+  setTimeout(function(){
+    $(winner_id).removeClass("disabled");
+    $(winner_id).removeClass("answer-sent");
+  }, 200);  // 215ms is median reaction time for humans
+}
 </script>
 </html>
