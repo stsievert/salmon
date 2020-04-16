@@ -12,13 +12,14 @@ Experimentalist
 2. Select the "Oregon" region (or ``us-west-2``) in the upper right.
 3. Go to Amazon EC2
 4. Launch a new instance (the big blue button or square orange button).
-5. Select AMI ``ami-0e804e857258e967e`` titled "Salmon" (it appears in
-   Community AMIs after searching "Salmon").
-6. Don't click the big blue button yet -- continue to the rules page. Here's a
-   image description:
+5. Select AMI ``ami-0e804e857258e967e`` titled "Salmon". It appears in
+   Community AMIs after searching "Salmon".
+6. Don't click the big blue button yet. Continue to the rules page, and add
+   these rules:
 
 .. image:: imgs/networking-rule.png
    :width: 80%
+   :align: center
 
 Then after this AMI is finished launching and initializing, go to
 
@@ -46,7 +47,7 @@ Then after this AMI is finished launching and initializing, go to
 Experiment Launch
 ^^^^^^^^^^^^^^^^^
 
-Visit ``[url]:8000/init_exp`` to initialize an experiment. This will ask for
+Visit ``[url]:8421/init_exp`` to initialize an experiment. This will ask for
 the following:
 
 * a file describing the experiment
@@ -92,7 +93,7 @@ First, `install Docker`_ and `install Git`_. After that, run the following code:
    $ cd salmon
    $ docker-compose build
    $ docker-compose up
-   $ # visit http://localhost:8000/init_exp or http://localhost:8000/docs
+   $ # visit http://localhost:8421/init_exp or http://localhost:8421/docs
 
 Developer
 ---------
