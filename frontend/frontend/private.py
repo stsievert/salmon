@@ -186,7 +186,10 @@ async def process_form(
     logger.warning("Experiment initialized with\nexp_config=%s", nice_config)
     response = dedent(
         """<html><body>
-        <br><br><br>
+        <br><br>
+        <p>
+        Now, Salmon presents the following interfaces:
+        </p>
         <p><ul style="text-align: center;">
         <li><a href="/">Query page</a>. Send this page to crowdsourcing participants.</li>
         <li><a href="/dashboard">Dashboard</a>. Use this page to monitor experimental progress.</li>
