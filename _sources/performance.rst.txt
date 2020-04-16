@@ -6,8 +6,8 @@ with the system and answering questions. Here's the setup:
 
 * Launched Salmon on a Amazon EC2 ``t3.large`` instance.
 * Simulated client response time using the most similar task I could find
-  [#1]_.  Response times were a Gaussian random variable with mean 750ms and
-  standard deviation 250ms.
+  [#1]_.  Response times were a modified Gaussian random variable with mean 750ms and
+  standard deviation 250ms (modified so always greater than 200ms).
 * Each client for 50 responses.
 
 Here are the performance results with that setup:

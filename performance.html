@@ -156,8 +156,8 @@ with the system and answering questions. Here’s the setup:</p>
 <ul class="simple">
 <li><p>Launched Salmon on a Amazon EC2 <code class="docutils literal notranslate"><span class="pre">t3.large</span></code> instance.</p></li>
 <li><p>Simulated client response time using the most similar task I could find
-<a class="footnote-reference brackets" href="#id2" id="id1">2</a>.  Response times were a Gaussian random variable with mean 750ms and
-standard deviation 250ms.</p></li>
+<a class="footnote-reference brackets" href="#id2" id="id1">2</a>.  Response times were a modified Gaussian random variable with mean 750ms and
+standard deviation 250ms (modified so always greater than 200ms).</p></li>
 <li><p>Each client for 50 responses.</p></li>
 </ul>
 <p>Here are the performance results with that setup:</p>
