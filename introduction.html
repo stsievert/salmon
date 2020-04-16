@@ -1,66 +1,167 @@
 
-<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta charset="utf-8" />
-    <title>Getting started &#8212; Salmon v0.1-alpha documentation</title>
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Getting started &mdash; Salmon v0.1-alpha documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Welcome to Salmon’s documentation!" href="index.html" />
+    <link rel="next" title="Performance" href="performance.html" />
+    <link rel="prev" title="Welcome to Salmon’s documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
    
-  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
-
-  </head><body>
-  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
           
 
-          <div class="body" role="main">
+          
+            <a href="index.html" class="icon icon-home"> Salmon
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#experimentalist">Experimentalist</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#experiment-launch">Experiment Launch</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#local-machine">Local machine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#developer">Developer</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html">Performance</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Salmon</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Getting started</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/stsievert/salmon/blob/master/source/introduction.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <div class="section" id="getting-started">
 <h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
-<p>On your local machine? Run this following code in a terminal:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/stsievert/salmon.git
-</pre></div>
-</div>
-</div>
-<div class="section" id="launching-salmon">
-<h2>Launching Salmon<a class="headerlink" href="#launching-salmon" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="developer">
-<h3>Developer<a class="headerlink" href="#developer" title="Permalink to this headline">¶</a></h3>
-<p>First, <a class="reference external" href="https://www.docker.com/products/docker-desktop">install Docker</a> and <a class="reference external" href="https://git-scm.com/downloads">install Git</a>. After that, run the following code:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> salmon
-$ docker-compose build
-$ docker-compose up
-$ <span class="c1"># visit http://localhost:8000/init_exp or http://localhost:8000/docs</span>
-</pre></div>
-</div>
-<p>If you make changes to this code, use this to</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ docker-compose stop
-$ docker-compose build
-$ docker-compose up
-</pre></div>
-</div>
-<p>Want to use AWS? See below.</p>
-</div>
 <div class="section" id="experimentalist">
-<h3>Experimentalist<a class="headerlink" href="#experimentalist" title="Permalink to this headline">¶</a></h3>
+<h2>Experimentalist<a class="headerlink" href="#experimentalist" title="Permalink to this headline">¶</a></h2>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>This process is only ready for testing. It is <strong>not</strong> ready for deployment.</p>
@@ -69,18 +170,20 @@ $ docker-compose up
 <li><p>Sign into Amazon AWS (<a class="reference external" href="http://aws.amazon.com/">http://aws.amazon.com/</a>)</p></li>
 <li><p>Select the “Oregon” region (or <code class="docutils literal notranslate"><span class="pre">us-west-2</span></code>) in the upper right.</p></li>
 <li><p>Go to Amazon EC2</p></li>
-<li><p>Launch a new instance (the big blue button).</p></li>
-<li><p>Select AMI <code class="docutils literal notranslate"><span class="pre">ami-00e64ce0cd129cb26</span></code> titled “Salmon”
-(appears in Community AMIs after searching “Salmon”).</p></li>
-<li><p>On the rules page, make a custom TCP rule to open ports 1000-9999 from
-anywhere. Here’s a image description:</p></li>
+<li><p>Launch a new instance (the big blue button or square orange button).</p></li>
+<li><p>Select AMI <code class="docutils literal notranslate"><span class="pre">ami-0e804e857258e967e</span></code> titled “Salmon”. It appears in
+Community AMIs after searching “Salmon”.</p></li>
+<li><p>Don’t click the big blue button yet. Continue to the rules page, and add
+these rules:</p></li>
 </ol>
-<img alt="_images/networking-rule.png" src="_images/networking-rule.png" />
+<a class="reference internal image-reference" href="_images/networking-rule.png"><img alt="_images/networking-rule.png" class="align-center" src="_images/networking-rule.png" style="width: 80%;" /></a>
 <p>Then after this AMI is finished launching and initializing, go to</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">[url]:8000/init_exp</span></code> to initialize an experiment</p></li>
-<li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">[url]:8000/dashboard</span></code> to view all relevant links, including links to the</dt><dd><ul>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">[url]:8421/init_exp</span></code> to initialize an experiment</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[url]:8421/dashboard</span></code> to view all relevant links, including links to
+the…</p>
+<blockquote>
+<div><ul class="simple">
 <li><p>The <strong>query page.</strong> This is the URL that shows the relevant triplets. This
 is the URL to be sent to a crowdsourcing service.</p></li>
 <li><p><strong>API documentation</strong>. This includes information on how to launch an
@@ -89,8 +192,7 @@ the POST request <code class="docutils literal notranslate"><span class="pre">/i
 <li><p><strong>Responses</strong>. To get all human responses.</p></li>
 <li><p><strong>Logs</strong>. This is very useful for debugging.</p></li>
 </ul>
-</dd>
-</dl>
+</div></blockquote>
 </li>
 </ul>
 <div class="admonition warning">
@@ -100,13 +202,11 @@ logs when contacting the Salmon developers. They’d also appreciate it if
 you left the machine running.</p>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">[url]</span></code> is the Amazon public DNS or public IP. This means that going to
-<code class="docutils literal notranslate"><span class="pre">[url]:8000/foo</span></code> might mean going to
-<code class="docutils literal notranslate"><span class="pre">http://ec2-35-164-240-184.us-west-2.compute.amazonaws.com:8000/foo</span></code>.</p>
-</div>
-</div>
+<code class="docutils literal notranslate"><span class="pre">[url]:8421/foo</span></code> might mean going to
+<code class="docutils literal notranslate"><span class="pre">http://ec2-35-164-240-184.us-west-2.compute.amazonaws.com:8421/foo</span></code>.</p>
 <div class="section" id="experiment-launch">
-<h2>Experiment Launch<a class="headerlink" href="#experiment-launch" title="Permalink to this headline">¶</a></h2>
-<p>Visit <code class="docutils literal notranslate"><span class="pre">[url]:8000/init_exp</span></code> to initialize an experiment. This will ask for
+<h3>Experiment Launch<a class="headerlink" href="#experiment-launch" title="Permalink to this headline">¶</a></h3>
+<p>Visit <code class="docutils literal notranslate"><span class="pre">[url]:8421/init_exp</span></code> to initialize an experiment. This will ask for
 the following:</p>
 <ul class="simple">
 <li><p>a file describing the experiment</p></li>
@@ -145,78 +245,79 @@ experiment page.</p>
 </div>
 </div>
 </div>
+<div class="section" id="local-machine">
+<h2>Local machine<a class="headerlink" href="#local-machine" title="Permalink to this headline">¶</a></h2>
+<p>On your local machine as a developer? Run this following code in a terminal:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/stsievert/salmon.git
+</pre></div>
+</div>
+<p>First, <a class="reference external" href="https://www.docker.com/products/docker-desktop">install Docker</a> and <a class="reference external" href="https://git-scm.com/downloads">install Git</a>. After that, run the following code:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> salmon
+$ docker-compose build
+$ docker-compose up
+$ <span class="c1"># visit http://localhost:8421/init_exp or http://localhost:8421/docs</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="developer">
+<h2>Developer<a class="headerlink" href="#developer" title="Permalink to this headline">¶</a></h2>
+<p>Follow the instructions for local machine launch.</p>
+<p>If you make changes to this code, follow these instructions:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ docker-compose stop
+$ docker-compose build
+$ docker-compose up
+</pre></div>
+</div>
+</div>
+</div>
 
 
+           </div>
+           
           </div>
-          
-        </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="index.html">Salmon</a></h1>
-
-
-
-
-
-
-
-
-<h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting started</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#launching-salmon">Launching Salmon</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#experiment-launch">Experiment Launch</a></li>
-</ul>
-</li>
-</ul>
-
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="index.html" title="previous chapter">Welcome to Salmon’s documentation!</a></li>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="performance.html" class="btn btn-neutral float-right" title="Performance" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to Salmon’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
     </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+  
 
+  <hr/>
 
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Scott Sievert
 
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
-
-
-
+</footer>
 
         </div>
       </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2019, Scott Sievert.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.2</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
-      
-      |
-      <a href="_sources/introduction.rst.txt"
-          rel="nofollow">Page source</a>
-    </div>
 
-    
+    </section>
 
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
     
-  </body>
+   
+
+</body>
 </html>

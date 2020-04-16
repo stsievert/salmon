@@ -13,6 +13,7 @@ Salmon is a tool to easily allow collection of triplet queries.
    :caption: Contents:
 
    introduction
+   performance
 
 
 Indices and tables
