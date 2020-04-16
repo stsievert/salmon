@@ -12,18 +12,19 @@ Experimentalist
 2. Select the "Oregon" region (or ``us-west-2``) in the upper right.
 3. Go to Amazon EC2
 4. Launch a new instance (the big blue button or square orange button).
-5. Select AMI ``ami-00e64ce0cd129cb26`` titled "Salmon" (it appears in
+5. Select AMI ``ami-0e804e857258e967e`` titled "Salmon" (it appears in
    Community AMIs after searching "Salmon").
-6. Don't click the big blue button yet -- continue to the rules page. Make a
-   custom TCP rule to open ports 1000-9999 from anywhere. Here's a image
-   description:
+6. Don't click the big blue button yet -- continue to the rules page. Here's a
+   image description:
 
 .. image:: imgs/networking-rule.png
+   :width: 80%
 
 Then after this AMI is finished launching and initializing, go to
 
-* ``[url]:8000/init_exp`` to initialize an experiment
-* ``[url]:8000/dashboard`` to view all relevant links, including links to the
+- ``[url]:8421/init_exp`` to initialize an experiment
+- ``[url]:8421/dashboard`` to view all relevant links, including links to
+  the...
    * The **query page.** This is the URL that shows the relevant triplets. This
      is the URL to be sent to a crowdsourcing service.
    * **API documentation**. This includes information on how to launch an
@@ -39,8 +40,8 @@ Then after this AMI is finished launching and initializing, go to
    you left the machine running.
 
 ``[url]`` is the Amazon public DNS or public IP. This means that going to
-``[url]:8000/foo`` might mean going to
-``http://ec2-35-164-240-184.us-west-2.compute.amazonaws.com:8000/foo``.
+``[url]:8421/foo`` might mean going to
+``http://ec2-35-164-240-184.us-west-2.compute.amazonaws.com:8421/foo``.
 
 Experiment Launch
 ^^^^^^^^^^^^^^^^^

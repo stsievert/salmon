@@ -25,7 +25,7 @@ from fastapi import File, UploadFile, Depends, HTTPException, Form
 from fastapi.logger import logger as fastapi_logger
 from starlette.requests import Request
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
-from starlette.responses import HTMLResponse, JSONResponse, RedirectResponse
+from starlette.responses import HTMLResponse, JSONResponse
 from starlette.status import HTTP_401_UNAUTHORIZED
 from fastapi.responses import PlainTextResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
@@ -184,7 +184,20 @@ async def process_form(
 
     nice_config = pprint.pformat(exp_config)
     logger.warning("Experiment initialized with\nexp_config=%s", nice_config)
-    return RedirectResponse(url="/dashboard")
+    response = dedent(
+        """<html><body>
+        <br><br>
+        <p>
+        Now, Salmon presents the following interfaces:
+        </p>
+        <p><ul style="text-align: center;">
+        <li><a href="/">Query page</a>. Send this page to crowdsourcing participants.</li>
+        <li><a href="/dashboard">Dashboard</a>. Use this page to monitor experimental progress.</li>
+        </ul></p>
+        </body></html>
+        """
+    )
+    return HTMLResponse(content=response)
 
 
 @app.delete("/reset", tags=["private"])
@@ -301,14 +314,13 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
             r = await time_histogram(df.time_received_since_start)
         except:
             name, descr, tr = sys.exc_info()
-            hist_time_responses = f"{name} exception: {descr}"
+            hist_time_responses = f"Time responses received:\n{name} exception: {descr}"
         else:
             fig, ax = r
             ax.set_title("Time responses received")
             with StringIO() as f:
                 fig.savefig(f, format="svg", bbox_inches="tight")
                 hist_time_responses = f.getvalue()
-            hist_time_responses = f"Time responses received:\n{name} exception: {descr}"
         try:
             r = await time_human_delay(df.response_time.to_numpy())
         except:

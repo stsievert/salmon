@@ -6,10 +6,14 @@ services:
     environment:
       - SALMON_NO_AUTH  # pass through to backend
     ports:
-      - "8000:8000"
+      - "8421:8421"
 
   redis:
     image: redislabs/rejson
+    sysctls:  # https://github.com/docker-library/redis/issues/191
+      - net.core.somaxconn=65535
+      - net.core.somaxconn=511
+    # also https://github.com/boot2docker/boot2docker/issues/1083#issuecomment-151380687
 
 # To get bash on one of these machines:
 # docker exec -it <containerIdOrName> bash
