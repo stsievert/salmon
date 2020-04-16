@@ -10,4 +10,6 @@ RUN pip install -r requirements.txt
 
 COPY frontend frontend
 COPY templates templates
+RUN echo never > /sys/kernel/mm/transparent_hugepage/enabled
+RUN echo never > /sys/kernel/mm/transparent_hugepage/defrag
 CMD ["uvicorn", "frontend:app", "--port", "8421", "--host", "0.0.0.0"]
