@@ -12,14 +12,14 @@ with the system and answering questions. Here's the setup:
 
 Here are the performance results with that setup:
 
-.. image:: imgs/delay-histogram.svg
+.. image:: imgs/delay-histogram.png
    :width: 60%
    :align: center
 
 This performance is pretty good! Most of the responses return in around 400ms.
 How do the extremes perform?
 
-.. image:: imgs/delay-percentils.svg
+.. image:: imgs/delay-percentils.png
    :width: 40%
    :align: center
 
