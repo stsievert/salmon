@@ -6,7 +6,7 @@ services:
     environment:
       - SALMON_NO_AUTH  # pass through to backend
     ports:
-      - "8000:8000"
+      - "8421:8421"
 
   redis:
     image: redislabs/rejson
