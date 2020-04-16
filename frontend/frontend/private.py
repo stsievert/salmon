@@ -79,7 +79,7 @@ def upload_form():
         warning = dedent(
             """<div style="color: #f00;">
             <p>Warning: an experiment is already set!
-               Visit [url]:8000/reset to reset the expeirment</p>
+               Visit [url]:8421/reset to reset the expeirment</p>
             </div>
             """
         )
