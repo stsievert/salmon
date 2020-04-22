@@ -36,6 +36,7 @@ def _any_outliers(x, low=True, high=True):
     else:
         raise ValueError(f"high={high}, low={low}")
 
+
 async def time_human_delay(delay):
     w = 3
     fig, ax = plt.subplots(figsize=(w, w))

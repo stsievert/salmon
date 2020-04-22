@@ -86,6 +86,7 @@ def _format_target(file: Path):
             "'jpeg', 'svg', 'mov' or 'mp4']"
         )
 
+
 def sha256(x: Any) -> str:
     if not isinstance(x, (str, bytes)):
         x = str(x)
