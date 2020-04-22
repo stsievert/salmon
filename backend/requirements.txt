@@ -1,0 +1,12 @@
+fastapi[all]
+uvicorn
+jinja2
+pandas
+redis
+rejson
+requests
+pytest
+aiofiles
+altair
+matplotlib
+joblib
