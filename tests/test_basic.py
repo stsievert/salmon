@@ -14,41 +14,7 @@ from joblib import Parallel, delayed
 import requests
 from requests.auth import HTTPBasicAuth, HTTPDigestAuth
 
-URL = "http://127.0.0.1:8421"
-
-
-def _get_auth() -> Tuple[str, str]:
-    p = Path(__file__).parent.parent / "creds.yaml"
-    if p.exists():
-        creds = yaml.safe_load(p.read_text())
-        return (creds["username"], creds["password"])
-
-    return ("username", "password")
-
-
-def _get(endpoint, URL=URL, status_code=200, **kwargs):
-    r = requests.get(URL + endpoint, **kwargs)
-    assert r.status_code == status_code
-    return r
-
-
-def _post(endpoint, data=None, URL=URL, status_code=200, error=False, **kwargs):
-    #  data = data or {}
-    if isinstance(data, dict) and "exp" not in data:
-        data = json.dumps(data)
-    r = requests.post(URL + endpoint, data=data, **kwargs)
-    if not error:
-        assert r.status_code == status_code
-    return r
-
-
-def _delete(endpoint, data=None, URL=URL, status_code=200, **kwargs):
-    #  data = data or {}
-    if isinstance(data, dict) and "exp" not in data:
-        data = json.dumps(data)
-    r = requests.delete(URL + endpoint, data=data, **kwargs)
-    assert r.status_code == status_code
-    return r
+from .utils import _get, _post, _delete, _get_auth
 
 
 def test_basics():
@@ -108,7 +74,7 @@ def test_basics():
         "network_latency",
         "datetime_received",
         "name",
-        "query_randomly_selected",
+        "score",
     }
     n = len(exp_config["targets"])
     assert (0 == df["head"].min()) and (df["head"].max() == n - 1)
@@ -117,6 +83,7 @@ def test_basics():
     assert 10e-3 < df.response_time.min()
     assert expected_cols == set(df.columns)
     assert df.puid.nunique() == 1
+    assert np.allclose(df.score, 0)
 
     r = _get("/get_responses", auth=(username, password))
     assert r.status_code == 200

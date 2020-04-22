@@ -6,9 +6,10 @@ from copy import copy
 from textwrap import dedent
 import pathlib
 import threading
+import asyncio
 
 from rejson import Client, Path
-from fastapi import FastAPI
+from fastapi import FastAPI, BackgroundTasks
 
 import numpy as np
 import pandas as pd
@@ -26,19 +27,22 @@ app = FastAPI(title="salmon-backend")
 samplers = {}
 
 
-async def _get_config():
-    return rj.jsonget("exp_config")
-
-
 @app.post("/init")
-async def init() -> bool:
+async def init(background_tasks: BackgroundTasks) -> bool:
     # TODO: Better handling of exceptions if params keys don't match
     logger.info("backend: initialized")
-    config = await _get_config()
+    config = rj.jsonget("exp_config")
     for name, params in config["samplers"].items():
         _class = params.pop("class")
         Alg = getattr(algs, _class)
         samplers[name] = Alg(n=config["n"], **params)
+
+    client = None
+    logger.info(f"Starting algs={samplers.keys()}")
+    for name, alg in samplers.items():
+        background_tasks.add_task(algs.run, name, alg, client, rj)
+
+    logger.info("samplers=%s", list(samplers.keys()))
     return list(samplers.keys())
 
 

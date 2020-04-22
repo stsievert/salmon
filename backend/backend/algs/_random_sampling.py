@@ -1,10 +1,11 @@
 import numpy as np
 from sklearn.utils import check_random_state
+from typing import Tuple, List
 
 from .utils import Query, Answer
 
 
-def _get_query(n, random_state=None):
+def _get_query(n, random_state=None) -> Tuple[int, Tuple[int, int]]:
     random_state = check_random_state(random_state)
     while True:
         a = random_state.choice(n)
@@ -19,10 +20,13 @@ class RandomSampling:
     def __init__(self, n, random_state=None):
         self.n = n
         self.answers = []
+        self.clear = True
         self.random_state = check_random_state(random_state)
 
-    def get_queries(self, num: int) -> Query:
-        return [_get_query(self.n, random_state=self.random_state) for _ in range(num)]
+    def get_queries(self) -> Query:
+        num = 10
+        queries = [_get_query(self.n, random_state=self.random_state) for _ in range(num)]
+        return queries, [0] * len(queries)
 
-    def process_answer(self, ans: Answer):
-        self.answers.append(ans)
+    def process_answers(self, ans: List[Answer]):
+        self.answers.extend(ans)

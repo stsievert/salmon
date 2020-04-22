@@ -92,23 +92,19 @@ async def get_query() -> Dict[str, int]:
 
     """
     samplers = rj.jsonget("samplers")
-    alg = random.choice(samplers)
-    num_queries = rj.jsonarrlen(f"alg-{alg}", Path(".queries"))
-    if not num_queries:
-        logger.info(f"num_queries={num_queries} for alg={alg}")
-        exp_config = await _ensure_initialized()
-        n = exp_config["n"]
-        h, l, r = list(np.random.choice(n, size=3, replace=False))
-        return {
-            "head": int(h),
-            "left": int(l),
-            "right": int(r),
-            "name": alg,
-            "query_randomly_selected": True,
-        }
-
-    query = rj.jsonarrpop(f"alg-{alg}", Path(".queries"))
-    return query
+    name = random.choice(samplers)
+    key = f"alg-{name}.queries"
+    queries = rj.bzpopmax(key)
+    logger.info(f"queries={queries}, type(queries)=%s", type(queries))
+    _, serialized_query, score = queries
+    h, l, r = serialized_query.split("-")
+    return {
+        "head": int(h),
+        "left": int(l),
+        "right": int(r),
+        "name": name,
+        "score": score,
+    }
 
 
 class Answer(BaseModel):
@@ -125,15 +121,15 @@ class Answer(BaseModel):
     left: int
     right: int
     winner: int
+    name: str
+    score: float
     puid: str = ""
     response_time: float = -1
     network_latency: float = -1
-    name: str
-    random: bool
 
 
 @app.post("/process_answer", tags=["public"])
-def process_answer(ans: Answer):
+async def process_answer(ans: Answer):
     """
     Process the answer, and append the received answer (alongside participant
     UID) to the database.
@@ -149,5 +145,6 @@ def process_answer(ans: Answer):
     d.update({"time_received": time()})
     logger.info(d)
     name = d["name"]
-    rj.jsonarrappend(f"alg-{name}", Path(".responses"), d)
+    rj.jsonarrappend(f"alg-{name}-answers", root, d)
+    rj.jsonarrappend("all-responses", root, d)
     return {"success": True}

@@ -13,6 +13,7 @@ import pprint
 from functools import lru_cache
 import traceback
 from textwrap import dedent
+import asyncio
 
 import numpy as np
 
@@ -200,6 +201,7 @@ async def _process_form(
     _time = time()
     rj.jsonset("start_time", root, _time)
     rj.jsonset("start_datetime", root, datetime.now().isoformat())
+    rj.jsonset("all-responses", root, [])
 
     nice_config = pprint.pformat(exp_config)
     logger.info("Experiment initialized with\nexp_config=%s", nice_config)
@@ -279,38 +281,30 @@ async def _get_responses():
 
     """
     exp_config = await _ensure_initialized()
-    samplers = rj.jsonget("samplers")
-    responses = {}
-    for alg in samplers:
-        alg_responses = rj.jsonget(f"alg-{alg}", Path(".responses"))
-        responses[alg] = alg_responses
-
-    num_responses = {k: len(v) for k, v in responses.items()}
-    logger.info("total responses: %s ", sum(num_responses.values()))
-    logger.info("responses per alg: %s", num_responses)
     targets = exp_config["targets"]
+    responses = rj.jsonget("all-responses")
+    logger.info("getting %s responses", len(responses))
     out: List[Dict[str, Any]] = []
     start = rj.jsonget("start_time")
 
-    for name, alg_responses in responses.items():
-        for datum in alg_responses:
-            out.append(datum)
-            datetime_received = timedelta(seconds=datum["time_received"]) + datetime(
-                1970, 1, 1
-            )
-            idxs = {
-                key + "_object": targets[datum[key]]
-                for key in ["left", "right", "head", "winner"]
-            }
-            names = {
-                key + "_filename": _get_filename(idxs[f"{key}_object"])
-                for key in ["left", "right", "head", "winner"]
-            }
-            meta = {
-                "time_received_since_start": datum["time_received"] - start,
-                "datetime_received": datetime_received.isoformat(),
-            }
-            out[-1].update({**idxs, **names, **meta})
+    for datum in responses:
+        out.append(datum)
+        datetime_received = timedelta(seconds=datum["time_received"]) + datetime(
+            1970, 1, 1
+        )
+        idxs = {
+            key + "_object": targets[datum[key]]
+            for key in ["left", "right", "head", "winner"]
+        }
+        names = {
+            key + "_filename": _get_filename(idxs[f"{key}_object"])
+            for key in ["left", "right", "head", "winner"]
+        }
+        meta = {
+            "time_received_since_start": datum["time_received"] - start,
+            "datetime_received": datetime_received.isoformat(),
+        }
+        out[-1].update({**idxs, **names, **meta})
     return out
 
 
