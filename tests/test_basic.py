@@ -4,7 +4,6 @@ from time import sleep
 import random
 import json
 import yaml
-import yaml
 from time import time
 
 import numpy as np
@@ -16,6 +15,7 @@ import requests
 from requests.auth import HTTPBasicAuth, HTTPDigestAuth
 
 URL = "http://127.0.0.1:8421"
+
 
 def _get_auth() -> Tuple[str, str]:
     p = Path(__file__).parent.parent / "creds.yaml"
@@ -51,7 +51,7 @@ def _delete(endpoint, data=None, URL=URL, status_code=200, **kwargs):
     return r
 
 
-def test_basic():
+def test_basics():
     """
     Requires `docker-compose up` in salmon directory
     """
@@ -107,6 +107,8 @@ def test_basic():
         "response_time",
         "network_latency",
         "datetime_received",
+        "name",
+        "query_randomly_selected",
     }
     n = len(exp_config["targets"])
     assert (0 == df["head"].min()) and (df["head"].max() == n - 1)

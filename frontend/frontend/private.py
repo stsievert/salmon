@@ -20,6 +20,7 @@ from rejson import Client, Path
 import pandas as pd
 import altair as alt
 import matplotlib.pyplot as plt
+import requests
 
 from fastapi import File, UploadFile, Depends, HTTPException, Form
 from fastapi.logger import logger as fastapi_logger
@@ -103,11 +104,11 @@ def upload_form():
 
 async def _get_config(exp: bytes, targets_file: bytes) -> Dict[str, Any]:
     config = yaml.load(exp, Loader=yaml.SafeLoader)
-    logger.info(config)
     exp_config: Dict = {
         "instructions": "Default instructions (can include <i>arbitrary</i> HTML)",
         "max_queries": None,
         "debrief": "Thanks!",
+        "samplers": {"random": {"class": "RandomSampling"}},
     }
     exp_config.update(config)
     exp_config["targets"] = [str(x) for x in exp_config["targets"]]
@@ -148,6 +149,19 @@ async def process_form(
     targets_file: bytes = File(default=""),
     authorized: bool = Depends(_authorize),
 ):
+    try:
+        return await _process_form(request, exp, targets_file)
+    except Exception as e:
+        msg = exception_to_string(e)
+        logger.error(msg)
+        raise ExpParsingError(status_code=500, detail=msg)
+
+
+async def _process_form(
+    request: Request,
+    exp: bytes = File(default=""),
+    targets_file: bytes = File(default=""),
+):
     """
     The uploaded file needs to have the following keys:
 
@@ -170,20 +184,25 @@ async def process_form(
         - max_queries: 25
     """
     logger.info("salmon.__version__ = %s", app.version)
-    try:
-        exp_config = await _get_config(exp, targets_file)
-    except Exception as e:
-        msg = exception_to_string(e)
-        raise ExpParsingError(status_code=500, detail=msg)
+    exp_config = await _get_config(exp, targets_file)
 
     rj.jsonset("exp_config", root, exp_config)
-    rj.jsonset("responses", root, [])
+
+    # Start the backend
+    r = requests.post("http://backend:8400/init")
+    if r.status_code != 200:
+        raise HTTPException(500, Exception(r))
+    names = r.json()
+    rj.jsonset("samplers", root, names)
+    for name in names:
+        rj.jsonset(f"alg-{name}", root, {"queries": [], "responses": []})
+
     _time = time()
     rj.jsonset("start_time", root, _time)
     rj.jsonset("start_datetime", root, datetime.now().isoformat())
 
     nice_config = pprint.pformat(exp_config)
-    logger.warning("Experiment initialized with\nexp_config=%s", nice_config)
+    logger.info("Experiment initialized with\nexp_config=%s", nice_config)
     response = dedent(
         """<html><body>
         <br><br>
@@ -223,7 +242,7 @@ def reset(force: int = 0, authorized=Depends(_authorize), tags=["private"]):
             "Resetting, force=True and authorized. Removing data from database"
         )
         rj.flushdb()
-        rj.jsonset("responses", root, [])
+        rj.jsonset("responses", root, {})
         rj.jsonset("start_time", root, -1)
         rj.jsonset("start_datetime", root, "-1")
         rj.jsonset("exp_config", root, {})
@@ -260,34 +279,38 @@ async def _get_responses():
 
     """
     exp_config = await _ensure_initialized()
-    responses = rj.jsonget("responses")
-    logger.info("getting %s responses", len(responses))
+    samplers = rj.jsonget("samplers")
+    responses = {}
+    for alg in samplers:
+        alg_responses = rj.jsonget(f"alg-{alg}", Path(".responses"))
+        responses[alg] = alg_responses
+
+    num_responses = {k: len(v) for k, v in responses.items()}
+    logger.info("total responses: %s ", sum(num_responses.values()))
+    logger.info("responses per alg: %s", num_responses)
     targets = exp_config["targets"]
     out: List[Dict[str, Any]] = []
     start = rj.jsonget("start_time")
 
-    for datum in responses:
-        out.append(datum)
-        datetime_received = timedelta(seconds=datum["time_received"]) + datetime(
-            1970, 1, 1
-        )
-        new_data = {
-            key + "_object": targets[datum[key]]
-            for key in ["left", "right", "head", "winner"]
-        }
-        new_data.update(
-            {
-                key + "_filename": _get_filename(new_data[f"{key}_object"])
+    for name, alg_responses in responses.items():
+        for datum in alg_responses:
+            out.append(datum)
+            datetime_received = timedelta(seconds=datum["time_received"]) + datetime(
+                1970, 1, 1
+            )
+            idxs = {
+                key + "_object": targets[datum[key]]
                 for key in ["left", "right", "head", "winner"]
             }
-        )
-        new_data.update(
-            {
+            names = {
+                key + "_filename": _get_filename(idxs[f"{key}_object"])
+                for key in ["left", "right", "head", "winner"]
+            }
+            meta = {
                 "time_received_since_start": datum["time_received"] - start,
                 "datetime_received": datetime_received.isoformat(),
             }
-        )
-        out[-1].update(new_data)
+            out[-1].update({**idxs, **names, **meta})
     return out
 
 

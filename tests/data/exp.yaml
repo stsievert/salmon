@@ -8,3 +8,6 @@ targets:
 instructions: These are <b>instructions</b>!
 max_queries: 10
 debrief: Thanks for participating!
+samplers:
+  random:
+    class: RandomSampling
