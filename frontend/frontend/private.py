@@ -36,6 +36,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from .public import _ensure_initialized, app, templates
 from .utils import ServerException, get_logger, _extract_zipfile, _format_target
 from .plotting import time_histogram, _any_outliers, time_human_delay, network_latency
+from . import manager
 
 security = HTTPBasic()
 
@@ -306,24 +307,7 @@ async def _get_responses():
     out: List[Dict[str, Any]] = []
     start = rj.jsonget("start_time")
 
-    for datum in responses:
-        out.append(datum)
-        datetime_received = timedelta(seconds=datum["time_received"]) + datetime(
-            1970, 1, 1
-        )
-        idxs = {
-            key + "_object": targets[datum[key]]
-            for key in ["left", "right", "head", "winner"]
-        }
-        names = {
-            key + "_filename": _get_filename(idxs[f"{key}_object"])
-            for key in ["left", "right", "head", "winner"]
-        }
-        meta = {
-            "time_received_since_start": datum["time_received"] - start,
-            "datetime_received": datetime_received.isoformat(),
-        }
-        out[-1].update({**idxs, **names, **meta})
+    out = manager.get_responses(responses, targets, start_time=start)
     return out
 
 

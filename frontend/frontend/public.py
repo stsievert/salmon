@@ -21,6 +21,7 @@ import numpy as np
 import pandas as pd
 
 from .utils import ServerException, get_logger, sha256
+from . import manager
 
 logger = get_logger(__name__)
 
@@ -96,41 +97,12 @@ async def get_query() -> Dict[str, Union[int, str, float]]:
     key = f"alg-{name}-queries"
     queries = rj.bzpopmax(key)
     _, serialized_query, score = queries
-
-    # How many queries have this score?
-    h, l, r = serialized_query.split("-")
-    return {
-        "head": int(h),
-        "left": int(l),
-        "right": int(r),
-        "name": name,
-        "score": score,
-    }
-
-
-class Answer(BaseModel):
-    """
-    An answer to a triplet query. head, left and right are integers
-    from '/get_query'. The 'winner' is an integer that is most similar to 'head',
-    and must be one of 'left' and 'right'.
-
-    'puid' is the "participant unique ID", and is optional.
-
-    """
-
-    head: int
-    left: int
-    right: int
-    winner: int
-    name: str
-    score: float
-    puid: str = ""
-    response_time: float = -1
-    network_latency: float = -1
+    q = manager.deserialize_query(serialized_query)
+    return {"name": name, "score": score, **q}
 
 
 @app.post("/process_answer", tags=["public"])
-async def process_answer(ans: Answer):
+async def process_answer(ans: manager.Answer):
     """
     Process the answer, and append the received answer (alongside participant
     UID) to the database.
