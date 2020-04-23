@@ -1,28 +1,20 @@
-import asyncio
 import hashlib
-import json
 import os
 import pathlib
 import pprint
 import sys
 import traceback
-import uuid
-from copy import copy, deepcopy
-from datetime import datetime, timedelta
-from functools import lru_cache
+from copy import deepcopy
+from datetime import datetime
 from io import StringIO
 from textwrap import dedent
 from time import sleep, time
-from typing import Any, Dict, List
+from typing import Any, Dict
 
-import altair as alt
-import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
 import requests as httpx
 import yaml
-from fastapi import Depends, File, Form, HTTPException, UploadFile
-from fastapi.logger import logger as fastapi_logger
+from fastapi import Depends, File, HTTPException
 from fastapi.responses import PlainTextResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from rejson import Client, Path
@@ -199,7 +191,7 @@ async def _process_form(
         # Not set because rj.zadd doesn't require it
         # don't touch! rj.jsonset(f"alg-{name}-queries", root, [])
         try:
-            r = httpx.post(f"http://backend:8400/init/{name}")
+            httpx.post(f"http://backend:8400/init/{name}")
         except Exception as e:
             msg = exception_to_string(e)
             logger.error(msg)
@@ -330,9 +322,9 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
     targets = exp_config.pop("targets")
     start = rj.jsonget("start_time")
 
-    r = await _get_responses()
-    df = pd.DataFrame(r)
-    r["time_received_since_start"] -= start
+    responses = await _get_responses()
+    df = pd.DataFrame(responses)
+    df["time_received_since_start"] = df["time_received"] - start
 
     if len(responses) >= 2:
         try:

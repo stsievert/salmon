@@ -2,12 +2,12 @@ import logging
 from time import sleep
 from typing import List, Tuple
 
-import numpy as np
 from sklearn.utils import check_random_state
 
 from .utils import Answer, Query, Runner, get_answers
 
 logger = logging.getLogger(__name__)
+
 
 def _get_query(n, random_state=None) -> Tuple[int, Tuple[int, int]]:
     random_state = check_random_state(random_state)

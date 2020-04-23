@@ -1,7 +1,6 @@
 import logging
 from typing import List, Tuple
 
-import numpy as np
 from sklearn.utils import check_random_state
 
 from .utils import Answer, Query, Runner

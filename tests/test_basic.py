@@ -89,6 +89,9 @@ def test_basics(server):
     assert r.status_code == 200
     assert "exception" not in r.text
 
+    r = server.get("/dashboard", auth=(username, password))
+    assert r.status_code == 200
+
 
 def test_bad_file_upload(server):
     server.authorize()
