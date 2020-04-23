@@ -305,14 +305,12 @@ async def _get_responses():
     logger.info("getting %s responses", len(responses))
     out: List[Dict[str, Any]] = []
     start = rj.jsonget("start_time")
-    #  logger.info("%s", pprint.pformat(responses))
 
     for datum in responses:
         out.append(datum)
         datetime_received = timedelta(seconds=datum["time_received"]) + datetime(
             1970, 1, 1
         )
-        logger.info("%s chosen from %s", len(targets), [datum[k] for k in ["left", "right", "head"]])
         idxs = {
             key + "_object": targets[datum[key]]
             for key in ["left", "right", "head", "winner"]

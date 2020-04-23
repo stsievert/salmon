@@ -37,7 +37,9 @@ class RoundRobin:
         logger.info(f"get_queries, self.counter={self.counter}")
         num = 10
         queries = [
-            _get_query(self.n, (self.counter + k) % self.n, random_state=self.random_state)
+            _get_query(
+                self.n, (self.counter + k) % self.n, random_state=self.random_state
+            )
             for k in range(num)
         ]
         scores = [_score_query(q) for q in queries]
