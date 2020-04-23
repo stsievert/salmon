@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from typing import List, Dict, Any
 from pydantic import BaseModel
 
+
 class Answer(BaseModel):
     """
     An answer to a triplet query. head, left and right are integers
@@ -21,7 +22,6 @@ class Answer(BaseModel):
     puid: str = ""
     response_time: float = -1
     network_latency: float = -1
-
 
 
 def get_responses(answers: List[Dict[str, Any]], targets, start_time=0):
@@ -47,6 +47,7 @@ def get_responses(answers: List[Dict[str, Any]], targets, start_time=0):
         out[-1].update({**idxs, **names, **meta})
     return out
 
+
 def _get_filename(html):
     html = str(html)
     if "<img" in html or "<video" in html:
@@ -54,4 +55,3 @@ def _get_filename(html):
         j = html[i:].find(" ")
         return html[i + 5 : i + j - 1].replace("/static/targets/", "")
     return html
-

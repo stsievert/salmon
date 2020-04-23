@@ -17,19 +17,22 @@ class Answer(BaseModel):
     right: int
     winner: int
 
+
 def clear_queries(name, rj: RedisClient) -> bool:
     rj.delete(f"alg-{name}.queries")
     return True
 
 
-def post_queries(name, queries: List[Query], scores: List[float], rj: RedisClient) -> bool:
+def post_queries(
+    name, queries: List[Query], scores: List[float], rj: RedisClient
+) -> bool:
     q2 = {serialize_query(q): score for q, score in zip(queries, scores)}
     key = f"alg-{name}-queries"
     rj.zadd(key, q2)
     return True
 
 
-def get_answers(name: str, rj: RedisClient, clear: bool=True) -> List[Answer]:
+def get_answers(name: str, rj: RedisClient, clear: bool = True) -> List[Answer]:
     if not clear:
         raise NotImplementedError
     pipe = rj.pipeline()
@@ -38,9 +41,11 @@ def get_answers(name: str, rj: RedisClient, clear: bool=True) -> List[Answer]:
     answers, success = pipe.execute()
     return answers
 
+
 def serialize_query(q: Query) -> str:
     h, (a, b) = q
     return f"{h}-{a}-{b}"
+
 
 def deserialize_query(serialized_query: str) -> Dict[str, int]:
     h, l, r = serialized_query.split("-")
@@ -49,6 +54,7 @@ def deserialize_query(serialized_query: str) -> Dict[str, int]:
         "left": int(l),
         "right": int(r),
     }
+
 
 class Runner:
     def run(self, name: str, client, rj: RedisClient):

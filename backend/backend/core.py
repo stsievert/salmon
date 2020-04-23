@@ -53,11 +53,13 @@ async def init(name: str, background_tasks: BackgroundTasks) -> bool:
 async def get_model(name: str):
     return 1
 
+
 @app.post("/reset")
 def reset():
     global samplers
     samplers = {}
     return True
+
 
 @app.get("/query")
 async def get_query() -> Dict[str, Union[int, str, float]]:

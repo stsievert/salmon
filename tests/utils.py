@@ -26,9 +26,7 @@ class Server:
         assert r.status_code == status_code
         return r
 
-    def post(
-        self, endpoint, data=None, status_code=200, error=False, **kwargs
-    ):
+    def post(self, endpoint, data=None, status_code=200, error=False, **kwargs):
         if isinstance(data, dict) and "exp" not in data:
             data = json.dumps(data)
         if self._authorized:

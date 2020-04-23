@@ -99,11 +99,7 @@ def test_bad_file_upload(server):
     server.authorize()
     server.get("/init_exp")
     exp = Path(__file__).parent / "data" / "bad_exp.yaml"
-    r = server.post(
-        "/init_exp",
-        data={"exp": exp.read_bytes()},
-        error=True,
-    )
+    r = server.post("/init_exp", data={"exp": exp.read_bytes()}, error=True,)
     assert r.status_code == 500
     assert "Error!" in r.text
     assert "yaml" in r.text
@@ -113,9 +109,7 @@ def test_bad_file_upload(server):
 def test_no_repeats(server):
     server.authorize()
     exp = Path(__file__).parent / "data" / "exp.yaml"
-    server.post(
-        "/init_exp", data={"exp": exp.read_bytes()}
-    )
+    server.post("/init_exp", data={"exp": exp.read_bytes()})
     for k in range(100):
         q = server.get("/query").json()
         ans = {"winner": random.choice([q["left"], q["right"]]), "puid": "foo", **q}
@@ -130,12 +124,11 @@ def test_no_repeats(server):
     )
     assert not equal_targets
 
+
 def test_meta(server):
     server.authorize()
     exp = Path(__file__).parent / "data" / "exp.yaml"
-    server.post(
-        "/init_exp", data={"exp": exp.read_bytes()}
-    )
+    server.post("/init_exp", data={"exp": exp.read_bytes()})
     num_ans = 10
     for k in range(num_ans):
         q = server.get("/query").json()

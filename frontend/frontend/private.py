@@ -311,6 +311,7 @@ async def _get_responses():
     responses = rj.jsonget("all-responses")
     return responses
 
+
 async def _format_responses(responses, targets, start):
     logger.info("getting %s responses", len(responses))
     out = manager.get_responses(responses, targets, start_time=start)

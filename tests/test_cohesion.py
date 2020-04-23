@@ -14,6 +14,7 @@ from backend.algs.utils import serialize_query, deserialize_query
 
 from .utils import server
 
+
 def test_answer(server):
     server.authorize()
     exp = Path(__file__).parent / "data" / "exp-active.yaml"
