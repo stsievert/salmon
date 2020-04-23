@@ -47,14 +47,6 @@ def get_responses(answers: List[Dict[str, Any]], targets, start_time=0):
         out[-1].update({**idxs, **names, **meta})
     return out
 
-def deserialize_query(serialized_query: str) -> Dict[str, int]:
-    h, l, r = serialized_query.split("-")
-    return {
-        "head": int(h),
-        "left": int(l),
-        "right": int(r),
-    }
-
 def _get_filename(html):
     html = str(html)
     if "<img" in html or "<video" in html:

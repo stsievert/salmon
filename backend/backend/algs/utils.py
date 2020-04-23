@@ -3,14 +3,15 @@ from dataclasses import dataclass
 from rejson import Client as RedisClient, Path
 import rejson
 import logging
+from pydantic import BaseModel
+from time import sleep
 
-Query = Tuple[int, Tuple[int, int]]  # head, (obj1, obj2)
+Query = Tuple[int, Tuple[int, int]]  # head, (choice 1, choice 2)
 
 logger = logging.getLogger(__name__)
 
 
-@dataclass
-class Answer:
+class Answer(BaseModel):
     head: int
     left: int
     right: int
@@ -22,7 +23,7 @@ def clear_queries(name, rj: RedisClient) -> bool:
 
 
 def post_queries(name, queries: List[Query], scores: List[float], rj: RedisClient) -> bool:
-    q2 = {f"{h}-{a}-{b}": score for (h, (a, b)), score in zip(queries, scores)}
+    q2 = {serialize_query(q): score for q, score in zip(queries, scores)}
     key = f"alg-{name}-queries"
     rj.zadd(key, q2)
     return True
@@ -36,6 +37,18 @@ def get_answers(name: str, rj: RedisClient, clear: bool=True) -> List[Answer]:
     pipe.jsonset(f"alg-{name}-answers", Path("."), [])
     answers, success = pipe.execute()
     return answers
+
+def serialize_query(q: Query) -> str:
+    h, (a, b) = q
+    return f"{h}-{a}-{b}"
+
+def deserialize_query(serialized_query: str) -> Dict[str, int]:
+    h, l, r = serialized_query.split("-")
+    return {
+        "head": int(h),
+        "left": int(l),
+        "right": int(r),
+    }
 
 class Runner:
     def run(self, name: str, client, rj: RedisClient):
@@ -56,6 +69,7 @@ class Runner:
             if answers:
                 logger.info(f"Processing {len(answers)} answers...")
                 self.process_answers(answers)
+                logger.info(f"Done processing answers.")
                 answers = []
             if self.clear:
                 clear_queries(name, rj)

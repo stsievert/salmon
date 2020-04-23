@@ -7,6 +7,7 @@ from textwrap import dedent
 import pathlib
 import threading
 import random
+import requests as httpx
 
 from fastapi import FastAPI, HTTPException, Form
 from starlette.templating import Jinja2Templates
@@ -82,26 +83,13 @@ async def get_query_page(request: Request):
     return templates.TemplateResponse("query_page.html", items)
 
 
-@app.get("/get_query", tags=["public"])
+@app.get("/query", tags=["public"])
 async def get_query() -> Dict[str, Union[int, str, float]]:
-    """
-    Get the objects for a triplet query
-
-    Returns
-    -------
-    `d : Dict[str, int]`. Indices for different objects.
-
-    """
-    samplers = rj.jsonget("samplers")
-    name = random.choice(samplers)
-    key = f"alg-{name}-queries"
-    queries = rj.bzpopmax(key)
-    _, serialized_query, score = queries
-    q = manager.deserialize_query(serialized_query)
-    return {"name": name, "score": score, **q}
+    r = httpx.get(f"http://backend:8400/query")
+    return r.json()
 
 
-@app.post("/process_answer", tags=["public"])
+@app.post("/answer", tags=["public"])
 async def process_answer(ans: manager.Answer):
     """
     Process the answer, and append the received answer (alongside participant

@@ -11,9 +11,6 @@ import pandas as pd
 from typing import Tuple
 from joblib import Parallel, delayed
 
-import requests
-from requests.auth import HTTPBasicAuth, HTTPDigestAuth
-
 from .utils import server
 
 
@@ -28,13 +25,13 @@ def test_backend_basics(server):
     puid = "puid-foo"
     for k in range(30):
         _start = time()
-        q = server.get("/get_query").json()
+        q = server.get("/query").json()
         score = max(abs(q["head"] - q["left"]), abs(q["head"] - q["right"]))
         assert q["score"] == score
         ans = {"winner": random.choice([q["left"], q["right"]]), "puid": puid, **q}
         ans["response_time"] = time() - _start
-        server.post("/process_answer", data=ans)
+        server.post("/answer", data=ans)
 
-    r = server.get("/get_responses")
+    r = server.get("/responses")
     df = pd.DataFrame(r.json())
     assert (df.score > 0).all()

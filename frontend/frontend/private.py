@@ -22,7 +22,7 @@ from rejson import Client, Path
 import pandas as pd
 import altair as alt
 import matplotlib.pyplot as plt
-import requests
+import requests as httpx
 
 from fastapi import File, UploadFile, Depends, HTTPException, Form
 from fastapi.logger import logger as fastapi_logger
@@ -198,7 +198,7 @@ async def _process_form(
         rj.jsonset(f"alg-{name}-answers", root, [])
         # Not set because rj.zadd doesn't require it
         # don't touch! rj.jsonset(f"alg-{name}-queries", root, [])
-        r = requests.post(f"http://backend:8400/init/{name}")
+        r = httpx.post(f"http://backend:8400/init/{name}")
         if r.status_code != 200:
             raise HTTPException(500, Exception(r))
 
@@ -262,6 +262,10 @@ def reset(force: int = 0, authorized=Depends(_authorize), tags=["private"]):
                     break
                 sleep(1)
 
+        r = httpx.post(f"http://backend:8400/reset")
+        if r.status_code != 200:
+            raise HTTPException(500, Exception(r))
+
         rj.flushdb()
         logger.info("After reset, rj.keys=%s", rj.keys())
         rj.jsonset("responses", root, {})
@@ -273,7 +277,7 @@ def reset(force: int = 0, authorized=Depends(_authorize), tags=["private"]):
     return {"success": False}
 
 
-@app.get("/get_responses", tags=["private"])
+@app.get("/responses", tags=["private"])
 async def get_responses(authorized: bool = Depends(_authorize)) -> Dict[str, Any]:
     out = await _get_responses()
     return JSONResponse(

@@ -130,7 +130,7 @@ async function send(winner, id) {
   $('#q-left').addClass("disabled");
   $('#q-right').addClass("disabled");
   $("#num-queries").html("" + num_queries);
-  $.post("/process_answer",
+  $.post("/answer",
     JSON.stringify({
         "head": head,
         "left": left,
@@ -145,7 +145,7 @@ async function send(winner, id) {
 
 
 function getquery(){
-  $.get("/get_query", function(data){
+  $.get("/query", function(data){
       head = data["head"];
       right = data["right"];
       left = data["left"];

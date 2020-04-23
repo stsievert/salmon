@@ -1,4 +1,4 @@
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Union
 from functools import lru_cache
 from time import time
 import yaml
@@ -7,6 +7,7 @@ from textwrap import dedent
 import pathlib
 import threading
 import asyncio
+import random
 
 from rejson import Client, Path
 from fastapi import FastAPI, BackgroundTasks
@@ -51,3 +52,22 @@ async def init(name: str, background_tasks: BackgroundTasks) -> bool:
 @app.get("/model")
 async def get_model(name: str):
     return 1
+
+@app.post("/reset")
+def reset():
+    global samplers
+    samplers = {}
+    return True
+
+@app.get("/query")
+async def get_query() -> Dict[str, Union[int, str, float]]:
+    name = random.choice(list(samplers.keys()))
+    alg = samplers[name]
+    if hasattr(alg, "get_query"):
+        query, score = alg.get_query()
+        return {"name": name, "score": score, **query}
+    key = f"alg-{name}-queries"
+    queries = rj.bzpopmax(key)
+    _, serialized_query, score = queries
+    q = algs.utils.deserialize_query(serialized_query)
+    return {"name": name, "score": score, **q}

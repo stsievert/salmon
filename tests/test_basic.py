@@ -37,16 +37,17 @@ def test_basics(server):
     exp_config = yaml.safe_load(exp.read_bytes())
     puid = "puid-foo"
     answers = []
+    print("Starting loop...")
     for k in range(30):
         _start = time()
-        q = server.get("/get_query").json()
+        q = server.get("/query").json()
         ans = {"winner": random.choice([q["left"], q["right"]]), "puid": puid, **q}
         answers.append(ans)
         sleep(10e-3)
         ans["response_time"] = time() - _start
-        server.post("/process_answer", data=ans)
+        server.post("/answer", data=ans)
 
-    r = server.get("/get_responses", auth=(username, password))
+    r = server.get("/responses", auth=(username, password))
     for server_ans, actual_ans in zip(r.json(), answers):
         assert set(actual_ans).issubset(server_ans)
         assert all(
@@ -89,7 +90,7 @@ def test_basics(server):
     #  assert np.allclose(df.score, 0)
     assert (df.score > 0).all()
 
-    r = server.get("/get_responses", auth=(username, password))
+    r = server.get("/responses", auth=(username, password))
     assert r.status_code == 200
     assert "exception" not in r.text
 
@@ -116,11 +117,11 @@ def test_no_repeats(server):
         "/init_exp", data={"exp": exp.read_bytes()}
     )
     for k in range(100):
-        q = server.get("/get_query").json()
+        q = server.get("/query").json()
         ans = {"winner": random.choice([q["left"], q["right"]]), "puid": "foo", **q}
-        server.post("/process_answer", data=ans)
+        server.post("/answer", data=ans)
 
-    r = server.get("/get_responses")
+    r = server.get("/responses")
     df = pd.DataFrame(r.json())
     equal_targets = (
         (df["head"] == df["right"]).any()
