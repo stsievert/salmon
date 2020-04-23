@@ -10,6 +10,7 @@ import asyncio
 
 from rejson import Client, Path
 from fastapi import FastAPI, BackgroundTasks
+from starlette.background import BackgroundTasks
 
 import numpy as np
 import pandas as pd
@@ -27,20 +28,21 @@ app = FastAPI(title="salmon-backend")
 samplers = {}
 
 
-@app.post("/init")
-async def init(background_tasks: BackgroundTasks) -> bool:
+@app.post("/init/{name}")
+async def init(name: str, background_tasks: BackgroundTasks) -> bool:
     # TODO: Better handling of exceptions if params keys don't match
     logger.info("backend: initialized")
     config = rj.jsonget("exp_config")
-    for name, params in config["samplers"].items():
-        _class = params.pop("class")
-        Alg = getattr(algs, _class)
-        samplers[name] = Alg(n=config["n"], **params)
+
+    params = config["samplers"][name]
+    _class = params.pop("class")
+    Alg = getattr(algs, _class)
+    alg = Alg(n=config["n"], **params)
+    samplers[name] = alg
 
     client = None
     logger.info(f"Starting algs={samplers.keys()}")
-    for name, alg in samplers.items():
-        background_tasks.add_task(algs.run, name, alg, client, rj)
+    background_tasks.add_task(algs.run, name, alg, client, rj)
 
     logger.info("samplers=%s", list(samplers.keys()))
     return list(samplers.keys())

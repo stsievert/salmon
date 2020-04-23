@@ -14,6 +14,7 @@ from functools import lru_cache
 import traceback
 from textwrap import dedent
 import asyncio
+from time import sleep
 
 import numpy as np
 
@@ -120,7 +121,7 @@ async def _get_config(exp: bytes, targets_file: bytes) -> Dict[str, Any]:
         exp_config["targets"] = targets
 
     exp_config["n"] = len(exp_config["targets"])
-    logger.info(exp_config)
+    logger.info("initializing experinment with %s", exp_config)
     return exp_config
 
 
@@ -190,13 +191,15 @@ async def _process_form(
     rj.jsonset("exp_config", root, exp_config)
 
     # Start the backend
-    r = requests.post("http://backend:8400/init")
-    if r.status_code != 200:
-        raise HTTPException(500, Exception(r))
-    names = r.json()
+    names = list(exp_config["samplers"].keys())
     rj.jsonset("samplers", root, names)
     for name in names:
-        rj.jsonset(f"alg-{name}", root, {"queries": [], "responses": []})
+        rj.jsonset(f"alg-{name}-answers", root, [])
+        # Not set because rj.zadd doesn't require it
+        # don't touch! rj.jsonset(f"alg-{name}-queries", root, [])
+        r = requests.post(f"http://backend:8400/init/{name}")
+        if r.status_code != 200:
+            raise HTTPException(500, Exception(r))
 
     _time = time()
     rj.jsonset("start_time", root, _time)
@@ -243,7 +246,23 @@ def reset(force: int = 0, authorized=Depends(_authorize), tags=["private"]):
         logger.error(
             "Resetting, force=True and authorized. Removing data from database"
         )
+
+        # Stop background jobs (ie adaptive algs)
+        rj.jsonset("reset", root, True)
+        if "samplers" in rj.keys():
+            samplers = rj.jsonget("samplers")
+            stopped = {name: False for name in samplers}
+            while True:
+                for name in stopped:
+                    if f"stopped-{name}" in rj.keys():
+                        stopped[name] = rj.jsonget(f"stopped-{name}")
+                if all(stopped.values()):
+                    logger.info(f"stopped={stopped}")
+                    break
+                sleep(1)
+
         rj.flushdb()
+        logger.info("After reset, rj.keys=%s", rj.keys())
         rj.jsonset("responses", root, {})
         rj.jsonset("start_time", root, -1)
         rj.jsonset("start_datetime", root, "-1")
@@ -286,12 +305,14 @@ async def _get_responses():
     logger.info("getting %s responses", len(responses))
     out: List[Dict[str, Any]] = []
     start = rj.jsonget("start_time")
+    #  logger.info("%s", pprint.pformat(responses))
 
     for datum in responses:
         out.append(datum)
         datetime_received = timedelta(seconds=datum["time_received"]) + datetime(
             1970, 1, 1
         )
+        logger.info("%s chosen from %s", len(targets), [datum[k] for k in ["left", "right", "head"]])
         idxs = {
             key + "_object": targets[datum[key]]
             for key in ["left", "right", "head", "winner"]

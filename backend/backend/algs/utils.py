@@ -15,16 +15,18 @@ class Answer:
     left: int
     right: int
 
+
 def _clear_queries(name, rj) -> bool:
     rj.delete(f"alg-{name}.queries")
     return True
 
+
 def _post_queries(name, queries, scores, rj) -> bool:
     q2 = {f"{h}-{a}-{b}": score for (h, (a, b)), score in zip(queries, scores)}
-    key = f"alg-{name}.queries"
-    logger.info(f"zadd'ing {q2} to {key}")
+    key = f"alg-{name}-queries"
     rj.zadd(key, q2)
     return True
+
 
 def _get_and_clear_answers(name, rj):
     pipe = rj.pipeline()
@@ -33,9 +35,9 @@ def _get_and_clear_answers(name, rj):
     answers, success = pipe.execute()
     return answers
 
+
 def run(name, alg, client, rj):
     answers: List = []
-    rj.jsonset(f"alg-{name}-answers", Path("."), [])
     while True:
         # TODO: integrate Dask
         #  f1 = client.submit(alg.get_queries)
@@ -52,4 +54,8 @@ def run(name, alg, client, rj):
         if queries:
             _post_queries(name, queries, scores, rj)
         answers = _get_and_clear_answers(name, rj)
-        sleep(1)  # TODO: remove!
+        if "reset" in rj.keys() and rj.jsonget("reset"):
+            reset = rj.jsonget("reset")
+            logger.info("reset=%s for %s", reset, name)
+            rj.jsonset(f"stopped-{name}", Path("."), True)
+            return

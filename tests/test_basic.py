@@ -14,24 +14,24 @@ from joblib import Parallel, delayed
 import requests
 from requests.auth import HTTPBasicAuth, HTTPDigestAuth
 
-from .utils import _get, _post, _delete, _get_auth
+from .utils import server
 
 
-def test_basics():
+def test_basics(server):
     """
     Requires `docker-compose up` in salmon directory
     """
-    username, password = _get_auth()
+    username, password = server.auth()
     print(username, password)
-    _delete("/reset", status_code=401)
-    r = _delete("/reset?force=1", auth=(username, password))
+    server.delete("/reset", status_code=401)
+    r = server.delete("/reset?force=1", auth=(username, password))
     assert r.json() == {"success": True}
-    _get("/reset", status_code=401)
-    r = _get("/reset?force=1", auth=(username, password))
+    server.get("/reset", status_code=401)
+    r = server.get("/reset?force=1", auth=(username, password))
     assert r.json() == {"success": True}
-    _get("/init_exp")
+    server.get("/init_exp")
     exp = Path(__file__).parent / "data" / "exp.yaml"
-    _post(
+    server.post(
         "/init_exp", data={"exp": exp.read_bytes()}, auth=(username, password),
     )
     exp_config = yaml.safe_load(exp.read_bytes())
@@ -39,14 +39,14 @@ def test_basics():
     answers = []
     for k in range(30):
         _start = time()
-        q = _get("/get_query").json()
+        q = server.get("/get_query").json()
         ans = {"winner": random.choice([q["left"], q["right"]]), "puid": puid, **q}
         answers.append(ans)
         sleep(10e-3)
         ans["response_time"] = time() - _start
-        _post("/process_answer", data=ans)
+        server.post("/process_answer", data=ans)
 
-    r = _get("/get_responses", auth=(username, password))
+    r = server.get("/get_responses", auth=(username, password))
     for server_ans, actual_ans in zip(r.json(), answers):
         assert set(actual_ans).issubset(server_ans)
         assert all(
@@ -83,19 +83,23 @@ def test_basics():
     assert 10e-3 < df.response_time.min()
     assert expected_cols == set(df.columns)
     assert df.puid.nunique() == 1
-    assert np.allclose(df.score, 0)
 
-    r = _get("/get_responses", auth=(username, password))
+    # Scores have to be unique => weaker test (random chooses scores
+    # uniformly at random between 0, 1; can't test that here)
+    #  assert np.allclose(df.score, 0)
+    assert (df.score > 0).all()
+
+    r = server.get("/get_responses", auth=(username, password))
     assert r.status_code == 200
     assert "exception" not in r.text
 
 
-def test_bad_file_upload():
-    username, password = _get_auth()
+def test_bad_file_upload(server):
+    username, password = server.auth()
     print(username, password)
-    _get("/init_exp")
+    server.get("/init_exp")
     exp = Path(__file__).parent / "data" / "bad_exp.yaml"
-    r = _post(
+    r = server.post(
         "/init_exp",
         data={"exp": exp.read_bytes()},
         auth=(username, password),
@@ -107,18 +111,18 @@ def test_bad_file_upload():
     assert "-\tfoo" in r.text
 
 
-def test_no_repeats():
-    username, password = _get_auth()
+def test_no_repeats(server):
+    username, password = server.auth()
     exp = Path(__file__).parent / "data" / "exp.yaml"
-    _post(
+    server.post(
         "/init_exp", data={"exp": exp.read_bytes()}, auth=(username, password),
     )
     for k in range(100):
-        q = _get("/get_query").json()
+        q = server.get("/get_query").json()
         ans = {"winner": random.choice([q["left"], q["right"]]), "puid": "foo", **q}
-        _post("/process_answer", data=ans)
+        server.post("/process_answer", data=ans)
 
-    r = _get("/get_responses", auth=(username, password))
+    r = server.get("/get_responses", auth=(username, password))
     df = pd.DataFrame(r.json())
     equal_targets = (
         (df["head"] == df["right"]).any()

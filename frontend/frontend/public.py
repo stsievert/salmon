@@ -1,4 +1,4 @@
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Union
 from functools import lru_cache
 from time import time
 import yaml
@@ -82,7 +82,7 @@ async def get_query_page(request: Request):
 
 
 @app.get("/get_query", tags=["public"])
-async def get_query() -> Dict[str, int]:
+async def get_query() -> Dict[str, Union[int, str, float]]:
     """
     Get the objects for a triplet query
 
@@ -93,10 +93,11 @@ async def get_query() -> Dict[str, int]:
     """
     samplers = rj.jsonget("samplers")
     name = random.choice(samplers)
-    key = f"alg-{name}.queries"
+    key = f"alg-{name}-queries"
     queries = rj.bzpopmax(key)
-    logger.info(f"queries={queries}, type(queries)=%s", type(queries))
     _, serialized_query, score = queries
+
+    # How many queries have this score?
     h, l, r = serialized_query.split("-")
     return {
         "head": int(h),
@@ -143,8 +144,7 @@ async def process_answer(ans: Answer):
     """
     d = ujson.loads(ans.json())
     d.update({"time_received": time()})
-    logger.info(d)
     name = d["name"]
-    rj.jsonarrappend(f"alg-{name}-answers", root, d)
-    rj.jsonarrappend("all-responses", root, d)
+    rj.jsonarrappend(f"alg-{name}-answers", root, copy(d))
+    rj.jsonarrappend("all-responses", root, copy(d))
     return {"success": True}

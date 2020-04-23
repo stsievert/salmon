@@ -18,10 +18,12 @@ def _get_query(n, head, random_state=None) -> Tuple[int, Tuple[int, int]]:
             break
     return a, (b, c)
 
+
 def _score_query(q: Tuple[int, Tuple[int, int]]) -> float:
     h, (l, r) = q
     score = max(abs(h - l), abs(h - r))
     return float(score)
+
 
 class RoundRobin:
     def __init__(self, n, random_state=None):
@@ -31,11 +33,13 @@ class RoundRobin:
         self.counter = 0
         self.clear = True
 
-
     def get_queries(self) -> Query:
         logger.info(f"get_queries, self.counter={self.counter}")
         num = 10
-        queries = [_get_query(self.n, self.counter + k, random_state=self.random_state) for k in range(num)]
+        queries = [
+            _get_query(self.n, (self.counter + k) % self.n, random_state=self.random_state)
+            for k in range(num)
+        ]
         scores = [_score_query(q) for q in queries]
         return queries, scores
 

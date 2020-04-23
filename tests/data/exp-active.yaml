@@ -13,6 +13,9 @@ targets:
   - 10
 max_queries: 20
 samplers:
-  foo:
+  foobar:
     class: RoundRobin
     random_state: 42
+  foobar2:
+    class: RoundRobin
+    random_state: 41

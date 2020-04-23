@@ -23,10 +23,13 @@ class RandomSampling:
         self.clear = True
         self.random_state = check_random_state(random_state)
 
-    def get_queries(self) -> Query:
+    def get_queries(self) -> Tuple[Query, List[float]]:
         num = 10
-        queries = [_get_query(self.n, random_state=self.random_state) for _ in range(num)]
-        return queries, [0] * len(queries)
+        queries = [
+            _get_query(self.n, random_state=self.random_state) for _ in range(num)
+        ]
+        scores = self.random_state.uniform(low=0, high=1, size=len(queries))
+        return queries, scores.tolist()
 
     def process_answers(self, ans: List[Answer]):
         self.answers.extend(ans)
