@@ -129,3 +129,18 @@ def test_no_repeats(server):
         or (df["left"] == df["right"]).any()
     )
     assert not equal_targets
+
+def test_meta(server):
+    server.authorize()
+    exp = Path(__file__).parent / "data" / "exp.yaml"
+    server.post(
+        "/init_exp", data={"exp": exp.read_bytes()}
+    )
+    num_ans = 10
+    for k in range(num_ans):
+        q = server.get("/query").json()
+        ans = {"winner": random.choice([q["left"], q["right"]]), "puid": str(k), **q}
+        server.post("/answer", data=ans)
+    meta = server.get("/meta").json()
+    assert meta["participants"] == num_ans
+    assert meta["responses"] == num_ans

@@ -409,7 +409,7 @@ async def get_meta(request: Request, authorized: bool = Depends(_authorize)):
     df = pd.DataFrame(responses)
     out = {
         "responses": len(df),
-        "participants": df.puid.unique(),
+        "participants": df.puid.nunique(),
     }
     return JSONResponse(out)
 
