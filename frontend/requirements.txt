@@ -10,3 +10,4 @@ aiofiles
 altair
 matplotlib
 joblib
+scikit-learn

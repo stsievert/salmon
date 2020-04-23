@@ -198,9 +198,12 @@ async def _process_form(
         rj.jsonset(f"alg-{name}-answers", root, [])
         # Not set because rj.zadd doesn't require it
         # don't touch! rj.jsonset(f"alg-{name}-queries", root, [])
-        r = httpx.post(f"http://backend:8400/init/{name}")
-        if r.status_code != 200:
-            raise HTTPException(500, Exception(r))
+        try:
+            r = httpx.post(f"http://backend:8400/init/{name}")
+        except Exception as e:
+            msg = exception_to_string(e)
+            logger.error(msg)
+            raise ExpParsingError(status_code=500, detail=msg)
 
     _time = time()
     rj.jsonset("start_time", root, _time)
