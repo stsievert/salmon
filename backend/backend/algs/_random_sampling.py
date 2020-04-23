@@ -2,7 +2,7 @@ import numpy as np
 from sklearn.utils import check_random_state
 from typing import Tuple, List
 
-from .utils import Query, Answer
+from .utils import Query, Answer, Runner
 
 
 def _get_query(n, random_state=None) -> Tuple[int, Tuple[int, int]]:
@@ -16,11 +16,10 @@ def _get_query(n, random_state=None) -> Tuple[int, Tuple[int, int]]:
     return a, [b, c]
 
 
-class RandomSampling:
+class RandomSampling(Runner):
     def __init__(self, n, random_state=None):
         self.n = n
         self.answers = []
-        self.clear = True
         self.random_state = check_random_state(random_state)
 
     def get_queries(self) -> Tuple[Query, List[float]]:

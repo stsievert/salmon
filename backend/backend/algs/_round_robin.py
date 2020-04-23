@@ -3,7 +3,7 @@ from sklearn.utils import check_random_state
 from typing import Tuple, List
 import logging
 
-from .utils import Query, Answer
+from .utils import Query, Answer, Runner
 
 logger = logging.getLogger(__name__)
 
@@ -25,13 +25,12 @@ def _score_query(q: Tuple[int, Tuple[int, int]]) -> float:
     return float(score)
 
 
-class RoundRobin:
+class RoundRobin(Runner):
     def __init__(self, n, random_state=None):
         self.n = n
         self.answers = []
         self.random_state = check_random_state(random_state)
         self.counter = 0
-        self.clear = True
 
     def get_queries(self) -> Query:
         logger.info(f"get_queries, self.counter={self.counter}")

@@ -42,7 +42,7 @@ async def init(name: str, background_tasks: BackgroundTasks) -> bool:
 
     client = None
     logger.info(f"Starting algs={samplers.keys()}")
-    background_tasks.add_task(algs.run, name, alg, client, rj)
+    background_tasks.add_task(alg.run, name, client, rj)
 
     logger.info("samplers=%s", list(samplers.keys()))
     return list(samplers.keys())

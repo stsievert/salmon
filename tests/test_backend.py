@@ -30,7 +30,6 @@ def test_backend_basics(server):
         _start = time()
         q = server.get("/get_query").json()
         ans = {"winner": random.choice([q["left"], q["right"]]), "puid": puid, **q}
-        sleep(10e-3)
         ans["response_time"] = time() - _start
         server.post("/process_answer", data=ans)
 
