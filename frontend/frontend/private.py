@@ -279,7 +279,11 @@ def reset(force: int = 0, authorized=Depends(_authorize), tags=["private"]):
 
 @app.get("/responses", tags=["private"])
 async def get_responses(authorized: bool = Depends(_authorize)) -> Dict[str, Any]:
-    out = await _get_responses()
+    exp_config = await _ensure_initialized()
+    targets = exp_config["targets"]
+    start = rj.jsonget("start_time")
+    responses = await _get_responses()
+    out = await _format_responses(responses, targets, start)
     return JSONResponse(
         out, headers={"Content-Disposition": 'attachment; filename="responses.json"'}
     )
@@ -304,13 +308,11 @@ async def _get_responses():
     This file will be downloaded.
 
     """
-    exp_config = await _ensure_initialized()
-    targets = exp_config["targets"]
     responses = rj.jsonget("all-responses")
-    logger.info("getting %s responses", len(responses))
-    out: List[Dict[str, Any]] = []
-    start = rj.jsonget("start_time")
+    return responses
 
+async def _format_responses(responses, targets, start):
+    logger.info("getting %s responses", len(responses))
     out = manager.get_responses(responses, targets, start_time=start)
     return out
 
@@ -322,16 +324,11 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
     exp_config = await _ensure_initialized()
     exp_config = deepcopy(exp_config)
     targets = exp_config.pop("targets")
-    responses = await _get_responses()
-    df = pd.DataFrame(
-        responses,
-        columns=[
-            "puid",
-            "response_time",
-            "time_received_since_start",
-            "network_latency",
-        ],
-    )
+    start = rj.jsonget("start_time")
+
+    r = await _get_responses()
+    df = pd.DataFrame(r)
+    r["time_received_since_start"] -= start
 
     if len(responses) >= 2:
         try:
@@ -403,6 +400,17 @@ async def get_logs(request: Request, authorized: bool = Depends(_authorize)):
     for file in files:
         with open(str(file), "r") as f:
             out[file.name] = f.readlines()
+    return JSONResponse(out)
+
+
+@app.get("/meta", tags=["private"])
+async def get_meta(request: Request, authorized: bool = Depends(_authorize)):
+    responses = await _get_responses()
+    df = pd.DataFrame(responses)
+    out = {
+        "responses": len(df),
+        "participants": df.puid.unique(),
+    }
     return JSONResponse(out)
 
 
