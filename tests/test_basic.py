@@ -95,14 +95,12 @@ def test_basics(server):
 
 
 def test_bad_file_upload(server):
-    username, password = server.auth()
-    print(username, password)
+    server.authorize()
     server.get("/init_exp")
     exp = Path(__file__).parent / "data" / "bad_exp.yaml"
     r = server.post(
         "/init_exp",
         data={"exp": exp.read_bytes()},
-        auth=(username, password),
         error=True,
     )
     assert r.status_code == 500
@@ -112,17 +110,17 @@ def test_bad_file_upload(server):
 
 
 def test_no_repeats(server):
-    username, password = server.auth()
+    server.authorize()
     exp = Path(__file__).parent / "data" / "exp.yaml"
     server.post(
-        "/init_exp", data={"exp": exp.read_bytes()}, auth=(username, password),
+        "/init_exp", data={"exp": exp.read_bytes()}
     )
     for k in range(100):
         q = server.get("/get_query").json()
         ans = {"winner": random.choice([q["left"], q["right"]]), "puid": "foo", **q}
         server.post("/process_answer", data=ans)
 
-    r = server.get("/get_responses", auth=(username, password))
+    r = server.get("/get_responses")
     df = pd.DataFrame(r.json())
     equal_targets = (
         (df["head"] == df["right"]).any()

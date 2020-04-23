@@ -6,12 +6,11 @@ from typing import Tuple
 import pytest
 import requests
 
-URL = "http://127.0.0.1:8421"
-
 
 class Server:
-    def __init__(self, url=URL):
-        self.url = URL
+    def __init__(self, url):
+        self.url = url
+        self._authorized = False
 
     def auth(self) -> Tuple[str, str]:
         p = Path(__file__).parent.parent / "creds.yaml"
@@ -20,32 +19,42 @@ class Server:
             return (creds["username"], creds["password"])
         return ("username", "password")
 
-    def get(self, endpoint, URL=URL, status_code=200, **kwargs):
-        r = requests.get(URL + endpoint, **kwargs)
+    def get(self, endpoint, status_code=200, **kwargs):
+        if self._authorized:
+            kwargs.update({"auth": (self._username, self._password)})
+        r = requests.get(self.url + endpoint, **kwargs)
         assert r.status_code == status_code
         return r
 
     def post(
-        self, endpoint, data=None, URL=URL, status_code=200, error=False, **kwargs
+        self, endpoint, data=None, status_code=200, error=False, **kwargs
     ):
         if isinstance(data, dict) and "exp" not in data:
             data = json.dumps(data)
-        r = requests.post(URL + endpoint, data=data, **kwargs)
+        if self._authorized:
+            kwargs.update({"auth": (self._username, self._password)})
+        r = requests.post(self.url + endpoint, data=data, **kwargs)
         if not error:
             assert r.status_code == status_code
         return r
 
-    def delete(self, endpoint, data=None, URL=URL, status_code=200, **kwargs):
+    def delete(self, endpoint, data=None, status_code=200, **kwargs):
         if isinstance(data, dict) and "exp" not in data:
             data = json.dumps(data)
-        r = requests.delete(URL + endpoint, data=data, **kwargs)
+        if self._authorized:
+            kwargs.update({"auth": (self._username, self._password)})
+        r = requests.delete(self.url + endpoint, data=data, **kwargs)
         assert r.status_code == status_code
         return r
+
+    def authorize(self):
+        self._username, self._password = self.auth()
+        self._authorized = True
 
 
 @pytest.fixture()
 def server():
-    server = Server()
+    server = Server("http://127.0.0.1:8421")
     yield server
     username, password = server.auth()
     r = server.get("/reset?force=1", auth=(username, password))
