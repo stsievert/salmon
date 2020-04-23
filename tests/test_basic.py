@@ -85,10 +85,7 @@ def test_basics(server):
     assert expected_cols == set(df.columns)
     assert df.puid.nunique() == 1
 
-    # Scores have to be unique => weaker test (random chooses scores
-    # uniformly at random between 0, 1; can't test that here)
-    #  assert np.allclose(df.score, 0)
-    assert (df.score > 0).all()
+    assert np.allclose(df.score, 0)
 
     r = server.get("/responses", auth=(username, password))
     assert r.status_code == 200

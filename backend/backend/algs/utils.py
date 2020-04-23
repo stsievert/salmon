@@ -83,10 +83,14 @@ class Runner:
                 post_queries(name, queries, scores, rj)
             answers = get_answers(name, rj, clear=True)
             if "reset" in rj.keys() and rj.jsonget("reset"):
-                reset = rj.jsonget("reset")
-                logger.info("reset=%s for %s", reset, name)
-                rj.jsonset(f"stopped-{name}", Path("."), True)
+                self.reset(name, client, rj)
                 return
+
+    def reset(self, name, client, rj):
+        reset = rj.jsonget("reset")
+        logger.info("reset=%s for %s", reset, name)
+        rj.jsonset(f"stopped-{name}", Path("."), True)
+        return True
 
     @property
     def clear(self):
