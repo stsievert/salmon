@@ -1,18 +1,20 @@
+import random
 import sys
 from pathlib import Path
-import random
+
+from backend.algs.utils import Answer as BackAnswer
+from backend.algs.utils import deserialize_query, serialize_query
+from frontend.manager import Answer as FrontAnswer
+
+from .utils import server
 
 root = Path(__file__).parent.parent
 sys.path.append(str(root / "backend"))
 sys.path.append(str(root / "frontend"))
 
-from frontend.manager import Answer as FrontAnswer
-from backend.algs.utils import Answer as BackAnswer
 
 
-from backend.algs.utils import serialize_query, deserialize_query
 
-from .utils import server
 
 
 def test_answer(server):

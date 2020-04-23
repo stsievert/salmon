@@ -1,10 +1,12 @@
-from typing import Tuple, List, Dict, Any
-from dataclasses import dataclass
-from rejson import Client as RedisClient, Path
-import rejson
 import logging
-from pydantic import BaseModel
+from dataclasses import dataclass
 from time import sleep
+from typing import Any, Dict, List, Tuple
+
+import rejson
+from pydantic import BaseModel
+from rejson import Client as RedisClient
+from rejson import Path
 
 Query = Tuple[int, Tuple[int, int]]  # head, (choice 1, choice 2)
 

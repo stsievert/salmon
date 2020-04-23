@@ -1,10 +1,10 @@
-from pathlib import Path
 import json
-import yaml
+from pathlib import Path
 from typing import Tuple
 
 import pytest
 import requests
+import yaml
 
 
 class Server:

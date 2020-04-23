@@ -1,9 +1,10 @@
+import logging
+from typing import List, Tuple
+
 import numpy as np
 from sklearn.utils import check_random_state
-from typing import Tuple, List
-import logging
 
-from .utils import Query, Answer, Runner
+from .utils import Answer, Query, Runner
 
 logger = logging.getLogger(__name__)
 

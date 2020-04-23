@@ -1,17 +1,15 @@
-import os
-from pathlib import Path
-from time import sleep
-import random
 import json
-import yaml
-from time import time
+import os
+import random
+from pathlib import Path
+from time import sleep, time
+from typing import Tuple
 
 import numpy as np
 import pandas as pd
-from typing import Tuple
-from joblib import Parallel, delayed
-
 import requests
+import yaml
+from joblib import Parallel, delayed
 from requests.auth import HTTPBasicAuth, HTTPDigestAuth
 
 from .utils import server
