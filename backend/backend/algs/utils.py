@@ -3,7 +3,6 @@ from dataclasses import dataclass
 from rejson import Client as RedisClient, Path
 import rejson
 import logging
-from time import sleep
 
 Query = Tuple[int, Tuple[int, int]]  # head, (obj1, obj2)
 
