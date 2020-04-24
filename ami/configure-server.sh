@@ -4,6 +4,7 @@ echo never > /sys/kernel/mm/transparent_hugepage/enabled
 echo never > /sys/kernel/mm/transparent_hugepage/defrag
 
 ## Enable swapping memory to disk to prevent OOM errors
+# https://www.digitalocean.com/community/tutorials/how-to-add-swap-space-on-ubuntu-16-04
 # Enable swap
 sudo fallocate -l 16G /swapfile  # create file
 sudo chmod 600 /swapfile  # change permissions
