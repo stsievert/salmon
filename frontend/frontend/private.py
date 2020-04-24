@@ -24,11 +24,9 @@ from starlette.responses import HTMLResponse, JSONResponse
 from starlette.status import HTTP_401_UNAUTHORIZED
 
 from . import manager
-from .plotting import (_any_outliers, network_latency, time_histogram,
-                       time_human_delay)
+from .plotting import _any_outliers, network_latency, time_histogram, time_human_delay
 from .public import _ensure_initialized, app, templates
-from .utils import (ServerException, _extract_zipfile, _format_target,
-                    get_logger)
+from .utils import ServerException, _extract_zipfile, _format_target, get_logger
 
 security = HTTPBasic()
 

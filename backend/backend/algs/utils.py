@@ -56,6 +56,9 @@ def deserialize_query(serialized_query: str) -> Dict[str, int]:
 
 
 class Runner:
+    """
+    Run an adaptive algorithm.
+    """
     def run(self, name: str, client, rj: RedisClient):
         """
         Run the algorithm.
@@ -63,8 +66,18 @@ class Runner:
         Parameters
         ----------
         name : str
+            The algorithm name. This value is used to identify the algorithm
+            in the database.
         client : DaskClient
+            A client to Dask.
         rj : RedisClient
+            A Redist Client, a rejson.Client
+
+        Notes
+        -----
+        This function runs the adaptive algorithm. Because it's asynchronous,
+        this function should return if
+        ``"reset" in rj.keys() and rj.jsonget("reset")``.
 
         """
         answers: List = []
@@ -86,6 +99,10 @@ class Runner:
                 return
 
     def reset(self, name, client, rj):
+        """
+        Reset the algorithm. The algorithm will be deleted shortly after
+        this function is called.
+        """
         reset = rj.jsonget("reset")
         logger.info("reset=%s for %s", reset, name)
         rj.jsonset(f"stopped-{name}", Path("."), True)
@@ -93,6 +110,9 @@ class Runner:
 
     @property
     def clear(self):
+        """
+        Should the queries be cleared from the database?
+        """
         return True
 
     def process_answers(self, answers: List[Answer]):
@@ -129,4 +149,13 @@ class Runner:
         raise NotImplementedError
 
     def get_model(self) -> Dict[str, Any]:
+        """
+        Get the model underlying the algorithm.
+
+        Returns
+        -------
+        state : Dict[str, Any]
+            The state of the algorithm. This can be used for display on the
+            dashboard or with an HTTP get request.
+        """
         raise NotImplementedError
