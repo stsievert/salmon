@@ -11,3 +11,4 @@ altair
 matplotlib
 joblib
 scikit-learn
+gunicorn

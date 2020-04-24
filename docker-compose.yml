@@ -4,14 +4,24 @@ services:
   frontend:
     build: frontend
     environment:
-      - SALMON_NO_AUTH  # pass through to backend
+      - SALMON_DEBUG  # pass through to backend
     ports:
       - "8421:8421"
+    volumes:
+      - type: bind
+        source: ./frontend
+        target: /usr/src/salmon/frontend
 
   backend:
     build: backend
+    environment:
+      - SALMON_DEBUG  # pass through to backend
     expose:
       - "8400"
+    volumes:
+      - type: bind
+        source: ./backend
+        target: /usr/src/salmon/backend
 
   redis:
     image: redislabs/rejson
@@ -22,4 +32,3 @@ services:
 
 # To get bash on one of these machines:
 # docker exec -it <containerIdOrName> bash
-
