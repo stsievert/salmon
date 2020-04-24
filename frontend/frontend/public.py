@@ -1,5 +1,6 @@
 import pathlib
 from copy import copy
+import random
 from textwrap import dedent
 from time import time
 from typing import Dict, Union
@@ -78,8 +79,18 @@ async def get_query_page(request: Request):
 
 @app.get("/query", tags=["public"])
 async def get_query() -> Dict[str, Union[int, str, float]]:
-    r = httpx.get(f"http://backend:8400/query")
-    return r.json()
+    names = rj.jsonget("samplers")
+    name = random.choice(names)
+
+    r = httpx.get(f"http://backend:8400/query-{name}")
+    if r.status_code == 200:
+        return r.json()
+
+    key = f"alg-{name}-queries"
+    queries = rj.bzpopmax(key)
+    _, serialized_query, score = queries
+    q = manager.deserialize_query(serialized_query)
+    return {"name": name, "score": score, **q}
 
 
 @app.post("/answer", tags=["public"])

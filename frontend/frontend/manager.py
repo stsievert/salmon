@@ -25,6 +25,15 @@ class Answer(BaseModel):
     network_latency: float = -1
 
 
+def deserialize_query(serialized_query: str) -> Dict[str, int]:
+    h, l, r = serialized_query.split("-")
+    return {
+        "head": int(h),
+        "left": int(l),
+        "right": int(r),
+    }
+
+
 def get_responses(answers: List[Dict[str, Any]], targets, start_time=0):
     start = start_time
     out = []

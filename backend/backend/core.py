@@ -14,12 +14,8 @@ rj = Client(host="redis", port=6379, decode_responses=True)
 
 app = FastAPI(title="salmon-backend")
 
-samplers = {}
-
-
 @app.post("/init/{name}")
 async def init(name: str, background_tasks: BackgroundTasks) -> bool:
-    global samplers
     # TODO: Better handling of exceptions if params keys don't match
     logger.info("backend: initialized")
     config = rj.jsonget("exp_config")
@@ -28,40 +24,20 @@ async def init(name: str, background_tasks: BackgroundTasks) -> bool:
     _class = params.pop("class")
     Alg = getattr(algs, _class)
     alg = Alg(n=config["n"], **params)
-    samplers[name] = alg
+
+    if hasattr(alg, "get_query"):
+        @app.get(f"/query-{name}")
+        def _get_query():
+            q, score = alg.get_query()
+            return {"name": name, "score": score, **q}
 
     client = None
-    logger.info(f"Starting algs={samplers.keys()}")
+    logger.info(f"Starting algs={name}")
     background_tasks.add_task(alg.run, name, client, rj)
+    return True
 
-    logger.info("samplers=%s", list(samplers.keys()))
-    return list(samplers.keys())
 
 
 @app.get("/model")
 async def get_model(name: str):
     return 1
-
-
-@app.post("/reset")
-def reset():
-    global samplers
-    samplers = {}
-    return True
-
-
-@app.get("/query")
-async def get_query() -> Dict[str, Union[int, str, float]]:
-    names = list(samplers.keys())
-    if len(names) == 0:
-        raise HTTPException(status_code=501, detail="No samplers initialized")
-    name = random.choice(names)
-    alg = samplers[name]
-    if hasattr(alg, "get_query"):
-        query, score = alg.get_query()
-        return {"name": name, "score": score, **query}
-    key = f"alg-{name}-queries"
-    queries = rj.bzpopmax(key)
-    _, serialized_query, score = queries
-    q = algs.utils.deserialize_query(serialized_query)
-    return {"name": name, "score": score, **q}

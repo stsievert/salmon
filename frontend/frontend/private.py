@@ -47,7 +47,7 @@ def _salt(password: str) -> str:
 
 def _authorize(credentials: HTTPBasicCredentials = Depends(security)) -> bool:
     SALMON_NO_AUTH = os.environ.get("SALMON_NO_AUTH", False)
-    logger.info("Seeing if authorized access with SALMON_NO_AUTH={SALMON_NO_AUTH}")
+    logger.info(f"Seeing if authorized access with SALMON_NO_AUTH={SALMON_NO_AUTH}")
     if SALMON_NO_AUTH:
         return True
 
@@ -260,10 +260,6 @@ def reset(force: int = 0, authorized=Depends(_authorize), tags=["private"]):
                     logger.info(f"stopped={stopped}")
                     break
                 sleep(1)
-
-        r = httpx.post(f"http://backend:8400/reset")
-        if r.status_code != 200:
-            raise HTTPException(500, Exception(r))
 
         rj.flushdb()
         logger.info("After reset, rj.keys=%s", rj.keys())

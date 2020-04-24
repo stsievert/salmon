@@ -48,15 +48,6 @@ def serialize_query(q: Query) -> str:
     return f"{h}-{a}-{b}"
 
 
-def deserialize_query(serialized_query: str) -> Dict[str, int]:
-    h, l, r = serialized_query.split("-")
-    return {
-        "head": int(h),
-        "left": int(l),
-        "right": int(r),
-    }
-
-
 class Runner:
     """
     Run an adaptive algorithm.
