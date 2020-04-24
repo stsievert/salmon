@@ -98,6 +98,8 @@ async def process_answer(ans: manager.Answer):
     d = ujson.loads(ans.json())
     d.update({"time_received": time()})
     name = d["name"]
-    rj.jsonarrappend(f"alg-{name}-answers", root, copy(d))
-    rj.jsonarrappend("all-responses", root, copy(d))
+    logger.info("answer d=%s", d)
+    rj.jsonarrappend(f"alg-{name}-answers", root, d)
+    logger.info("answer2 d=%s", d)
+    rj.jsonarrappend("all-responses", root, d)
     return {"success": True}

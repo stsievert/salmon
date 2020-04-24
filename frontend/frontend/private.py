@@ -301,7 +301,7 @@ async def _get_responses():
     This file will be downloaded.
 
     """
-    responses = rj.jsonget("all-responses")
+    responses = rj.jsonget("all-responses", root)
     return responses
 
 
@@ -321,10 +321,10 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
     start = rj.jsonget("start_time")
 
     responses = await _get_responses()
-    df = pd.DataFrame(responses)
-    df["time_received_since_start"] = df["time_received"] - start
+    df = pd.DataFrame(responses, columns=["puid", "time_received", "response_time", "network_latency"])
 
     if len(responses) >= 2:
+        df["time_received_since_start"] = df["time_received"] - start
         try:
             r = await time_histogram(df.time_received_since_start)
         except:

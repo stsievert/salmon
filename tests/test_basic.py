@@ -88,6 +88,8 @@ def test_basics(server):
     r = server.get("/responses", auth=(username, password))
     assert r.status_code == 200
     assert "exception" not in r.text
+    df = pd.DataFrame(r.json())
+    assert len(df) == 30
 
     r = server.get("/dashboard", auth=(username, password))
     assert r.status_code == 200
