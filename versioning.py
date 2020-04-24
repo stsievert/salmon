@@ -11,6 +11,7 @@ _version = lines[idx[0]].split("=")
 _version = [v.strip() for v in _version]
 _version[-1] = f"\"{version}\""
 lines[idx[0]] = " = ".join(_version)
+lines = [line for line in lines if line]
 out = "\n".join(lines)
 with open(str(init), "w") as f:
     print(out, file=f)
