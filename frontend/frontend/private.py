@@ -47,7 +47,7 @@ def _salt(password: str) -> str:
 
 def _authorize(credentials: HTTPBasicCredentials = Depends(security)) -> bool:
     logger.info("Seeing if authorized access")
-    if os.environ.get("SALMON_NO_AUTH", False):
+    if os.environ.get("SALMON_DEBUG", False):
         return True
 
     if credentials.username != "foo" or _salt(credentials.password) != EXPECTED_PWORD:
@@ -400,7 +400,7 @@ async def get_logs(request: Request, authorized: bool = Depends(_authorize)):
 @app.get("/meta", tags=["private"])
 async def get_meta(request: Request, authorized: bool = Depends(_authorize)):
     responses = await _get_responses()
-    df = pd.DataFrame(responses)
+    df = pd.DataFrame(responses, columns=["puid"])
     out = {
         "responses": len(df),
         "participants": df.puid.nunique(),

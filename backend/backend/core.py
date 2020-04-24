@@ -53,7 +53,6 @@ def reset():
 async def get_query() -> Dict[str, Union[int, str, float]]:
     name = random.choice(list(samplers.keys()))
     alg = samplers[name]
-    logger.warning("%s %s", alg, hasattr(alg, "get_query"))
     if hasattr(alg, "get_query"):
         query, score = alg.get_query()
         return {"name": name, "score": score, **query}
