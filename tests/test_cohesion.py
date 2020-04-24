@@ -2,13 +2,9 @@ import random
 import sys
 from pathlib import Path
 
-root = Path(__file__).parent.parent
-sys.path.append(str(root / "backend"))
-sys.path.append(str(root / "frontend"))
-
-from backend.algs.utils import Answer as BackAnswer
-from backend.algs.utils import deserialize_query, serialize_query
-from frontend.manager import Answer as FrontAnswer
+from backend.backend.algs.utils import Answer as BackAnswer
+from backend.backend.algs.utils import deserialize_query, serialize_query
+from frontend.frontend.manager import Answer as FrontAnswer
 
 from .utils import server
 
