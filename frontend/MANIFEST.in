@@ -1,0 +1,2 @@
+include versioneer.py
+include frontend/_version.py

@@ -7,6 +7,10 @@ services:
       - SALMON_NO_AUTH  # pass through to backend
     ports:
       - "8421:8421"
+    volumes:
+       - type: bind
+         source: ./frontend
+         target: /usr/src/tmp
 
   backend:
     build: backend
