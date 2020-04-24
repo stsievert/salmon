@@ -46,10 +46,12 @@ def _salt(password: str) -> str:
 
 
 def _authorize(credentials: HTTPBasicCredentials = Depends(security)) -> bool:
-    logger.info("Seeing if authorized access")
-    if os.environ.get("SALMON_DEBUG", False):
+    SALMON_NO_AUTH = os.environ.get("SALMON_NO_AUTH", False)
+    logger.info("Seeing if authorized access with SALMON_NO_AUTH={SALMON_NO_AUTH}")
+    if SALMON_NO_AUTH:
         return True
 
+    logger.info("SALMON_NO_AUTH is False")
     if credentials.username != "foo" or _salt(credentials.password) != EXPECTED_PWORD:
         logger.info("Not authorized")
         raise HTTPException(
@@ -57,6 +59,7 @@ def _authorize(credentials: HTTPBasicCredentials = Depends(security)) -> bool:
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Basic"},
         )
+    logger.info("Authorized: true")
     return True
 
 
@@ -189,7 +192,10 @@ async def _process_form(
         # Not set because rj.zadd doesn't require it
         # don't touch! rj.jsonset(f"alg-{name}-queries", root, [])
         try:
-            httpx.post(f"http://backend:8400/init/{name}")
+            logger.info("initializing algorithm {name}...")
+            r = httpx.post(f"http://backend:8400/init/{name}")
+            assert r.status_code == 200
+            logger.info("done initializing {name}.")
         except Exception as e:
             msg = exception_to_string(e)
             logger.error(msg)

@@ -1,7 +1,7 @@
 import random
 from typing import Dict, Union
 
-from fastapi import BackgroundTasks, FastAPI
+from fastapi import BackgroundTasks, FastAPI, HTTPException
 from rejson import Client, Path
 
 from . import algs
@@ -19,6 +19,7 @@ samplers = {}
 
 @app.post("/init/{name}")
 async def init(name: str, background_tasks: BackgroundTasks) -> bool:
+    global samplers
     # TODO: Better handling of exceptions if params keys don't match
     logger.info("backend: initialized")
     config = rj.jsonget("exp_config")
@@ -51,7 +52,10 @@ def reset():
 
 @app.get("/query")
 async def get_query() -> Dict[str, Union[int, str, float]]:
-    name = random.choice(list(samplers.keys()))
+    names = list(samplers.keys())
+    if len(names) == 0:
+        raise HTTPException(status_code=501, detail="No samplers initialized")
+    name = random.choice(names)
     alg = samplers[name]
     if hasattr(alg, "get_query"):
         query, score = alg.get_query()

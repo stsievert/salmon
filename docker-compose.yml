@@ -5,6 +5,7 @@ services:
     build: frontend
     environment:
       - SALMON_DEBUG  # pass through to backend
+      - SALMON_NO_AUTH
     ports:
       - "8421:8421"
     volumes:
@@ -16,6 +17,7 @@ services:
     build: backend
     environment:
       - SALMON_DEBUG  # pass through to backend
+      - SALMON_NO_AUTH
     expose:
       - "8400"
     volumes:
