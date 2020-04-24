@@ -1,86 +1,51 @@
-import os
-from pathlib import Path
-from time import sleep
-import random
 import json
-import yaml
-import yaml
-from time import time
+import os
+import random
+from pathlib import Path
+from time import sleep, time
+from typing import Tuple
 
 import numpy as np
 import pandas as pd
-from typing import Tuple
-from joblib import Parallel, delayed
-
 import requests
+import yaml
+from joblib import Parallel, delayed
 from requests.auth import HTTPBasicAuth, HTTPDigestAuth
 
-URL = "http://127.0.0.1:8421"
-
-def _get_auth() -> Tuple[str, str]:
-    p = Path(__file__).parent.parent / "creds.yaml"
-    if p.exists():
-        creds = yaml.safe_load(p.read_text())
-        return (creds["username"], creds["password"])
-
-    return ("username", "password")
+from .utils import server
 
 
-def _get(endpoint, URL=URL, status_code=200, **kwargs):
-    r = requests.get(URL + endpoint, **kwargs)
-    assert r.status_code == status_code
-    return r
-
-
-def _post(endpoint, data=None, URL=URL, status_code=200, error=False, **kwargs):
-    #  data = data or {}
-    if isinstance(data, dict) and "exp" not in data:
-        data = json.dumps(data)
-    r = requests.post(URL + endpoint, data=data, **kwargs)
-    if not error:
-        assert r.status_code == status_code
-    return r
-
-
-def _delete(endpoint, data=None, URL=URL, status_code=200, **kwargs):
-    #  data = data or {}
-    if isinstance(data, dict) and "exp" not in data:
-        data = json.dumps(data)
-    r = requests.delete(URL + endpoint, data=data, **kwargs)
-    assert r.status_code == status_code
-    return r
-
-
-def test_basic():
+def test_basics(server):
     """
     Requires `docker-compose up` in salmon directory
     """
-    username, password = _get_auth()
+    username, password = server.auth()
     print(username, password)
-    _delete("/reset", status_code=401)
-    r = _delete("/reset?force=1", auth=(username, password))
+    server.delete("/reset", status_code=401)
+    r = server.delete("/reset?force=1", auth=(username, password))
     assert r.json() == {"success": True}
-    _get("/reset", status_code=401)
-    r = _get("/reset?force=1", auth=(username, password))
+    server.get("/reset", status_code=401)
+    r = server.get("/reset?force=1", auth=(username, password))
     assert r.json() == {"success": True}
-    _get("/init_exp")
+    server.get("/init_exp")
     exp = Path(__file__).parent / "data" / "exp.yaml"
-    _post(
+    server.post(
         "/init_exp", data={"exp": exp.read_bytes()}, auth=(username, password),
     )
     exp_config = yaml.safe_load(exp.read_bytes())
     puid = "puid-foo"
     answers = []
+    print("Starting loop...")
     for k in range(30):
         _start = time()
-        q = _get("/get_query").json()
+        q = server.get("/query").json()
         ans = {"winner": random.choice([q["left"], q["right"]]), "puid": puid, **q}
         answers.append(ans)
         sleep(10e-3)
         ans["response_time"] = time() - _start
-        _post("/process_answer", data=ans)
+        server.post("/answer", data=ans)
 
-    r = _get("/get_responses", auth=(username, password))
+    r = server.get("/responses", auth=(username, password))
     for server_ans, actual_ans in zip(r.json(), answers):
         assert set(actual_ans).issubset(server_ans)
         assert all(
@@ -107,6 +72,8 @@ def test_basic():
         "response_time",
         "network_latency",
         "datetime_received",
+        "name",
+        "score",
     }
     n = len(exp_config["targets"])
     assert (0 == df["head"].min()) and (df["head"].max() == n - 1)
@@ -116,40 +83,37 @@ def test_basic():
     assert expected_cols == set(df.columns)
     assert df.puid.nunique() == 1
 
-    r = _get("/get_responses", auth=(username, password))
+    assert np.allclose(df.score, 0)
+
+    r = server.get("/responses", auth=(username, password))
     assert r.status_code == 200
     assert "exception" not in r.text
 
+    r = server.get("/dashboard", auth=(username, password))
+    assert r.status_code == 200
 
-def test_bad_file_upload():
-    username, password = _get_auth()
-    print(username, password)
-    _get("/init_exp")
+
+def test_bad_file_upload(server):
+    server.authorize()
+    server.get("/init_exp")
     exp = Path(__file__).parent / "data" / "bad_exp.yaml"
-    r = _post(
-        "/init_exp",
-        data={"exp": exp.read_bytes()},
-        auth=(username, password),
-        error=True,
-    )
+    r = server.post("/init_exp", data={"exp": exp.read_bytes()}, error=True,)
     assert r.status_code == 500
     assert "Error!" in r.text
     assert "yaml" in r.text
     assert "-\tfoo" in r.text
 
 
-def test_no_repeats():
-    username, password = _get_auth()
+def test_no_repeats(server):
+    server.authorize()
     exp = Path(__file__).parent / "data" / "exp.yaml"
-    _post(
-        "/init_exp", data={"exp": exp.read_bytes()}, auth=(username, password),
-    )
+    server.post("/init_exp", data={"exp": exp.read_bytes()})
     for k in range(100):
-        q = _get("/get_query").json()
+        q = server.get("/query").json()
         ans = {"winner": random.choice([q["left"], q["right"]]), "puid": "foo", **q}
-        _post("/process_answer", data=ans)
+        server.post("/answer", data=ans)
 
-    r = _get("/get_responses", auth=(username, password))
+    r = server.get("/responses")
     df = pd.DataFrame(r.json())
     equal_targets = (
         (df["head"] == df["right"]).any()
@@ -157,3 +121,17 @@ def test_no_repeats():
         or (df["left"] == df["right"]).any()
     )
     assert not equal_targets
+
+
+def test_meta(server):
+    server.authorize()
+    exp = Path(__file__).parent / "data" / "exp.yaml"
+    server.post("/init_exp", data={"exp": exp.read_bytes()})
+    num_ans = 10
+    for k in range(num_ans):
+        q = server.get("/query").json()
+        ans = {"winner": random.choice([q["left"], q["right"]]), "puid": str(k), **q}
+        server.post("/answer", data=ans)
+    meta = server.get("/meta").json()
+    assert meta["participants"] == num_ans
+    assert meta["responses"] == num_ans

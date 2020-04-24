@@ -8,6 +8,11 @@ services:
     ports:
       - "8421:8421"
 
+  backend:
+    build: backend
+    expose:
+      - "8400"
+
   redis:
     image: redislabs/rejson
     sysctls:  # https://github.com/docker-library/redis/issues/191

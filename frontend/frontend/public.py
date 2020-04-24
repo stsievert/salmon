@@ -1,24 +1,20 @@
-from typing import Dict, List, Any
-from functools import lru_cache
-from time import time
-import yaml
+import pathlib
 from copy import copy
 from textwrap import dedent
-import pathlib
-import threading
-
-from fastapi import FastAPI, HTTPException, Form
-from starlette.templating import Jinja2Templates
-from starlette.requests import Request
-from starlette.staticfiles import StaticFiles
-from pydantic import BaseModel
-import ujson
-
-from rejson import Client, Path
+from time import time
+from typing import Dict, Union
 
 import numpy as np
-import pandas as pd
+import requests as httpx
+from fastapi import FastAPI
+from rejson import Client, Path
+from starlette.requests import Request
+from starlette.staticfiles import StaticFiles
+from starlette.templating import Jinja2Templates
 
+import ujson
+
+from . import manager
 from .utils import ServerException, get_logger, sha256
 
 logger = get_logger(__name__)
@@ -47,7 +43,14 @@ async def _ensure_initialized():
     if "exp_config" not in rj:
         raise ServerException("No data has been uploaded")
     exp_config = _get_config()
-    expected_keys = ["targets", "instructions", "n", "max_queries", "debrief"]
+    expected_keys = [
+        "targets",
+        "samplers",
+        "instructions",
+        "n",
+        "max_queries",
+        "debrief",
+    ]
     if not set(exp_config) == set(expected_keys):
         msg = "Experiment keys are not correct. Expected {}, got {}"
         raise ServerException(msg.format(expected_keys, list(exp_config.keys())))
@@ -60,7 +63,7 @@ async def get_query_page(request: Request):
     Load the query page and present a "triplet query".
     """
     exp_config = await _ensure_initialized()
-    uid = "salmon-{}".format(np.random.randint(2**32 - 1))
+    uid = "salmon-{}".format(np.random.randint(2 ** 32 - 1))
     puid = sha256(uid)[:16]
     items = {
         "puid": puid,
@@ -73,48 +76,14 @@ async def get_query_page(request: Request):
     return templates.TemplateResponse("query_page.html", items)
 
 
-@app.get("/get_query", tags=["public"])
-async def get_query() -> Dict[str, int]:
-    """
-    Get the objects for a triplet query
-
-    Returns
-    -------
-    `d : Dict[str, int]`. Indices for different objects.
-
-    """
-    exp_config = await _ensure_initialized()
-    n = exp_config["n"]
-    h, l, r = list(np.random.choice(n, size=3, replace=False))
-    logger.info("Query [h, l, r]=[%d, %d, %d] served", h, l, r)
-    return {"head": int(h), "left": int(l), "right": int(r)}
+@app.get("/query", tags=["public"])
+async def get_query() -> Dict[str, Union[int, str, float]]:
+    r = httpx.get(f"http://backend:8400/query")
+    return r.json()
 
 
-class Answer(BaseModel):
-    """
-    An answer to a triplet query. head, left and right are integers
-    from '/get_query'. The 'winner' is an integer that is most similar to 'head',
-    and must be one of 'left' and 'right'.
-
-    'puid' is the "participant unique ID", and is optional.
-
-    """
-
-    head: int
-    left: int
-    right: int
-    winner: int
-    puid: str = ""
-    response_time: float = -1
-    network_latency: float = -1
-
-
-def _write(data: dict, filename: str):
-    with open(filename, "w") as f:
-        ujson.dump(data, f)
-
-@app.post("/process_answer", tags=["public"])
-def process_answer(ans: Answer):
+@app.post("/answer", tags=["public"])
+async def process_answer(ans: manager.Answer):
     """
     Process the answer, and append the received answer (alongside participant
     UID) to the database.
@@ -127,11 +96,8 @@ def process_answer(ans: Answer):
 
     """
     d = ujson.loads(ans.json())
-    logger.info("Answer received: %s", d)
     d.update({"time_received": time()})
-    fname = f"{d['puid']}-{time()}.json"
-    x = threading.Thread(target=_write, args=(d, fname))
-    x.start()
-
-    rj.jsonarrappend("responses", root, d)
+    name = d["name"]
+    rj.jsonarrappend(f"alg-{name}-answers", root, copy(d))
+    rj.jsonarrappend("all-responses", root, copy(d))
     return {"success": True}

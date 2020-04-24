@@ -1,38 +1,32 @@
-import sys
-from typing import Dict, Any, List
+import hashlib
 import os
-import yaml
-from time import time
-import hashlib, uuid
-from copy import copy, deepcopy
 import pathlib
-from datetime import datetime, timedelta
-import json
-from io import StringIO
 import pprint
-from functools import lru_cache
+import sys
 import traceback
+from copy import deepcopy
+from datetime import datetime
+from io import StringIO
 from textwrap import dedent
+from time import sleep, time
+from typing import Any, Dict
 
-import numpy as np
-
-from rejson import Client, Path
 import pandas as pd
-import altair as alt
-import matplotlib.pyplot as plt
-
-from fastapi import File, UploadFile, Depends, HTTPException, Form
-from fastapi.logger import logger as fastapi_logger
-from starlette.requests import Request
+import requests as httpx
+import yaml
+from fastapi import Depends, File, HTTPException
+from fastapi.responses import PlainTextResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
+from rejson import Client, Path
+from starlette.exceptions import HTTPException as StarletteHTTPException
+from starlette.requests import Request
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.status import HTTP_401_UNAUTHORIZED
-from fastapi.responses import PlainTextResponse
-from starlette.exceptions import HTTPException as StarletteHTTPException
 
+from . import manager
+from .plotting import _any_outliers, network_latency, time_histogram, time_human_delay
 from .public import _ensure_initialized, app, templates
-from .utils import ServerException, get_logger, _extract_zipfile, _format_target
-from .plotting import time_histogram, _any_outliers, time_human_delay, network_latency
+from .utils import ServerException, _extract_zipfile, _format_target, get_logger
 
 security = HTTPBasic()
 
@@ -103,11 +97,11 @@ def upload_form():
 
 async def _get_config(exp: bytes, targets_file: bytes) -> Dict[str, Any]:
     config = yaml.load(exp, Loader=yaml.SafeLoader)
-    logger.info(config)
     exp_config: Dict = {
         "instructions": "Default instructions (can include <i>arbitrary</i> HTML)",
         "max_queries": None,
         "debrief": "Thanks!",
+        "samplers": {"random": {"class": "RandomSampling"}},
     }
     exp_config.update(config)
     exp_config["targets"] = [str(x) for x in exp_config["targets"]]
@@ -118,7 +112,7 @@ async def _get_config(exp: bytes, targets_file: bytes) -> Dict[str, Any]:
         exp_config["targets"] = targets
 
     exp_config["n"] = len(exp_config["targets"])
-    logger.info(exp_config)
+    logger.info("initializing experinment with %s", exp_config)
     return exp_config
 
 
@@ -148,6 +142,19 @@ async def process_form(
     targets_file: bytes = File(default=""),
     authorized: bool = Depends(_authorize),
 ):
+    try:
+        return await _process_form(request, exp, targets_file)
+    except Exception as e:
+        msg = exception_to_string(e)
+        logger.error(msg)
+        raise ExpParsingError(status_code=500, detail=msg)
+
+
+async def _process_form(
+    request: Request,
+    exp: bytes = File(default=""),
+    targets_file: bytes = File(default=""),
+):
     """
     The uploaded file needs to have the following keys:
 
@@ -170,20 +177,31 @@ async def process_form(
         - max_queries: 25
     """
     logger.info("salmon.__version__ = %s", app.version)
-    try:
-        exp_config = await _get_config(exp, targets_file)
-    except Exception as e:
-        msg = exception_to_string(e)
-        raise ExpParsingError(status_code=500, detail=msg)
+    exp_config = await _get_config(exp, targets_file)
 
     rj.jsonset("exp_config", root, exp_config)
-    rj.jsonset("responses", root, [])
+
+    # Start the backend
+    names = list(exp_config["samplers"].keys())
+    rj.jsonset("samplers", root, names)
+    for name in names:
+        rj.jsonset(f"alg-{name}-answers", root, [])
+        # Not set because rj.zadd doesn't require it
+        # don't touch! rj.jsonset(f"alg-{name}-queries", root, [])
+        try:
+            httpx.post(f"http://backend:8400/init/{name}")
+        except Exception as e:
+            msg = exception_to_string(e)
+            logger.error(msg)
+            raise ExpParsingError(status_code=500, detail=msg)
+
     _time = time()
     rj.jsonset("start_time", root, _time)
     rj.jsonset("start_datetime", root, datetime.now().isoformat())
+    rj.jsonset("all-responses", root, [])
 
     nice_config = pprint.pformat(exp_config)
-    logger.warning("Experiment initialized with\nexp_config=%s", nice_config)
+    logger.info("Experiment initialized with\nexp_config=%s", nice_config)
     response = dedent(
         """<html><body>
         <br><br>
@@ -222,8 +240,28 @@ def reset(force: int = 0, authorized=Depends(_authorize), tags=["private"]):
         logger.error(
             "Resetting, force=True and authorized. Removing data from database"
         )
+
+        # Stop background jobs (ie adaptive algs)
+        rj.jsonset("reset", root, True)
+        if "samplers" in rj.keys():
+            samplers = rj.jsonget("samplers")
+            stopped = {name: False for name in samplers}
+            while True:
+                for name in stopped:
+                    if f"stopped-{name}" in rj.keys():
+                        stopped[name] = rj.jsonget(f"stopped-{name}")
+                if all(stopped.values()):
+                    logger.info(f"stopped={stopped}")
+                    break
+                sleep(1)
+
+        r = httpx.post(f"http://backend:8400/reset")
+        if r.status_code != 200:
+            raise HTTPException(500, Exception(r))
+
         rj.flushdb()
-        rj.jsonset("responses", root, [])
+        logger.info("After reset, rj.keys=%s", rj.keys())
+        rj.jsonset("responses", root, {})
         rj.jsonset("start_time", root, -1)
         rj.jsonset("start_datetime", root, "-1")
         rj.jsonset("exp_config", root, {})
@@ -232,9 +270,13 @@ def reset(force: int = 0, authorized=Depends(_authorize), tags=["private"]):
     return {"success": False}
 
 
-@app.get("/get_responses", tags=["private"])
+@app.get("/responses", tags=["private"])
 async def get_responses(authorized: bool = Depends(_authorize)) -> Dict[str, Any]:
-    out = await _get_responses()
+    exp_config = await _ensure_initialized()
+    targets = exp_config["targets"]
+    start = rj.jsonget("start_time")
+    responses = await _get_responses()
+    out = await _format_responses(responses, targets, start)
     return JSONResponse(
         out, headers={"Content-Disposition": 'attachment; filename="responses.json"'}
     )
@@ -259,35 +301,13 @@ async def _get_responses():
     This file will be downloaded.
 
     """
-    exp_config = await _ensure_initialized()
-    responses = rj.jsonget("responses")
-    logger.info("getting %s responses", len(responses))
-    targets = exp_config["targets"]
-    out: List[Dict[str, Any]] = []
-    start = rj.jsonget("start_time")
+    responses = rj.jsonget("all-responses")
+    return responses
 
-    for datum in responses:
-        out.append(datum)
-        datetime_received = timedelta(seconds=datum["time_received"]) + datetime(
-            1970, 1, 1
-        )
-        new_data = {
-            key + "_object": targets[datum[key]]
-            for key in ["left", "right", "head", "winner"]
-        }
-        new_data.update(
-            {
-                key + "_filename": _get_filename(new_data[f"{key}_object"])
-                for key in ["left", "right", "head", "winner"]
-            }
-        )
-        new_data.update(
-            {
-                "time_received_since_start": datum["time_received"] - start,
-                "datetime_received": datetime_received.isoformat(),
-            }
-        )
-        out[-1].update(new_data)
+
+async def _format_responses(responses, targets, start):
+    logger.info("getting %s responses", len(responses))
+    out = manager.get_responses(responses, targets, start_time=start)
     return out
 
 
@@ -298,16 +318,11 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
     exp_config = await _ensure_initialized()
     exp_config = deepcopy(exp_config)
     targets = exp_config.pop("targets")
+    start = rj.jsonget("start_time")
+
     responses = await _get_responses()
-    df = pd.DataFrame(
-        responses,
-        columns=[
-            "puid",
-            "response_time",
-            "time_received_since_start",
-            "network_latency",
-        ],
-    )
+    df = pd.DataFrame(responses)
+    df["time_received_since_start"] = df["time_received"] - start
 
     if len(responses) >= 2:
         try:
@@ -379,6 +394,17 @@ async def get_logs(request: Request, authorized: bool = Depends(_authorize)):
     for file in files:
         with open(str(file), "r") as f:
             out[file.name] = f.readlines()
+    return JSONResponse(out)
+
+
+@app.get("/meta", tags=["private"])
+async def get_meta(request: Request, authorized: bool = Depends(_authorize)):
+    responses = await _get_responses()
+    df = pd.DataFrame(responses)
+    out = {
+        "responses": len(df),
+        "participants": df.puid.nunique(),
+    }
     return JSONResponse(out)
 
 

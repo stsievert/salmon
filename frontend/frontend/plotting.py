@@ -1,6 +1,6 @@
-import numpy as np
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
+import numpy as np
 
 from .utils import get_logger
 
@@ -35,6 +35,7 @@ def _any_outliers(x, low=True, high=True):
         return _high or _low
     else:
         raise ValueError(f"high={high}, low={low}")
+
 
 async def time_human_delay(delay):
     w = 3

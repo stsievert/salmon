@@ -1,13 +1,12 @@
+import hashlib
 import logging
 import logging.config
-from pathlib import Path
+import os
 from io import BytesIO
 from pathlib import Path
-from zipfile import ZipFile
-import os
 from textwrap import dedent
-import hashlib
 from typing import Any
+from zipfile import ZipFile
 
 from fastapi import HTTPException
 
@@ -85,6 +84,7 @@ def _format_target(file: Path):
             "Supported extensions are ['png', 'gif', 'jpg', 'bmp', "
             "'jpeg', 'svg', 'mov' or 'mp4']"
         )
+
 
 def sha256(x: Any) -> str:
     if not isinstance(x, (str, bytes)):

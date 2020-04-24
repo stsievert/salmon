@@ -1,9 +1,9 @@
-import random
 import itertools
+import random
 
-from distributed.utils import sleep, time
-import scipy.stats as stats
 import requests
+import scipy.stats as stats
+from distributed.utils import sleep, time
 from joblib import Parallel, delayed
 
 
