@@ -12,8 +12,29 @@ API the must conform to below:
 
    backend.algs.Runner
 
+Configuration
+-------------
 
+
+Adaptive algorithm API
+----------------------
+Runner
+^^^^^^
 .. currentmodule:: backend.algs
 
 .. autoclass:: Runner
    :members:
+
+RandomSampling
+^^^^^^^^^^^^^^
+
+.. autoclass:: RandomSampling
+
+   .. automethod:: __init__
+
+RoundRobin
+^^^^^^^^^^
+
+.. autoclass:: RoundRobin
+
+   .. automethod:: __init__
