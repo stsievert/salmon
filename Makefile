@@ -1,7 +1,7 @@
 FORCE: ;
 
 loop: FORCE
-	python deploy.py
+	python versioning.py
 	docker-compose stop
 	docker-compose rm -f
 	docker-compose build
@@ -9,7 +9,7 @@ loop: FORCE
 	docker-compose logs -f
 
 release: FORCE
-	echo "Run these commands:\ngit tag -a VERSION\ngit push --tags"
+	echo "Run these commands:\n\ngit tag -a VERSION\npython versioning.py\ngit add .; git commit --amend\ngit push --tags"
 
 frontend: FORCE
 	docker run -i -t salmon_frontend /bin/bash
