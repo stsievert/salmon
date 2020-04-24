@@ -1,7 +1,7 @@
 # Turning off transparent huge-paging is recommended by Redis
 # https://redis.io/topics/latency
-echo never > /sys/kernel/mm/transparent_hugepage/enabled
-echo never > /sys/kernel/mm/transparent_hugepage/defrag
+sudo sh -c "echo never > /sys/kernel/mm/transparent_hugepage/enabled"
+sudo sh -c "echo never > /sys/kernel/mm/transparent_hugepage/defrag"
 
 ## Enable swapping memory to disk to prevent OOM errors
 # https://www.digitalocean.com/community/tutorials/how-to-add-swap-space-on-ubuntu-16-04
