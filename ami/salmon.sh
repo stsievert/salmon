@@ -19,7 +19,6 @@ if [ -d "/home/ubuntu/salmon" ]; then
     sudo systemctl start salmon
     cd /home/ubuntu/salmon
 
-
     # Install fresh verison of Docker
     # https://docs.docker.com/install/linux/docker-ce/ubuntu/
     sudo apt-get remove -y docker docker-engine docker.io containerd runc
@@ -41,6 +40,7 @@ if [ -d "/home/ubuntu/salmon" ]; then
     cd /home/ubuntu/salmon; sudo docker-compose build
 fi
 
+sudo bash /home/ubuntu/salmon/ami/configure-server.sh
 cd /home/ubuntu/salmon; sudo docker-compose up
 
 # Instructions for deploying to EC2: https://askubuntu.com/questions/919054/how-do-i-run-a-single-command-at-startup-using-systemd

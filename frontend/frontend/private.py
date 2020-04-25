@@ -7,9 +7,10 @@ import traceback
 from copy import deepcopy
 from datetime import datetime
 from io import StringIO
+import itertools
 from textwrap import dedent
 from time import sleep, time
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 import pandas as pd
 import requests as httpx
@@ -46,10 +47,12 @@ def _salt(password: str) -> str:
 
 
 def _authorize(credentials: HTTPBasicCredentials = Depends(security)) -> bool:
-    logger.info("Seeing if authorized access")
-    if os.environ.get("SALMON_NO_AUTH", False):
+    SALMON_NO_AUTH = os.environ.get("SALMON_NO_AUTH", False)
+    logger.info(f"Seeing if authorized access with SALMON_NO_AUTH={SALMON_NO_AUTH}")
+    if SALMON_NO_AUTH:
         return True
 
+    logger.info("SALMON_NO_AUTH is False")
     if credentials.username != "foo" or _salt(credentials.password) != EXPECTED_PWORD:
         logger.info("Not authorized")
         raise HTTPException(
@@ -57,6 +60,7 @@ def _authorize(credentials: HTTPBasicCredentials = Depends(security)) -> bool:
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Basic"},
         )
+    logger.info("Authorized: true")
     return True
 
 
@@ -117,7 +121,7 @@ async def _get_config(exp: bytes, targets_file: bytes) -> Dict[str, Any]:
 
 
 def exception_to_string(excp):
-    stack = traceback.extract_stack()[:-3] + traceback.extract_tb(
+    stack = traceback.extract_stack() + traceback.extract_tb(
         excp.__traceback__
     )  # add limit=??
     pretty = traceback.format_list(stack)
@@ -145,6 +149,9 @@ async def process_form(
     try:
         return await _process_form(request, exp, targets_file)
     except Exception as e:
+        reset(force=True, timeout=2)
+        if isinstance(e, ExpParsingError):
+            raise e
         msg = exception_to_string(e)
         logger.error(msg)
         raise ExpParsingError(status_code=500, detail=msg)
@@ -188,12 +195,14 @@ async def _process_form(
         rj.jsonset(f"alg-{name}-answers", root, [])
         # Not set because rj.zadd doesn't require it
         # don't touch! rj.jsonset(f"alg-{name}-queries", root, [])
-        try:
-            httpx.post(f"http://backend:8400/init/{name}")
-        except Exception as e:
-            msg = exception_to_string(e)
+        logger.info("initializing algorithm {name}...")
+        r = httpx.post(f"http://backend:8400/init/{name}")
+        if r.status_code != 200:
+            msg = "Algorithm errored on initialization.\n\n" + r.text
+            logger.error("Error! r.text = %s", r.text)
             logger.error(msg)
             raise ExpParsingError(status_code=500, detail=msg)
+        logger.info("done initializing {name}.")
 
     _time = time()
     rj.jsonset("start_time", root, _time)
@@ -220,7 +229,12 @@ async def _process_form(
 
 @app.delete("/reset", tags=["private"])
 @app.get("/reset", tags=["private"])
-def reset(force: int = 0, authorized=Depends(_authorize), tags=["private"]):
+def reset(
+    force: int = 0,
+    authorized=Depends(_authorize),
+    tags=["private"],
+    timeout: Optional[int] = None,
+):
     """
     Delete all data from the database. This requires authentication.
 
@@ -246,7 +260,8 @@ def reset(force: int = 0, authorized=Depends(_authorize), tags=["private"]):
         if "samplers" in rj.keys():
             samplers = rj.jsonget("samplers")
             stopped = {name: False for name in samplers}
-            while True:
+            for k in itertools.count():
+                rj.jsonset("reset", root, True)
                 for name in stopped:
                     if f"stopped-{name}" in rj.keys():
                         stopped[name] = rj.jsonget(f"stopped-{name}")
@@ -254,10 +269,10 @@ def reset(force: int = 0, authorized=Depends(_authorize), tags=["private"]):
                     logger.info(f"stopped={stopped}")
                     break
                 sleep(1)
-
-        r = httpx.post(f"http://backend:8400/reset")
-        if r.status_code != 200:
-            raise HTTPException(500, Exception(r))
+                logger.info(f"Waited {k + 1} seconds for {name} to stop...")
+                if timeout and k > timeout:
+                    logger.info(f"Hit timeout={timeout} for {name}. Brekaing")
+                    break
 
         rj.flushdb()
         logger.info("After reset, rj.keys=%s", rj.keys())
@@ -301,7 +316,7 @@ async def _get_responses():
     This file will be downloaded.
 
     """
-    responses = rj.jsonget("all-responses")
+    responses = rj.jsonget("all-responses", root)
     return responses
 
 
@@ -321,10 +336,12 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
     start = rj.jsonget("start_time")
 
     responses = await _get_responses()
-    df = pd.DataFrame(responses)
-    df["time_received_since_start"] = df["time_received"] - start
+    df = pd.DataFrame(
+        responses, columns=["puid", "time_received", "response_time", "network_latency"]
+    )
 
     if len(responses) >= 2:
+        df["time_received_since_start"] = df["time_received"] - start
         try:
             r = await time_histogram(df.time_received_since_start)
         except:
@@ -400,7 +417,7 @@ async def get_logs(request: Request, authorized: bool = Depends(_authorize)):
 @app.get("/meta", tags=["private"])
 async def get_meta(request: Request, authorized: bool = Depends(_authorize)):
     responses = await _get_responses()
-    df = pd.DataFrame(responses)
+    df = pd.DataFrame(responses, columns=["puid"])
     out = {
         "responses": len(df),
         "participants": df.puid.nunique(),

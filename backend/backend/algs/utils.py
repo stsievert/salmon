@@ -5,9 +5,11 @@ from pydantic import BaseModel
 from rejson import Client as RedisClient
 from rejson import Path
 
+from ..utils import get_logger
+
 Query = Tuple[int, Tuple[int, int]]  # head, (choice 1, choice 2)
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 class Answer(BaseModel):
@@ -46,19 +48,11 @@ def serialize_query(q: Query) -> str:
     return f"{h}-{a}-{b}"
 
 
-def deserialize_query(serialized_query: str) -> Dict[str, int]:
-    h, l, r = serialized_query.split("-")
-    return {
-        "head": int(h),
-        "left": int(l),
-        "right": int(r),
-    }
-
-
 class Runner:
     """
     Run an adaptive algorithm.
     """
+
     def run(self, name: str, client, rj: RedisClient):
         """
         Run the algorithm.

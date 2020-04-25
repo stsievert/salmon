@@ -139,6 +139,8 @@ async function send(winner, id) {
         "puid": puid,
         "response_time": response_time,
         "network_latency": latency,
+        "score": score,
+        "name": name,
     })
   );
 }
@@ -149,6 +151,8 @@ function getquery(){
       head = data["head"];
       right = data["right"];
       left = data["left"];
+      score = data["score"];
+      name = data["name"];
       $("#q-left").html(targets[left]);
       $("#q-right").html(targets[right]);
       $("#q-head").html(targets[head]);

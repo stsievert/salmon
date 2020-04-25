@@ -11,3 +11,5 @@ altair
 matplotlib
 joblib
 scikit-learn
+gunicorn
+starlette-prometheus

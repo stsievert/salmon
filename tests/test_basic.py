@@ -88,6 +88,8 @@ def test_basics(server):
     r = server.get("/responses", auth=(username, password))
     assert r.status_code == 200
     assert "exception" not in r.text
+    df = pd.DataFrame(r.json())
+    assert len(df) == 30
 
     r = server.get("/dashboard", auth=(username, password))
     assert r.status_code == 200
@@ -97,7 +99,7 @@ def test_bad_file_upload(server):
     server.authorize()
     server.get("/init_exp")
     exp = Path(__file__).parent / "data" / "bad_exp.yaml"
-    r = server.post("/init_exp", data={"exp": exp.read_bytes()}, error=True,)
+    r = server.post("/init_exp", data={"exp": exp.read_bytes()}, error=True)
     assert r.status_code == 500
     assert "Error!" in r.text
     assert "yaml" in r.text

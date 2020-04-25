@@ -1,5 +1,6 @@
 import pathlib
 from copy import copy
+import random
 from textwrap import dedent
 from time import time
 from typing import Dict, Union
@@ -11,6 +12,7 @@ from rejson import Client, Path
 from starlette.requests import Request
 from starlette.staticfiles import StaticFiles
 from starlette.templating import Jinja2Templates
+from starlette_prometheus import metrics, PrometheusMiddleware
 
 import ujson
 
@@ -30,6 +32,9 @@ app = FastAPI(
         """
     ),
 )
+app.add_middleware(PrometheusMiddleware)
+app.add_route("/metrics/", metrics)
+
 pkg_dir = pathlib.Path(__file__).absolute().parent
 app.mount("/static", StaticFiles(directory=str(pkg_dir / "static")), name="static")
 templates = Jinja2Templates(directory="templates")
@@ -78,8 +83,18 @@ async def get_query_page(request: Request):
 
 @app.get("/query", tags=["public"])
 async def get_query() -> Dict[str, Union[int, str, float]]:
-    r = httpx.get(f"http://backend:8400/query")
-    return r.json()
+    names = rj.jsonget("samplers")
+    name = random.choice(names)
+
+    r = httpx.get(f"http://backend:8400/query-{name}")
+    if r.status_code == 200:
+        return r.json()
+
+    key = f"alg-{name}-queries"
+    queries = rj.bzpopmax(key)
+    _, serialized_query, score = queries
+    q = manager.deserialize_query(serialized_query)
+    return {"name": name, "score": score, **q}
 
 
 @app.post("/answer", tags=["public"])
@@ -98,6 +113,7 @@ async def process_answer(ans: manager.Answer):
     d = ujson.loads(ans.json())
     d.update({"time_received": time()})
     name = d["name"]
-    rj.jsonarrappend(f"alg-{name}-answers", root, copy(d))
-    rj.jsonarrappend("all-responses", root, copy(d))
+    logger.warning("answer recieved: %s", d)
+    rj.jsonarrappend(f"alg-{name}-answers", root, d)
+    rj.jsonarrappend("all-responses", root, d)
     return {"success": True}
