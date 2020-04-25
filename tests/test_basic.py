@@ -105,6 +105,7 @@ def test_bad_file_upload(server):
     assert "yaml" in r.text
     assert "-\tfoo" in r.text
 
+
 def test_no_repeats(server):
     server.authorize()
     exp = Path(__file__).parent / "data" / "exp.yaml"

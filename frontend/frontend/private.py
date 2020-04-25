@@ -229,7 +229,12 @@ async def _process_form(
 
 @app.delete("/reset", tags=["private"])
 @app.get("/reset", tags=["private"])
-def reset(force: int = 0, authorized=Depends(_authorize), tags=["private"], timeout: Optional[int]=None):
+def reset(
+    force: int = 0,
+    authorized=Depends(_authorize),
+    tags=["private"],
+    timeout: Optional[int] = None,
+):
     """
     Delete all data from the database. This requires authentication.
 
@@ -331,7 +336,9 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
     start = rj.jsonget("start_time")
 
     responses = await _get_responses()
-    df = pd.DataFrame(responses, columns=["puid", "time_received", "response_time", "network_latency"])
+    df = pd.DataFrame(
+        responses, columns=["puid", "time_received", "response_time", "network_latency"]
+    )
 
     if len(responses) >= 2:
         df["time_received_since_start"] = df["time_received"] - start

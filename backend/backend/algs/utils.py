@@ -52,6 +52,7 @@ class Runner:
     """
     Run an adaptive algorithm.
     """
+
     def run(self, name: str, client, rj: RedisClient):
         """
         Run the algorithm.

@@ -17,6 +17,7 @@ rj = Client(host="redis", port=6379, decode_responses=True)
 
 app = FastAPI(title="salmon-backend")
 
+
 def exception_to_string(excp):
     stack = traceback.extract_stack() + traceback.extract_tb(
         excp.__traceback__
@@ -35,6 +36,7 @@ class ExpParsingError(StarletteHTTPException):
 async def http_exception_handler(request, exc):
     return PlainTextResponse(exc.detail, status_code=exc.status_code)
 
+
 @app.post("/init/{name}")
 async def init(name: str, background_tasks: BackgroundTasks) -> bool:
     # TODO: Better handling of exceptions if params keys don't match
@@ -52,6 +54,7 @@ async def init(name: str, background_tasks: BackgroundTasks) -> bool:
         raise ExpParsingError(status_code=500, detail=msg)
 
     if hasattr(alg, "get_query"):
+
         @app.get(f"/query-{name}")
         def _get_query():
             q, score = alg.get_query()
