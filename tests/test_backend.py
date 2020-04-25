@@ -34,3 +34,12 @@ def test_backend_basics(server):
     r = server.get("/responses")
     df = pd.DataFrame(r.json())
     assert (df.score > 0).all()
+
+
+def test_init_errors_propogate(server):
+    server.authorize()
+    server.get("/init_exp")
+    exp = Path(__file__).parent / "data" / "exp-active-bad.yaml"
+    r = server.post("/init_exp", data={"exp": exp.read_bytes()}, error=True)
+    assert r.status_code == 500
+    assert "module 'backend.algs' has no attribute 'RoundRobinFooBad'" in r.text

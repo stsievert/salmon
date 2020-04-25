@@ -3,7 +3,6 @@ import traceback
 from typing import Dict, Union
 
 from fastapi import BackgroundTasks, FastAPI, HTTPException
-from fastapi.responses import PlainTextResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from rejson import Client, Path
 
@@ -18,7 +17,7 @@ rj = Client(host="redis", port=6379, decode_responses=True)
 app = FastAPI(title="salmon-backend")
 
 def exception_to_string(excp):
-    stack = traceback.extract_stack() + traceback.extract_tb(
+    stack = traceback.extract_stack()[:-3] + traceback.extract_tb(
         excp.__traceback__
     )  # add limit=??
     pretty = traceback.format_list(stack)
@@ -48,8 +47,8 @@ async def init(name: str, background_tasks: BackgroundTasks) -> bool:
         alg = Alg(n=config["n"], **params)
     except Exception as e:
         msg = exception_to_string(e)
-        logger.error(f"Error on alg={name} init: {msg}")
-        raise ExpParsingError(status_code=500, detail=msg)
+        logging.error(f"Error on alg={name} init: {msg}")
+        raise HTTPException(status_code=500, details=msg)
 
     if hasattr(alg, "get_query"):
         @app.get(f"/query-{name}")

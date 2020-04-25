@@ -12,7 +12,7 @@ from rejson import Client, Path
 from starlette.requests import Request
 from starlette.staticfiles import StaticFiles
 from starlette.templating import Jinja2Templates
-from starlette_prometheus import metrics, PrometheusMiddleware
+#  from starlette_prometheus import metrics, PrometheusMiddleware
 
 import ujson
 
@@ -32,8 +32,8 @@ app = FastAPI(
         """
     ),
 )
-app.add_middleware(PrometheusMiddleware)
-app.add_route("/metrics/", metrics)
+#  app.add_middleware(PrometheusMiddleware)
+#  app.add_route("/metrics/", metrics)
 
 pkg_dir = pathlib.Path(__file__).absolute().parent
 app.mount("/static", StaticFiles(directory=str(pkg_dir / "static")), name="static")

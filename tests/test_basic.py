@@ -99,12 +99,11 @@ def test_bad_file_upload(server):
     server.authorize()
     server.get("/init_exp")
     exp = Path(__file__).parent / "data" / "bad_exp.yaml"
-    r = server.post("/init_exp", data={"exp": exp.read_bytes()}, error=True,)
+    r = server.post("/init_exp", data={"exp": exp.read_bytes()}, error=True)
     assert r.status_code == 500
     assert "Error!" in r.text
     assert "yaml" in r.text
     assert "-\tfoo" in r.text
-
 
 def test_no_repeats(server):
     server.authorize()
