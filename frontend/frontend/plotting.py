@@ -8,7 +8,7 @@ import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import holoviews as hv
+from holoviews.util import renderer
 import hvplot.pandas
 
 from .utils import get_logger
