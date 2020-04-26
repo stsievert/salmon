@@ -83,6 +83,5 @@ async def network_latency(df: pd.DataFrame):
     return await hv_to_bokeh(p)
 
 async def hv_to_bokeh(p):
-    renderer = hv.renderer('bokeh')
-    hvplot = renderer.get_plot(p)
+    hvplot = renderer('bokeh').get_plot(p)
     return hvplot.state
