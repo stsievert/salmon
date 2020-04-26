@@ -13,3 +13,4 @@ joblib
 scikit-learn
 gunicorn
 starlette-prometheus
+bokeh==2.0.1

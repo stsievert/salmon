@@ -54,6 +54,7 @@ def test_basics(server):
         assert server_ans["puid"] == puid
     df = pd.DataFrame(r.json())
     expected_cols = {
+        "start_time",
         "time_received_since_start",
         "time_received",
         "head",

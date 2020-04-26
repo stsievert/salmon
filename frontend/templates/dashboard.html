@@ -18,12 +18,19 @@
 </style>
 </head>
 <body>
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src="https://cdn.bokeh.org/bokeh/release/bokeh-2.0.1.min.js"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-2.0.1.min.js"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.bokeh.org/bokeh/release/bokeh-tables-2.0.1.min.js"
+        crossorigin="anonymous"></script>
+
 
 <br>
 <div class="container">
@@ -33,9 +40,10 @@
     </div>
     <div class="row justify-content-center">
       <ul>
-        <li><a href="/">Query page</a></li>
+        <li>Start time: {{ start }} UTC </li>
         <li>Number of responses: {{num_responses }}</li>
         <li>Number of participants: {{ num_participants }}</li>
+        <li><a href="/">Query page</a></li>
         <li><a href="/responses">Responses</a></li>
       </ul>
     </div>
@@ -53,11 +61,21 @@
       <h2>Plots</h2>
     </div>
     <div class="row justify-content-center">
-      <div id="plot">{{ hist_time_responses | safe }}</div>
+      <div id="activity-plot"></div>
+      <script>
+      plot = JSON.parse({{ activity | tojson }});
+      Bokeh.embed.embed_item(plot, "activity-plot");
+      </script>
     </div>
     <div class="row justify-content-center">
-      <span id="plot">{{ hist_human_delay | safe }}</span>
-      <span id="plot">{{ hist_network_latency | safe }}</span>
+      <span id="responses"></span>
+      <span id="network-latency"></span>
+      <script>
+      plot = JSON.parse({{ response_times | tojson }});
+      Bokeh.embed.embed_item(plot, "responses");
+      plot = JSON.parse({{ network_latency | tojson }});
+      Bokeh.embed.embed_item(plot, "network-latency");
+      </script>
     </div>
     <div class="row justify-content-center">
       <h2>Targets</h2>
