@@ -172,7 +172,9 @@ latency = end_latency - start_latency;
 function iterate(winner, id) {
   send(winner, id);
   if ((max_queries > 0) && (num_queries >= max_queries)){
-    $('#debriefModal').modal("show")
+    $("#debriefModal").modal("show")
+    $("#q-left").addClass("no-more-queries");
+    $("#q-right").addClass("no-more-queries");
   }
   else {
     getquery();
@@ -197,10 +199,11 @@ document.onkeydown = function checkKey(e) {
 
   left_disabled = $("#q-left").hasClass("answer-sent");
   right_disabled = $("#q-right").hasClass("answer-sent");
-  console.log(left_disabled || right_disabled);
-  if (left_disabled || right_disabled){
-    return
-  }
+  if (left_disabled || right_disabled){ return }
+  left_disabled = $("#q-left").hasClass("no-more-queries");
+  right_disabled = $("#q-right").hasClass("no-more-queries");
+  if (left_disabled || right_disabled){ return }
+
   start_latency = getTime();
   if (e.keyCode == '37') { // left arrow
     iterate(left, "#q-left");
