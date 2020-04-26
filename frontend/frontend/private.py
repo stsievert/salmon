@@ -5,9 +5,10 @@ import pprint
 import sys
 import traceback
 from copy import deepcopy
-from datetime import datetime
+from datetime import datetime, timedelta
 from io import StringIO
 import itertools
+import json
 from textwrap import dedent
 from time import sleep, time
 from typing import Any, Dict, Optional
@@ -15,6 +16,7 @@ from typing import Any, Dict, Optional
 import pandas as pd
 import requests as httpx
 import yaml
+from bokeh.embed import json_item
 from fastapi import Depends, File, HTTPException
 from fastapi.responses import PlainTextResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
@@ -25,7 +27,7 @@ from starlette.responses import HTMLResponse, JSONResponse
 from starlette.status import HTTP_401_UNAUTHORIZED
 
 from . import manager
-from .plotting import _any_outliers, network_latency, time_histogram, time_human_delay
+from . import plotting
 from .public import _ensure_initialized, app, templates
 from .utils import ServerException, _extract_zipfile, _format_target, get_logger
 
@@ -334,68 +336,37 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
     exp_config = deepcopy(exp_config)
     targets = exp_config.pop("targets")
     start = rj.jsonget("start_time")
+    start_datetime = timedelta(seconds=start) + datetime(1970, 1, 1)
 
     responses = await _get_responses()
     df = pd.DataFrame(
         responses, columns=["puid", "time_received", "response_time", "network_latency"]
     )
+    df["start_time"] = start
 
-    if len(responses) >= 2:
-        df["time_received_since_start"] = df["time_received"] - start
-        try:
-            r = await time_histogram(df.time_received_since_start)
-        except:
-            name, descr, tr = sys.exc_info()
-            hist_time_responses = f"Time responses received:\n{name} exception: {descr}"
-        else:
-            fig, ax = r
-            ax.set_title("Time responses received")
-            with StringIO() as f:
-                fig.savefig(f, format="svg", bbox_inches="tight")
-                hist_time_responses = f.getvalue()
-        try:
-            r = await time_human_delay(df.response_time.to_numpy())
-        except:
-            name, descr, tr = sys.exc_info()
-            hist_human_delay = (
-                f"Histogram of human response time:\n{name} exception: {descr}"
-            )
-        else:
-            fig, ax = r
-            with StringIO() as f:
-                fig.savefig(f, format="svg", bbox_inches="tight")
-                hist_human_delay = f.getvalue()
-        try:
-            r = await network_latency(df.network_latency.to_numpy())
-        except Exception as e:
-            name, descr, traceback = sys.exc_info()
-            hist_network_latency = f"Network latency:\n{name} exception: {descr}"
-        else:
-            fig, ax = r
-            with StringIO() as f:
-                fig.savefig(f, format="svg", bbox_inches="tight")
-                hist_network_latency = f.getvalue()
-    else:
-        msg = (
-            "Histogram of {} will appear here after at least 2 responses are collected"
-        )
-
-        hist_time_responses = msg.format("when responses are received")
-        hist_network_latency = msg.format("network latency")
-        hist_human_delay = msg.format("human response time")
-
+    activity = await plotting.activity(df, start)
+    response_times = await plotting.response_time(df)
+    network_latency = await plotting.network_latency(df)
+    plots = {
+        "activity": activity,
+        "response_times": response_times,
+        "network_latency": network_latency
+    }
+    logger.info("plot = %s", plots)
+    logger.info("plot types = %s", {k: type(v) for k, v in plots.items()})
+    plots = {k: json.dumps(json_item(v)) for k, v in plots.items()}
+    logger.info("plot types = %s", {k: type(v) for k, v in plots.items()})
     return templates.TemplateResponse(
         "dashboard.html",
         {
+            "start": start_datetime.isoformat()[:10 + 6],
             "request": request,
             "targets": targets,
             "exp_config": exp_config,
             "num_responses": len(responses),
             "num_participants": df.puid.nunique(),
-            "hist_time_responses": hist_time_responses,
-            "hist_human_delay": hist_human_delay,
-            "hist_network_latency": hist_network_latency,
             "filenames": [_get_filename(html) for html in targets],
+            **plots,
         },
     )
 

@@ -53,6 +53,7 @@ def get_responses(answers: List[Dict[str, Any]], targets, start_time=0):
         meta = {
             "time_received_since_start": datum["time_received"] - start,
             "datetime_received": datetime_received.isoformat(),
+            "start_time": start_time,
         }
         out[-1].update({**idxs, **names, **meta})
     return out
