@@ -350,16 +350,13 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
     plots = {
         "activity": activity,
         "response_times": response_times,
-        "network_latency": network_latency
+        "network_latency": network_latency,
     }
-    logger.info("plot = %s", plots)
-    logger.info("plot types = %s", {k: type(v) for k, v in plots.items()})
     plots = {k: json.dumps(json_item(v)) for k, v in plots.items()}
-    logger.info("plot types = %s", {k: type(v) for k, v in plots.items()})
     return templates.TemplateResponse(
         "dashboard.html",
         {
-            "start": start_datetime.isoformat()[:10 + 6],
+            "start": start_datetime.isoformat()[: 10 + 6],
             "request": request,
             "targets": targets,
             "exp_config": exp_config,
