@@ -101,7 +101,14 @@ async def response_time(df: pd.DataFrame):
     except ValueError:
         bins = 10
     bin_heights, edges = np.histogram(x, bins=bins)
-    p = _make_hist(f"Response time", "Time (s)", bin_heights, edges, width=300)
+    p = _make_hist(
+        f"Response time",
+        "Time (s)",
+        bin_heights,
+        edges,
+        width=300,
+        toolbar_location="below",
+    )
     return p
 
 
@@ -114,5 +121,12 @@ async def network_latency(df: pd.DataFrame):
     except ValueError:
         bins = 10
     bin_heights, edges = np.histogram(x, bins=bins)
-    p = _make_hist(f"Client side latency", "Time (s)", bin_heights, edges, width=300)
+    p = _make_hist(
+        f"Client side latency",
+        "Time (s)",
+        bin_heights,
+        edges,
+        width=300,
+        toolbar_location="below",
+    )
     return p
