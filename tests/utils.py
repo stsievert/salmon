@@ -61,4 +61,5 @@ def server():
     username, password = server.auth()
     r = server.get("/reset?force=1", auth=(username, password))
     assert r.json() == {"success": True}
-    dump.unlink(missing_ok=True)
+    if dump.exists():
+        dump.unlink()
