@@ -21,3 +21,5 @@ sudo sh -c "echo 'vm.swappiness=10' >> /etc/sysctl.conf "
 sudo apt install hugepages
 sudo hugeadm --thp-never
 sudo /bin/sed -i '$i /usr/bin/hugeadm --thp-never' /etc/rc.local
+
+sudo touch /home/ubuntu/salmon/ran-host
