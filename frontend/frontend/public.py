@@ -1,6 +1,7 @@
+import random
 import pathlib
 from copy import copy
-import random
+from datetime import datetime, timedelta
 from textwrap import dedent
 from time import time
 from typing import Dict, Union
@@ -116,4 +117,8 @@ async def process_answer(ans: manager.Answer):
     logger.warning("answer recieved: %s", d)
     rj.jsonarrappend(f"alg-{name}-answers", root, d)
     rj.jsonarrappend("all-responses", root, d)
+    last_save = rj.lastsave()
+    if (datetime.now() - last_save) >= timedelta(seconds=60 * 15):
+        rj.bgsave()
+
     return {"success": True}

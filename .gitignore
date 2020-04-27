@@ -1,6 +1,7 @@
 creds.yaml
 __MACOSX
 dask-worker-space
+frontend/dump.rdb
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
