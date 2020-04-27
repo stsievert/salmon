@@ -1,5 +1,6 @@
 import json
 import os
+import pickle
 import random
 from pathlib import Path
 from time import sleep, time
@@ -138,3 +139,45 @@ def test_meta(server):
     meta = server.get("/meta").json()
     assert meta["participants"] == num_ans
     assert meta["responses"] == num_ans
+
+
+def test_saves_state(server):
+    dump = Path(__file__).absolute().parent.parent / "frontend" / "dump.rdb"
+    assert not dump.exists()
+    server.authorize()
+    exp = Path(__file__).parent / "data" / "exp.yaml"
+    server.post("/init_exp", data={"exp": exp.read_bytes()})
+    for k in range(10):
+        q = server.get("/query").json()
+        ans = {"winner": random.choice([q["left"], q["right"]]), "puid": str(k), **q}
+        server.post("/answer", data=ans)
+    assert dump.exists()
+
+def test_download_restore(server):
+    dump = Path(__file__).absolute().parent.parent / "frontend" / "dump.rdb"
+    assert not dump.exists()
+    server.authorize()
+    exp = Path(__file__).parent / "data" / "exp.yaml"
+    server.post("/init_exp", data={"exp": exp.read_bytes()})
+    data = []
+    for k in range(10):
+        q = server.get("/query").json()
+        ans = {"winner": random.choice([q["left"], q["right"]]), "puid": str(k), **q}
+        server.post("/answer", data=ans)
+        data.append(ans)
+    r = server.get("/download")
+    assert all(x in r.headers["content-disposition"] for x in ["exp-", ".rdb"])
+    exp2 = r.content
+    with open(str(exp), "r") as f:
+        config = yaml.load(f)
+    exp_len = len(pickle.dumps(config)) + len(pickle.dumps(ans))
+
+    # It's storing approximately the same number of bytes as answers + config
+    assert exp_len / 2 <= len(exp2) <= exp_len * 2
+
+    ## Now, does it restore correctly?
+    # Remove the file
+    dump.unlink()
+    # Restore the experiment
+    server.post("/restore", data={"rdb": exp.read_bytes()})
+    assert dump.exists()
