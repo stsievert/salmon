@@ -1,4 +1,5 @@
 import random
+import pickle
 import traceback
 from typing import Dict, Union
 
@@ -44,10 +45,14 @@ async def init(name: str, background_tasks: BackgroundTasks) -> bool:
     config = rj.jsonget("exp_config")
 
     try:
-        params = config["samplers"][name]
-        _class = params.pop("class")
-        Alg = getattr(algs, _class)
-        alg = Alg(n=config["n"], **params)
+        if f"state-{name}" in rj.keys():
+            state = rj.get(f"state-{name}")
+            alg = pickle.loads(state)
+        else:
+            params = config["samplers"][name]
+            _class = params.pop("class")
+            Alg = getattr(algs, _class)
+            alg = Alg(n=config["n"], **params)
     except Exception as e:
         msg = exception_to_string(e)
         logger.error(f"Error on alg={name} init: {msg}")
