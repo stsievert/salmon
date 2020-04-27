@@ -426,7 +426,9 @@ async def download(request: Request, authorized: bool = Depends(_authorize)):
 
 
 @app.post("/restore", tags=["private"])
-async def restore(rdb:bytes = File(default=""), authorized: bool = Depends(_authorize)):
+async def restore(
+    rdb: bytes = File(default=""), authorized: bool = Depends(_authorize)
+):
     with open("dump.rdb", "wb") as f:
         f.write(rdb)
     msg = dedent(
@@ -441,6 +443,7 @@ async def restore(rdb:bytes = File(default=""), authorized: bool = Depends(_auth
         """
     )
     return HTMLResponse(msg)
+
 
 def _get_filename(html):
     html = str(html)

@@ -153,6 +153,7 @@ def test_saves_state(server):
         server.post("/answer", data=ans)
     assert dump.exists()
 
+
 def test_download_restore(server):
     dump = Path(__file__).absolute().parent.parent / "frontend" / "dump.rdb"
     assert not dump.exists()
