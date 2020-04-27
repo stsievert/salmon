@@ -1,6 +1,7 @@
+import random
 import pathlib
 from copy import copy
-import random
+from datetime import datetime, timedelta
 from textwrap import dedent
 from time import time
 from typing import Dict, Union
@@ -24,6 +25,17 @@ logger = get_logger(__name__)
 root = Path.rootPath()
 rj = Client(host="redis", port=6379, decode_responses=True)
 
+
+def start_algs():
+    if "samplers" not in rj.keys():
+        return
+    names = rj.jsonget("samplers")
+    for name in names:
+        r = httpx.post(f"http://backend:8400/init/{name}")
+        assert r.status_code == 200
+    return True
+
+
 app = FastAPI(
     title="Salmon",
     description=dedent(
@@ -31,6 +43,7 @@ app = FastAPI(
         \n\n***Warning!*** This platform is experimental and unstable.
         """
     ),
+    on_startup=[start_algs],
 )
 app.add_middleware(PrometheusMiddleware)
 app.add_route("/metrics/", metrics)
@@ -116,4 +129,8 @@ async def process_answer(ans: manager.Answer):
     logger.warning("answer recieved: %s", d)
     rj.jsonarrappend(f"alg-{name}-answers", root, d)
     rj.jsonarrappend("all-responses", root, d)
+    last_save = rj.lastsave()
+    if (datetime.now() - last_save) >= timedelta(seconds=60 * 15):
+        rj.bgsave()
+
     return {"success": True}

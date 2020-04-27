@@ -27,7 +27,7 @@ class Server:
         return r
 
     def post(self, endpoint, data=None, status_code=200, error=False, **kwargs):
-        if isinstance(data, dict) and "exp" not in data:
+        if isinstance(data, dict) and "exp" not in data and "rdb" not in data:
             data = json.dumps(data)
         if self._authorized:
             kwargs.update({"auth": (self._username, self._password)})
@@ -52,8 +52,14 @@ class Server:
 
 @pytest.fixture()
 def server():
+    dump = Path(__file__).absolute().parent.parent / "frontend" / "dump.rdb"
+    if dump.exists():
+        dump.unlink()
+
     server = Server("http://127.0.0.1:8421")
     yield server
     username, password = server.auth()
     r = server.get("/reset?force=1", auth=(username, password))
     assert r.json() == {"success": True}
+    if dump.exists():
+        dump.unlink()

@@ -1,4 +1,5 @@
 import logging
+import pickle
 from typing import Any, Dict, List, Tuple
 
 from pydantic import BaseModel
@@ -91,6 +92,12 @@ class Runner:
             if "reset" in rj.keys() and rj.jsonget("reset"):
                 self.reset(name, client, rj)
                 return
+            self.save(name, client, rj)
+
+    def save(self, name, client, rj: RedisClient) -> bool:
+        out = pickle.dumps(self)
+        rj.set(f"state-{name}", out)
+        return True
 
     def reset(self, name, client, rj):
         """

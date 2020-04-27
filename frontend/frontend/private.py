@@ -15,10 +15,11 @@ from typing import Any, Dict, Optional
 
 import pandas as pd
 import requests as httpx
+import msgpack
 import yaml
 from bokeh.embed import json_item
 from fastapi import Depends, File, HTTPException
-from fastapi.responses import PlainTextResponse
+from fastapi.responses import PlainTextResponse, FileResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from rejson import Client, Path
 from starlette.exceptions import HTTPException as StarletteHTTPException
@@ -85,6 +86,8 @@ def upload_form():
         )
     body = dedent(
         f"""<body>
+        <div style="display: table; margin: 0 auto; max-width: 600px;">
+        <h3 style="text-align: center;">Option 1: initialize new experiment.</h3>
         <div style="text-align: center; padding: 10px;">
         <form action="/init_exp" enctype="multipart/form-data" method="post">
         <ul>
@@ -94,6 +97,23 @@ def upload_form():
         <input type="submit">
         </form>
         {warning}
+        </div>
+        <h3 style="text-align: center;">Option 2: restore from old experiment.</h3>
+        <div style="text-align: center; padding: 10px;">
+        <p>Instructions:
+        <ol style="text-align: left;">
+        <li>Upload database dump from Salmon. The name should look like
+          <code>exp-2020-03-12.rdb</code> if downloaded on March 12th, 2020.</li>
+        <li>Restart the server. On Amazon EC2, this means choosing the EC2 instance state "reboot".</li>
+        </ol>
+        </p>
+        <form action="/init_exp" enctype="multipart/form-data" method="post">
+        <ul>
+          <li>Database file : <input name="rdb" type="file"></li>
+        </ul>
+        <input type="submit">
+        </form>
+        </div>
         </div>
         </body>
         """
@@ -146,10 +166,11 @@ async def process_form(
     request: Request,
     exp: bytes = File(default=""),
     targets_file: bytes = File(default=""),
+    rdb: bytes = File(default=""),
     authorized: bool = Depends(_authorize),
 ):
     try:
-        return await _process_form(request, exp, targets_file)
+        return await _process_form(request, exp, targets_file, rdb)
     except Exception as e:
         reset(force=True, timeout=2)
         if isinstance(e, ExpParsingError):
@@ -163,6 +184,7 @@ async def _process_form(
     request: Request,
     exp: bytes = File(default=""),
     targets_file: bytes = File(default=""),
+    rdb: bytes = File(default=""),
 ):
     """
     The uploaded file needs to have the following keys:
@@ -185,6 +207,8 @@ async def _process_form(
         - instructions: "Foobar!"
         - max_queries: 25
     """
+    if rdb:
+        return await restore(rdb=rdb)
     logger.info("salmon.__version__ = %s", app.version)
     exp_config = await _get_config(exp, targets_file)
 
@@ -197,19 +221,20 @@ async def _process_form(
         rj.jsonset(f"alg-{name}-answers", root, [])
         # Not set because rj.zadd doesn't require it
         # don't touch! rj.jsonset(f"alg-{name}-queries", root, [])
-        logger.info("initializing algorithm {name}...")
+        logger.info(f"initializing algorithm {name}...")
         r = httpx.post(f"http://backend:8400/init/{name}")
         if r.status_code != 200:
             msg = "Algorithm errored on initialization.\n\n" + r.text
             logger.error("Error! r.text = %s", r.text)
             logger.error(msg)
             raise ExpParsingError(status_code=500, detail=msg)
-        logger.info("done initializing {name}.")
+        logger.info(f"done initializing {name}.")
 
     _time = time()
     rj.jsonset("start_time", root, _time)
     rj.jsonset("start_datetime", root, datetime.now().isoformat())
     rj.jsonset("all-responses", root, [])
+    rj.bgsave()
 
     nice_config = pprint.pformat(exp_config)
     logger.info("Experiment initialized with\nexp_config=%s", nice_config)
@@ -391,6 +416,33 @@ async def get_meta(request: Request, authorized: bool = Depends(_authorize)):
         "participants": df.puid.nunique(),
     }
     return JSONResponse(out)
+
+
+@app.get("/download", tags=["private"])
+async def download(request: Request, authorized: bool = Depends(_authorize)):
+    fname = datetime.now().isoformat()[:10]
+    headers = {"Content-Disposition": f'attachment; filename="exp-{fname}.rdb"'}
+    return FileResponse("dump.rdb", headers=headers)
+
+
+@app.post("/restore", tags=["private"])
+async def restore(
+    rdb: bytes = File(default=""), authorized: bool = Depends(_authorize)
+):
+    with open("dump.rdb", "wb") as f:
+        f.write(rdb)
+    msg = dedent(
+        """
+        <div style="display: table; margin: 0 auto; max-width: 600px;">
+        <p>
+        Restart the server for these changes to take effect.
+        On Amazon EC2, select the \"Actions > Instance State > Reboot\"
+        </p>
+        <p><i>Warning: restart is required to restore experiment</i></p>
+        </div>
+        """
+    )
+    return HTMLResponse(msg)
 
 
 def _get_filename(html):
