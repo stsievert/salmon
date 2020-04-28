@@ -1,8 +1,8 @@
 import random
-import cloudpickle
 import traceback
 from typing import Dict, Union
 
+import cloudpickle
 from fastapi import BackgroundTasks, FastAPI, HTTPException
 from fastapi.responses import PlainTextResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
