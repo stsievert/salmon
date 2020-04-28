@@ -46,7 +46,9 @@ async def init(name: str, background_tasks: BackgroundTasks) -> bool:
 
     try:
         if f"state-{name}" in rj.keys():
-            state = rj.get(f"state-{name}")
+            # See https://github.com/andymccurdy/redis-py/issues/1006
+            rj2 = Client(host="redis", port=6379, decode_responses=False)
+            state = rj2.get(f"state-{name}")
             alg = cloudpickle.loads(state)
         else:
             params = config["samplers"][name]

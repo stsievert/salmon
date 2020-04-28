@@ -1,3 +1,4 @@
+import asyncio
 import hashlib
 import os
 import pathlib
@@ -420,6 +421,11 @@ async def get_meta(request: Request, authorized: bool = Depends(_authorize)):
 
 @app.get("/download", tags=["private"])
 async def download(request: Request, authorized: bool = Depends(_authorize)):
+    async def _save(rj):
+        return rj.save()
+
+    start = datetime.now()
+    await _save(rj)
     fname = datetime.now().isoformat()[:10]
     headers = {"Content-Disposition": f'attachment; filename="exp-{fname}.rdb"'}
     return FileResponse("dump.rdb", headers=headers)
