@@ -2,6 +2,7 @@ import logging
 import pickle
 from typing import Any, Dict, List, Tuple
 
+import cloudpickle
 from pydantic import BaseModel
 from rejson import Client as RedisClient
 from rejson import Path
@@ -95,7 +96,7 @@ class Runner:
             self.save(name, client, rj)
 
     def save(self, name, client, rj: RedisClient) -> bool:
-        out = pickle.dumps(self)
+        out = cloudpickle.dumps(self)
         rj.set(f"state-{name}", out)
         return True
 

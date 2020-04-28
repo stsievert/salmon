@@ -1,5 +1,5 @@
 import random
-import pickle
+import cloudpickle
 import traceback
 from typing import Dict, Union
 
@@ -47,7 +47,7 @@ async def init(name: str, background_tasks: BackgroundTasks) -> bool:
     try:
         if f"state-{name}" in rj.keys():
             state = rj.get(f"state-{name}")
-            alg = pickle.loads(state)
+            alg = cloudpickle.loads(state)
         else:
             params = config["samplers"][name]
             _class = params.pop("class")
