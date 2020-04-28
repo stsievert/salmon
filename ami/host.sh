@@ -11,7 +11,7 @@ sudo sh -c "echo never > /sys/kernel/mm/transparent_hugepage/defrag"
 # https://www.digitalocean.com/community/tutorials/how-to-add-swap-space-on-ubuntu-16-04
 # Enable swap
 sudo echo "    Turning on memory swapping"
-sudo fallocate -l 16G /swapfile  # create file
+sudo fallocate -l 32G /swapfile  # create file
 sudo chmod 600 /swapfile  # change permissions
 sudo mkswap /swapfile  # mark as swap
 sudo swapon /swapfile  # enable swapping
