@@ -19,7 +19,7 @@ sudo swapon /swapfile  # enable swapping
 # Make it persist on reboot
 sudo echo "    Making memory swap persisent on reboot..."
 sudo cp /etc/fstab /etc/fstab.bak
-echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+sudo echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
 sudo sysctl vm.swappiness=10
 sudo sh -c "echo 'vm.swappiness=10' >> /etc/sysctl.conf "
 

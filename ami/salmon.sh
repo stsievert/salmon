@@ -50,4 +50,4 @@ cd /home/ubuntu/salmon; sudo docker-compose up
 # sudo systemctl enable salmon
 #
 ## View logs with
-# systemctl -l status salmon
+# systemctl -l status salmon --lines 2000
