@@ -440,11 +440,12 @@ async def restore(
     msg = dedent(
         """
         <div style="display: table; margin: 0 auto; max-width: 600px;">
+        <br><br>
+        <p><i><b>Your experiment is not initialized yet! Restart is required to restore experiment.</i></b></p>
         <p>
-        Restart the server for these changes to take effect.
-        On Amazon EC2, select the \"Actions > Instance State > Reboot\"
+        To do this on Amazon EC2, select the \"Actions > Instance State > Reboot\"
         </p>
-        <p><i>Warning: restart is required to restore experiment</i></p>
+        <p>After you reboot visit <a href="/dashboard">/dashboard</a></p>
         </div>
         """
     )
