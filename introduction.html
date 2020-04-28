@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Getting started &mdash; Salmon v0.1-alpha documentation</title>
+  <title>Introduction &mdash; Salmon v0.1-alpha documentation</title>
   
 
   
@@ -25,6 +25,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -33,10 +34,11 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/basic.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Performance" href="performance.html" />
-    <link rel="prev" title="Welcome to Salmon’s documentation!" href="index.html" /> 
+    <link rel="next" title="Adaptive algorithms" href="adaptive.html" />
+    <link rel="prev" title="Getting started" href="getting-started.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -82,15 +84,9 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting started</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#experimentalist">Experimentalist</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#experiment-launch">Experiment Launch</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#local-machine">Local machine</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#developer">Developer</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting started</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="adaptive.html">Adaptive algorithms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="performance.html">Performance</a></li>
 </ul>
 
@@ -137,7 +133,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Getting started</li>
+      <li>Introduction</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -158,117 +154,16 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="getting-started">
-<h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="experimentalist">
-<h2>Experimentalist<a class="headerlink" href="#experimentalist" title="Permalink to this headline">¶</a></h2>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>This process is only ready for testing. It is <strong>not</strong> ready for deployment.</p>
-</div>
-<ol class="arabic simple">
-<li><p>Sign into Amazon AWS (<a class="reference external" href="http://aws.amazon.com/">http://aws.amazon.com/</a>)</p></li>
-<li><p>Select the “Oregon” region (or <code class="docutils literal notranslate"><span class="pre">us-west-2</span></code>) in the upper right.</p></li>
-<li><p>Go to Amazon EC2</p></li>
-<li><p>Launch a new instance (the big blue button or square orange button).</p></li>
-<li><p>Select AMI <code class="docutils literal notranslate"><span class="pre">ami-0e804e857258e967e</span></code> titled “Salmon”. It appears in
-Community AMIs after searching “Salmon”.</p></li>
-<li><p>Don’t click the big blue button yet. Continue to the rules page, and add
-these rules:</p></li>
-</ol>
-<a class="reference internal image-reference" href="_images/networking-rule.png"><img alt="_images/networking-rule.png" class="align-center" src="_images/networking-rule.png" style="width: 80%;" /></a>
-<p>Then after this AMI is finished launching and initializing, go to</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">[url]:8421/init_exp</span></code> to initialize an experiment</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">[url]:8421/dashboard</span></code> to view all relevant links, including links to
-the…</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>The <strong>query page.</strong> This is the URL that shows the relevant triplets. This
-is the URL to be sent to a crowdsourcing service.</p></li>
-<li><p><strong>API documentation</strong>. This includes information on how to launch an
-experiment, and what files need to be uploaded. View the documentation for
-the POST request <code class="docutils literal notranslate"><span class="pre">/init_exp</span></code> for more detail.</p></li>
-<li><p><strong>Responses</strong>. To get all human responses.</p></li>
-<li><p><strong>Logs</strong>. This is very useful for debugging.</p></li>
-</ul>
-</div></blockquote>
-</li>
-</ul>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>If you have an issue with the machine running Salmon, be sure to include the
-logs when contacting the Salmon developers. They’d also appreciate it if
-you left the machine running.</p>
-</div>
-<p><code class="docutils literal notranslate"><span class="pre">[url]</span></code> is the Amazon public DNS or public IP. This means that going to
-<code class="docutils literal notranslate"><span class="pre">[url]:8421/foo</span></code> might mean going to
-<code class="docutils literal notranslate"><span class="pre">http://ec2-35-164-240-184.us-west-2.compute.amazonaws.com:8421/foo</span></code>.</p>
-<div class="section" id="experiment-launch">
-<h3>Experiment Launch<a class="headerlink" href="#experiment-launch" title="Permalink to this headline">¶</a></h3>
-<p>Visit <code class="docutils literal notranslate"><span class="pre">[url]:8421/init_exp</span></code> to initialize an experiment. This will ask for
-the following:</p>
-<ul class="simple">
-<li><p>a file describing the experiment</p></li>
-<li><p>a username and password</p></li>
-</ul>
-<p>Here’s an example experiment file:</p>
-<div class="highlight-yaml notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="c1"># filename: exp.yaml</span>
-<span class="nt">targets</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">object 1</span>
-  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;i&gt;&lt;b&gt;arbitrary HTML&lt;/b&gt;&lt;/i&gt;</span>
-  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;img alt=&quot;bode miller&quot; src=&quot;https://www.denverpost.com/wp-content/uploads/2005/02/bode-miller-one-ski.jpg&quot; /&gt;</span>
-  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;img alt=&quot;hoby cat&quot; src=&quot;https://cdn.hobiecat.com/digital_asset_profiles/wildcat-action-12-full_jpg_1600x1600__generated.jpg&quot; /&gt;</span>
-  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;img alt=&quot;bode miller&quot; src=&quot;https://nbcolympictalk.files.wordpress.com/2013/11/bode-miller.jpg&quot; /&gt;</span>
-<span class="nt">instructions</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">These are &lt;b&gt;instructions&lt;/b&gt;!</span>
-<span class="nt">max_queries</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">10</span>
-<span class="nt">debrief</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Thanks for participating!</span>
-</pre></div>
-</td></tr></table></div>
-<p>This file follows the <a class="reference external" href="https://yaml.org/">YAML specification</a>.
-Each target is a piece of HTML, and will be rendered correctly on the
-experiment page.</p>
-<p>If you visit <code class="docutils literal notranslate"><span class="pre">[url]</span></code>, you will see a query page:</p>
-<a class="reference internal image-reference" href="_images/query_page.png"><img alt="_images/query_page.png" class="align-center" src="_images/query_page.png" style="width: 500px;" /></a>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>This image is almost certainly out of date.</p>
-</div>
-</div>
-</div>
-<div class="section" id="local-machine">
-<h2>Local machine<a class="headerlink" href="#local-machine" title="Permalink to this headline">¶</a></h2>
-<p>On your local machine as a developer? Run this following code in a terminal:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/stsievert/salmon.git
-</pre></div>
-</div>
-<p>First, <a class="reference external" href="https://www.docker.com/products/docker-desktop">install Docker</a> and <a class="reference external" href="https://git-scm.com/downloads">install Git</a>. After that, run the following code:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> salmon
-$ docker-compose build
-$ docker-compose up
-$ <span class="c1"># visit http://localhost:8421/init_exp or http://localhost:8421/docs</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="developer">
-<h2>Developer<a class="headerlink" href="#developer" title="Permalink to this headline">¶</a></h2>
-<p>Follow the instructions for local machine launch.</p>
-<p>If you make changes to this code, follow these instructions:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ docker-compose stop
-$ docker-compose build
-$ docker-compose up
-</pre></div>
-</div>
-</div>
+  <div class="section" id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>Salmon is primarily a platform to efficiently collect “triplet queries.” These
+queries are of the form “is object <span class="math notranslate nohighlight">\(a\)</span> more similar to object <span class="math notranslate nohighlight">\(b\)</span>
+or <span class="math notranslate nohighlight">\(b\)</span>?” An example is shown below with facial similarities:</p>
+<a class="reference internal image-reference" href="_images/query.png"><img alt="_images/query.png" class="align-center" src="_images/query.png" style="width: 400px;" /></a>
+<p>These queries are interesting because they provide some relative similarity
+structure: a response might indicate that object <span class="math notranslate nohighlight">\(a\)</span> is closer to object
+<span class="math notranslate nohighlight">\(b\)</span> than object <span class="math notranslate nohighlight">\(c\)</span> as determined by humans and the instructions
+they are given.</p>
 </div>
 
 
@@ -279,10 +174,10 @@ $ docker-compose up
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="performance.html" class="btn btn-neutral float-right" title="Performance" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="adaptive.html" class="btn btn-neutral float-right" title="Adaptive algorithms" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to Salmon’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="getting-started.html" class="btn btn-neutral float-left" title="Getting started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
