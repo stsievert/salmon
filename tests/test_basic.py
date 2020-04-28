@@ -168,17 +168,8 @@ def test_download_restore(server):
         data.append(ans)
     r = server.get("/download")
     assert all(x in r.headers["content-disposition"] for x in ["exp-", ".rdb"])
-    exp2 = r.content
-    with open(str(exp), "r") as f:
-        config = yaml.load(f)
-    exp_len = len(pickle.dumps(config)) + len(pickle.dumps(ans))
 
-    # It's storing approximately the same number of bytes as answers + config
-    assert exp_len / 2 <= len(exp2) <= exp_len * 2
-
-    ## Now, does it restore correctly?
-    # Remove the file
+    # Does it restore?
     dump.unlink()
-    # Restore the experiment
     server.post("/restore", data={"rdb": exp.read_bytes()})
     assert dump.exists()

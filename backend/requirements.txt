@@ -12,3 +12,4 @@ matplotlib
 joblib
 scikit-learn
 gunicorn
+cloudpickle

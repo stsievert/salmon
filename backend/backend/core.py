@@ -1,8 +1,8 @@
 import random
-import pickle
 import traceback
 from typing import Dict, Union
 
+import cloudpickle
 from fastapi import BackgroundTasks, FastAPI, HTTPException
 from fastapi.responses import PlainTextResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
@@ -46,8 +46,10 @@ async def init(name: str, background_tasks: BackgroundTasks) -> bool:
 
     try:
         if f"state-{name}" in rj.keys():
-            state = rj.get(f"state-{name}")
-            alg = pickle.loads(state)
+            # See https://github.com/andymccurdy/redis-py/issues/1006
+            rj2 = Client(host="redis", port=6379, decode_responses=False)
+            state = rj2.get(f"state-{name}")
+            alg = cloudpickle.loads(state)
         else:
             params = config["samplers"][name]
             _class = params.pop("class")

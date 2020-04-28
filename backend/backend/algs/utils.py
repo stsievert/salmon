@@ -2,6 +2,7 @@ import logging
 import pickle
 from typing import Any, Dict, List, Tuple
 
+import cloudpickle
 from pydantic import BaseModel
 from rejson import Client as RedisClient
 from rejson import Path
@@ -92,11 +93,12 @@ class Runner:
             if "reset" in rj.keys() and rj.jsonget("reset"):
                 self.reset(name, client, rj)
                 return
-            self.save(name, client, rj)
+            self.save(name)
 
-    def save(self, name, client, rj: RedisClient) -> bool:
-        out = pickle.dumps(self)
-        rj.set(f"state-{name}", out)
+    def save(self, name) -> bool:
+        rj2 = RedisClient(host="redis", port=6379, decode_responses=False)
+        out = cloudpickle.dumps(self)
+        rj2.set(f"state-{name}", out)
         return True
 
     def reset(self, name, client, rj):
