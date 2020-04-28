@@ -1,6 +1,10 @@
 Adaptive algorithms
 ===================
 
+.. warning::
+
+   This interface is experimental and may change at any time.
+
 There are many queries to ask about in triplet queries: with :math:`n` objects
 there are :math:`\mathcal{O}(n^3)` questions that could be presented.
 

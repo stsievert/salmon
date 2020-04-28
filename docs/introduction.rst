@@ -12,4 +12,5 @@ or :math:`b`?" An example is shown below with facial similarities:
 
 These queries are interesting because they provide some relative similarity
 structure: a response might indicate that object :math:`a` is closer to object
-:math:`b` than object :math:`c` in some sense.
+:math:`b` than object :math:`c` as determined by humans and the instructions
+they are given.
