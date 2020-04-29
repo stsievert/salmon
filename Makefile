@@ -10,11 +10,8 @@ loop: FORCE
 release: FORCE
 	echo "Run these commands:\n\ngit tag -a VERSION\npython versioning.py\ngit add .; git commit --amend\ngit push --tags"
 
-frontend: FORCE
-	docker run -i -t salmon /bin/bash
-
-backend: FORCE
-	docker run -i -t salmon /bin/bash
+login: FORCE
+	docker run -i -t salmon_server /bin/bash
 
 watch: FORCE
 	# for debugging on ec2, `sudo make watch`

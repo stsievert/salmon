@@ -1,4 +1,4 @@
-from .._round_robin import RoundRobin
+from salmon.backend.algs import RoundRobin
 import cloudpickle
 import numpy as np
 

@@ -1,15 +1,16 @@
 import asyncio
 import hashlib
 import os
+import itertools
+import json
 import pathlib
 import pprint
 import sys
+import shutil
 import traceback
 from copy import deepcopy
 from datetime import datetime, timedelta
 from io import StringIO
-import itertools
-import json
 from textwrap import dedent
 from time import sleep, time
 from typing import Any, Dict, Optional
@@ -38,6 +39,7 @@ security = HTTPBasic()
 root = Path.rootPath()
 rj = Client(host="redis", port=6379, decode_responses=True)
 logger = get_logger(__name__)
+DIR = pathlib.Path(__file__).absolute().parent
 
 EXPECTED_PWORD = "331a5156c7f0a529ed1de8d9aba35da95655c341df0ca0bbb2b69b3be319ecf0"
 
@@ -223,7 +225,7 @@ async def _process_form(
         # Not set because rj.zadd doesn't require it
         # don't touch! rj.jsonset(f"alg-{name}-queries", root, [])
         logger.info(f"initializing algorithm {name}...")
-        r = httpx.post(f"http://backend:8400/init/{name}")
+        r = httpx.post(f"http://localhost:8400/init/{name}")
         if r.status_code != 200:
             msg = "Algorithm errored on initialization.\n\n" + r.text
             logger.error("Error! r.text = %s", r.text)
@@ -308,6 +310,14 @@ def reset(
         rj.jsonset("start_time", root, -1)
         rj.jsonset("start_datetime", root, "-1")
         rj.jsonset("exp_config", root, {})
+
+        now = datetime.now().isoformat()[:10 + 6]
+        files = [f.name for f in DIR.glob("*")]
+        logger.info(files)
+        logger.info("dump.rdb" in files)
+        if "dump.rdb" in files:
+            logger.error(f"Moving dump.rdb to dump-{now}.rdb")
+            shutil.move(str(DIR / "dump.rdb"), str(DIR / f"dump-{now}.rdb"))
         return {"success": True}
 
     return {"success": False}
@@ -400,7 +410,7 @@ async def get_logs(request: Request, authorized: bool = Depends(_authorize)):
     logger.info("Getting logs")
 
     items = {"request": request}
-    log_dir = pathlib.Path(__file__).absolute().parent / "logs"
+    log_dir = DIR / "logs"
     files = log_dir.glob("*.log")
     out = {}
     for file in files:
@@ -422,17 +432,17 @@ async def get_meta(request: Request, authorized: bool = Depends(_authorize)):
 
 @app.get("/download", tags=["private"])
 async def download(request: Request, authorized: bool = Depends(_authorize)):
-    await coroutine(rj.save)()
+    rj.save()
     fname = datetime.now().isoformat()[:10]
     headers = {"Content-Disposition": f'attachment; filename="exp-{fname}.rdb"'}
-    return FileResponse("dump.rdb", headers=headers)
+    return FileResponse(str(DIR / "dump.rdb"), headers=headers)
 
 
 @app.post("/restore", tags=["private"])
 async def restore(
     rdb: bytes = File(default=""), authorized: bool = Depends(_authorize)
 ):
-    with open("dump.rdb", "wb") as f:
+    with open(str(DIR / "dump.rdb"), "wb") as f:
         f.write(rdb)
     msg = dedent(
         """

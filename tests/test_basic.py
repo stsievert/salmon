@@ -142,9 +142,11 @@ def test_meta(server):
 
 
 def test_saves_state(server):
-    dump = Path(__file__).absolute().parent.parent / "frontend" / "dump.rdb"
-    assert not dump.exists()
     server.authorize()
+    server.get("/reset?force=1")
+    sleep(0.1)
+    dump = Path(__file__).absolute().parent.parent / "salmon" / "frontend" / "dump.rdb"
+    assert not dump.exists()
     exp = Path(__file__).parent / "data" / "exp.yaml"
     server.post("/init_exp", data={"exp": exp.read_bytes()})
     for k in range(10):
@@ -155,7 +157,7 @@ def test_saves_state(server):
 
 
 def test_download_restore(server):
-    dump = Path(__file__).absolute().parent.parent / "frontend" / "dump.rdb"
+    dump = Path(__file__).absolute().parent.parent / "salmon" / "frontend" / "dump.rdb"
     assert not dump.exists()
     server.authorize()
     exp = Path(__file__).parent / "data" / "exp.yaml"

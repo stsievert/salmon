@@ -31,7 +31,7 @@ def start_algs():
         return
     names = rj.jsonget("samplers")
     for name in names:
-        r = httpx.post(f"http://backend:8400/init/{name}")
+        r = httpx.post(f"http://localhost:8400/init/{name}")
         assert r.status_code == 200
     return True
 
@@ -53,7 +53,7 @@ app.mount("/static", StaticFiles(directory=str(pkg_dir / "static")), name="stati
 templates = Jinja2Templates(directory="templates")
 
 
-def _get_config():
+async def _get_config():
     return rj.jsonget("exp_config")
 
 
@@ -99,7 +99,7 @@ async def get_query() -> Dict[str, Union[int, str, float]]:
     names = rj.jsonget("samplers")
     name = random.choice(names)
 
-    r = httpx.get(f"http://backend:8400/query-{name}")
+    r = httpx.get(f"http://localhost:8400/query-{name}")
     if r.status_code == 200:
         return r.json()
 
