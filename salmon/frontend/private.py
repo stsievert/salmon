@@ -263,7 +263,7 @@ def reset(
     force: int = 0,
     authorized=Depends(_authorize),
     tags=["private"],
-    timeout: Optional[int] = None,
+    timeout: int = 2,
 ):
     """
     Delete all data from the database. This requires authentication.

@@ -21,10 +21,11 @@ def _get_query(n, random_state=None) -> Tuple[int, Tuple[int, int]]:
 
 
 class RandomSampling(Runner):
-    def __init__(self, n, random_state=None):
+    def __init__(self, n, random_state=None, name=""):
         self.n = n
         self.answers = []
         self.random_state = check_random_state(random_state)
+        super().__init__(name=name)
 
     def get_query(self) -> Tuple[Query, float]:
         h, (a, b) = _get_query(self.n, random_state=self.random_state)
@@ -34,14 +35,14 @@ class RandomSampling(Runner):
     def process_answers(self, ans: List[Answer]):
         self.answers.extend(ans)
 
-    def run(self, name, client, rj):
+    def run(self, client, rj):
         answers: List = []
         while True:
             if answers:
                 self.process_answers(answers)
                 answers = []
-            answers = get_answers(name, rj, clear=True)
+            answers = get_answers(self.name, rj, clear=True)
             if "reset" in rj.keys() and rj.jsonget("reset"):
-                self.reset(name, client, rj)
+                self.reset(client, rj)
                 return
             sleep(1)

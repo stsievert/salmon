@@ -26,11 +26,12 @@ def _score_query(q: Tuple[int, Tuple[int, int]]) -> float:
 
 
 class RoundRobin(Runner):
-    def __init__(self, n, random_state=None):
+    def __init__(self, n, random_state=None, name=""):
         self.n = n
         self.answers = []
         self.random_state = check_random_state(random_state)
         self.counter = 0
+        super().__init__(name=name)
 
     def get_queries(self) -> Query:
         logger.info(f"get_queries, self.counter={self.counter}")

@@ -54,7 +54,7 @@ async def init(name: str, background_tasks: BackgroundTasks) -> bool:
             params = config["samplers"][name]
             _class = params.pop("class")
             Alg = getattr(algs, _class)
-            alg = Alg(n=config["n"], **params)
+            alg = Alg(name=name, n=config["n"], **params)
     except Exception as e:
         msg = exception_to_string(e)
         logger.error(f"Error on alg={name} init: {msg}")
@@ -69,7 +69,7 @@ async def init(name: str, background_tasks: BackgroundTasks) -> bool:
 
     client = None
     logger.info(f"Starting algs={name}")
-    background_tasks.add_task(alg.run, name, client, rj)
+    background_tasks.add_task(alg.run, client, rj)
     return True
 
 

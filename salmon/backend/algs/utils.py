@@ -54,16 +54,20 @@ class Runner:
     """
     Run an adaptive algorithm.
     """
+    def __init__(self, name: str =""):
+        """
+        name : str
+            The algorithm name. This value is used to identify the algorithm
+            in the database.
+        """
+        self.name = name
 
-    def run(self, name: str, client, rj: RedisClient):
+    def run(self, client, rj: RedisClient):
         """
         Run the algorithm.
 
         Parameters
         ----------
-        name : str
-            The algorithm name. This value is used to identify the algorithm
-            in the database.
         client : DaskClient
             A client to Dask.
         rj : RedisClient
@@ -86,29 +90,29 @@ class Runner:
                 logger.info(f"Done processing answers.")
                 answers = []
             if self.clear:
-                clear_queries(name, rj)
+                clear_queries(self.name, rj)
             if queries:
-                post_queries(name, queries, scores, rj)
-            answers = get_answers(name, rj, clear=True)
+                post_queries(self.name, queries, scores, rj)
+            answers = get_answers(self.name, rj, clear=True)
             if "reset" in rj.keys() and rj.jsonget("reset"):
-                self.reset(name, client, rj)
+                self.reset(client, rj)
                 return
-            self.save(name)
+            self.save()
 
-    def save(self, name) -> bool:
+    def save(self) -> bool:
         rj2 = RedisClient(host="redis", port=6379, decode_responses=False)
         out = cloudpickle.dumps(self)
-        rj2.set(f"state-{name}", out)
+        rj2.set(f"state-{self.name}", out)
         return True
 
-    def reset(self, name, client, rj):
+    def reset(self, client, rj):
         """
         Reset the algorithm. The algorithm will be deleted shortly after
         this function is called.
         """
         reset = rj.jsonget("reset")
-        logger.info("reset=%s for %s", reset, name)
-        rj.jsonset(f"stopped-{name}", Path("."), True)
+        logger.info("reset=%s for %s", reset, self.name)
+        rj.jsonset(f"stopped-{self.name}", Path("."), True)
         return True
 
     @property
