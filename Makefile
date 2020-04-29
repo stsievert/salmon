@@ -1,7 +1,6 @@
 FORCE: ;
 
 loop: FORCE
-	python versioning.py
 	docker-compose stop
 	docker-compose rm -f
 	docker-compose build
@@ -12,10 +11,10 @@ release: FORCE
 	echo "Run these commands:\n\ngit tag -a VERSION\npython versioning.py\ngit add .; git commit --amend\ngit push --tags"
 
 frontend: FORCE
-	docker run -i -t salmon_frontend /bin/bash
+	docker run -i -t salmon /bin/bash
 
 backend: FORCE
-	docker run -i -t salmon_backend /bin/bash
+	docker run -i -t salmon /bin/bash
 
 watch: FORCE
 	# for debugging on ec2, `sudo make watch`

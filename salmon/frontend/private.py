@@ -358,6 +358,7 @@ async def _format_responses(responses, targets, start):
 @app.post("/dashboard", tags=["private"])
 async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)):
     logger.info("Getting dashboard")
+    rj.bgsave()
     exp_config = await _ensure_initialized()
     exp_config = deepcopy(exp_config)
     targets = exp_config.pop("targets")
@@ -421,11 +422,7 @@ async def get_meta(request: Request, authorized: bool = Depends(_authorize)):
 
 @app.get("/download", tags=["private"])
 async def download(request: Request, authorized: bool = Depends(_authorize)):
-    async def _save(rj):
-        return rj.save()
-
-    start = datetime.now()
-    await _save(rj)
+    await coroutine(rj.save)()
     fname = datetime.now().isoformat()[:10]
     headers = {"Content-Disposition": f'attachment; filename="exp-{fname}.rdb"'}
     return FileResponse("dump.rdb", headers=headers)

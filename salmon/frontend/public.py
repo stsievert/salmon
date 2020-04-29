@@ -60,7 +60,7 @@ def _get_config():
 async def _ensure_initialized():
     if "exp_config" not in rj:
         raise ServerException("No data has been uploaded")
-    exp_config = _get_config()
+    exp_config = await _get_config()
     expected_keys = [
         "targets",
         "samplers",
