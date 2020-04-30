@@ -5,7 +5,7 @@ import random
 from pathlib import Path
 from time import sleep, time
 from typing import Tuple
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import numpy as np
 import pandas as pd
@@ -167,16 +167,16 @@ def test_saves_state(server):
     # Make sure saved resetting saves experiment state
     before_reset = datetime.now()
     server.get("/reset?force=1")
-    sleep(1)
     files = [f.name for f in dir.glob("*.rdb")]
-    datetimes = [
-        datetime.strptime(x.replace("dump-", "").replace(".rdb", ""), "%Y-%m-%dT%H:%M")
-        for x in files
-    ]
-    # Database dump happened in the same minute
-    diff = [d - before_reset for d in datetimes]
-    print(diff)
-    assert sum(before_reset <= d for d in datetimes) == 1
+    assert len(files) == 1
+
+    _written_fname = files[0].replace("dump-", "").replace(".rdb", "")
+    written = datetime.strptime(_written_fname, "%Y-%m-%dT%H:%M")
+
+    print(before_reset)
+    print(written)
+    print(written - before_reset)
+    assert False
 
 
 def test_download_restore(server):
