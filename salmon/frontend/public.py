@@ -17,8 +17,9 @@ from starlette_prometheus import metrics, PrometheusMiddleware
 
 import ujson
 
-from . import manager
-from .utils import ServerException, get_logger, sha256
+from ..triplets import manager
+from .utils import ServerException, sha256
+from ..utils import get_logger
 
 logger = get_logger(__name__)
 

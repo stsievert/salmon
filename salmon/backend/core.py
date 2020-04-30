@@ -8,8 +8,8 @@ from fastapi.responses import PlainTextResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from rejson import Client, Path
 
-from . import algs
-from .utils import get_logger
+from ..triplets import algs
+from ..utils import get_logger
 
 logger = get_logger(__name__)
 

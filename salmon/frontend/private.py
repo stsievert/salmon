@@ -29,7 +29,7 @@ from starlette.requests import Request
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.status import HTTP_401_UNAUTHORIZED
 
-from . import manager
+from ..triplets import manager
 from . import plotting
 from .public import _ensure_initialized, app, templates
 from .utils import ServerException, _extract_zipfile, _format_target, get_logger

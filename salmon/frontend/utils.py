@@ -1,6 +1,4 @@
 import hashlib
-import logging
-import logging.config
 import os
 from io import BytesIO
 from pathlib import Path
@@ -10,23 +8,7 @@ from zipfile import ZipFile
 
 from fastapi import HTTPException
 
-
-def get_logger(name):
-    # Config from https://docs.python-guide.org/writing/logging/ and
-    # https://docs.python-guide.org/writing/logging/
-    logger = logging.getLogger(name)
-    formatter = logging.Formatter(
-        "%(asctime)s %(levelname)s from %(name)s: %(message)s"
-    )
-
-    handler2 = logging.StreamHandler()
-    handler2.setFormatter(formatter)
-    logger.addHandler(handler2)
-
-    logger.setLevel(logging.INFO)
-
-    return logger
-
+from ..utils import get_logger
 
 class ServerException(HTTPException):
     def __init__(self, msg):

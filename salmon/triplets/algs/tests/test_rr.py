@@ -1,6 +1,7 @@
-from salmon.backend.algs import RoundRobin
 import cloudpickle
 import numpy as np
+
+from salmon.triplets.algs import RoundRobin
 
 def test_rr():
     alg = RoundRobin(n=10, random_state=42)
