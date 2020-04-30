@@ -4,7 +4,8 @@ from typing import List, Tuple
 
 from sklearn.utils import check_random_state
 
-from .utils import Answer, Query, Runner, get_answers
+from .utils import Answer, Query
+from ...backend.alg import Runner, get_answers
 
 logger = logging.getLogger(__name__)
 
@@ -21,6 +22,19 @@ def _get_query(n, random_state=None) -> Tuple[int, Tuple[int, int]]:
 
 
 class RandomSampling(Runner):
+    """
+    Choose the triplet queries randomly, only ensuring objects are not repeated.
+
+    Parameters
+    ----------
+    n : int
+        Number of objects
+    random_state: Optional[int]
+        Seed for random generateor
+    name : str
+        Identifier of the algorithm
+
+    """
     def __init__(self, n, random_state=None, name=""):
         self.n = n
         self.answers = []

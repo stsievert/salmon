@@ -284,6 +284,14 @@ def reset(
         logger.error(
             "Resetting, force=True and authorized. Removing data from database"
         )
+        rj.save()
+        now = datetime.now().isoformat()[:10 + 6]
+        files = [f.name for f in DIR.glob("*")]
+        logger.info(files)
+        logger.info("dump.rdb" in files)
+        if "dump.rdb" in files:
+            logger.error(f"Moving dump.rdb to dump-{now}.rdb")
+            shutil.move(str(DIR / "dump.rdb"), str(DIR / f"dump-{now}.rdb"))
 
         # Stop background jobs (ie adaptive algs)
         rj.jsonset("reset", root, True)
@@ -311,13 +319,6 @@ def reset(
         rj.jsonset("start_datetime", root, "-1")
         rj.jsonset("exp_config", root, {})
 
-        now = datetime.now().isoformat()[:10 + 6]
-        files = [f.name for f in DIR.glob("*")]
-        logger.info(files)
-        logger.info("dump.rdb" in files)
-        if "dump.rdb" in files:
-            logger.error(f"Moving dump.rdb to dump-{now}.rdb")
-            shutil.move(str(DIR / "dump.rdb"), str(DIR / f"dump-{now}.rdb"))
         return {"success": True}
 
     return {"success": False}
@@ -393,7 +394,7 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
     return templates.TemplateResponse(
         "dashboard.html",
         {
-            "start": start_datetime.isoformat()[: 10 + 6],
+            "start": start_datetime.isoformat()[:10 + 6],
             "request": request,
             "targets": targets,
             "exp_config": exp_config,
@@ -433,7 +434,7 @@ async def get_meta(request: Request, authorized: bool = Depends(_authorize)):
 @app.get("/download", tags=["private"])
 async def download(request: Request, authorized: bool = Depends(_authorize)):
     rj.save()
-    fname = datetime.now().isoformat()[:10]
+    fname = datetime.now().isoformat()[:10 + 6]
     headers = {"Content-Disposition": f'attachment; filename="exp-{fname}.rdb"'}
     return FileResponse(str(DIR / "dump.rdb"), headers=headers)
 

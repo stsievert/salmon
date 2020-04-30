@@ -3,7 +3,9 @@ from typing import List, Tuple
 
 from sklearn.utils import check_random_state
 
-from .utils import Answer, Query, Runner
+from .utils import Answer, Query
+from ...backend.alg import Runner
+
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +28,19 @@ def _score_query(q: Tuple[int, Tuple[int, int]]) -> float:
 
 
 class RoundRobin(Runner):
+    """
+    Let the head of the triplet query rotate through the available items while choosing the bottom two items randomly.
+
+    Parameters
+    ----------
+    n : int
+        Number of objects
+    random_state: Optional[int]
+        Seed for random generateor
+    name : str
+        Identifier of the algorithm
+
+    """
     def __init__(self, n, random_state=None, name=""):
         self.n = n
         self.answers = []
