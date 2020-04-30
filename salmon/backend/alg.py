@@ -30,7 +30,6 @@ def serialize_query(q: Query) -> str:
     return f"{h}-{a}-{b}"
 
 
-
 def get_answers(name: str, rj: RedisClient, clear: bool = True) -> List[Answer]:
     if not clear:
         raise NotImplementedError
@@ -45,7 +44,8 @@ class Runner:
     """
     Run an adaptive algorithm.
     """
-    def __init__(self, name: str =""):
+
+    def __init__(self, name: str = ""):
         """
         name : str
             The algorithm name. This value is used to identify the algorithm

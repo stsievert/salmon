@@ -41,6 +41,7 @@ class RoundRobin(Runner):
         Identifier of the algorithm
 
     """
+
     def __init__(self, n, random_state=None, name=""):
         self.n = n
         self.answers = []

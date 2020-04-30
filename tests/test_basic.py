@@ -169,11 +169,11 @@ def test_saves_state(server):
     server.get("/reset?force=1")
     sleep(1)
     files = [f.name for f in dir.glob("*.rdb")]
-    datetimes = [datetime.strptime(x.replace("dump-", "").replace(".rdb", ""), "%Y-%m-%dT%H:%M")
-                 for x in files]
+    datetimes = [
+        datetime.strptime(x.replace("dump-", "").replace(".rdb", ""), "%Y-%m-%dT%H:%M")
+        for x in files
+    ]
     assert sum(before_reset < d for d in datetimes) == 1
-
-
 
 
 def test_download_restore(server):

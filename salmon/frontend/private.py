@@ -260,10 +260,7 @@ async def _process_form(
 @app.delete("/reset", tags=["private"])
 @app.get("/reset", tags=["private"])
 def reset(
-    force: int = 0,
-    authorized=Depends(_authorize),
-    tags=["private"],
-    timeout: int = 2,
+    force: int = 0, authorized=Depends(_authorize), tags=["private"], timeout: int = 2,
 ):
     """
     Delete all data from the database. This requires authentication.
@@ -285,7 +282,7 @@ def reset(
             "Resetting, force=True and authorized. Removing data from database"
         )
         rj.save()
-        now = datetime.now().isoformat()[:10 + 6]
+        now = datetime.now().isoformat()[: 10 + 6]
         files = [f.name for f in DIR.glob("*")]
         logger.info(files)
         logger.info("dump.rdb" in files)
@@ -394,7 +391,7 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
     return templates.TemplateResponse(
         "dashboard.html",
         {
-            "start": start_datetime.isoformat()[:10 + 6],
+            "start": start_datetime.isoformat()[: 10 + 6],
             "request": request,
             "targets": targets,
             "exp_config": exp_config,
@@ -434,7 +431,7 @@ async def get_meta(request: Request, authorized: bool = Depends(_authorize)):
 @app.get("/download", tags=["private"])
 async def download(request: Request, authorized: bool = Depends(_authorize)):
     rj.save()
-    fname = datetime.now().isoformat()[:10 + 6]
+    fname = datetime.now().isoformat()[: 10 + 6]
     headers = {"Content-Disposition": f'attachment; filename="exp-{fname}.rdb"'}
     return FileResponse(str(DIR / "dump.rdb"), headers=headers)
 
