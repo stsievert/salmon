@@ -173,6 +173,8 @@ def test_saves_state(server):
         datetime.strptime(x.replace("dump-", "").replace(".rdb", ""), "%Y-%m-%dT%H:%M")
         for x in files
     ]
+    print(files)
+    print(datetimes)
     assert sum(before_reset < d for d in datetimes) == 1
 
 
