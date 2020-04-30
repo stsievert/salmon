@@ -174,6 +174,8 @@ def test_saves_state(server):
         for x in files
     ]
     # Database dump happened in the same minute
+    diff = [d - before_reset for d in datetimes]
+    print(diff)
     assert sum(before_reset <= d for d in datetimes) == 1
 
 
