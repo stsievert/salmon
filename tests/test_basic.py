@@ -5,6 +5,7 @@ import random
 from pathlib import Path
 from time import sleep, time
 from typing import Tuple
+from datetime import datetime
 
 import numpy as np
 import pandas as pd
@@ -154,6 +155,25 @@ def test_saves_state(server):
         ans = {"winner": random.choice([q["left"], q["right"]]), "puid": str(k), **q}
         server.post("/answer", data=ans)
     assert dump.exists()
+
+    # Clear all dump files; reset state
+    dir = Path(__file__).absolute().parent.parent / "salmon" / "frontend"
+    dump_files = list(dir.glob("*.rdb"))
+    for d in dump_files:
+        d.unlink()
+    files = [f.name for f in dir.glob("*.rdb")]
+    assert len(files) == 0
+
+    # Make sure saved resetting saves experiment state
+    before_reset = datetime.now()
+    server.get("/reset?force=1")
+    sleep(1)
+    files = [f.name for f in dir.glob("*.rdb")]
+    datetimes = [datetime.strptime(x.replace("dump-", "").replace(".rdb", ""), "%Y-%m-%dT%H:%M")
+                 for x in files]
+    assert sum(before_reset < d for d in datetimes) == 1
+
+
 
 
 def test_download_restore(server):

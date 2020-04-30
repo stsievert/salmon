@@ -23,6 +23,7 @@ def test_backend_basics(server):
     assert len(exp_config["samplers"]) == 2
     puid = "puid-foo"
     for k in range(30):
+        print(k)
         _start = time()
         q = server.get("/query").json()
         score = max(abs(q["head"] - q["left"]), abs(q["head"] - q["right"]))
@@ -31,7 +32,9 @@ def test_backend_basics(server):
         ans["response_time"] = time() - _start
         server.post("/answer", data=ans)
 
+    print("Getting responses...")
     r = server.get("/responses")
+    print("Done responses...")
     df = pd.DataFrame(r.json())
     assert (df.score > 0).all()
 
