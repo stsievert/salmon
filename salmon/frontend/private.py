@@ -282,7 +282,7 @@ def reset(
             "Resetting, force=True and authorized. Removing data from database"
         )
         rj.save()
-        now = datetime.now().isoformat()[: 10 + 6]
+        now = datetime.now().isoformat()[:10 + 6]
         files = [f.name for f in DIR.glob("*")]
         logger.info(files)
         logger.info("dump.rdb" in files)

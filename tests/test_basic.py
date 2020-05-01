@@ -169,14 +169,13 @@ def test_saves_state(server):
     server.get("/reset?force=1")
     files = [f.name for f in dir.glob("*.rdb")]
     assert len(files) == 1
+    written = datetime.strptime(files[0], "dump-%Y-%m-%dT%H:%M.rdb")
+    assert isinstance(written, datetime)
 
-    _written_fname = files[0].replace("dump-", "").replace(".rdb", "")
-    written = datetime.strptime(_written_fname, "%Y-%m-%dT%H:%M")
-
-    print(before_reset)
-    print(written)
-    print(written - before_reset)
-    assert False
+    # Because docker container time zones are screwy... this is a check to
+    # make sure this new file was written sometime today
+    day = timedelta(hours=24)
+    assert datetime.now() - day < written < datetime.now() + day
 
 
 def test_download_restore(server):
