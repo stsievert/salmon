@@ -36,7 +36,15 @@
 <div class="container">
   <div class="outline justify-content-center">
     <div class="row justify-content-center">
-      <h2>Basic information</h2>
+      <div id="activity-plot"></div>
+      <script>
+      plot = JSON.parse({{ activity | tojson }});
+      Bokeh.embed.embed_item(plot, "activity-plot");
+      </script>
+    </div>
+    <br>
+    <div class="row justify-content-center">
+      <h3>Basic information</h3>
     </div>
     <div class="row justify-content-center">
       <ul>
@@ -46,28 +54,48 @@
         <li><a href="/">Query page</a></li>
         <li><a href="/responses">Responses</a></li>
         <li><a href="/download">Download experiment</a></li>
-      </ul>
-    </div>
-    <div class="row justify-content-center">
-      <h4>Debug information</h4>
-    </div>
-    <div class="row justify-content-center">
-      <ul>
         <li><a href="/docs">API Documentation</a></li>
         <li><a href="/logs">Logs</a></li>
-        <li><a href="/metrics">Various server metrics</a></li>
       </ul>
     </div>
     <div class="row justify-content-center">
-      <h2>Plots</h2>
     </div>
     <div class="row justify-content-center">
-      <div id="activity-plot"></div>
-      <script>
-      plot = JSON.parse({{ activity | tojson }});
-      Bokeh.embed.embed_item(plot, "activity-plot");
-      </script>
+      <h3>Server-side timing</h3>
     </div>
+    <br>
+    <div class="row justify-content-center">
+      <ul class="nav nav-tabs" id="myTab" role="tablist">
+        {% for endpoint in endpoints %}
+          <li class="nav-item">
+              <a class="nav-link {% if loop.first %}active{% endif %}" id="{{endpoint}}-tab" data-toggle="tab" href="#{{endpoint}}" role="tab" aria-controls="{{endpoint}}" aria-selected={% if loop.first %}"true"{% else %}"false"{% endif %}>
+              {{endpoint}}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="row justify-content-center">
+        <div class="tab-content" id="myTabContent">
+          {% for endpoint in endpoints %}
+          <div class="tab-pane fade {% if loop.first %}show active{% endif %}"
+                id="{{ endpoint }}"
+                role="tabpanel"
+                aria-labelledby="{{endpoint}}-tab"
+            >
+              <script>
+              plot = JSON.parse({{ endpoint_timings[endpoint] | tojson }});
+              Bokeh.embed.embed_item(plot, "{{ endpoint }}");
+              </script>
+          </div>
+          {% endfor %}
+        </div>
+    </div>
+    <br><br>
+    <div class="row justify-content-center">
+      <h3>Client-side timing</h3>
+    </div>
+    <br>
     <div class="row justify-content-center">
       <span id="responses"></span>
       <span id="network-latency"></span>
@@ -79,7 +107,9 @@
       </script>
     </div>
     <div class="row justify-content-center">
-      <h2>Targets</h2>
+      <div class="row justify-content-center">
+        <h2>Targets</h2>
+      </div>
     </div>
     <div class="row justify-content-center markdown-body">
       <p>

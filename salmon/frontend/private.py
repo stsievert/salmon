@@ -388,6 +388,16 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
         "network_latency": network_latency,
     }
     plots = {k: json.dumps(json_item(v)) for k, v in plots.items()}
+    endpoint_timing = await plotting.get_endpoint_time_plots()
+    plots["endpoint_timings"] = {k: json.dumps(json_item(v)) for k, v in endpoint_timing.items()}
+
+    endpoints = list(reversed(sorted(endpoint_timing.keys())))
+    if "/query" in endpoints:
+        i = endpoints.index("/query")
+        endpoints[0], endpoints[i] = endpoints[i], endpoints[0]
+    if "/answer" in endpoints:
+        i = endpoints.index("/answer")
+        endpoints[1], endpoints[i] = endpoints[i], endpoints[1]
     return templates.TemplateResponse(
         "dashboard.html",
         {
@@ -398,6 +408,7 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
             "num_responses": len(responses),
             "num_participants": df.puid.nunique(),
             "filenames": [_get_filename(html) for html in targets],
+            "endpoints": endpoints,
             **plots,
         },
     )

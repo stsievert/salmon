@@ -4,12 +4,16 @@ import json
 
 from bokeh.plotting import figure, show
 from bokeh.embed import json_item
+from bokeh.models import ColumnDataSource
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import requests
 
 from .utils import get_logger
+
+logger = get_logger(__name__)
 
 
 def _make_hist(
@@ -130,3 +134,79 @@ async def network_latency(df: pd.DataFrame):
         toolbar_location="below",
     )
     return p
+
+
+async def _get_server_metrics():
+    base = "http://prom:9090"
+    start = datetime.now() - timedelta(days=1)
+    end = datetime.now()
+    data = {
+        "query": "starlette_requests_processing_time_seconds_bucket",
+        "start": start.isoformat(),
+        "end": end.isoformat(),
+        "step": 0.1,
+    }
+    r = requests.post(base + "/api/v1/query", data=data)
+    assert r.status_code == 200
+    raw = r.json()
+    assert raw["status"] == "success"
+    rare = raw["data"]
+    assert rare["resultType"] == "vector"
+    med_rare = rare["result"]
+    assert all(len(m["value"]) == 2 for m in med_rare)
+    assert all(set(m.keys()) == {"value", "metric"} for m in med_rare)
+    medium = [{"value": m["value"][1], **m["metric"]} for m in med_rare]
+    df = pd.DataFrame(medium)
+    df["value"] = df["value"].astype(float)
+    df["le"] = df["le"].astype(float)
+
+    cols = ["value", "le", "path_template"]
+    proc = df[cols]
+    proc.columns = ["count", "le", "endpoint"]
+
+    bad_endpoints = ["/favicon.ico", "/metrics", "/metrics", "/api/v1/query", "/static", "/init_exp"]
+    idx = proc.endpoint.isin(bad_endpoints)
+    idx |= proc.endpoint.isin([e + "/" for e in bad_endpoints])
+    proc = proc[~idx].copy()
+    return proc
+
+async def _process_endpoint_times(p, endpoint):
+    e = endpoint
+    base = pd.DataFrame([{"count": 0, "le": 0, "endpoint": e}])
+    p = p.append(base)
+    p = p.sort_values(by="le")
+
+    between = p["count"].diff()
+    limits = p["le"].values
+    upper = limits
+    idx = np.arange(len(p))
+    lower = limits[idx - 1]
+    df = pd.DataFrame({"between": between, "upper": upper, "lower": lower, "endpoint": e})
+    df["prob"] = df["between"] / df["between"].sum()
+    return df.copy()
+
+async def get_endpoint_time_plots():
+    proc = await _get_server_metrics()
+    endpoints = proc.endpoint.unique()
+    dfs = {e: await _process_endpoint_times(proc[proc.endpoint == e], e) for e in endpoints}
+    out = {}
+    for e, df in dfs.items():
+        logger.info(df.columns)
+        x = [
+            str(xi) if xi >= 0.1 or xi <= 0 else "{}ms".format(int(xi * 1000))
+            for xi in df.upper.unique()
+        ]
+
+        p = figure(x_range=x, plot_height=150, toolbar_location=None, title=f"{e} processing time",
+                   width=500, tools="")
+
+        _data = {k: df[k].values.tolist() for k in ["upper", "between"]}
+        _data["upper"] = [str(k) for k in _data["upper"]]
+        source = ColumnDataSource(_data)
+        p.vbar(x=x, top=_data["between"], width=0.9, line_color="#" + "e" * 6)
+
+        p.yaxis.axis_label = 'Frequency'
+        p.xaxis.axis_label = 'Processing time (s)'
+        p.yaxis.minor_tick_line_color = None  # turn off x-axis minor ticks
+        out[e] = p
+    return out
