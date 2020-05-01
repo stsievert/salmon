@@ -52,14 +52,12 @@ class Server:
 
 @pytest.fixture()
 def server():
-    dump = Path(__file__).absolute().parent.parent / "frontend" / "dump.rdb"
-    if dump.exists():
-        dump.unlink()
-
     server = Server("http://127.0.0.1:8421")
+    server.get("/reset?force=1", auth=server.auth())
     yield server
     username, password = server.auth()
     r = server.get("/reset?force=1", auth=(username, password))
     assert r.json() == {"success": True}
+    dump = Path(__file__).absolute().parent.parent / "frontend" / "dump.rdb"
     if dump.exists():
         dump.unlink()

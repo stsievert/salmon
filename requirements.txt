@@ -1,0 +1,17 @@
+fastapi[all]
+uvicorn
+jinja2
+pandas
+redis
+rejson
+httpx
+pytest
+aiofiles
+altair
+matplotlib
+joblib
+scikit-learn
+gunicorn
+starlette-prometheus
+bokeh==2.0.1
+cloudpickle

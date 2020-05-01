@@ -1,8 +1,8 @@
 version: '3.7'
 services:
 
-  frontend:
-    build: frontend
+  server:
+    build: .
     environment:
       - SALMON_DEBUG  # pass through to backend
       - SALMON_NO_AUTH
@@ -10,20 +10,8 @@ services:
       - "8421:8421"
     volumes:
       - type: bind
-        source: ./frontend
-        target: /usr/src/salmon/frontend
-
-  backend:
-    build: backend
-    environment:
-      - SALMON_DEBUG  # pass through to backend
-      - SALMON_NO_AUTH
-    expose:
-      - "8400"
-    volumes:
-      - type: bind
-        source: ./backend
-        target: /usr/src/salmon/backend
+        source: .
+        target: /usr/src/salmon
 
   redis:
     image: redislabs/rejson
@@ -32,9 +20,8 @@ services:
       - net.core.somaxconn=511
     volumes:
       - type: bind
-        source: ./frontend
+        source: ./salmon/frontend
         target: /data
-
     # also https://github.com/boot2docker/boot2docker/issues/1083#issuecomment-151380687
 
 # To get bash on one of these machines:

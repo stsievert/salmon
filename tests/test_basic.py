@@ -5,6 +5,7 @@ import random
 from pathlib import Path
 from time import sleep, time
 from typing import Tuple
+from datetime import datetime, timedelta
 
 import numpy as np
 import pandas as pd
@@ -142,9 +143,11 @@ def test_meta(server):
 
 
 def test_saves_state(server):
-    dump = Path(__file__).absolute().parent.parent / "frontend" / "dump.rdb"
-    assert not dump.exists()
     server.authorize()
+    server.get("/reset?force=1")
+    sleep(0.1)
+    dump = Path(__file__).absolute().parent.parent / "salmon" / "frontend" / "dump.rdb"
+    assert not dump.exists()
     exp = Path(__file__).parent / "data" / "exp.yaml"
     server.post("/init_exp", data={"exp": exp.read_bytes()})
     for k in range(10):
@@ -153,9 +156,30 @@ def test_saves_state(server):
         server.post("/answer", data=ans)
     assert dump.exists()
 
+    # Clear all dump files; reset state
+    dir = Path(__file__).absolute().parent.parent / "salmon" / "frontend"
+    dump_files = list(dir.glob("*.rdb"))
+    for d in dump_files:
+        d.unlink()
+    files = [f.name for f in dir.glob("*.rdb")]
+    assert len(files) == 0
+
+    # Make sure saved resetting saves experiment state
+    before_reset = datetime.now()
+    server.get("/reset?force=1")
+    files = [f.name for f in dir.glob("*.rdb")]
+    assert len(files) == 1
+    written = datetime.strptime(files[0], "dump-%Y-%m-%dT%H:%M.rdb")
+    assert isinstance(written, datetime)
+
+    # Because docker container time zones are screwy... this is a check to
+    # make sure this new file was written sometime today
+    day = timedelta(hours=24)
+    assert datetime.now() - day < written < datetime.now() + day
+
 
 def test_download_restore(server):
-    dump = Path(__file__).absolute().parent.parent / "frontend" / "dump.rdb"
+    dump = Path(__file__).absolute().parent.parent / "salmon" / "frontend" / "dump.rdb"
     assert not dump.exists()
     server.authorize()
     exp = Path(__file__).parent / "data" / "exp.yaml"

@@ -24,7 +24,9 @@ copyright = "2019, Scott Sievert"
 author = "Scott Sievert"
 
 # The full version, including alpha/beta/rc tags
-release = "v0.1-alpha"
+from salmon import __version__
+
+release = __version__
 
 html_context = {
     "display_github": True,  # Integrate GitHub
