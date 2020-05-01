@@ -2,6 +2,7 @@ FORCE: ;
 
 loop: FORCE
 	rm -f salmon/frontend/dump*.rdb
+	rm -f salmon/frontend/logs/*.log
 	docker-compose stop
 	docker-compose rm -f
 	docker-compose build

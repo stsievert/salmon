@@ -28,14 +28,14 @@ services:
 
   prom:
     image: prom/prometheus
-    ports:
-      - "9090:9090"
+    expose:
+      - 9090
     volumes:
       - ./config:/etc/prometheus
-        # granfna:
-        #   image: grafana/grafana
-        #   ports:
-        #     - "3000:3000"
+        #  granfna:
+        #    image: grafana/grafana
+        #    ports:
+        #      - "3000:3000"
 
 # To get bash on one of these machines:
 # docker exec -it <containerIdOrName> bash
