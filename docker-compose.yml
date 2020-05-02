@@ -8,6 +8,8 @@ services:
       - SALMON_NO_AUTH
     ports:
       - "8421:8421"
+    expose:
+      - 8421
     volumes:
       - type: bind
         source: .
@@ -18,11 +20,35 @@ services:
     sysctls:  # https://github.com/docker-library/redis/issues/191
       - net.core.somaxconn=65535
       - net.core.somaxconn=511
+    expose:
+      - 6379
     volumes:
       - type: bind
         source: ./salmon/frontend
         target: /data
     # also https://github.com/boot2docker/boot2docker/issues/1083#issuecomment-151380687
+
+  redismonitor:
+    build: redismonitor
+    ports:
+      - "7381:7389"
+    volumes:
+      - type: bind
+        source: ./salmon/frontend/logs
+        target: /salmon
+    logging:
+      driver: none
+
+  prom:
+    image: prom/prometheus
+    expose:
+      - 9090
+    volumes:
+      - ./config:/etc/prometheus
+        #  granfna:
+        #    image: grafana/grafana
+        #    ports:
+        #      - "3000:3000"
 
 # To get bash on one of these machines:
 # docker exec -it <containerIdOrName> bash
