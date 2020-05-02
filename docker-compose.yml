@@ -20,11 +20,24 @@ services:
     sysctls:  # https://github.com/docker-library/redis/issues/191
       - net.core.somaxconn=65535
       - net.core.somaxconn=511
+    expose:
+      - 6379
     volumes:
       - type: bind
         source: ./salmon/frontend
         target: /data
     # also https://github.com/boot2docker/boot2docker/issues/1083#issuecomment-151380687
+
+  redismonitor:
+    build: redismonitor
+    ports:
+      - "7381:7389"
+    volumes:
+      - type: bind
+        source: ./salmon/frontend
+        target: /salmon
+    logging:
+      driver: none
 
   prom:
     image: prom/prometheus
