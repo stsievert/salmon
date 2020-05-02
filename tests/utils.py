@@ -53,11 +53,11 @@ class Server:
 @pytest.fixture()
 def server():
     # Make-pretend the logs have just been re-loaded...
-    base = Path(__file__).absolute().parent.parent
-    logs = base / "salmon" / "frontend" / "logs"
-    for log in logs.glob("*.log"):
-        log.unlink()
-        log.touch()
+    #  base = Path(__file__).absolute().parent.parent
+    #  logs = base / "salmon" / "frontend" / "logs"
+    #  for log in logs.glob("*.log"):
+        #  log.unlink()
+        #  log.touch()
     server = Server("http://127.0.0.1:8421")
     server.get("/reset?force=1", auth=server.auth())
     yield server
