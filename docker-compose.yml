@@ -34,7 +34,7 @@ services:
       - "7381:7389"
     volumes:
       - type: bind
-        source: ./salmon/frontend
+        source: ./salmon/frontend/logs
         target: /salmon
     logging:
       driver: none

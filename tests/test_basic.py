@@ -197,3 +197,25 @@ def test_download_restore(server):
     dump.unlink()
     server.post("/restore", data={"rdb": exp.read_bytes()})
     assert dump.exists()
+
+
+def test_logs(server):
+    dump = Path(__file__).absolute().parent.parent / "salmon" / "frontend" / "dump.rdb"
+    assert not dump.exists()
+    server.authorize()
+    exp = Path(__file__).parent / "data" / "exp.yaml"
+    server.post("/init_exp", data={"exp": exp.read_bytes()})
+    data = []
+    puid = "adsfjkl4awjklra"
+    for k in range(10):
+        q = server.get("/query").json()
+        ans = {"winner": random.choice([q["left"], q["right"]]), "puid": puid, **q}
+        server.post("/answer", data=ans)
+        data.append(ans)
+
+    r = server.get("/logs")
+    assert r.status_code == 200
+    logs = r.json()
+    query_logs = logs["salmon.frontend.public.log"]
+    assert len(query_logs) == 10
+    assert all(puid in log for log in query_logs)

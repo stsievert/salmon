@@ -2,6 +2,7 @@ creds.yaml
 __MACOSX
 dask-worker-space
 salmon/frontend/dump*rdb
+salmon/frontend/logs/*.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
