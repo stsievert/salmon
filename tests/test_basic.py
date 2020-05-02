@@ -217,5 +217,4 @@ def test_logs(server):
     assert r.status_code == 200
     logs = r.json()
     query_logs = logs["salmon.frontend.public.log"]
-    assert len(query_logs) == 10
-    assert all(puid in log for log in query_logs)
+    assert sum(puid in log for log in query_logs) == 10
