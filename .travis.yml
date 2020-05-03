@@ -16,6 +16,7 @@ script:
   - set -e
   - pip install -r requirements.txt
   - pytest tests
+  - rm salmon/out/*
   - cd docs
   - make html
   - cd ..
@@ -31,4 +32,4 @@ deploy:
   target_branch: gh-pages
   keep_history: true
   on:
-    branch: master
+    branch: docs2
