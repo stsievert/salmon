@@ -24,7 +24,7 @@ services:
       - 6379
     volumes:
       - type: bind
-        source: ./salmon/frontend
+        source: ./salmon/out
         target: /data
     # also https://github.com/boot2docker/boot2docker/issues/1083#issuecomment-151380687
 
@@ -34,7 +34,7 @@ services:
       - "7381:7389"
     volumes:
       - type: bind
-        source: ./salmon/frontend/logs
+        source: ./salmon/out
         target: /logs
     logging:
       driver: none
