@@ -35,4 +35,4 @@ deploy:
   target_branch: gh-pages
   keep_history: true
   on:
-    branch: docs2
+    branch: master
