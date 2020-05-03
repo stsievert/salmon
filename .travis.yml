@@ -13,14 +13,14 @@ before_install:
   - docker ps
 
 script:
+  - set -e
   - pip install -r requirements.txt
   - pytest tests
-
-before_deploy:
-  - set -e
   - cd docs
   - make html
   - cd ..
+
+before_deploy:
   - pip install doctr
   - doctr deploy --built-docs docs/_build/html .
 
