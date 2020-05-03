@@ -3,6 +3,9 @@ python: 3.7
 
 env:
   - SALMON_NO_AUTH=1
+  global:
+    # Doctr deploy key for stsievert/salmon
+    - secure: "zzOw+4w/+nN11A2mXz5xxk+yL9NyFD4ogFMLuu3DvJfwjbI6/yiB4AZi1a8Gw1GkpOZ4FCtAv0yT96g4zQIZxaJ7sz7/yVPltNY+zsF1THtdzmJee2+rb46K3nNqBLc7UNrbnk7DYqbAreYXeQm7QRqJfb23kwKbiU4b5/OF0rTR/8seuOpo4CLFFbI1WBHrOjV3GdhIXQuJb8C4UGcmpjpV2fyahIYk3uaT8WBBXOtTTNMlMSf2hwhblC342R7lX8Ad72SDj/tvttlFc7PQ8elewMzu8N4mpnyNSwbXgDlRhhuDDkKxrAI02rccXX+sQYUeGwmFJ9EYc2yhw4im/ssawg4vl+e0AfPC8WmL+VkMZ1iAB+AqPyJHRIOc+g2LGhA5bQd57viWY3Kc3vDMxOe4u13mnBIKo6bdWTRUkRn/1JPiNluioKQOXIl8G/Bx2kwgyp4CDZuz0FiC27qNrWLzK2g/+FtDr6Df1M28tc5D5igREkI7Fu7UOtq8lVTQHGZNPYmOQ+IGWFbtBfFUHxX7W+plYY+fIkO7eyPuPXB4WPGsTio9aWDD/5oZ9bleMAV1mVABYcZjEbJRU2xF0gUSFq7lnxJtwRtXmrgt5xG1Nc1TpFn4fho3HFVa5/GZRoMgCEf4rqEKF2mHsAPqHFBl71qvIpaKtBuiTzNvxHM="
 
 services:
   - docker
@@ -12,10 +15,12 @@ before_install:
   - until curl 127.0.0.1:8421 > /dev/null 2>&1; do :; done  # wait for container to start
   - docker ps
 
+
 script:
   - set -e
   - pip install -r requirements.txt
   - pytest tests
+  - rm -f salmon/out/*
   - cd docs
   - make html
   - cd ..
