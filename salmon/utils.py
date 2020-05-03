@@ -24,7 +24,7 @@ def get_logger(name, level=logging.INFO):
     ph.setLevel(level)
 
     DIR = Path(__file__).absolute().parent
-    out = DIR / "frontend" / "logs" / f"{name}.log"
+    out = DIR / "out" / f"{name}.log"
 
     fh = logging.FileHandler(str(out))
     fh.setLevel(level)

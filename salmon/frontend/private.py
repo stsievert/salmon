@@ -283,12 +283,14 @@ def reset(
         )
         rj.save()
         now = datetime.now().isoformat()[:10 + 6]
-        files = [f.name for f in DIR.glob("*")]
+
+        save_dir = DIR.parent / "out"
+        files = [f.name for f in save_dir.glob("*")]
         logger.info(files)
         logger.info("dump.rdb" in files)
         if "dump.rdb" in files:
             logger.error(f"Moving dump.rdb to dump-{now}.rdb")
-            shutil.move(str(DIR / "dump.rdb"), str(DIR / f"dump-{now}.rdb"))
+            shutil.move(str(save_dir / "dump.rdb"), str(save_dir / f"dump-{now}.rdb"))
 
         # Stop background jobs (ie adaptive algs)
         rj.jsonset("reset", root, True)
@@ -419,7 +421,7 @@ async def get_logs(request: Request, authorized: bool = Depends(_authorize)):
     logger.info("Getting logs")
 
     items = {"request": request}
-    log_dir = DIR / "logs"
+    log_dir = DIR.parent / "out"
     files = log_dir.glob("*.log")
     out = {}
     for file in files:
@@ -444,14 +446,16 @@ async def download(request: Request, authorized: bool = Depends(_authorize)):
     rj.save()
     fname = datetime.now().isoformat()[: 10 + 6]
     headers = {"Content-Disposition": f'attachment; filename="exp-{fname}.rdb"'}
-    return FileResponse(str(DIR / "dump.rdb"), headers=headers)
+    save_dir = DIR.parent / "out"
+    return FileResponse(str(save_dir / "dump.rdb"), headers=headers)
 
 
 @app.post("/restore", tags=["private"])
 async def restore(
     rdb: bytes = File(default=""), authorized: bool = Depends(_authorize)
 ):
-    with open(str(DIR / "dump.rdb"), "wb") as f:
+    save_dir = DIR.parent / "out"
+    with open(str(save_dir / "dump.rdb"), "wb") as f:
         f.write(rdb)
     msg = dedent(
         """
@@ -461,7 +465,7 @@ async def restore(
         <p>
         To do this on Amazon EC2, select the \"Actions > Instance State > Reboot\"
         </p>
-        <p>After you reboot visit <a href="/dashboard">/dashboard</a></p>
+        <p>After you reboot, visit the dashboard.</p>
         </div>
         """
     )

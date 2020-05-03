@@ -6,4 +6,4 @@ RUN apt-get install -y ruby-full
 RUN apt-get install -y build-essential
 RUN gem install redis-stat
 
-CMD redis-stat redis:6379 --csv=/salmon/logs/redis.csv 5 --server=7389
+CMD redis-stat redis:6379 --csv=/logs/redis.csv 5 --server=7389
