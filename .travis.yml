@@ -16,10 +16,19 @@ script:
   - pip install -r requirements.txt
   - pytest tests
 
+before_deploy:
+  - set -e
+  - cd docs
+  - make html
+  - cd ..
+  - pip install doctr
+  - doctr deploy --built-docs docs/build/html .
+
 deploy:
   provider: pages
   skip_cleanup: true
   github_token: $GITHUBTOKEN  # Set in the settings page of your repository, as a secure variable
+  target_branch: gh-pages
   keep_history: true
   on:
     branch: master
