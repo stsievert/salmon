@@ -16,7 +16,7 @@ script:
   - set -e
   - pip install -r requirements.txt
   - pytest tests
-  - rm salmon/out/*
+  - rm -f salmon/out/*
   - cd docs
   - make html
   - cd ..
