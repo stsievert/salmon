@@ -15,3 +15,6 @@ gunicorn
 starlette-prometheus
 bokeh==2.0.1
 cloudpickle
+sphinx
+numpydoc
+sphinx_rtd_theme

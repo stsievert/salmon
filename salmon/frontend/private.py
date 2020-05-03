@@ -17,7 +17,6 @@ from typing import Any, Dict, Optional
 
 import pandas as pd
 import requests as httpx
-import msgpack
 import yaml
 from bokeh.embed import json_item
 from fastapi import Depends, File, HTTPException
