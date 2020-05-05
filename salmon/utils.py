@@ -30,7 +30,12 @@ def get_logger(name, level=logging.INFO):
     fh.setLevel(level)
     fh.setFormatter(formatter)
 
-    logger = background_logger(logger, fh, ph)
+    if False:
+        # Works for uvicorn, but not for gunicorn
+        logger = background_logger(logger, fh, ph)
+    else:
+        logger.addHandler(ph)
+        logger.addHandler(fh)
     return logger
 
 
