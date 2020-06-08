@@ -380,17 +380,31 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
     )
     df["start_time"] = start
 
-    activity = await plotting.activity(df, start)
-    response_times = await plotting.response_time(df)
-    network_latency = await plotting.network_latency(df)
-    plots = {
-        "activity": activity,
-        "response_times": response_times,
-        "network_latency": network_latency,
-    }
-    plots = {k: json.dumps(json_item(v)) for k, v in plots.items()}
-    endpoint_timing = await plotting.get_endpoint_time_plots()
-    plots["endpoint_timings"] = {k: json.dumps(json_item(v)) for k, v in endpoint_timing.items()}
+    try:
+        activity = await plotting.activity(df, start)
+        response_times = await plotting.response_time(df)
+        network_latency = await plotting.network_latency(df)
+        plots = {
+            "activity": activity,
+            "response_times": response_times,
+            "network_latency": network_latency,
+        }
+        plots = {k: json.dumps(json_item(v)) for k, v in plots.items()}
+    except Exception as e:
+        logger.exception(e)
+        activity = response_times = network_latency = f"Exception! {e}"
+        plots = {
+            "activity": activity,
+            "response_times": response_times,
+            "network_latency": network_latency,
+        }
+    try:
+        endpoint_timing = await plotting.get_endpoint_time_plots()
+        plots["endpoint_timings"] = {k: json.dumps(json_item(v)) for k, v in endpoint_timing.items()}
+    except Exception as e:
+        logger.exception(e)
+        endpoint_timings = {"/": "exception"}
+        plots["endpoint_timings"] = endpoint_timing
 
     endpoints = list(reversed(sorted(endpoint_timing.keys())))
     if "/query" in endpoints:

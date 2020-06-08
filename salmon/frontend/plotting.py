@@ -58,10 +58,10 @@ async def _get_unique(series: pd.Series):
     return series.iloc[0]
 
 
-async def _get_nbins(x: np.array):
+async def _get_nbins(x: np.array) -> int:
     total_days = (x.max() - x.min()) / (60 * 60 * 24)
     bins = max(10, total_days * 3)
-    return bins
+    return int(bins)
 
 
 async def activity(df: pd.DataFrame, start_sec: float):
@@ -70,6 +70,7 @@ async def activity(df: pd.DataFrame, start_sec: float):
         bins = await _get_nbins(x)
     except ValueError:
         bins = 10
+    logger.info(f"bins = {bins}")
     bin_heights, edges = np.histogram(x, bins=bins)
 
     start = datetime(1970, 1, 1) + timedelta(seconds=start_sec)
@@ -98,8 +99,8 @@ async def _remove_outliers(x, low=True, high=True):
 
 async def response_time(df: pd.DataFrame):
     x = df["response_time"].values.copy()
-    if len(x) >= 100:
-        x = await _remove_outliers(x)
+    limit = np.percentile(x, 95)
+    x = x[x <= limit]
     try:
         bins = await _get_nbins(x)
     except ValueError:
