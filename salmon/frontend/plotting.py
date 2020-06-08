@@ -59,17 +59,17 @@ async def _get_unique(series: pd.Series):
 
 
 async def _get_nbins(x: np.array) -> int:
-    total_days = (x.max() - x.min()) / (60 * 60 * 24)
-    bins = max(10, total_days * 3)
+    if len(x) <= 10:
+        return 10
+
+    total_days = (np.nanmax(x) - np.nanmin(x)) / (60 * 60 * 24)
+    bins = max(10, total_days * 4)
     return int(bins)
 
 
 async def activity(df: pd.DataFrame, start_sec: float):
     x = df["time_received"].values.copy()
-    try:
-        bins = await _get_nbins(x)
-    except ValueError:
-        bins = 10
+    bins = await _get_nbins(x)
     logger.info(f"bins = {bins}")
     bin_heights, edges = np.histogram(x, bins=bins)
 
@@ -91,20 +91,19 @@ async def activity(df: pd.DataFrame, start_sec: float):
 
 
 async def _remove_outliers(x, low=True, high=True):
-    _high = np.mean(x) + 3 * np.std(x) <= x
-    _low = x <= np.mean(x) - 3 * np.std(x)
-    bad = _high | _low
-    return x[~bad]
+    # _high = np.mean(x) + 3 * np.std(x) <= x
+    # _low = x <= np.mean(x) - 3 * np.std(x)
+    _high = np.percentile(x, 95)
+    _low = np.percentile(x, 5)
+    good = (x >= _low) & (x <= _high)
+    return x[good]
 
 
 async def response_time(df: pd.DataFrame):
     x = df["response_time"].values.copy()
     limit = np.percentile(x, 95)
     x = x[x <= limit]
-    try:
-        bins = await _get_nbins(x)
-    except ValueError:
-        bins = 10
+    bins = await _get_nbins(x)
     bin_heights, edges = np.histogram(x, bins=bins)
     p = _make_hist(
         f"Response time",
@@ -121,10 +120,7 @@ async def network_latency(df: pd.DataFrame):
     x = df["network_latency"].values.copy()
     if len(x) >= 100:
         x = await _remove_outliers(x)
-    try:
-        bins = await _get_nbins(x)
-    except ValueError:
-        bins = 10
+    bins = await _get_nbins(x)
     bin_heights, edges = np.histogram(x, bins=bins)
     p = _make_hist(
         f"Client side latency",
