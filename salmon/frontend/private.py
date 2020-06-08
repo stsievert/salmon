@@ -89,6 +89,19 @@ def upload_form():
     body = dedent(
         f"""<body>
         <div style="display: table; margin: 0 auto; max-width: 600px;">
+        <div>
+        <ul>
+          <li>
+            <a href="https://stsievert.com/salmon/">
+              General Salmon documentation
+            </a>
+          </li>
+          <li>
+            <a href="/docs#/private/process_form_init_exp_post">
+              Detailed /init_exp endpoint documentation
+            </a>
+          </li>
+        </div>
         <h3 style="text-align: center;">Option 1: initialize new experiment.</h3>
         <div style="text-align: center; padding: 10px;">
         <form action="/init_exp" enctype="multipart/form-data" method="post">
