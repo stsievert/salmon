@@ -91,15 +91,16 @@ async def activity(df: pd.DataFrame, start_sec: float):
 
 
 async def _remove_outliers(x, low=True, high=True, frac=0.10):
+    """Remove outliers ``frac`` fraction of the data"""
     p = (frac * 100) / 2
     _high = np.percentile(x, 100 - p)
     _low = np.percentile(x, p)
     if low and high:
         good = (x >= _low) & (x <= _high)
     elif low:
-        good = (x >= _low)
+        good = x >= _low
     elif high:
-        good = (x <= _high)
+        good = x <= _high
     return x[good]
 
 
@@ -165,11 +166,19 @@ async def _get_server_metrics():
     proc = df[cols]
     proc.columns = ["count", "le", "endpoint"]
 
-    bad_endpoints = ["/favicon.ico", "/metrics", "/metrics", "/api/v1/query", "/static", "/init_exp"]
+    bad_endpoints = [
+        "/favicon.ico",
+        "/metrics",
+        "/metrics",
+        "/api/v1/query",
+        "/static",
+        "/init_exp",
+    ]
     idx = proc.endpoint.isin(bad_endpoints)
     idx |= proc.endpoint.isin([e + "/" for e in bad_endpoints])
     proc = proc[~idx].copy()
     return proc
+
 
 async def _process_endpoint_times(p, endpoint):
     e = endpoint
@@ -182,14 +191,19 @@ async def _process_endpoint_times(p, endpoint):
     upper = limits
     idx = np.arange(len(p))
     lower = limits[idx - 1]
-    df = pd.DataFrame({"between": between, "upper": upper, "lower": lower, "endpoint": e})
+    df = pd.DataFrame(
+        {"between": between, "upper": upper, "lower": lower, "endpoint": e}
+    )
     df["prob"] = df["between"] / df["between"].sum()
     return df.copy()
+
 
 async def get_endpoint_time_plots():
     proc = await _get_server_metrics()
     endpoints = proc.endpoint.unique()
-    dfs = {e: await _process_endpoint_times(proc[proc.endpoint == e], e) for e in endpoints}
+    dfs = {
+        e: await _process_endpoint_times(proc[proc.endpoint == e], e) for e in endpoints
+    }
     out = {}
     for e, df in dfs.items():
         logger.info(df.columns)
@@ -198,16 +212,22 @@ async def get_endpoint_time_plots():
             for xi in df.upper.unique()
         ]
 
-        p = figure(x_range=x, plot_height=150, toolbar_location=None, title=f"{e} processing time",
-                   width=500, tools="")
+        p = figure(
+            x_range=x,
+            plot_height=150,
+            toolbar_location=None,
+            title=f"{e} processing time",
+            width=500,
+            tools="",
+        )
 
         _data = {k: df[k].values.tolist() for k in ["upper", "between"]}
         _data["upper"] = [str(k) for k in _data["upper"]]
         source = ColumnDataSource(_data)
         p.vbar(x=x, top=_data["between"], width=0.9, line_color="#" + "e" * 6)
 
-        p.yaxis.axis_label = 'Frequency'
-        p.xaxis.axis_label = 'Processing time (s)'
+        p.yaxis.axis_label = "Frequency"
+        p.xaxis.axis_label = "Processing time (s)"
         p.yaxis.minor_tick_line_color = None  # turn off x-axis minor ticks
         out[e] = p
     return out

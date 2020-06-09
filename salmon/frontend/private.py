@@ -294,7 +294,7 @@ def reset(
             "Resetting, force=True and authorized. Removing data from database"
         )
         rj.save()
-        now = datetime.now().isoformat()[:10 + 6]
+        now = datetime.now().isoformat()[: 10 + 6]
 
         save_dir = DIR.parent / "out"
         files = [f.name for f in save_dir.glob("*")]
@@ -443,7 +443,9 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
         }
     try:
         endpoint_timing = await plotting.get_endpoint_time_plots()
-        plots["endpoint_timings"] = {k: json.dumps(json_item(v)) for k, v in endpoint_timing.items()}
+        plots["endpoint_timings"] = {
+            k: json.dumps(json_item(v)) for k, v in endpoint_timing.items()
+        }
     except Exception as e:
         logger.exception(e)
         endpoint_timing = {"/": "exception"}
