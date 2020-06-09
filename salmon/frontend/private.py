@@ -89,6 +89,19 @@ def upload_form():
     body = dedent(
         f"""<body>
         <div style="display: table; margin: 0 auto; max-width: 600px;">
+        <div>
+        <ul>
+          <li>
+            <a href="https://stsievert.com/salmon/">
+              General Salmon documentation
+            </a>
+          </li>
+          <li>
+            <a href="/docs#/private/process_form_init_exp_post">
+              Detailed /init_exp endpoint documentation
+            </a>
+          </li>
+        </div>
         <h3 style="text-align: center;">Option 1: initialize new experiment.</h3>
         <div style="text-align: center; padding: 10px;">
         <form action="/init_exp" enctype="multipart/form-data" method="post">
@@ -171,23 +184,6 @@ async def process_form(
     rdb: bytes = File(default=""),
     authorized: bool = Depends(_authorize),
 ):
-    try:
-        return await _process_form(request, exp, targets_file, rdb)
-    except Exception as e:
-        reset(force=True, timeout=2)
-        if isinstance(e, ExpParsingError):
-            raise e
-        msg = exception_to_string(e)
-        logger.error(msg)
-        raise ExpParsingError(status_code=500, detail=msg)
-
-
-async def _process_form(
-    request: Request,
-    exp: bytes = File(default=""),
-    targets_file: bytes = File(default=""),
-    rdb: bytes = File(default=""),
-):
     """
     The uploaded file needs to have the following keys:
 
@@ -209,6 +205,23 @@ async def _process_form(
         - instructions: "Foobar!"
         - max_queries: 25
     """
+    try:
+        return await _process_form(request, exp, targets_file, rdb)
+    except Exception as e:
+        reset(force=True, timeout=2)
+        if isinstance(e, ExpParsingError):
+            raise e
+        msg = exception_to_string(e)
+        logger.error(msg)
+        raise ExpParsingError(status_code=500, detail=msg)
+
+
+async def _process_form(
+    request: Request,
+    exp: bytes = File(default=""),
+    targets_file: bytes = File(default=""),
+    rdb: bytes = File(default=""),
+):
     if rdb:
         return await restore(rdb=rdb)
     logger.info("salmon.__version__ = %s", app.version)
@@ -281,7 +294,7 @@ def reset(
             "Resetting, force=True and authorized. Removing data from database"
         )
         rj.save()
-        now = datetime.now().isoformat()[:10 + 6]
+        now = datetime.now().isoformat()[: 10 + 6]
 
         save_dir = DIR.parent / "out"
         files = [f.name for f in save_dir.glob("*")]
@@ -324,6 +337,24 @@ def reset(
 
 @app.get("/responses", tags=["private"])
 async def get_responses(authorized: bool = Depends(_authorize)) -> Dict[str, Any]:
+    """
+    Get the recorded responses from the current experiments. This includes
+    the following columns:
+
+    * `left`, `right`, `head`: Indices describing the objects in the
+      head/left/right positions.
+    * `head_object`, `right_object`, `head_object`: the HTML
+      representation of the target in the head/left/right position.
+    * `datetime_received`: the time the response was received.
+    * `response_time`: the time spent between the providing the query and
+      receiving the answer.
+
+    Returns
+    -------
+    The list of responses as a JSON file. This file can be read by
+    Panda's `read_json` function.
+
+    """
     exp_config = await _ensure_initialized()
     targets = exp_config["targets"]
     start = rj.jsonget("start_time")
@@ -366,6 +397,18 @@ async def _format_responses(responses, targets, start):
 @app.get("/dashboard", tags=["private"])
 @app.post("/dashboard", tags=["private"])
 async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)):
+    """
+    The primary method to view information about the experiment.
+    It displays the following information:
+
+    * Basic meta information: how many responses have been received, when
+      were they received, etc.
+    * Links to other API endpoints. These endpoint allow experiment
+      download, getting the resposnes, resetting the experiment, etc.
+    * Relevant graphs. Some answered questions are "how long did
+      participants take to respond?" and "how long did it take to serve a
+      query page?"
+    """
     logger.info("Getting dashboard")
     rj.bgsave()
     exp_config = await _ensure_initialized()
@@ -380,17 +423,33 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
     )
     df["start_time"] = start
 
-    activity = await plotting.activity(df, start)
-    response_times = await plotting.response_time(df)
-    network_latency = await plotting.network_latency(df)
-    plots = {
-        "activity": activity,
-        "response_times": response_times,
-        "network_latency": network_latency,
-    }
-    plots = {k: json.dumps(json_item(v)) for k, v in plots.items()}
-    endpoint_timing = await plotting.get_endpoint_time_plots()
-    plots["endpoint_timings"] = {k: json.dumps(json_item(v)) for k, v in endpoint_timing.items()}
+    try:
+        activity = await plotting.activity(df, start)
+        response_times = await plotting.response_time(df)
+        network_latency = await plotting.network_latency(df)
+        plots = {
+            "activity": activity,
+            "response_times": response_times,
+            "network_latency": network_latency,
+        }
+        plots = {k: json.dumps(json_item(v)) for k, v in plots.items()}
+    except Exception as e:
+        logger.exception(e)
+        activity = response_times = network_latency = f"Exception! {e}"
+        plots = {
+            "activity": activity,
+            "response_times": response_times,
+            "network_latency": network_latency,
+        }
+    try:
+        endpoint_timing = await plotting.get_endpoint_time_plots()
+        plots["endpoint_timings"] = {
+            k: json.dumps(json_item(v)) for k, v in endpoint_timing.items()
+        }
+    except Exception as e:
+        logger.exception(e)
+        endpoint_timing = {"/": "exception"}
+        plots["endpoint_timings"] = endpoint_timing
 
     endpoints = list(reversed(sorted(endpoint_timing.keys())))
     if "/query" in endpoints:
@@ -417,6 +476,17 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
 
 @app.get("/logs", tags=["private"])
 async def get_logs(request: Request, authorized: bool = Depends(_authorize)):
+    """
+    Get detailed information about the server. This might include detailed
+    tracebacks and exceptions.
+
+    Returns
+    -------
+    JSON response with structure Dict[str, List[str]]
+
+    The keys are the names of the different loggers, and each element in
+    the list is one log record.
+    """
     logger.info("Getting logs")
 
     items = {"request": request}
@@ -431,6 +501,14 @@ async def get_logs(request: Request, authorized: bool = Depends(_authorize)):
 
 @app.get("/meta", tags=["private"])
 async def get_meta(request: Request, authorized: bool = Depends(_authorize)):
+    """
+    Get meta information about the experiment.
+    How many responses and participants are there?
+
+    Returns
+    -------
+    JSON response describing meta information.
+    """
     responses = await _get_responses()
     df = pd.DataFrame(responses, columns=["puid"])
     out = {
@@ -442,6 +520,17 @@ async def get_meta(request: Request, authorized: bool = Depends(_authorize)):
 
 @app.get("/download", tags=["private"])
 async def download(request: Request, authorized: bool = Depends(_authorize)):
+    """
+    Download any experiment state. Functionally, this endpoint allows
+    moving the experiment to a new machine.
+
+    Returns
+    -------
+    experiment_state : file
+
+    This file can be used to restore the contents of the Redis
+    database on a new machine.
+    """
     rj.save()
     fname = datetime.now().isoformat()[: 10 + 6]
     headers = {"Content-Disposition": f'attachment; filename="exp-{fname}.rdb"'}
@@ -453,6 +542,19 @@ async def download(request: Request, authorized: bool = Depends(_authorize)):
 async def restore(
     rdb: bytes = File(default=""), authorized: bool = Depends(_authorize)
 ):
+    """
+    Restore an experiment. This endpoint takes an experiment file from
+    `/download` and restores it on the current machine.
+
+    An experiment can be restored with the following steps:
+
+    1. Download the experiment state at ``/download``
+    2. Save the file on your machine.
+    3. On a new machine, upload the file at ``/restore`` (this endpoint)
+    4. Restart the machine, either via `docker-compose down; docker-
+       compose up` or "Actions > Instance state > Reboot" on Amazon EC2.
+
+    """
     save_dir = DIR.parent / "out"
     with open(str(save_dir / "dump.rdb"), "wb") as f:
         f.write(rdb)

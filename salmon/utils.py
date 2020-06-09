@@ -15,9 +15,7 @@ def get_logger(name, level=logging.INFO):
     # Config from https://docs.python-guide.org/writing/logging/ and
     # https://docs.python-guide.org/writing/logging/
     logger = logging.getLogger(name)
-    formatter = logging.Formatter(
-        "%(asctime)s %(name)s %(levelname)s: %(message)s"
-    )
+    formatter = logging.Formatter("%(asctime)s %(name)s %(levelname)s: %(message)s")
 
     ph = logging.StreamHandler()
     ph.setFormatter(formatter)
@@ -52,6 +50,8 @@ def background_logger(logger, *handlers):
     async_handler = QueueHandler(queue)
     logger.addHandler(async_handler)
 
-    listener = logging.handlers.QueueListener(queue, *handlers, respect_handler_level=True)
+    listener = logging.handlers.QueueListener(
+        queue, *handlers, respect_handler_level=True
+    )
     listener.start()
     return logger

@@ -28,12 +28,22 @@ rj = Client(host="redis", port=6379, decode_responses=True)
 
 
 def start_algs():
+    """
+    Start the algorithm backend. This function is necessary because the
+    machine might be restarted (so the experiment isn't launched fresh).
+    """
     if "samplers" not in rj.keys():
         return
     names = rj.jsonget("samplers")
     for name in names:
+        logger.info(f"Restarting alg={name}...")
         r = httpx.post(f"http://localhost:8400/init/{name}")
         assert r.status_code == 200
+    return True
+
+
+def stop_algs():
+    rj.jsonset("reset", root, True)
     return True
 
 
@@ -45,6 +55,7 @@ app = FastAPI(
         """
     ),
     on_startup=[start_algs],
+    on_shutdown=[stop_algs],
 )
 app.add_middleware(PrometheusMiddleware)
 app.add_route("/metrics/", metrics)
