@@ -90,19 +90,23 @@ async def activity(df: pd.DataFrame, start_sec: float):
     return p
 
 
-async def _remove_outliers(x, low=True, high=True):
-    # _high = np.mean(x) + 3 * np.std(x) <= x
-    # _low = x <= np.mean(x) - 3 * np.std(x)
-    _high = np.percentile(x, 95)
-    _low = np.percentile(x, 5)
-    good = (x >= _low) & (x <= _high)
+async def _remove_outliers(x, low=True, high=True, frac=0.10):
+    p = (frac * 100) / 2
+    _high = np.percentile(x, 100 - p)
+    _low = np.percentile(x, p)
+    if low and high:
+        good = (x >= _low) & (x <= _high)
+    elif low:
+        good = (x >= _low)
+    elif high:
+        good = (x <= _high)
     return x[good]
 
 
 async def response_time(df: pd.DataFrame):
     x = df["response_time"].values.copy()
-    limit = np.percentile(x, 95)
-    x = x[x <= limit]
+    if len(x) >= 100:
+        x = await _remove_outliers(x, low=False, high=True)
     bins = await _get_nbins(x)
     bin_heights, edges = np.histogram(x, bins=bins)
     p = _make_hist(
@@ -119,7 +123,7 @@ async def response_time(df: pd.DataFrame):
 async def network_latency(df: pd.DataFrame):
     x = df["network_latency"].values.copy()
     if len(x) >= 100:
-        x = await _remove_outliers(x)
+        x = await _remove_outliers(x, low=False, high=True)
     bins = await _get_nbins(x)
     bin_heights, edges = np.histogram(x, bins=bins)
     p = _make_hist(
