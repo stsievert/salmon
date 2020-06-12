@@ -1,0 +1,37 @@
+name: salmon
+channels:
+  - conda-forge
+  - defaults
+  - pytorch
+  - anaconda
+dependencies:
+  - python>=3.7
+  - numpy
+  - pytorch
+  - scipy
+  - pandas
+  - scikit-learn
+  - ujson
+  - msgpack-python
+  - pip
+  - nb_conda
+  - pip:
+    - fastapi[all]
+    - uvicorn
+    - jinja2
+    - redis
+    - rejson
+    - httpx
+    - pytest
+    - aiofiles
+    - altair
+    - matplotlib
+    - joblib
+    - gunicorn
+    - starlette-prometheus
+    - bokeh==2.0.1
+    - cloudpickle
+    - sphinx
+    - numpydoc
+    - sphinx_rtd_theme
+    - skorch

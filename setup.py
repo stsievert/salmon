@@ -3,7 +3,6 @@
 from distutils.core import setup
 import versioneer
 
-version = "v0.1"
 setup(
     name="Salmon",
     version=versioneer.get_version(),
