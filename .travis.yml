@@ -10,7 +10,16 @@ env:
 services:
   - docker
 
+cache:
+  directories:
+  - docker_images
+
+before_cache:
+  - docker save -o docker_images/images.tar $(docker images -a -q)
+
 before_install:
+  - docker load -i docker_images/images.tar || true
+  # Build the images
   - docker-compose up &
   - until curl 127.0.0.1:8421 > /dev/null 2>&1; do :; done  # wait for container to start
   - docker ps
