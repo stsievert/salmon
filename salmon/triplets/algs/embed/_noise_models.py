@@ -10,6 +10,8 @@ ArrayLike = Union[np.ndarray, torch.Tensor]
 
 class TripletDist(nn.Module):
     """
+    A base class to find losses for the triplet embedding problem.
+
     Parameters
     ----------
     n : int
