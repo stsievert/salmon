@@ -19,6 +19,7 @@ class TripletDist(nn.Module):
     Attributes
     ----------
     embedding : np.ndarray
+        The current embedding.
 
     """
 
