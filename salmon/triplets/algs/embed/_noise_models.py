@@ -1,6 +1,7 @@
 from typing import Union
 
 import numpy as np
+from sklearn.utils import check_random_state
 import torch
 import torch.nn as nn
 
@@ -8,10 +9,29 @@ ArrayLike = Union[np.ndarray, torch.Tensor]
 
 
 class TripletDist(nn.Module):
-    def __init__(self, n: int=None, d: int = 2):
+    """
+    Parameters
+    ----------
+    n : int
+    d : int
+    random_state : None, int, np.random.RandomState
+
+    Attributes
+    ----------
+    embedding : np.ndarray
+
+    """
+
+    def __init__(self, n: int = None, d: int = 2, random_state=None):
         super().__init__()
-        embedding = 1e-4 * torch.randn((n, d), requires_grad=True)
-        self.embedding = torch.nn.Parameter(embedding)
+        self.random_state = random_state
+        self.n = n
+        self.d = d
+        rng = check_random_state(self.random_state)
+        embedding = 1e-4 * rng.randn(n, d).astype("float32")
+        self._embedding = torch.nn.Parameter(
+            torch.from_numpy(embedding), requires_grad=True
+        )
 
     def losses(self, win2: ArrayLike, lose2: ArrayLike) -> ArrayLike:
         """
@@ -34,10 +54,14 @@ class TripletDist(nn.Module):
         """
         raise NotImplementedError
 
+    @property
+    def embedding(self):
+        return self._embedding
+
     def _get_dists(self, h_w_l):
-        heads = self.embedding[h_w_l[:, 0]]
-        winners = self.embedding[h_w_l[:, 1]]
-        losers = self.embedding[h_w_l[:, 2]]
+        heads = self._embedding[h_w_l[:, 0]]
+        winners = self._embedding[h_w_l[:, 1]]
+        losers = self._embedding[h_w_l[:, 2]]
 
         win_dist2 = torch.norm(heads - winners, dim=1) ** 2
         lose_dist2 = torch.norm(heads - losers, dim=1) ** 2
@@ -88,7 +112,7 @@ class CKL(TripletDist):
 
     def losses(self, win2, lose2):
         num = self.mu + lose2
-        probs = num / (num + self.mu + lose2)
+        probs = num / (num + self.mu + win2)
         return -1 * torch.log(probs)
 
 
