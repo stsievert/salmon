@@ -20,7 +20,7 @@ before_cache:
 before_install:
   - docker load -i docker_images/images.tar || true
   # Build the images
-  - docker-compose up &
+  - SALMON_NO_AUTH=1 docker-compose up &
   - until curl 127.0.0.1:8421 > /dev/null 2>&1; do :; done  # wait for container to start
   - docker ps
 
