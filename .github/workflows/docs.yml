@@ -1,2 +1,0 @@
-- name: Sphinx Doc Build
-  uses: ammaraskar/sphinx-action@0.4
