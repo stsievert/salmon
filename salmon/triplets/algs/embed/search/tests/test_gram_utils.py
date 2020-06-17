@@ -2,14 +2,17 @@ import numpy as np
 import pytest
 import scipy.spatial
 import numpy.linalg as LA
+from sklearn.utils import check_random_state
+import torch
 
 from .. import gram_utils
 
-
-@pytest.mark.parametrize("n", [20, 40, 80, 160])
-@pytest.mark.parametrize("d", [2, 4, 8, 16])
-def test_decompose_gram(n, d):
-    X = np.random.randn(n, d)
+@pytest.mark.parametrize("n", [10, 20, 40])
+@pytest.mark.parametrize("d", [2, 3])
+@pytest.mark.parametrize("seed", np.arange(5))
+def test_decompose_gram(n, d, seed):
+    rng = check_random_state(seed)
+    X = rng.randn(n, d)
     G = X @ X.T
 
     X_hat = gram_utils.decompose(G, d)
@@ -22,39 +25,78 @@ def test_decompose_gram(n, d):
     assert np.allclose(G, G_hat)
 
 
-@pytest.mark.parametrize("n", [20, 40, 80, 160])
+@pytest.mark.parametrize("n", [10, 20, 40])
 @pytest.mark.parametrize("d", [1, 2, 3])
-def test_project(n, d):
-    X = np.random.randn(n, d)
-    G = X @ X.T
+@pytest.mark.parametrize("seed", np.arange(5))
+def test_project_and_is_psd(n, d, seed):
+    rng = check_random_state(seed)
+    X = rng.randn(n, d)
+    G = gram_utils.gram_matrix(X)
+    assert gram_utils.is_psd(G)
     lamduhs, vecs = LA.eigh(G)
     lamduhs[0] = -1
     G = vecs.T @ np.diag(lamduhs) @ vecs
+    assert not gram_utils.is_psd(G)
 
-    F = gram_utils.project(G)
+    F = gram_utils.onto_psd(G)
     assert not np.allclose(F, G)
 
     l2, _ = LA.eigh(F)
     assert np.allclose(min(l2), 0)
 
 
-@pytest.mark.parametrize("n", [20, 40, 80, 160])
-@pytest.mark.parametrize("d", [1, 2, 3])
-def test_project_no_change(n, d):
-    X = np.random.randn(n, d)
-    G = X @ X.T
+def test_project_changes_torch():
+    n, d, seed = 20, 2, 0
+    rng = check_random_state
+    X = torch.randn(n, d)
+
+    G = gram_utils.gram_matrix(X.numpy())
+    lamduhs, vecs = LA.eigh(G)
+    lamduhs[0] = -1
+    G = vecs.T @ np.diag(lamduhs) @ vecs
+    G = torch.from_numpy(G)
+    e, v = torch.symeig(G)
+    assert e.min().item() < -0.5
+
+    before = G.numpy().copy()
+    after = gram_utils.onto_psd(G.numpy(), out=G.numpy())
+
+    assert not np.allclose(before, after)
+    assert not torch.allclose(torch.from_numpy(before), G)
+    e, v = torch.symeig(G)
+    assert e.min() > -0.25
+
+
+def test_project_no_change_with_pos_eig(n=20, d=2, seed=42):
+    rng = check_random_state(seed)
+    X = rng.randn(n, d)
+    G = gram_utils.gram_matrix(X)
     lamduhs, vecs = LA.eigh(G)
     lamduhs += lamduhs.min() + 1
     G = vecs.T @ np.diag(lamduhs) @ vecs
 
-    F = gram_utils.project(G)
+    F = gram_utils.onto_psd(G)
     assert np.allclose(F, G)
 
 
-@pytest.mark.parametrize("n", [20, 40, 80, 160])
-@pytest.mark.parametrize("d", [2, 4, 8, 16])
-def test_dist(n, d):
-    X = np.random.randn(n, d)
+@pytest.mark.parametrize("seed", np.arange(5))
+def test_gram_generation(seed, n=20, d=2):
+    rng = check_random_state(seed)
+    X = rng.randn(n, d)
+    G_star = X @ X.T
+    G_hat = gram_utils.gram_matrix(X)
+    assert np.allclose(G_star, G_hat)
+    assert np.allclose(G_hat, G_hat.T)
+
+    for i, g_star in enumerate(G_star):
+        for j, g_hat in enumerate(G_hat):
+            assert np.allclose(G_hat[i, j], np.inner(X[i], X[j]))
+
+
+@pytest.mark.parametrize("seed", np.arange(5))
+def test_distances(seed, n=20, d=4):
+    rng = check_random_state(seed)
+    X = rng.randn(n, d)
     G = X @ X.T
 
     D = gram_utils.distances(G)
@@ -64,12 +106,14 @@ def test_dist(n, d):
     assert np.allclose(D, D_star)
 
 
-def test_dist2():
+@pytest.mark.parametrize("seed", np.arange(5))
+def test_dist2(seed):
+    rng = check_random_state(seed)
     n, d = 10, 2
-    X = np.random.randn(n, d)
+    X = rng.randn(n, d)
     G = X @ X.T
 
-    inds = [np.random.choice(n, size=2, replace=False) for _ in range(100)]
+    inds = [rng.choice(n, size=2, replace=False) for _ in range(100)]
     dists = [LA.norm(X[i[0]] - X[i[1]]) ** 2 for i in inds]
     gram_dists1 = [gram_utils.dist2(G, i[0], i[1]) for i in inds]
     gram_dists2 = [gram_utils.dist2(G, i[1], i[0]) for i in inds]
