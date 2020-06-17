@@ -53,7 +53,8 @@ def _salt(password: str) -> str:
 
 def _authorize(credentials: HTTPBasicCredentials = Depends(security)) -> bool:
     SALMON_NO_AUTH = os.environ.get("SALMON_NO_AUTH", False)
-    logger.info(f"Seeing if authorized access with SALMON_NO_AUTH={SALMON_NO_AUTH}")
+    logger.warning(f"Seeing if authorized access with SALMON_NO_AUTH={SALMON_NO_AUTH}")
+    print("SALMON_NO_AUTH={SALMON_NO_AUTH}")
     if SALMON_NO_AUTH:
         return True
 

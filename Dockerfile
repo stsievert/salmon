@@ -4,6 +4,7 @@ WORKDIR /usr/src/salmon/
 RUN apt-get update
 RUN apt-get install -y gcc
 RUN conda install -y numpy scipy pandas scikit-learn ujson
+RUN conda install -y numba
 
 COPY requirements.txt .
 RUN pip install -r requirements.txt

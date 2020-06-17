@@ -23,7 +23,7 @@ class Server:
         if self._authorized:
             kwargs.update({"auth": (self._username, self._password)})
         r = requests.get(self.url + endpoint, **kwargs)
-        assert r.status_code == status_code
+        assert r.status_code == status_code, (r.status_code, status_code)
         return r
 
     def post(self, endpoint, data=None, status_code=200, error=False, **kwargs):
@@ -33,7 +33,7 @@ class Server:
             kwargs.update({"auth": (self._username, self._password)})
         r = requests.post(self.url + endpoint, data=data, **kwargs)
         if not error:
-            assert r.status_code == status_code
+            assert r.status_code == status_code, (r.status_code, status_code)
         return r
 
     def delete(self, endpoint, data=None, status_code=200, **kwargs):
@@ -42,7 +42,7 @@ class Server:
         if self._authorized:
             kwargs.update({"auth": (self._username, self._password)})
         r = requests.delete(self.url + endpoint, data=data, **kwargs)
-        assert r.status_code == status_code
+        assert r.status_code == status_code, (r.status_code, status_code)
         return r
 
     def authorize(self):
