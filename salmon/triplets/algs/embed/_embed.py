@@ -62,20 +62,16 @@ class Embedding(BaseEstimator):
         self.initial_batch_size = initial_batch_size
         super().__init__()
 
-    def _set_seed(self, rng):
-        seed = rng.choice(2 ** 31)
-        torch.manual_seed(seed)
-
     def initialize(self):
         mod_kwargs = {f"module__{k}": v for k, v in self.module_kwargs.items()}
         opt_kwargs = {f"optimizer__{k}": v for k, v in self.optimizer_kwargs.items()}
 
         rng = check_random_state(self.random_state)
-        self._set_seed(rng)
         est = _Embedding(
             module=self.module,
             criterion=Reduce,
             **mod_kwargs,
+            module__random_state=self.random_state,
             optimizer=self.optimizer,
             **opt_kwargs,
             batch_size=-1,

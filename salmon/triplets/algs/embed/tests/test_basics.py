@@ -21,12 +21,15 @@ def test_random_state():
     )
 
     est1 = embed.Embedding(**kwargs)
-    est2 = embed.Embedding(**kwargs)
-
+    est1.initialize()
     est1.partial_fit(answers)
-    est2.partial_fit(answers)
-    assert np.allclose(est1.embedding, est2.embedding)
-
     s1 = est1.score(answers)
+
+    est2 = embed.Embedding(**kwargs)
+    est2.initialize()
+    est2.partial_fit(answers)
     s2 = est2.score(answers)
+
+    assert np.allclose(est1.embedding, est2.embedding)
+    assert np.allclose(est1.embedding, est2.embedding)
     assert np.allclose(s1, s2)
