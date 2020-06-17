@@ -15,6 +15,7 @@ dependencies:
   - msgpack-python
   - pip
   - nb_conda
+  - numba
   - pip:
     - fastapi[all]
     - uvicorn
