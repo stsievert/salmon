@@ -3,7 +3,8 @@ Adaptive algorithms
 
 .. warning::
 
-   This interface is experimental and may change at any time.
+   These adaptive algorithms are (currently) experimental and may change at any
+   time. Do not use these adaptive algorithms in deployment.
 
 There are many queries to ask about in triplet queries: with :math:`n` objects
 there are :math:`\mathcal{O}(n^3)` questions that could be presented.
@@ -14,31 +15,12 @@ API the must conform to below:
 
 .. autosummary::
 
-   backend.algs.Runner
+   salmon.backend.alg.Runner
 
 Configuration
 -------------
 
+Every adaptive algorithm takes different parameters. How should the parameters
+be configured in the YAML file provided on upload?
 
-Adaptive algorithm API
-----------------------
-Runner
-^^^^^^
-.. currentmodule:: backend.algs
 
-.. autoclass:: Runner
-   :members:
-
-RandomSampling
-^^^^^^^^^^^^^^
-
-.. autoclass:: RandomSampling
-
-   .. automethod:: __init__
-
-RoundRobin
-^^^^^^^^^^
-
-.. autoclass:: RoundRobin
-
-   .. automethod:: __init__
