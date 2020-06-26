@@ -19,6 +19,7 @@ def numpy_or_torch(f):
         if converted:
             r = r.numpy()
         return r
+
     return wrapper
 
 
@@ -105,7 +106,6 @@ class TripletDist(nn.Module):
 
 
 class STE(TripletDist):
-
     @numpy_or_torch
     def probs(self, win2, lose2):
         ## Double the computation
@@ -151,4 +151,3 @@ class GNMDS(TripletDist):
     def losses(self, win2, lose2):
         zeros = torch.zeros(len(win2))
         return torch.max(zeros, win2 - lose2 + 1)
-

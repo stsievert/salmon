@@ -35,14 +35,10 @@ class _Embedding(NeuralNet):
         return acc
 
 
-#  class Reduce(_Loss):
-    #  def forward(self, input: torch.Tensor, target=None) -> torch.Tensor:
-        #  assert self.reduction == "mean"
-        #  return torch.mean(input)
-
 class Reduce:
     def __call__(self, input: torch.Tensor, target=None) -> torch.Tensor:
         return torch.mean(input)
+
 
 class Embedding(BaseEstimator):
     """
@@ -57,8 +53,8 @@ class Embedding(BaseEstimator):
     def __init__(
         self,
         module,
-        module__n: int=85,
-        module__d: int =2,
+        module__n: int = 85,
+        module__d: int = 2,
         optimizer=optim.SGD,
         optimizer__lr=0.05,
         optimizer__momentum=0.9,
@@ -142,67 +138,6 @@ class Embedding(BaseEstimator):
 
         return self
 
-    @jit
-    def _random_query(self, n):
-        while True:
-            h = self.random_state_.choice(n)
-            o1 = self.random_state_.choice(n)
-            o2 = self.random_state_.choice(n)
-            if h != o1 and h != o2 and o1 != o2:
-                return [h, o1, o2]
-
-    @jit
-    def random_queries(self, num=1000):
-        n = self.module_kwargs["n"]
-        return [self._random_query(n) for _ in prange(num)]
-
-    def distances(self):
-        G = gram_utils.gram_matrix(self.embedding)
-        return gram_utils.distances(G)
-
-    def score_queries(self, *, num=1000):
-        D = self.distances()
-        _Q = self.random_queries(num=num)
-        Q = np.array(_Q).astype("int64")
-        H, O1, O2 = Q[:, 0], Q[:, 1], Q[:, 2]
-
-        #  self.posterior_ = self.posterior(D, self.history_)
-        #  scores = score(H, O1, O2, self.posterior_, D, probs=self.probs)
-        scores = [0 for _ in range(len(Q))]
-        return Q, scores
-
-    def posterior(self, D, S):
-        """
-        Calculate the posterior.
-
-        Parameters
-        ----------
-        D : array-like
-            Distance array. D[i, j] = ||x_i - x_j||_2^2
-        S : array-like, shape=(num_ans, 3)
-            History of answers.
-
-        Returns
-        -------
-        posterior : array-like, shape=(self.n, self.n)
-        """
-        gram_utils.assert_distance(D)
-        n = D.shape[0]
-        tau = np.zeros((n, n))
-
-        # TODO: S is the entire history. Why not calculate this
-        # partially?
-        for head, w, l in S:
-            tau[head] += np.log(self.probs(D[w], D[l]))
-
-        tau = np.exp(tau)
-        s = tau.sum(axis=1)  # the sum of each row
-        tau = (tau.T / s).T
-        return tau
-
-    def probs(self, win2, lose2):
-        return self.est_.module_.probs(win2, lose2)
-
     def score(self, answers, y=None):
         if not (hasattr(self, "initialized_") and self.initialized_):
             self.initialize()
@@ -215,9 +150,9 @@ class Embedding(BaseEstimator):
     def fit(self, X, y=None):
         raise NotImplementedError
 
-    @property
     def embedding(self):
         return self.est_.module_.embedding.detach().numpy()
+
 
 class Damper(Embedding):
     def __init__(

@@ -7,6 +7,7 @@ import torch
 
 from .. import gram_utils
 
+
 @pytest.mark.parametrize("n", [10, 20, 40])
 @pytest.mark.parametrize("d", [2, 3])
 @pytest.mark.parametrize("seed", np.arange(5))
