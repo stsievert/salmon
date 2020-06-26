@@ -182,7 +182,6 @@ def test_refactor_v2():
     D = gram_utils.distances(G)
     tau = np.random.uniform(size=(n, n))
 
-    Q = [[0, 1, 2], [0, 1, 3], [0, 1, 4]]
     Q = [
         (h, o1, o2)
         for h in range(n)

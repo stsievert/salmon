@@ -221,9 +221,9 @@ def _score_v1(q: Tuple[int, int, int], tau: np.ndarray, D: np.ndarray) -> float:
     return _entropy
 
 
-def score(H: Array, W: Array, L: Array, tau: Array, D: Array) -> Array:
+def score(H: Array, W: Array, L: Array, tau: Array, D: Array, probs=STE_probs) -> Array:
     """
-    Find the entropy for each query.
+    Find the information gain for each query.
 
     Arguments
     ---------
@@ -237,27 +237,40 @@ def score(H: Array, W: Array, L: Array, tau: Array, D: Array) -> Array:
 
     Returns
     -------
-    entropy : Array of shape ``(q, )``
-        Almost the information gain for the query.
+    ig : Array of shape ``(q, )``
+        The information gain of the queries (minus a constant).
+
+    Notes
+    -----
+
+    The information gain of a query is given by the following expression:
+
+    .. math::
+
+       H(\tau) - pH(\tau_b) - (1 - p)H(\tau_a)
+
+    where :math:`H` is the entropy. This
+
+    References
+    ----------
+    [1] "Adaptively learning the crowd kernel" O. Tamuz, C. Liu,
+         S. Belongie, O. Shamir, and A. Kalai. 2011.
+         https://arxiv.org/abs/1105.1033
 
     """
     gram_utils.assert_distance(D)
-    """
-    Score q queries
-    """
     assert all(x.dtype.kind == "i" for x in (H, W, L))
     head, w, l = H, W, L
     q = len(head)
 
-    probs = STE_probs(D[w], D[l])  # (q, n)
+    prob = probs(D[w], D[l])  # (q, n)
 
-    p = (probs * tau[head]).sum(axis=1)  # (q, )
+    p = (prob * tau[head]).sum(axis=1)  # (q, )
 
-    taub = tau[head] * probs  # (q, n)
+    taub = tau[head] * prob  # (q, n)
     taub /= taub.sum(axis=1).reshape(q, 1)
 
-    tauc = tau[head] * (1 - probs)  # (q, n)
+    tauc = tau[head] * (1 - prob)  # (q, n)
     tauc /= tauc.sum(axis=1).reshape(q, 1)
 
-    _entropy = -p * entropy(taub) - (1 - p) * entropy(tauc)
-    return _entropy
+    return -p * entropy(taub) - (1 - p) * entropy(tauc)
