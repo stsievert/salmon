@@ -7,6 +7,8 @@ from sklearn.utils import check_random_state
 from .. import gram_utils
 from .. import _search as search
 from . import utilsSTE
+from ..._adaptive import InfoGainScorer
+from ... import STE, TSTE
 
 
 def test_probs():
@@ -45,7 +47,7 @@ def test_score_refactor(seed=None):
 
     queries = [search.random_query(n, random_state=rng) for _ in range(100)]
     # old_score has been refactored to take in [h, w, l]
-    old_scores = [_score_next([h, w, l], tau, X) for h, w, l in queries]
+    old_scores = [_score_next([w, l, h], tau, X) for h, w, l in queries]
     new_scores = [search._score_v1(q, tau, D) for q in queries]
 
     old = np.array(old_scores)
@@ -191,20 +193,75 @@ def test_refactor_v2():
     #  print(f"New took {time() - start:0.2f}s")
     assert np.allclose(s_new, np.array(s_old))
 
+def _simple_triplet(n, rng, p_flip=0.2):
+    h, a, b = rng.choice(n, size=3, replace=False)
+    if abs(h - a) < abs(h - b):
+        ret = [h, a, b]
+    ret = [h, b, a]
 
-def _score_next(q, tau, X):
+    flip = rng.uniform(0, 1)
+    if flip < p_flip:
+        return [ret[0], ret[1], ret[0]]
+    return ret
+
+def test_salmon_integration():
+    import warnings
+    warnings.filterwarnings('error')
+    n, d = 10, 2
+    rng = np.random.RandomState(42)
+    X = rng.randn(n, d).astype("float32")
+    est = TSTE(n, random_state=42)
+    search = InfoGainScorer(random_state=42, embedding=X, probs=est.probs)
+    history = [_simple_triplet(n, rng) for _ in range(1000)]
+    search.update(history)
+    queries, scores = search.score()
+
+    next_history = [[w, l, h] for h, w, l in history]
+    tau = utilsSTE.getSTETauDistribution(X, next_history)
+
+    rel_error = LA.norm(tau - search.posterior_) / LA.norm(tau)
+    post = search.posterior_
+    err = np.abs(search.posterior_ / tau)
+
+    # Making sure approximately correct (not exactly correct)
+    zero = tau <= 1e-6
+    err = tau[~zero] / post[~zero]
+    eps = 1e-3
+    assert 1 - eps <= err.min() <= err.max() <= 1 + eps
+    assert np.median(tau[zero]) <= 1e-8
+    assert post[zero].max() <= 1e-6
+    assert np.median(post[zero]) <= 1e-8
+
+    next_scores = np.array([_score_next(q, tau, X) for q in next_history])
+    _, salmon_scores = search.score(queries=history)
+
+    assert -1.4 < next_scores.min() < next_scores.max() < -0.15
+    assert np.allclose(next_scores.max(), salmon_scores.max())
+    assert np.allclose(next_scores.min(), salmon_scores.min())
+
+    rel_err = LA.norm(next_scores - salmon_scores) / LA.norm(next_scores)
+    assert rel_err <= 1e-5
+
+    diff = np.abs(next_scores - salmon_scores)
+    assert 1e-7 <= diff.min() <= diff.max() <= 1e-5
+    assert diff.mean() <= 5e-5
+    assert np.median(diff) <= 5e-5
+
+
+def _score_next(q: [int, int, int], tau, X):
     """
     copy/pasted from STE/myApp.py's getQuery
     (slightly modified)
     """
     n = X.shape[0]
-    a, b, c = q
+    #  a, b, c = q
     # q = random_query(n) == [head, winner, loser]
     # utilsSTE.getRandomQuery == [winner, loser, head]
     # this is from utilsSTE.py#getRandomQuery and myAlg.py#get_query (which calls utilsSTE#getRandomQuery)
     # from myAlg.py#getQuery: b, c, a = q
     #                   (winner, loser, head)
-    a, b, c = q
+    #  a, b, c = q
+    b, c, a = q
     p = 0
     for i in range(n):
         p += utilsSTE.getSTETripletProbability(X[b], X[c], X[i]) * tau[a, i]

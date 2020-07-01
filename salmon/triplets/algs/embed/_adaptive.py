@@ -1,6 +1,7 @@
 from sklearn.base import BaseEstimator
 from numba import jit, prange
 import numpy as np
+from joblib import Parallel, delayed
 
 from .search import gram_utils, score
 
@@ -51,24 +52,25 @@ class QueryScorer:
 
     def _initialize(self):
         self.random_state_ = np.random.RandomState(self.random_state)
-        self.initialized = True
+        self.initialized_ = True
         n = len(self.embedding)
         self._tau_ = np.zeros((n, n), dtype="float32")
         self.update([])
 
-    @jit
     def __random_query(self, n):
         while True:
             h = self.random_state_.choice(n)
             o1 = self.random_state_.choice(n)
             o2 = self.random_state_.choice(n)
             if h != o1 and h != o2 and o1 != o2:
-                return [h, o1, o2]
+                ret = [h, o1, o2]
+                return np.array(ret, dtype="int32")
 
-    @jit
-    def _random_queries(self, num=1000):
-        n = len(self.embedding)
-        return [self.__random_query(n) for _ in prange(num)]
+    def _random_queries(self, n, num=1000):
+        queries = Parallel(backend="threading", n_jobs=min(10, num))(
+            delayed(self.__random_query)(n) for _ in range(num)
+        )
+        return queries
 
     def _distances(self):
         G = gram_utils.gram_matrix(self.embedding)
@@ -94,8 +96,11 @@ class QueryScorer:
         """
         n = D.shape[0]
 
-        for head, w, l in history:
-            self._tau_[head] += np.log(self.probs(D[w], D[l]))
+        for k, (head, w, l) in enumerate(history):
+            a = np.log(self.probs(D[w], D[l]))
+            if k == 0:
+                print("_adaptive tau[0]", a)
+            self._tau_[head] += a
 
         tau = np.exp(self._tau_)
         s = tau.sum(axis=1)  # the sum of each row
@@ -103,16 +108,33 @@ class QueryScorer:
         return tau
 
     def update(self, history):
+        if not hasattr(self, "initialized_"):
+            self._initialize()
         D = self._distances()
         self.posterior_ = self._posterior(D, history)
         return self
 
-
 class InfoGainScorer(QueryScorer):
-    def score(self, *, num=1000):
+    def score(self, *, queries=None, num=1000):
+        """
+        Score the queries using (almost) the information gain.
+
+        Parameters
+        ----------
+        queries : List[int, int, int]
+            The list of queries to score.
+        num : int
+            Number of random queries to generate.
+
+        """
+        if not hasattr(self, "initialized_"):
+            self._initialize()
         D = self._distances()
-        _Q = self._random_queries(num=num)
-        Q = np.array(_Q).astype("int64")
+        if queries is not None and num != 1000:
+            raise ValueError("Only specify one of `queries` or `num`")
+        if queries is None:
+            queries = self._random_queries(len(self.embedding), num=num)
+        Q = np.array(queries).astype("int64")
         H, O1, O2 = Q[:, 0], Q[:, 1], Q[:, 2]
 
         scores = score(H, O1, O2, self.posterior_, D, probs=self.probs)

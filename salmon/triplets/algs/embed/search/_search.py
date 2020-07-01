@@ -114,14 +114,15 @@ def exp_STE_probs(d2_winner, d2_loser):
 def entropy(x):
     if x.ndim == 1:
         i = x > 0
-        y = x[i]
+        y = x[i].copy()
         return (-1 * y * np.log(y)).sum()
     elif x.ndim == 2:
-        i = np.argwhere(x <= 0)
+        i = np.argwhere(x > 0)
         y = x.copy()
-        y[i[:, 0], i[:, 1]] = np.nan
-        ret = -1 * y * np.log(y)
-        return np.nansum(ret, axis=1)
+        idx = (i[:, 0], i[:, 1])
+        ret = -1 * y[idx] * np.log(y[idx])
+        y[idx] = ret
+        return np.sum(y, axis=1)
     else:
         raise ValueError("Invalid number of dimensions in input ``x``")
 

@@ -120,7 +120,7 @@ class STE(TripletDist):
         # = 1 / (1 + exp(-d2 / -d1))
         # = exp(-d1) / (exp(-d1) + exp(d2))
         # = prob of winning by STE
-        return 1 / (1 + np.exp(win2 - lose2))
+        return 1 / (1 + torch.exp(win2 - lose2))
 
 
 class TSTE(TripletDist):

@@ -14,9 +14,11 @@ def test_random_state():
 
     kwargs = dict(
         module=embed.STE,
-        module_kwargs={"n": n, "d": 2},
+        module__n=n,
+        module__d=2,
         optimizer=SGD,
-        optimizer_kwargs={"nesterov": True, "lr": 0.1, "momentum": 0.9},
+        optimizer__lr=0.1,
+        optimizer__momentum=0.9,
         random_state=random_state,
     )
 
@@ -30,6 +32,5 @@ def test_random_state():
     est2.partial_fit(answers)
     s2 = est2.score(answers)
 
-    assert np.allclose(est1.embedding, est2.embedding)
-    assert np.allclose(est1.embedding, est2.embedding)
+    assert np.allclose(est1.embedding(), est2.embedding())
     assert np.allclose(s1, s2)

@@ -177,6 +177,12 @@ def getSTETripletProbability(i, j, k, alpha=1):
         (numpy.ndarray) b : numpy array
     (numpy.ndarray) c : numpy array
         (float) alpha : regularization parameter
+
+    Notes
+    -----
+    head : k
+    winner : i
+    loser : j
     """
     ki = norm(k - i)
     kj = norm(k - j)
