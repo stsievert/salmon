@@ -33,8 +33,7 @@ def test_probs():
     assert (p3[i] > 0.5).all()
 
 
-@pytest.mark.parametrize("seed", np.arange(5))
-def test_score_refactor(seed):
+def test_score_refactor(seed=None):
     n, d = 40, 2
     rng = check_random_state(seed)
     X = rng.randn(n, d)
@@ -54,8 +53,7 @@ def test_score_refactor(seed):
     assert np.allclose(old, new)
 
 
-@pytest.mark.parametrize("seed", np.arange(10))
-def test_probs_vector(seed):
+def test_probs_vector(seed=None):
     rng = check_random_state(seed)
     X = rng.randn(20, 2)
     n = X.shape[0]
@@ -68,8 +66,7 @@ def test_probs_vector(seed):
         assert np.allclose(p1, p2)
 
 
-@pytest.mark.parametrize("seed", np.arange(5))
-def test_posterior(seed):
+def test_posterior(seed=None):
     """
     The two searches have different orderings for their queries.
 
@@ -92,8 +89,7 @@ def test_posterior(seed):
     assert np.allclose(new.sum(axis=1), 1)
 
 
-@pytest.mark.parametrize("seed", np.arange(5))
-def test_posterior_v2(seed):
+def test_posterior_v2(seed=None):
     """
     The two searches have different orderings for their queries.
 
@@ -116,8 +112,7 @@ def test_posterior_v2(seed):
     assert np.allclose(new.sum(axis=1), 1)
 
 
-@pytest.mark.parametrize("seed", np.arange(5))
-def test_decide_distance(seed):
+def test_decide_distance(seed=None):
     rng = check_random_state(seed)
     n, d = 40, 2
     X = rng.randn(n, d)
@@ -133,8 +128,7 @@ def test_decide_distance(seed):
     assert queries1 == queries2
 
 
-@pytest.mark.parametrize("seed", np.arange(5))
-def test_correct_prob(seed):
+def test_correct_prob(seed=None):
     rng = check_random_state(seed)
     n, d = 40, 2
     X = rng.randn(n, d)
@@ -155,8 +149,7 @@ def test_correct_prob(seed):
     assert (df["prob"][disagrees] < 0.5).all()
 
 
-@pytest.mark.parametrize("seed", np.arange(5))
-def test_agrees_with_embedding(seed):
+def test_agrees_with_embedding(seed=None):
     rng = check_random_state(seed)
     n, d = 40, 2
     X = rng.randn(n, d)

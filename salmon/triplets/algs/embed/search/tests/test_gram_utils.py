@@ -10,8 +10,7 @@ from .. import gram_utils
 
 @pytest.mark.parametrize("n", [10, 20, 40])
 @pytest.mark.parametrize("d", [2, 3])
-@pytest.mark.parametrize("seed", np.arange(5))
-def test_decompose_gram(n, d, seed):
+def test_decompose_gram(n, d, seed=None):
     rng = check_random_state(seed)
     X = rng.randn(n, d)
     G = X @ X.T
@@ -28,8 +27,7 @@ def test_decompose_gram(n, d, seed):
 
 @pytest.mark.parametrize("n", [10, 20, 40])
 @pytest.mark.parametrize("d", [1, 2, 3])
-@pytest.mark.parametrize("seed", np.arange(5))
-def test_project_and_is_psd(n, d, seed):
+def test_project_and_is_psd(n, d, seed=None):
     rng = check_random_state(seed)
     X = rng.randn(n, d)
     G = gram_utils.gram_matrix(X)
@@ -47,8 +45,8 @@ def test_project_and_is_psd(n, d, seed):
 
 
 def test_project_changes_torch():
-    n, d, seed = 20, 2, 0
-    rng = check_random_state
+    n, d, seed = 20, 2, None
+    rng = check_random_state(seed)
     X = torch.randn(n, d)
 
     G = gram_utils.gram_matrix(X.numpy())
@@ -68,7 +66,7 @@ def test_project_changes_torch():
     assert e.min() > -0.25
 
 
-def test_project_no_change_with_pos_eig(n=20, d=2, seed=42):
+def test_project_no_change_with_pos_eig(n=20, d=2, seed=None):
     rng = check_random_state(seed)
     X = rng.randn(n, d)
     G = gram_utils.gram_matrix(X)
@@ -80,8 +78,7 @@ def test_project_no_change_with_pos_eig(n=20, d=2, seed=42):
     assert np.allclose(F, G)
 
 
-@pytest.mark.parametrize("seed", np.arange(5))
-def test_gram_generation(seed, n=20, d=2):
+def test_gram_generation(seed=None, n=20, d=2):
     rng = check_random_state(seed)
     X = rng.randn(n, d)
     G_star = X @ X.T
@@ -94,8 +91,7 @@ def test_gram_generation(seed, n=20, d=2):
             assert np.allclose(G_hat[i, j], np.inner(X[i], X[j]))
 
 
-@pytest.mark.parametrize("seed", np.arange(5))
-def test_distances(seed, n=20, d=4):
+def test_distances(seed=None, n=20, d=4):
     rng = check_random_state(seed)
     X = rng.randn(n, d)
     G = X @ X.T
@@ -107,8 +103,7 @@ def test_distances(seed, n=20, d=4):
     assert np.allclose(D, D_star)
 
 
-@pytest.mark.parametrize("seed", np.arange(5))
-def test_dist2(seed):
+def test_dist2(seed=None):
     rng = check_random_state(seed)
     n, d = 10, 2
     X = rng.randn(n, d)

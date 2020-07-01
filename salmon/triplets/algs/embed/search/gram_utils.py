@@ -19,7 +19,7 @@ def decompose(G, d):
     d : int
         Dimension of each vector in X; X.shape == (n, d)
         when G.shape == (n, n)
-        
+
     Returns
     -------
     X : ndarray

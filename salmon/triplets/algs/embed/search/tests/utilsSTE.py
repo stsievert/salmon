@@ -89,14 +89,14 @@ def getRandomQuery(X):
     """
     Outputs a triplet [i,j,k] chosen uniformly at random from all possible triplets 
     and score = abs( ||x_i - x_k||^2 - ||x_j - x_k||^2 )
-    
+
     Inputs:
         (numpy.ndarray) X : matrix from which n is extracted from and score is derived
-        
+
     Outputs:
         [(int) i, (int) j, (int) k] q : where k in [n], i in [n]-k, j in [n]-k-j
         (float) score : signed distance to current solution (positive if it agrees, negative otherwise)
-        
+
     Usage:
         q,score = getRandomQuery(X)
     """
@@ -171,7 +171,7 @@ def getSTETripletProbability(i, j, k, alpha=1):
 
     Namely:
     pabc = (1 + || c - a||^2/alpha)**(-(alpha+1)/2)/(2*alpha + || b - a ||^2+|| c - a ||^2)
-    
+
     Inputs:
         (numpy.ndarray) a : numpy array
         (numpy.ndarray) b : numpy array
@@ -192,7 +192,7 @@ def getEntropy(tau):
 
     Namely:
     H(tau) = sum -tau[i]*log(tau[i])
-    
+
     Inputs:
         (numpy.ndarray) tau : numpy array representing a probability distribution
     """
@@ -206,9 +206,9 @@ def getEntropy(tau):
 def getSTETauDistribution(X, S, alpha=1):
     """
     Return the tau distributions for each point [n].
- 
+
     Returns a len(X)xlen(X) two dimensional arrray. The ith row of a is the tau distribution corresponding to the posterior distribution of a.
-   
+
     Inputs:
     (numpy.ndarray) X: current embedding of points
     (list) S: list of triplets
