@@ -14,11 +14,10 @@ def numpy_or_torch(f):
         if isinstance(win2, np.ndarray):
             win2 = torch.from_numpy(win2)
             lose2 = torch.from_numpy(lose2)
-            converted = True
-        r = f(_, win2, lose2)
-        if converted:
-            r = r.numpy()
-        return r
+            with torch.no_grad():
+                ret = f(_, win2, lose2)
+                return ret.detach().numpy()
+        return f(_, win2, lose2)
 
     return wrapper
 

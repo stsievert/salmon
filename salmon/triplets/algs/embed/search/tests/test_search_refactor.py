@@ -193,6 +193,7 @@ def test_refactor_v2():
     #  print(f"New took {time() - start:0.2f}s")
     assert np.allclose(s_new, np.array(s_old))
 
+
 def _simple_triplet(n, rng, p_flip=0.2):
     h, a, b = rng.choice(n, size=3, replace=False)
     if abs(h - a) < abs(h - b):
@@ -204,16 +205,18 @@ def _simple_triplet(n, rng, p_flip=0.2):
         return [ret[0], ret[1], ret[0]]
     return ret
 
+
 def test_salmon_integration():
     import warnings
-    warnings.filterwarnings('error')
+
+    warnings.filterwarnings("error")
     n, d = 10, 2
     rng = np.random.RandomState(42)
     X = rng.randn(n, d).astype("float32")
     est = TSTE(n, random_state=42)
     search = InfoGainScorer(random_state=42, embedding=X, probs=est.probs)
     history = [_simple_triplet(n, rng) for _ in range(1000)]
-    search.update(history)
+    search.push(history)
     queries, scores = search.score()
 
     next_history = [[w, l, h] for h, w, l in history]

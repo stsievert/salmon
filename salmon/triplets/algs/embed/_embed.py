@@ -60,8 +60,8 @@ class Embedding(BaseEstimator):
         optimizer__momentum=0.9,
         random_state=None,
         initial_batch_size=64,
-        max_eg=30_000,
-        pf_eg=1000,
+        warm_start=True,
+        max_epochs=1,
     ):
         self.module = module
         self.module__n = module__n
@@ -71,8 +71,8 @@ class Embedding(BaseEstimator):
         self.optimizer__momentum = optimizer__momentum
         self.random_state = random_state
         self.initial_batch_size = initial_batch_size
-        self.pf_eg = pf_eg
-        self.max_eg = max_eg
+        self.warm_start = warm_start
+        self.max_epochs = max_epochs
         super().__init__()
 
     def initialize(self):
@@ -100,54 +100,80 @@ class Embedding(BaseEstimator):
         self.meta_ = {"num_answers": 0, "model_updates": 0}
         self.initialized_ = True
         self.random_state_ = rng
-        #  self.history_: List[Tuple[int, int, int]] = []
-        #  self.posterior_ = self.posterior(self.distances(), self.history_)
+        self.history_ = np.zeros((1000, 3), dtype="uint16")
 
     @property
     def batch_size(self):
         return self.initial_batch_size
 
-    def partial_fit(self, answers, y=None):
+    def push(self, answers):
         if not (hasattr(self, "initialized_") and self.initialized_):
             self.initialize()
-        # history is only required for the posterior.
-        # TODO: reformulate posterior so history isn't required (keep running sum).
-        #  self.history_.extend(answers)
-        if self.meta_.get("num_answers", 0) >= self.max_eg:
-            return self
 
-        num_examples = 0
         if isinstance(answers, list):
-            answers = np.array(answers)
+            answers = (
+                np.array(answers) if len(answers) else np.empty((0, 3), dtype="uint16")
+            )
+        i = self.meta_["num_answers"]
+        if i + len(answers) >= len(self.history_):
+            n = len(answers) + len(self.history_)
+            new_ans = np.zeros((n, 3), dtype="uint16")
+            self.history_ = np.vstack((self.history_, new_ans))
+        self.history_[i : i + len(answers)] = answers
+        self.meta_["history_bytes"] = self.history_.nbytes
+        return self.history_.nbytes
+
+    def partial_fit(self, answers):
+        """
+        Process the provided answers.
+
+        Parameters
+        ----------
+        anwers : array-like
+            The answers, with shape (num_ans, 3). Each row is
+            [head, winner, loser].
+
+        Returns
+        -------
+        self
+
+        Notes
+        -----
+        This function runs one iteration of SGD.
+
+        This impure function modifies
+
+            * ``self.meta_`` keys ``model_updates`` and ``num_answers``
+            * ``self.est_``, the embedding.
+        """
+        if not isinstance(answers, np.ndarray):
+            answers = np.array(answers, dtype="uint16")
         beg_meta = copy(self.meta_)
-        incidies = np.arange(len(answers), dtype="int")
         while True:
+            incidies = np.arange(len(answers), dtype="int")
+
             bs = self.batch_size
 
             idx_train = self.random_state_.choice(len(answers), size=bs)
-            train_ans = answers[idx_train]
+            train_ans = answers[idx_train].astype("int64")
             _ = self.est_.partial_fit(train_ans)
 
-            num_examples += len(train_ans)
             self.meta_["num_answers"] += self.batch_size
             self.meta_["model_updates"] += 1
-
-            cur_eg = self.meta_["num_answers"] - beg_meta["num_answers"]
-            if cur_eg >= self.pf_eg:
+            if self.meta_["num_answers"] - beg_meta["num_answers"] >= len(answers):
                 break
-
         return self
 
     def score(self, answers, y=None):
         if not (hasattr(self, "initialized_") and self.initialized_):
             self.initialize()
-        if self.meta_.get("last_score", 0) >= self.max_eg:
-            return self.meta_["last_score"]
         score = self.est_.score(answers)
         self.meta_["last_score"] = score
         return score
 
     def fit(self, X, y=None):
+        for epoch in range(self.max_epochs):
+            self.partial_fit(self.history_)
         raise NotImplementedError
 
     def embedding(self):

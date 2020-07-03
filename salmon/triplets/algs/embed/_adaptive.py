@@ -55,22 +55,18 @@ class QueryScorer:
         self.initialized_ = True
         n = len(self.embedding)
         self._tau_ = np.zeros((n, n), dtype="float32")
-        self.update([])
-
-    def __random_query(self, n):
-        while True:
-            h = self.random_state_.choice(n)
-            o1 = self.random_state_.choice(n)
-            o2 = self.random_state_.choice(n)
-            if h != o1 and h != o2 and o1 != o2:
-                ret = [h, o1, o2]
-                return np.array(ret, dtype="int32")
+        self.push([])
 
     def _random_queries(self, n, num=1000):
-        queries = Parallel(backend="threading", n_jobs=min(10, num))(
-            delayed(self.__random_query)(n) for _ in range(num)
+        new_num = int(num * 1.1)
+        queries = self.random_state_.choice(n, size=(new_num, 3))
+        repeated = (
+            (queries[:, 0] == queries[:, 1])
+            | (queries[:, 1] == queries[:, 2])
+            | (queries[:, 0] == queries[:, 2])
         )
-        return queries
+        queries = queries[~repeated]
+        return queries[:num]
 
     def _distances(self):
         G = gram_utils.gram_matrix(self.embedding)
@@ -98,8 +94,6 @@ class QueryScorer:
 
         for k, (head, w, l) in enumerate(history):
             a = np.log(self.probs(D[w], D[l]))
-            if k == 0:
-                print("_adaptive tau[0]", a)
             self._tau_[head] += a
 
         tau = np.exp(self._tau_)
@@ -107,12 +101,13 @@ class QueryScorer:
         tau = (tau.T / s).T
         return tau
 
-    def update(self, history):
+    def push(self, history):
         if not hasattr(self, "initialized_"):
             self._initialize()
         D = self._distances()
         self.posterior_ = self._posterior(D, history)
         return self
+
 
 class InfoGainScorer(QueryScorer):
     def score(self, *, queries=None, num=1000):
