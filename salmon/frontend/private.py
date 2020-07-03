@@ -235,8 +235,10 @@ async def _process_form(
     rj.jsonset("samplers", root, names)
     for name in names:
         rj.jsonset(f"alg-{name}-answers", root, [])
-        # Not set because rj.zadd doesn't require it
-        # don't touch! rj.jsonset(f"alg-{name}-queries", root, [])
+
+        # Not set because rj.zadd doesn't require it -- don't touch!
+        # rj.jsonset(f"alg-{name}-queries", root, [])
+
         logger.info(f"initializing algorithm {name}...")
         r = httpx.post(f"http://localhost:8400/init/{name}")
         if r.status_code != 200:

@@ -10,7 +10,6 @@ Query = TypeVar("Query")
 Answer = TypeVar("Answer")
 
 
-
 def clear_queries(name, rj: RedisClient) -> bool:
     rj.delete(f"alg-{name}.queries")
     return True
