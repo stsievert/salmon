@@ -42,7 +42,8 @@ before_deploy:
 deploy:
   provider: pages
   skip_cleanup: true
-  github_token: $GITHUBTOKEN  # Set in the settings page of your repository, as a secure variable
+  # Defined in the Travis CI repo settings page as a secure variable
+  github_token: $GITHUBTOKEN
   target_branch: gh-pages
   keep_history: true
   on:
