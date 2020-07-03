@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Algorithm API &mdash; Salmon v0.3.2+2.g4a0a3d8.dirty documentation</title>
+  <title>Algorithm API &mdash; Salmon v0.3.2+3.g1265c5c.dirty documentation</title>
   
 
   
@@ -204,19 +204,19 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#salmon.backend.alg.Runner.get_model" title="salmon.backend.alg.Runner.get_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_model</span></code></a>(self)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#salmon.backend.alg.Runner.get_model" title="salmon.backend.alg.Runner.get_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_model</span></code></a>()</p></td>
 <td><p>Get the model underlying the algorithm.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#salmon.backend.alg.Runner.get_queries" title="salmon.backend.alg.Runner.get_queries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_queries</span></code></a>(self)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#salmon.backend.alg.Runner.get_queries" title="salmon.backend.alg.Runner.get_queries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_queries</span></code></a>()</p></td>
 <td><p>Get queries.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#salmon.backend.alg.Runner.process_answers" title="salmon.backend.alg.Runner.process_answers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">process_answers</span></code></a>(self, answers)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#salmon.backend.alg.Runner.process_answers" title="salmon.backend.alg.Runner.process_answers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">process_answers</span></code></a>(answers)</p></td>
 <td><p>Process answers.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#salmon.backend.alg.Runner.reset" title="salmon.backend.alg.Runner.reset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset</span></code></a>(self, client, rj)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#salmon.backend.alg.Runner.reset" title="salmon.backend.alg.Runner.reset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset</span></code></a>(client, rj)</p></td>
 <td><p>Reset the algorithm.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#salmon.backend.alg.Runner.run" title="salmon.backend.alg.Runner.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>(self, client, rj)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#salmon.backend.alg.Runner.run" title="salmon.backend.alg.Runner.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>(client, rj)</p></td>
 <td><p>Run the algorithm.</p></td>
 </tr>
 </tbody>
@@ -240,7 +240,7 @@
 
 <dl class="py method">
 <dt id="salmon.backend.alg.Runner.get_model">
-<code class="sig-name descname">get_model</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span> &#x2192; Dict<span class="p">[</span>str<span class="p">, </span>Any<span class="p">]</span><a class="headerlink" href="#salmon.backend.alg.Runner.get_model" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_model</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Dict<span class="p">[</span>str<span class="p">, </span>Any<span class="p">]</span><a class="headerlink" href="#salmon.backend.alg.Runner.get_model" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the model underlying the algorithm.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -255,7 +255,7 @@ dashboard or with an HTTP get request.</p>
 
 <dl class="py method">
 <dt id="salmon.backend.alg.Runner.get_queries">
-<code class="sig-name descname">get_queries</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span> &#x2192; Tuple[List[~Query], List[float]]<a class="headerlink" href="#salmon.backend.alg.Runner.get_queries" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_queries</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>List<span class="p">[</span>Query<span class="p">]</span><span class="p">, </span>List<span class="p">[</span>float<span class="p">]</span><span class="p">]</span><a class="headerlink" href="#salmon.backend.alg.Runner.get_queries" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get queries.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -275,7 +275,7 @@ not sample queries of the same score unbiased.</p>
 
 <dl class="py method">
 <dt id="salmon.backend.alg.Runner.process_answers">
-<code class="sig-name descname">process_answers</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">answers</span><span class="p">:</span> <span class="n">List[~ Answer]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.backend.alg.Runner.process_answers" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">process_answers</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">answers</span><span class="p">:</span> <span class="n">List<span class="p">[</span>Answer<span class="p">]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.backend.alg.Runner.process_answers" title="Permalink to this definition">¶</a></dt>
 <dd><p>Process answers.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -291,14 +291,14 @@ not sample queries of the same score unbiased.</p>
 
 <dl class="py method">
 <dt id="salmon.backend.alg.Runner.reset">
-<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">client</span></em>, <em class="sig-param"><span class="n">rj</span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.backend.alg.Runner.reset" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">client</span></em>, <em class="sig-param"><span class="n">rj</span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.backend.alg.Runner.reset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reset the algorithm. The algorithm will be deleted shortly after
 this function is called.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="salmon.backend.alg.Runner.run">
-<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">client</span></em>, <em class="sig-param"><span class="n">rj</span><span class="p">:</span> <span class="n">rejson.client.Client</span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.backend.alg.Runner.run" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">client</span></em>, <em class="sig-param"><span class="n">rj</span><span class="p">:</span> <span class="n">rejson.client.Client</span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.backend.alg.Runner.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run the algorithm.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -351,19 +351,19 @@ this function should return if
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_model</span></code>(self)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_model</span></code>()</p></td>
 <td><p>Get the model underlying the algorithm.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_queries</span></code>(self)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_queries</span></code>()</p></td>
 <td><p>Get queries.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">process_answers</span></code>(self, ans)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">process_answers</span></code>(ans)</p></td>
 <td><p>Process answers.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset</span></code>(self, client, rj)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset</span></code>(client, rj)</p></td>
 <td><p>Reset the algorithm.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code>(self, client, rj)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code>(client, rj)</p></td>
 <td><p>Run the algorithm.</p></td>
 </tr>
 </tbody>
@@ -384,7 +384,7 @@ this function should return if
 </table>
 <dl class="py method">
 <dt id="salmon.triplets.algs.RandomSampling.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">n</span></em>, <em class="sig-param"><span class="n">random_state</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.algs.RandomSampling.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span></em>, <em class="sig-param"><span class="n">random_state</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.algs.RandomSampling.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>name : str
 The algorithm name. This value is used to identify the algorithm
 in the database.</p>
@@ -421,19 +421,19 @@ in the database.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_model</span></code>(self)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_model</span></code>()</p></td>
 <td><p>Get the model underlying the algorithm.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_queries</span></code>(self)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_queries</span></code>()</p></td>
 <td><p>Get queries.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">process_answers</span></code>(self, ans)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">process_answers</span></code>(ans)</p></td>
 <td><p>Process answers.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset</span></code>(self, client, rj)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset</span></code>(client, rj)</p></td>
 <td><p>Reset the algorithm.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code>(self, client, rj)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code>(client, rj)</p></td>
 <td><p>Run the algorithm.</p></td>
 </tr>
 </tbody>
@@ -451,7 +451,7 @@ in the database.</p>
 </table>
 <dl class="py method">
 <dt id="salmon.triplets.algs.RoundRobin.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">n</span></em>, <em class="sig-param"><span class="n">random_state</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.algs.RoundRobin.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span></em>, <em class="sig-param"><span class="n">random_state</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.algs.RoundRobin.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>name : str
 The algorithm name. This value is used to identify the algorithm
 in the database.</p>
