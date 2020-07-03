@@ -10,36 +10,6 @@ Query = TypeVar("Query")
 Answer = TypeVar("Answer")
 
 
-def clear_queries(name, rj: RedisClient) -> bool:
-    rj.delete(f"alg-{name}.queries")
-    return True
-
-
-def post_queries(
-    name, queries: List[Query], scores: List[float], rj: RedisClient
-) -> bool:
-    q2 = {serialize_query(q): score for q, score in zip(queries, scores)}
-    key = f"alg-{name}-queries"
-    rj.zadd(key, q2)
-    return True
-
-
-def serialize_query(q: Query) -> str:
-    # TODO: use ast.literal_eval or json.loads
-    h, (a, b) = q
-    return f"{h}-{a}-{b}"
-
-
-def get_answers(name: str, rj: RedisClient, clear: bool = True) -> List[Answer]:
-    if not clear:
-        raise NotImplementedError
-    pipe = rj.pipeline()
-    pipe.jsonget(f"alg-{name}-answers", Path("."))
-    pipe.jsonset(f"alg-{name}-answers", Path("."), [])
-    answers, success = pipe.execute()
-    return answers
-
-
 class Runner:
     """
     Run an adaptive algorithm.
@@ -157,3 +127,31 @@ class Runner:
             dashboard or with an HTTP get request.
         """
         raise NotImplementedError
+
+    def clear_queries(self, name, rj: RedisClient) -> bool:
+        rj.delete(f"alg-{name}.queries")
+        return True
+
+    def post_queries(
+        self, name, queries: List[Query], scores: List[float], rj: RedisClient
+    ) -> bool:
+        q2 = {serialize_query(q): score for q, score in zip(queries, scores)}
+        key = f"alg-{name}-queries"
+        rj.zadd(key, q2)
+        return True
+
+    def serialize_query(self, q: Query) -> str:
+        # TODO: use ast.literal_eval or json.loads
+        h, (a, b) = q
+        return f"{h}-{a}-{b}"
+
+    def get_answers(
+        self, name: str, rj: RedisClient, clear: bool = True
+    ) -> List[Answer]:
+        if not clear:
+            raise NotImplementedError
+        pipe = rj.pipeline()
+        pipe.jsonget(f"alg-{name}-answers", Path("."))
+        pipe.jsonset(f"alg-{name}-answers", Path("."), [])
+        answers, success = pipe.execute()
+        return answers
