@@ -40,6 +40,46 @@ async def http_exception_handler(request, exc):
 
 @app.post("/init/{name}")
 async def init(name: str, background_tasks: BackgroundTasks) -> bool:
+    """
+    Start running an algorithm.
+
+    Parameters
+    ----------
+    name : str
+        The identifier paired with this algorithm.
+
+    Returns
+    -------
+    success : bool
+
+    Notes
+    -----
+    This function has side effects: it launches background job with
+    algorithm class. This class runs the ``run`` function, which posts
+    queries to Redis and process answers posted to Redis.
+
+    If the algorithm class has a ``get_query`` method, the class will
+    respond to the API request ``/get_query``. The method ``run`` should
+    be modified to handle this.
+
+    params : Dict[str, Any]
+        Pulled from the experiment config and Redis.
+        Here's an example YAML configuration:
+
+    .. code:: yaml
+
+       targets:
+         - 1
+         - 2
+         - 3
+         - 4
+       samplers:
+         - RandomSampling
+         - random2
+           - class: RandomSampling
+           - foo: bar
+
+    """
     # TODO: Better handling of exceptions if params keys don't match
     logger.info("backend: initialized")
     config = rj.jsonget("exp_config")
@@ -52,7 +92,7 @@ async def init(name: str, background_tasks: BackgroundTasks) -> bool:
             alg = cloudpickle.loads(state)
         else:
             params = config["samplers"][name]
-            _class = params.pop("class")
+            _class = params.pop("class", name)
             Alg = getattr(algs, _class)
             alg = Alg(name=name, n=config["n"], **params)
     except Exception as e:
