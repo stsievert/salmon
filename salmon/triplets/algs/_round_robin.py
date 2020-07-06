@@ -37,17 +37,17 @@ class RoundRobin(Runner):
         Number of objects
     random_state: Optional[int]
         Seed for random generateor
-    name : str
+    ident : str
         Identifier of the algorithm
 
     """
 
-    def __init__(self, n, random_state=None, name=""):
+    def __init__(self, n, random_state=None, ident=""):
         self.n = n
         self.answers = []
         self.random_state = check_random_state(random_state)
         self.counter = 0
-        super().__init__(name=name)
+        super().__init__(ident=ident)
 
     def get_queries(self) -> Query:
         logger.info(f"get_queries, self.counter={self.counter}")

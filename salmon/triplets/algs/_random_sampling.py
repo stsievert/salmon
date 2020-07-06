@@ -5,7 +5,7 @@ from typing import List, Tuple
 from sklearn.utils import check_random_state
 
 from .utils import Answer, Query
-from ...backend.alg import Runner, get_answers
+from ...backend.alg import Runner
 
 logger = logging.getLogger(__name__)
 
@@ -31,16 +31,16 @@ class RandomSampling(Runner):
         Number of objects
     random_state: Optional[int]
         Seed for random generateor
-    name : str
+    ident : str
         Identifier of the algorithm
 
     """
 
-    def __init__(self, n, random_state=None, name=""):
+    def __init__(self, n, random_state=None, ident=""):
         self.n = n
         self.answers = []
         self.random_state = check_random_state(random_state)
-        super().__init__(name=name)
+        super().__init__(ident=ident)
 
     def get_query(self) -> Tuple[Query, float]:
         h, (a, b) = _get_query(self.n, random_state=self.random_state)
@@ -56,7 +56,7 @@ class RandomSampling(Runner):
             if answers:
                 self.process_answers(answers)
                 answers = []
-            answers = get_answers(self.name, rj, clear=True)
+            answers = self.get_answers(rj, clear=True)
             if "reset" in rj.keys() and rj.jsonget("reset"):
                 self.reset(client, rj)
                 return
