@@ -6,16 +6,16 @@ targets:
   - <img alt="hoby cat" src="https://cdn.hobiecat.com/digital_asset_profiles/wildcat-action-12-full_jpg_1600x1600__generated.jpg" />
   - <img alt="bode miller" src="https://nbcolympictalk.files.wordpress.com/2013/11/bode-miller.jpg" />
 samplers:
-  - RandomSampling
-  - TSTE:
+  RandomSampling: {}
+  TSTE:
     alpha: 1.5
     optimizer: PadaDampG
     optimizer__lr: 0.1
-  - tste2:
+  tste2:
     alpha: 1.5
     class: TSTE
     optimizer: PadaDampG
     optimizer__lr: 0.01
-  - CKL
-  - GNMDS
-  - STE
+  CKL: {}
+  GNMDS: {}
+  STE: {}

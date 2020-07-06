@@ -18,3 +18,5 @@ cloudpickle
 sphinx
 numpydoc
 sphinx_rtd_theme
+torch
+skorch
