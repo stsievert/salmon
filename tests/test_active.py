@@ -21,7 +21,7 @@ def test_active_basics(server):
     server.authorize()
     exp = Path(__file__).parent / "data" / "active.yaml"
     server.post("/init_exp", data={"exp": exp.read_bytes()})
-    for k in range(100):
+    for k in range(6 * 3):
         print(k)
         q = server.get("/query").json()
         ans = {"winner": random.choice([q["left"], q["right"]]), "puid": "foo", **q}
