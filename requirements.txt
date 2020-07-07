@@ -20,3 +20,4 @@ numpydoc
 sphinx_rtd_theme
 torch
 skorch
+numba

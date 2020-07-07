@@ -142,7 +142,7 @@ async def process_answer(ans: manager.Answer):
     d = ujson.loads(ans.json())
     d.update({"time_received": time()})
     ident = d["alg_ident"]
-    logger.warning("answer recieved: %s", d)
+    logger.warning("answer received: %s", d)
     rj.jsonarrappend(f"alg-{ident}-answers", root, d)
     rj.jsonarrappend("all-responses", root, d)
     last_save = rj.lastsave()
