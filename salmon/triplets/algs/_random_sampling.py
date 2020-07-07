@@ -10,15 +10,13 @@ from ...backend.alg import Runner
 logger = logging.getLogger(__name__)
 
 
-def _get_query(n, random_state=None) -> Tuple[int, Tuple[int, int]]:
+def _get_query(n, random_state=None) -> Tuple[int, int, int]:
     random_state = check_random_state(random_state)
     while True:
-        a = random_state.choice(n)
-        b = random_state.choice(n)
-        c = random_state.choice(n)
+        a, b, c = random_state.choice(n, size=3)
         if a != b and b != c and c != a:
             break
-    return a, (b, c)
+    return a, b, c
 
 
 class RandomSampling(Runner):
@@ -43,8 +41,8 @@ class RandomSampling(Runner):
         super().__init__(ident=ident)
 
     def get_query(self) -> Tuple[Query, float]:
-        h, (a, b) = _get_query(self.n, random_state=self.random_state)
-        query = {"head": h, "left": a, "right": b}
+        h, a, b = _get_query(self.n, random_state=self.random_state)
+        query = {"head": int(h), "left": int(a), "right": int(b)}
         return query, 0.0
 
     def process_answers(self, ans: List[Answer]):

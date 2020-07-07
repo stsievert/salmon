@@ -112,13 +112,16 @@ async def get_query() -> Dict[str, Union[int, str, float]]:
     name = random.choice(names)
 
     r = httpx.get(f"http://localhost:8400/query-{name}")
+    logger.info(f"r={r}")
     if r.status_code == 200:
         return r.json()
 
     key = f"alg-{name}-queries"
     logger.info(f"bzpopmax'ing {key}")
     queries = rj.bzpopmax(key)
+    logger.warning(f"queries={queries}")
     _, serialized_query, score = queries
+    logger.warning(f"serialized_query={serialized_query}")
     q = manager.deserialize_query(serialized_query)
     return {"name": name, "score": score, **q}
 

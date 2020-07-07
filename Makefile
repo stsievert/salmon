@@ -1,8 +1,6 @@
 FORCE: ;
 
-loop: FORCE
-	rm -f salmon/frontend/dump*.rdb
-	rm -f salmon/frontend/logs/*.log
+loop: clean
 	docker-compose stop
 	docker-compose rm -f
 	docker-compose build
@@ -18,3 +16,8 @@ login: FORCE
 watch: FORCE
 	# for debugging on ec2, `sudo make watch`
 	docker-compose logs -f
+
+clean: FORCE
+	rm -f salmon/out/dump*.rdb
+	rm -f salmon/out/salmon*.log
+	rm -f salmon/out/redis.csv

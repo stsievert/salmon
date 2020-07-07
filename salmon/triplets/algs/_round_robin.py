@@ -10,19 +10,18 @@ from ...backend.alg import Runner
 logger = logging.getLogger(__name__)
 
 
-def _get_query(n, head, random_state=None) -> Tuple[int, Tuple[int, int]]:
+def _get_query(n, head, random_state=None) -> Tuple[int, int, int]:
     random_state = check_random_state(random_state)
     a = head
     while True:
-        b = random_state.choice(n)
-        c = random_state.choice(n)
+        b, c = random_state.choice(n, size=2)
         if a != b and b != c and c != a:
             break
-    return a, (b, c)
+    return a, b, c
 
 
-def _score_query(q: Tuple[int, Tuple[int, int]]) -> float:
-    h, (l, r) = q
+def _score_query(q: Tuple[int, int, int]) -> float:
+    h, l, r = q
     score = max(abs(h - l), abs(h - r))
     return float(score)
 

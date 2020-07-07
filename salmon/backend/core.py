@@ -92,8 +92,10 @@ async def init(ident: str, background_tasks: BackgroundTasks) -> bool:
             alg = cloudpickle.loads(state)
         else:
             params = config["samplers"][ident]
-            _class = params.pop("class", ident)
+            _class = params.pop("module", ident)
             Alg = getattr(algs, _class)
+            params = {k: _fmt_params(k, v) for k, v in params.items()}
+            logger.warning("params = %s", params)
             alg = Alg(ident=ident, n=config["n"], **params)
     except Exception as e:
         msg = exception_to_string(e)
@@ -102,15 +104,29 @@ async def init(ident: str, background_tasks: BackgroundTasks) -> bool:
 
     if hasattr(alg, "get_query"):
 
+        logger.info(f"Init'ing /query-{ident}")
         @app.get(f"/query-{ident}")
         def _get_query():
-            q, score = alg.get_query()
-            return {"ident": ident, "score": score, **q}
+            try:
+                q, score = alg.get_query()
+                return {"ident": ident, "score": score, **q}
+            except Exception as e:
+                logger.exception(e)
+                raise e
 
     client = None
     logger.info(f"Starting algs={ident}")
     background_tasks.add_task(alg.run, client, rj)
     return True
+
+
+def _fmt_params(k, v):
+    if isinstance(v, (str, int, float, bool, list)):
+        return v
+    elif isinstance(v, dict):
+        return {f"{k}__{ki}": _fmt_params(ki, vi) for ki, vi in v.items()}
+    raise ValueError(f"Error formatting key={k} with value {v}")
+
 
 
 @app.get("/model")

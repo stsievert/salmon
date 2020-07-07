@@ -52,7 +52,7 @@ class Runner:
                 answers = []
             if self.clear:
                 self.clear_queries(rj)
-            if queries:
+            if len(queries):
                 self.post_queries(queries, scores, rj)
             answers = self.get_answers(rj, clear=True)
             if "reset" in rj.keys() and rj.jsonget("reset"):
@@ -136,7 +136,7 @@ class Runner:
     def post_queries(
         self, queries: List[Query], scores: List[float], rj: RedisClient
     ) -> bool:
-        q2 = {self.serialize_query(q): score for q, score in zip(queries, scores)}
+        q2 = {self.serialize_query(q): float(score) for q, score in zip(queries, scores)}
         name = self.ident
         key = f"alg-{name}-queries"
         rj.zadd(key, q2)
@@ -144,7 +144,7 @@ class Runner:
 
     def serialize_query(self, q: Query) -> str:
         # TODO: use ast.literal_eval or json.loads
-        h, (a, b) = q
+        h, a, b = q
         return f"{h}-{a}-{b}"
 
     def get_answers(

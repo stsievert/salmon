@@ -62,6 +62,7 @@ class Embedding(BaseEstimator):
         initial_batch_size=64,
         warm_start=True,
         max_epochs=1,
+        **kwargs,
     ):
         self.module = module
         self.module__n = module__n
@@ -73,6 +74,7 @@ class Embedding(BaseEstimator):
         self.initial_batch_size = initial_batch_size
         self.warm_start = warm_start
         self.max_epochs = max_epochs
+        self.kwargs = kwargs
         super().__init__()
 
     def initialize(self):
@@ -93,6 +95,7 @@ class Embedding(BaseEstimator):
             max_epochs=1,
             train_split=None,
             verbose=False,
+            **self.kwargs,
         )
         est.initialize()
 
@@ -192,8 +195,7 @@ class Damper(Embedding):
         random_state=None,
         initial_batch_size=64,
         max_batch_size=None,
-        pf_eg=1000,
-        max_eg=30_000,
+        **kwargs,
     ):
         self.max_batch_size = max_batch_size
         super().__init__(
@@ -205,8 +207,7 @@ class Damper(Embedding):
             optimizer__momentum=optimizer__momentum,
             random_state=random_state,
             initial_batch_size=initial_batch_size,
-            pf_eg=pf_eg,
-            max_eg=max_eg,
+            **kwargs,
         )
 
     def _set_lr(self, lr):
@@ -244,8 +245,7 @@ class PadaDampG(Damper):
         max_batch_size=None,
         dwell=10,
         growth_factor=1.01,
-        pf_eg=1000,
-        max_eg=30_000,
+        **kwargs,
     ):
         super().__init__(
             module=module,
@@ -257,8 +257,7 @@ class PadaDampG(Damper):
             random_state=random_state,
             initial_batch_size=initial_batch_size,
             max_batch_size=max_batch_size,
-            pf_eg=pf_eg,
-            max_eg=max_eg,
+            **kwargs,
         )
         self.growth_factor = growth_factor
         self.dwell = dwell
@@ -287,8 +286,7 @@ class GeoDamp(Damper):
         max_batch_size=None,
         dwell=10,
         growth_factor=1.01,
-        pf_eg=1000,
-        max_eg=30_000,
+        **kwargs,
     ):
         super().__init__(
             module=module,
@@ -300,8 +298,7 @@ class GeoDamp(Damper):
             random_state=random_state,
             initial_batch_size=initial_batch_size,
             max_batch_size=max_batch_size,
-            pf_eg=pf_eg,
-            max_eg=max_eg,
+            **kwargs,
         )
         self.growth_factor = growth_factor
         self.dwell = dwell

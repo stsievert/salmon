@@ -54,7 +54,7 @@ def _salt(password: str) -> str:
 def _authorize(credentials: HTTPBasicCredentials = Depends(security)) -> bool:
     SALMON_NO_AUTH = os.environ.get("SALMON_NO_AUTH", False)
     logger.warning(f"Seeing if authorized access with SALMON_NO_AUTH={SALMON_NO_AUTH}")
-    print("SALMON_NO_AUTH={SALMON_NO_AUTH}")
+    print(f"SALMON_NO_AUTH={SALMON_NO_AUTH}")
     if SALMON_NO_AUTH:
         return True
 
@@ -143,7 +143,8 @@ async def _get_config(exp: bytes, targets_file: bytes) -> Dict[str, Any]:
         "instructions": "Default instructions (can include <i>arbitrary</i> HTML)",
         "max_queries": None,
         "debrief": "Thanks!",
-        "samplers": {"random": {"class": "RandomSampling"}},
+        "samplers": {"random": {"module": "RandomSampling"}},
+        "max_queries": -1,
     }
     exp_config.update(config)
     exp_config["targets"] = [str(x) for x in exp_config["targets"]]

@@ -150,3 +150,7 @@ class GNMDS(TripletDist):
     def losses(self, win2, lose2):
         zeros = torch.zeros(len(win2))
         return torch.max(zeros, win2 - lose2 + 1)
+
+    @numpy_or_torch
+    def probs(self, win2, lose2):
+        return win2 / (win2 + lose2 + 1e-6)
