@@ -12,15 +12,17 @@ Answer = TypeVar("Answer")
 
 class Runner:
     """
-    Run an adaptive algorithm.
+    Run a sampling algorithm. Provides hooks to connect with the database and
+    the Dask cluster.
+
+    Parameters
+    ----------
+    ident : str
+        The algorithm idenfifier. This value is used to identify the algorithm
+        in the database.
     """
 
     def __init__(self, ident: str = ""):
-        """
-        ident : str
-            The algorithm idenfifier. This value is used to identify the algorithm
-            in the database.
-        """
         self.ident = ident
 
     def run(self, client, rj: RedisClient):
@@ -68,7 +70,7 @@ class Runner:
 
     def reset(self, client, rj):
         """
-        Reset the algorithm. The algorithm will be deleted shortly after
+        Stop the algorithm. The algorithm will be deleted shortly after
         this function is called.
         """
         reset = rj.jsonget("reset")

@@ -21,7 +21,7 @@ by default will require more responses to triplet queries (say 20,000) to reach
 the same confidence.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :caption: Contents:
 
    getting-started
