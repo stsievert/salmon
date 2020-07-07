@@ -75,7 +75,7 @@ def test_basics(server):
         "response_time",
         "network_latency",
         "datetime_received",
-        "name",
+        "alg_ident",
         "score",
     }
     n = len(exp_config["targets"])

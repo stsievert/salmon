@@ -109,7 +109,7 @@ async def init(ident: str, background_tasks: BackgroundTasks) -> bool:
         def _get_query():
             try:
                 q, score = alg.get_query()
-                return {"ident": ident, "score": score, **q}
+                return {"alg_ident": ident, "score": score, **q}
             except Exception as e:
                 logger.exception(e)
                 raise e

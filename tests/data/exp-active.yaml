@@ -16,5 +16,5 @@ samplers:
   RoundRobin:
     random_state: 42
   foobar:
-    class: RoundRobin
+    module: RoundRobin
     random_state: 41

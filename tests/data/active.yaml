@@ -8,12 +8,12 @@ targets:
 samplers:
   RandomSampling: {}
   TSTE:
-    alpha: 1.5
+    module__alpha: 1.5
     optimizer: PadaDampG
     optimizer__lr: 0.1
   tste2:
-    alpha: 1.5
-    class: TSTE
+    module: TSTE
+    module__alpha: 1
     optimizer: PadaDampG
     optimizer__lr: 0.01
   CKL: {}

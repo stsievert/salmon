@@ -1,6 +1,7 @@
 from typing import List, TypeVar, Tuple, Dict, Any
 
 from sklearn.utils import check_random_state
+import torch.optim
 
 import salmon.triplets.algs.adaptive as adaptive
 from salmon.triplets.algs.adaptive import InfoGainScorer
@@ -38,17 +39,17 @@ class Adaptive(Runner):
             module=Module,
             module__n=n,
             module__d=d,
-            optimizer=Opt,
+            optimizer=torch.optim.SGD,
             optimizer__lr=optimizer__lr,
             optimizer__momentum=optimizer__momentum,
             initial_batch_size=initial_batch_size,
             random_state=random_state,
             warm_start=True,
             max_epochs=1,
-            **kwargs
+            **kwargs,
         )
-
         self.opt.initialize()
+
         self.search = InfoGainScorer(
             embedding=self.opt.embedding(),
             probs=self.opt.est_.module_.probs,
@@ -61,11 +62,19 @@ class Adaptive(Runner):
         return queries, scores
 
     def process_answers(self, answers: List[Answer]):
-        self.search.push(answers)
+        alg_ans = [
+            (
+                a["head"],
+                a["winner"],
+                a["left"] if a["winner"] == a["right"] else a["right"],
+            )
+            for a in answers
+        ]
+        self.search.push(alg_ans)
         self.search.embedding = self.opt.embedding()
 
-        self.opt.push(answers)
-        self.opt.partial_fit(answers)
+        self.opt.push(alg_ans)
+        self.opt.partial_fit(alg_ans)
 
     def get_model(self) -> Dict[str, Any]:
         pass

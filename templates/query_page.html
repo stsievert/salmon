@@ -143,7 +143,7 @@ async function send(winner, id) {
         "response_time": response_time,
         "network_latency": latency,
         "score": score,
-        "name": name,
+        "alg_ident": ident,
     })
   );
 }
@@ -155,7 +155,7 @@ function getquery(){
       right = data["right"];
       left = data["left"];
       score = data["score"];
-      name = data["name"];
+      ident = data["alg_ident"];
       $("#q-left").html(targets[left]);
       $("#q-right").html(targets[right]);
       $("#q-head").html(targets[head]);

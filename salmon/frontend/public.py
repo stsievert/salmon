@@ -108,22 +108,22 @@ async def get_query_page(request: Request):
 
 @app.get("/query", tags=["public"])
 async def get_query() -> Dict[str, Union[int, str, float]]:
-    names = rj.jsonget("samplers")
-    name = random.choice(names)
+    idents = rj.jsonget("samplers")
+    ident = random.choice(idents)
 
-    r = httpx.get(f"http://localhost:8400/query-{name}")
+    r = httpx.get(f"http://localhost:8400/query-{ident}")
     logger.info(f"r={r}")
     if r.status_code == 200:
         return r.json()
 
-    key = f"alg-{name}-queries"
+    key = f"alg-{ident}-queries"
     logger.info(f"bzpopmax'ing {key}")
     queries = rj.bzpopmax(key)
     logger.warning(f"queries={queries}")
     _, serialized_query, score = queries
     logger.warning(f"serialized_query={serialized_query}")
     q = manager.deserialize_query(serialized_query)
-    return {"name": name, "score": score, **q}
+    return {"alg_ident": ident, "score": score, **q}
 
 
 @app.post("/answer", tags=["public"])
@@ -141,11 +141,13 @@ async def process_answer(ans: manager.Answer):
     """
     d = ujson.loads(ans.json())
     d.update({"time_received": time()})
-    name = d["name"]
+    ident = d["alg_ident"]
     logger.warning("answer recieved: %s", d)
-    rj.jsonarrappend(f"alg-{name}-answers", root, d)
+    rj.jsonarrappend(f"alg-{ident}-answers", root, d)
     rj.jsonarrappend("all-responses", root, d)
     last_save = rj.lastsave()
+
+    # Save every 15 minutes
     if (datetime.now() - last_save) >= timedelta(seconds=60 * 15):
         rj.bgsave()
 

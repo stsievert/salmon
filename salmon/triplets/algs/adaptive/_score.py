@@ -4,6 +4,9 @@ import numpy as np
 from joblib import Parallel, delayed
 
 from .search import gram_utils, score
+import salmon.utils as utils
+
+logger = utils.get_logger(__name__)
 
 
 class QueryScorer:
@@ -92,9 +95,11 @@ class QueryScorer:
         """
         n = D.shape[0]
 
-        for k, (head, w, l) in enumerate(history):
-            a = np.log(self.probs(D[w], D[l]))
-            self._tau_[head] += a
+        logger.info("history = %s", history)
+        if len(history):
+            for k, (head, w, l) in enumerate(history):
+                a = np.log(self.probs(D[w], D[l]))
+                self._tau_[head] += a
 
         tau = np.exp(self._tau_)
         s = tau.sum(axis=1)  # the sum of each row
