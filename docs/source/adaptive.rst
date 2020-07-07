@@ -40,10 +40,10 @@ By defualt, ``samplers`` defaults to ``RandomSampling: {}``. We have to customiz
    samplers:
      TSTE: {}
 
-This will use :class:`~salmon.triplets.algs.adaptive.TSTE`. If we want to
-customize to include different keyword arguments, we need to look close at the
-arguments for :class:`~salmon.triplets.algs.adaptive.Embedding` or it's
-children. For example, this could be a configuration:
+This will use :class:`~salmon.triplets.algs.TSTE`. If we want to customize to
+include different keyword arguments, we need to look close at the arguments for
+:class:`~salmon.triplets.algs.TSTE` [#]_. For example, this could be a
+configuration:
 
 .. code-block:: yaml
 
@@ -76,6 +76,11 @@ If we want to use two alternate configs for TSTE:
 
 This would test out different optimization methods underlying the embedding.
 
+.. [#] Most of the other algorithms like :class:`~salmon.triplets.algs.CKL`
+       have very similar but slightly different configurations.
+       :class:`~salmon.triplets.algs.CKL` and
+       :class:`~salmon.triplets.algs.TSTE` have identical input parameters,
+       except ``CKL``'s input ``mu`` and ``TSTE``'s ``alpha``.
 
 Developing adaptive algorithms
 ------------------------------
@@ -86,3 +91,37 @@ The API the must conform to below:
 .. autosummary::
 
    salmon.backend.alg.Runner
+
+This API balances the fundamentally serial nature of adaptive algorithms with
+the parallel context of web servers.
+
+Typically, an adaptive algorithm looks like the following:
+
+.. code-block:: python
+
+   model = Model(...)
+   while True:
+       query = get_one_query()
+       ans = get_human_answer(query)
+       model.fit(ans)
+
+However, web servers are different. They typically look something like the
+following:
+
+.. code-block:: python
+
+   @app.get("/query")
+   async def query():
+       return get_one_query()
+
+   @app.post("/answer")
+   async def process_answer(answer):
+       db.push(answer)
+
+The :class:`~salmon.backend.alg.Runner` API balances the two. It runs both sets
+of code in parallel processes. That means one can not block the other. However,
+this also means that the adaptive algorithm has to produce queries quickly
+enough. Enough queries are produced because the scoring is rather fast [#]_ and
+every query is scored.
+
+.. [#] Fast enough to search 10,000 queries in 50ms with :math:`n = 85` objects.
