@@ -119,9 +119,7 @@ async def get_query() -> Dict[str, Union[int, str, float]]:
     key = f"alg-{ident}-queries"
     logger.info(f"bzpopmax'ing {key}")
     queries = rj.bzpopmax(key)
-    logger.warning(f"queries={queries}")
     _, serialized_query, score = queries
-    logger.warning(f"serialized_query={serialized_query}")
     q = manager.deserialize_query(serialized_query)
     return {"alg_ident": ident, "score": score, **q}
 

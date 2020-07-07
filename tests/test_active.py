@@ -21,7 +21,11 @@ def test_active_basics(server):
     server.authorize()
     exp = Path(__file__).parent / "data" / "active.yaml"
     server.post("/init_exp", data={"exp": exp.read_bytes()})
-    for k in range(6 * 3):
+
+    # There are 5 choices for sampler
+    # So probability of ignoring one sample all ``n`` pulls is :math:`(4/5)^n`.
+    # With n=30, that's about 0.12% of the time.
+    for k in range(30):
         print(k)
         q = server.get("/query").json()
         ans = {"winner": random.choice([q["left"], q["right"]]), "puid": "foo", **q}

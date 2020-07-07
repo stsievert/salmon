@@ -45,17 +45,16 @@ customize to include different keyword arguments, we need to look close at the
 arguments for :class:`~salmon.triplets.algs.adaptive.Embedding` or it's
 children. For example, this could be a configuration:
 
-:class:`~salmon.triplets.algs.RoundRobin`
-:class:`~salmon.triplets.algs.CKL`
-
 .. code-block:: yaml
 
    targets: ["obj1", "obj2", "foo", "bar", "foobar!"]
    samplers:
      RandomSampling: {}
      TSTE:
-       module__alpha: 1.1
+       alpha: 1.1
 
+``alpha`` is a keyword argument to
+:class:`~salmon.triplets.algs.adaptive.TSTE`.
 If we want to use two alternate configs for TSTE:
 
 .. code-block:: yaml

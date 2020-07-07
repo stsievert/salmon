@@ -1,12 +1,6 @@
 # filename: exp.yaml
-targets:
-  - object 1
-  - <i><b>arbitrary HTML</b></i>
-  - <img alt="bode miller" src="https://www.denverpost.com/wp-content/uploads/2005/02/bode-miller-one-ski.jpg" />
-  - <img alt="hoby cat" src="https://cdn.hobiecat.com/digital_asset_profiles/wildcat-action-12-full_jpg_1600x1600__generated.jpg" />
-  - <img alt="bode miller" src="https://nbcolympictalk.files.wordpress.com/2013/11/bode-miller.jpg" />
+targets: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
 samplers:
-  RandomSampling: {}
   TSTE:
     alpha: 1.5
     optimizer: PadaDampG
