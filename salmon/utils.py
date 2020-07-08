@@ -16,24 +16,31 @@ def get_logger(name, level=logging.INFO):
     # https://docs.python-guide.org/writing/logging/
     logger = logging.getLogger(name)
     formatter = logging.Formatter("%(asctime)s %(name)s %(levelname)s: %(message)s")
+    handlers = []
 
     ph = logging.StreamHandler()
     ph.setFormatter(formatter)
     ph.setLevel(level)
+    handlers.append(ph)
 
     DIR = Path(__file__).absolute().parent
     out = DIR / "out" / f"{name}.log"
 
-    fh = logging.FileHandler(str(out))
-    fh.setLevel(level)
-    fh.setFormatter(formatter)
+    try:
+        fh = logging.FileHandler(str(out))
+    except PermissionError:
+        pass
+    else:
+        fh.setLevel(level)
+        fh.setFormatter(formatter)
+        handlers.append(fh)
 
     if False:
         # Works for uvicorn but not for gunicorn
-        logger = background_logger(logger, fh, ph)
+        logger = background_logger(logger, *handlers)
     else:
-        logger.addHandler(ph)
-        logger.addHandler(fh)
+        for handler in handlers:
+            logger.addHandler(handler)
     return logger
 
 
