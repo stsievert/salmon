@@ -108,7 +108,7 @@ def upload_form():
         <form action="/init_exp" enctype="multipart/form-data" method="post">
         <ul>
           <li>Experiment parameters (YAML file): <input name="exp" type="file"></li>
-          <li>Images/movies (ZIP file, optional): <input name="targets_file" type="file"></li>
+          <li>Images/movies (ZIP file, optional): <input name="targets" type="file"></li>
         </ul>
         <input type="submit">
         </form>
@@ -137,7 +137,7 @@ def upload_form():
     return HTMLResponse(content=body)
 
 
-async def _get_config(exp: bytes, targets_file: bytes) -> Dict[str, Any]:
+async def _get_config(exp: bytes, targets: bytes) -> Dict[str, Any]:
     config = yaml.load(exp, Loader=yaml.SafeLoader)
     exp_config: Dict = {
         "instructions": "Default instructions (can include <i>arbitrary</i> HTML)",
@@ -147,12 +147,13 @@ async def _get_config(exp: bytes, targets_file: bytes) -> Dict[str, Any]:
         "max_queries": -1,
     }
     exp_config.update(config)
-    exp_config["targets"] = [str(x) for x in exp_config["targets"]]
 
-    if targets_file:
-        fnames = _extract_zipfile(targets_file)
+    if targets:
+        fnames = _extract_zipfile(targets)
         targets = [_format_target(f) for f in fnames]
         exp_config["targets"] = targets
+    else:
+        exp_config["targets"] = [str(x) for x in exp_config["targets"]]
 
     exp_config["n"] = len(exp_config["targets"])
     logger.info("initializing experinment with %s", exp_config)
@@ -182,7 +183,7 @@ async def http_exception_handler(request, exc):
 async def process_form(
     request: Request,
     exp: bytes = File(default=""),
-    targets_file: bytes = File(default=""),
+    targets: bytes = File(default=""),
     rdb: bytes = File(default=""),
     authorized: bool = Depends(_authorize),
 ):
@@ -208,7 +209,7 @@ async def process_form(
         - max_queries: 25
     """
     try:
-        return await _process_form(request, exp, targets_file, rdb)
+        return await _process_form(request, exp, targets, rdb)
     except Exception as e:
         reset(force=True, timeout=2)
         if isinstance(e, ExpParsingError):
@@ -221,13 +222,13 @@ async def process_form(
 async def _process_form(
     request: Request,
     exp: bytes = File(default=""),
-    targets_file: bytes = File(default=""),
+    targets: bytes = File(default=""),
     rdb: bytes = File(default=""),
 ):
     if rdb:
         return await restore(rdb=rdb)
     logger.info("salmon.__version__ = %s", app.version)
-    exp_config = await _get_config(exp, targets_file)
+    exp_config = await _get_config(exp, targets)
 
     rj.jsonset("exp_config", root, exp_config)
 
