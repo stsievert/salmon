@@ -20,7 +20,7 @@ class ServerException(HTTPException):
 
 def _extract_zipfile(raw_zipfile, directory="targets"):
     p = Path(__file__).absolute().parent  # directory to this file
-    imgs = p / "static" / "targets"
+    imgs = p / "static" / directory
 
     if imgs.exists():
         for _f in imgs.glob("**/*"):

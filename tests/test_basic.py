@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 import numpy as np
 import pandas as pd
 import requests
+import pytest
 import yaml
 from joblib import Parallel, delayed
 from requests.auth import HTTPBasicAuth, HTTPDigestAuth
@@ -219,3 +220,19 @@ def test_logs(server):
     logs = r.json()
     query_logs = logs["salmon.frontend.public.log"]
     assert sum(puid in log for log in query_logs) == 10
+
+
+@pytest.mark.xfail(
+    reason="Works in browser with imgs.zip; having difficulty with this test"
+)
+def test_zip_upload(server):
+    server.authorize()
+    exp = Path(__file__).parent / "data" / "upload_w_zip.yaml"
+    targets = Path(__file__).parent / "data" / "imgs.zip"
+    assert targets.exists()
+    t = targets.read_bytes()
+    assert len(t) > 0
+    assert t[:4] == b"\x50\x4B\x03\x04"
+    server.post(
+        "/init_exp", data={"exp": exp.read_bytes(), "targets": t},
+    )
