@@ -6,10 +6,12 @@ from textwrap import dedent
 from typing import Any
 from zipfile import ZipFile
 
+import pandas as pd
 from fastapi import HTTPException
 
 from ..utils import get_logger
 
+logger = get_logger(__name__)
 
 class ServerException(HTTPException):
     def __init__(self, msg):
@@ -38,7 +40,6 @@ def _extract_zipfile(raw_zipfile, directory="targets"):
 
 
 def _format_target(file: Path):
-    logger = get_logger(__name__)
     static = Path(__file__).absolute().parent
     p = file.relative_to(static)
     logger.info(str(p))
@@ -60,6 +61,12 @@ def _format_target(file: Path):
             "Supported extensions are ['png', 'gif', 'jpg', 'bmp', "
             "'jpeg', 'svg', 'mov' or 'mp4']"
         )
+
+def _format_targets(file: Path):
+    df = pd.read_csv(file, header=None)
+    if len(df.columns) > 1:
+        raise ValueError("Unsupported CSV file. One target should be on each line.")
+    return df[df.columns[0]].tolist()
 
 
 def sha256(x: Any) -> str:
