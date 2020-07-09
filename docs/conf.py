@@ -69,7 +69,6 @@ html_theme = "sphinx_rtd_theme"
 html_static_path = ["_static"]
 autodoc_mock_imports = ["fastapi", "rejson", "pydantic", "starlette"]
 autosummary_generate = True
-autodoc_default_flags = ["members", "inherited-members"]
 
 # Lifted from https://github.com/dask/dask-jobqueue/pull/301/files
 #
