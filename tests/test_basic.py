@@ -1,3 +1,4 @@
+import ast
 import json
 import os
 import pickle
@@ -76,7 +77,7 @@ def test_basics(server):
         "response_time",
         "network_latency",
         "datetime_received",
-        "name",
+        "alg_ident",
         "score",
     }
     n = len(exp_config["targets"])
@@ -197,6 +198,7 @@ def test_download_restore(server):
     # Does it restore?
     content = dump.read_bytes()
     dump.unlink()
+    assert not dump.exists()
     server.post("/restore", data={"rdb": content})
     assert dump.exists()
 
@@ -206,12 +208,13 @@ def test_logs(server):
     assert not dump.exists()
     server.authorize()
     exp = Path(__file__).parent / "data" / "exp.yaml"
+    server.get("/reset?force=1")
     server.post("/init_exp", data={"exp": exp.read_bytes()})
     data = []
     puid = "adsfjkl4awjklra"
     for k in range(10):
         q = server.get("/query").json()
-        ans = {"winner": random.choice([q["left"], q["right"]]), "puid": puid, **q}
+        ans = {"winner": random.choice([q["left"], q["right"]]), "puid": k, **q}
         server.post("/answer", data=ans)
         data.append(ans)
 
@@ -219,7 +222,11 @@ def test_logs(server):
     assert r.status_code == 200
     logs = r.json()
     query_logs = logs["salmon.frontend.public.log"]
-    assert sum(puid in log for log in query_logs) == 10
+
+    str_answers = [q.strip("\n") for q in query_logs if "answer received" in q]
+    answers = [ast.literal_eval(q[q.find("{"):]) for q in str_answers]
+    puids = {ans["puid"] for ans in answers}
+    assert {str(i) for i in range(10)}.issubset(puids)
 
 
 @pytest.mark.xfail(

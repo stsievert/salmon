@@ -45,4 +45,4 @@ def test_init_errors_propogate(server):
     exp = Path(__file__).parent / "data" / "exp-active-bad.yaml"
     r = server.post("/init_exp", data={"exp": exp.read_bytes()}, error=True)
     assert r.status_code == 500
-    assert "module 'salmon.triplets.algs' has no attribute 'RoundRobinFooBad'" in r.text
+    assert "module 'salmon.triplets.algs' has no attribute 'foobar'" in r.text

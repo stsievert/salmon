@@ -18,8 +18,8 @@ class Answer(BaseModel):
     left: int
     right: int
     winner: int
-    name: str
-    score: float
+    alg_ident: str
+    score: float = 0
     puid: str = ""
     response_time: float = -1
     network_latency: float = -1

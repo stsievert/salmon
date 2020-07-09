@@ -10,48 +10,20 @@ Query = TypeVar("Query")
 Answer = TypeVar("Answer")
 
 
-def clear_queries(name, rj: RedisClient) -> bool:
-    rj.delete(f"alg-{name}.queries")
-    return True
-
-
-def post_queries(
-    name, queries: List[Query], scores: List[float], rj: RedisClient
-) -> bool:
-    q2 = {serialize_query(q): score for q, score in zip(queries, scores)}
-    key = f"alg-{name}-queries"
-    rj.zadd(key, q2)
-    return True
-
-
-def serialize_query(q: Query) -> str:
-    # TODO: use ast.literal_eval or json.loads
-    h, (a, b) = q
-    return f"{h}-{a}-{b}"
-
-
-def get_answers(name: str, rj: RedisClient, clear: bool = True) -> List[Answer]:
-    if not clear:
-        raise NotImplementedError
-    pipe = rj.pipeline()
-    pipe.jsonget(f"alg-{name}-answers", Path("."))
-    pipe.jsonset(f"alg-{name}-answers", Path("."), [])
-    answers, success = pipe.execute()
-    return answers
-
-
 class Runner:
     """
-    Run an adaptive algorithm.
+    Run a sampling algorithm. Provides hooks to connect with the database and
+    the Dask cluster.
+
+    Parameters
+    ----------
+    ident : str
+        The algorithm idenfifier. This value is used to identify the algorithm
+        in the database.
     """
 
-    def __init__(self, name: str = ""):
-        """
-        name : str
-            The algorithm name. This value is used to identify the algorithm
-            in the database.
-        """
-        self.name = name
+    def __init__(self, ident: str = ""):
+        self.ident = ident
 
     def run(self, client, rj: RedisClient):
         """
@@ -81,10 +53,10 @@ class Runner:
                 logger.info(f"Done processing answers.")
                 answers = []
             if self.clear:
-                clear_queries(self.name, rj)
-            if queries:
-                post_queries(self.name, queries, scores, rj)
-            answers = get_answers(self.name, rj, clear=True)
+                self.clear_queries(rj)
+            if len(queries):
+                self.post_queries(queries, scores, rj)
+            answers = self.get_answers(rj, clear=True)
             if "reset" in rj.keys() and rj.jsonget("reset"):
                 self.reset(client, rj)
                 return
@@ -93,17 +65,17 @@ class Runner:
     def save(self) -> bool:
         rj2 = RedisClient(host="redis", port=6379, decode_responses=False)
         out = cloudpickle.dumps(self)
-        rj2.set(f"state-{self.name}", out)
+        rj2.set(f"state-{self.ident}", out)
         return True
 
     def reset(self, client, rj):
         """
-        Reset the algorithm. The algorithm will be deleted shortly after
+        Stop the algorithm. The algorithm will be deleted shortly after
         this function is called.
         """
         reset = rj.jsonget("reset")
-        logger.info("reset=%s for %s", reset, self.name)
-        rj.jsonset(f"stopped-{self.name}", Path("."), True)
+        logger.info("reset=%s for %s", reset, self.ident)
+        rj.jsonset(f"stopped-{self.ident}", Path("."), True)
         return True
 
     @property
@@ -157,3 +129,34 @@ class Runner:
             dashboard or with an HTTP get request.
         """
         raise NotImplementedError
+
+    def clear_queries(self, rj: RedisClient) -> bool:
+        name = self.ident
+        rj.delete(f"alg-{name}.queries")
+        return True
+
+    def post_queries(
+        self, queries: List[Query], scores: List[float], rj: RedisClient
+    ) -> bool:
+        q2 = {self.serialize_query(q): float(score) for q, score in zip(queries, scores)}
+        name = self.ident
+        key = f"alg-{name}-queries"
+        rj.zadd(key, q2)
+        return True
+
+    def serialize_query(self, q: Query) -> str:
+        # TODO: use ast.literal_eval or json.loads
+        h, a, b = q
+        return f"{h}-{a}-{b}"
+
+    def get_answers(
+        self, rj: RedisClient, clear: bool = True
+    ) -> List[Answer]:
+        if not clear:
+            raise NotImplementedError
+        pipe = rj.pipeline()
+        name = self.ident
+        pipe.jsonget(f"alg-{name}-answers", Path("."))
+        pipe.jsonset(f"alg-{name}-answers", Path("."), [])
+        answers, success = pipe.execute()
+        return answers

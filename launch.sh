@@ -2,9 +2,9 @@
 
 if [ $SALMON_DEBUG ]
 then
-    uvicorn salmon:app_algs --reload --port 8400 --host 0.0.0.0 &
+    uvicorn salmon:app_algs --reload --reload-dir salmon --port 8400 --host 0.0.0.0 &
     sleep 1
-    uvicorn salmon:app --reload --port 8421 --host 0.0.0.0
+    uvicorn salmon:app --reload --reload-dir salmon --reload-dir templates --port 8421 --host 0.0.0.0
 else
     # Use shared memory for Gunicorn; apparelty can block on AWS
     # [1]:https://pythonspeed.com/articles/gunicorn-in-docker/

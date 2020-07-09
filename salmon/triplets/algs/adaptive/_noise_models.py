@@ -123,6 +123,9 @@ class STE(TripletDist):
 
 
 class TSTE(TripletDist):
+    """
+    For details
+    """
     def __init__(self, n=None, d=2, alpha=1, random_state=None):
         super().__init__(n=n, d=d, random_state=random_state)
         self.alpha = alpha
@@ -136,6 +139,9 @@ class TSTE(TripletDist):
 
 
 class CKL(TripletDist):
+    """
+    The crowd kernel embedding.
+    """
     def __init__(self, n=None, d=2, mu=1e-4, random_state=None):
         super().__init__(n=n, d=d, random_state=random_state)
         self.mu = mu
@@ -147,6 +153,13 @@ class CKL(TripletDist):
 
 
 class GNMDS(TripletDist):
+    """
+    The global non-metric multidimensional scaling algorithm.
+    """
     def losses(self, win2, lose2):
         zeros = torch.zeros(len(win2))
         return torch.max(zeros, win2 - lose2 + 1)
+
+    @numpy_or_torch
+    def probs(self, win2, lose2):
+        return win2 / (win2 + lose2 + 1e-6)

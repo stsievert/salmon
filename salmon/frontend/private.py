@@ -28,6 +28,7 @@ from starlette.requests import Request
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.status import HTTP_401_UNAUTHORIZED
 
+import salmon
 from ..triplets import manager
 from . import plotting
 from .public import _ensure_initialized, app, templates
@@ -54,7 +55,7 @@ def _salt(password: str) -> str:
 def _authorize(credentials: HTTPBasicCredentials = Depends(security)) -> bool:
     SALMON_NO_AUTH = os.environ.get("SALMON_NO_AUTH", False)
     logger.warning(f"Seeing if authorized access with SALMON_NO_AUTH={SALMON_NO_AUTH}")
-    print("SALMON_NO_AUTH={SALMON_NO_AUTH}")
+    print(f"SALMON_NO_AUTH={SALMON_NO_AUTH}")
     if SALMON_NO_AUTH:
         return True
 
@@ -143,7 +144,8 @@ async def _get_config(exp: bytes, targets: bytes) -> Dict[str, Any]:
         "instructions": "Default instructions (can include <i>arbitrary</i> HTML)",
         "max_queries": None,
         "debrief": "Thanks!",
-        "samplers": {"random": {"class": "RandomSampling"}},
+        "samplers": {"random": {"module": "RandomSampling"}},
+        "max_queries": -1,
     }
     exp_config.update(config)
 
@@ -240,8 +242,10 @@ async def _process_form(
     rj.jsonset("samplers", root, names)
     for name in names:
         rj.jsonset(f"alg-{name}-answers", root, [])
-        # Not set because rj.zadd doesn't require it
-        # don't touch! rj.jsonset(f"alg-{name}-queries", root, [])
+
+        # Not set because rj.zadd doesn't require it -- don't touch!
+        # rj.jsonset(f"alg-{name}-queries", root, [])
+
         logger.info(f"initializing algorithm {name}...")
         r = httpx.post(f"http://localhost:8400/init/{name}")
         if r.status_code != 200:
@@ -539,7 +543,8 @@ async def download(request: Request, authorized: bool = Depends(_authorize)):
     """
     rj.save()
     fname = datetime.now().isoformat()[: 10 + 6]
-    headers = {"Content-Disposition": f'attachment; filename="exp-{fname}.rdb"'}
+    version = salmon.__version__
+    headers = {"Content-Disposition": f'attachment; filename="exp-{fname}-{version}.rdb"'}
     save_dir = DIR.parent / "out"
     return FileResponse(str(save_dir / "dump.rdb"), headers=headers)
 

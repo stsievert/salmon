@@ -1,7 +1,7 @@
 import numpy as np
 from sklearn.utils import check_random_state
 
-import salmon.triplets.algs.embed as embed
+from salmon.triplets.algs.adaptive import TSTE, Embedding
 from torch.optim import SGD
 
 
@@ -13,7 +13,7 @@ def test_random_state():
     answers = rng.choice(n, size=(4 * n, 3))
 
     kwargs = dict(
-        module=embed.STE,
+        module=TSTE,
         module__n=n,
         module__d=2,
         optimizer=SGD,
@@ -22,12 +22,12 @@ def test_random_state():
         random_state=random_state,
     )
 
-    est1 = embed.Embedding(**kwargs)
+    est1 = Embedding(**kwargs)
     est1.initialize()
     est1.partial_fit(answers)
     s1 = est1.score(answers)
 
-    est2 = embed.Embedding(**kwargs)
+    est2 = Embedding(**kwargs)
     est2.initialize()
     est2.partial_fit(answers)
     s2 = est2.score(answers)

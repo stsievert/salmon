@@ -80,8 +80,11 @@
 <div class="container">
   <div class="outline justify-content-center">
     <div class="fixed-bottom">
-      <div style="padding: 5px; margin: 5px; color: #aaa;">
-          <span id="num-queries">0</span>/{{ max_queries }}
+      <div style="padding: 5px; margin: 5px; color: #888;">
+          <span id="num-queries">0</span>
+          {% if max_queries > 0 %}
+          /{{ max_queries }}
+          {% endif %}
       </div>
     </div>
   </div>
@@ -140,7 +143,7 @@ async function send(winner, id) {
         "response_time": response_time,
         "network_latency": latency,
         "score": score,
-        "name": name,
+        "alg_ident": ident,
     })
   );
 }
@@ -152,7 +155,7 @@ function getquery(){
       right = data["right"];
       left = data["left"];
       score = data["score"];
-      name = data["name"];
+      ident = data["alg_ident"];
       $("#q-left").html(targets[left]);
       $("#q-right").html(targets[right]);
       $("#q-head").html(targets[head]);
