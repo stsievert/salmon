@@ -25,6 +25,7 @@ the same confidence.
    :caption: Contents:
 
    getting-started
+   experiment-init
    adaptive
    api
    performance

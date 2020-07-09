@@ -1,3 +1,4 @@
+
 Adaptive algorithms
 ===================
 
@@ -20,8 +21,10 @@ Below, the following will be detailed:
 1. How to specify adaptive algorithms, and how to configure them.
 2. How to write a new adaptive algorithms.
 
-Configuration
--------------
+.. _adaptive-config:
+
+Algorithm Configuration
+-----------------------
 
 Let's start out with a simple ``exp.yaml`` file, one suited for random
 sampling:
