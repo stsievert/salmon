@@ -97,7 +97,7 @@ async def init(ident: str, background_tasks: BackgroundTasks) -> bool:
             Alg = getattr(algs, _class)
             params = {k: _fmt_params(k, v) for k, v in params.items()}
             logger.warning("params = %s", params)
-            alg = Alg(ident=ident, n=config["n"], **params)
+            alg = Alg(ident=ident, n=config["n"], d=config["d"], **params)
     except Exception as e:
         msg = exception_to_string(e)
         logger.error(f"Error on alg={ident} init: {msg}")
@@ -106,6 +106,7 @@ async def init(ident: str, background_tasks: BackgroundTasks) -> bool:
     if hasattr(alg, "get_query"):
 
         logger.info(f"Init'ing /query-{ident}")
+
         @app.get(f"/query-{ident}")
         def _get_query():
             try:
