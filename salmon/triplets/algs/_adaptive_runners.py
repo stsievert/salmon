@@ -96,7 +96,9 @@ class Adaptive(Runner):
         self.opt.partial_fit(alg_ans)
 
     def get_model(self) -> Dict[str, Any]:
-        pass
+        return {
+            "embedding": self.search.embedding.tolist(),
+        }
 
 
 class TSTE(Adaptive):

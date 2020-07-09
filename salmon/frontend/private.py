@@ -584,6 +584,17 @@ async def restore(
     return HTMLResponse(msg)
 
 
+@app.get("/model/{alg_ident}")
+async def get_model(alg_ident: str) -> Dict[str, Any]:
+    logger.info("In public get_model with rj.keys() == %s", rj.keys())
+    r = httpx.get(f"http://localhost:8400/model/{alg_ident}")
+    if r.status_code != 200:
+        msg = r.json()["detail"]
+        raise ServerException(msg)
+    logger.info(r.text)
+    return r.json()
+
+
 def _get_filename(html):
     html = str(html)
     if "<img" in html or "<video" in html:

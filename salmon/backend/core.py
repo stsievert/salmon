@@ -8,6 +8,7 @@ from fastapi.responses import PlainTextResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from rejson import Client, Path
 
+from salmon.frontend.utils import ServerException
 from ..triplets import algs
 from ..utils import get_logger
 
@@ -128,7 +129,18 @@ def _fmt_params(k, v):
     raise ValueError(f"Error formatting key={k} with value {v}")
 
 
-
-@app.get("/model")
-async def get_model(name: str):
-    return 1
+@app.get("/model/{alg_ident}")
+async def get_model(alg_ident: str):
+    samplers = rj.jsonget("samplers")
+    if alg_ident not in samplers:
+        raise ServerException(
+            f"Can't find model for alg_ident='{alg_ident}'. "
+            f"Valid choices for alg_ident are {samplers}"
+        )
+    if f"model-{alg_ident}" not in rj.keys():
+        logger.warning("rj.keys() = %s", rj.keys())
+        raise ServerException(f"Model has not been created for alg_ident='{alg_ident}'")
+    rj2 = Client(host="redis", port=6379, decode_responses=False)
+    ir = rj2.get(f"model-{alg_ident}")
+    model = cloudpickle.loads(ir)
+    return model

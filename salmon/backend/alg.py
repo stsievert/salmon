@@ -1,3 +1,5 @@
+from time import time
+
 from typing import List, TypeVar, Tuple, Dict, Any
 from rejson import Client as RedisClient, Path
 import cloudpickle
@@ -44,7 +46,9 @@ class Runner:
 
         """
         answers: List = []
+        logger.info(f"Staring {self.ident}")
         while True:
+            _start = time()
             # TODO: integrate Dask
             queries, scores = self.get_queries()
             if answers:
@@ -58,14 +62,19 @@ class Runner:
                 self.post_queries(queries, scores, rj)
             answers = self.get_answers(rj, clear=True)
             if "reset" in rj.keys() and rj.jsonget("reset"):
+                self.save()
                 self.reset(client, rj)
                 return
             self.save()
+            _t = time() - _start
 
     def save(self) -> bool:
         rj2 = RedisClient(host="redis", port=6379, decode_responses=False)
         out = cloudpickle.dumps(self)
         rj2.set(f"state-{self.ident}", out)
+
+        out = cloudpickle.dumps(self.get_model())
+        rj2.set(f"model-{self.ident}", out)
         return True
 
     def reset(self, client, rj):
