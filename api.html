@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Algorithm API &mdash; Salmon v0.3.3+1.ged4da8c.dirty documentation</title>
+  <title>Algorithm API &mdash; Salmon v0.1.1+1.g4291c55.dirty documentation</title>
   
 
   
@@ -187,11 +187,19 @@
 <p>All adaptive algorithms must conform to this API:</p>
 <dl class="py class">
 <dt id="salmon.backend.alg.Runner">
-<em class="property">class </em><code class="sig-prename descclassname">salmon.backend.alg.</code><code class="sig-name descname">Runner</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.backend.alg.Runner" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run an adaptive algorithm.</p>
+<em class="property">class </em><code class="sig-prename descclassname">salmon.backend.alg.</code><code class="sig-name descname">Runner</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ident</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.backend.alg.Runner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a sampling algorithm. Provides hooks to connect with the database and
+the Dask cluster.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Attributes</dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
+<dt><strong>ident</strong><span class="classifier">str</span></dt><dd><p>The algorithm idenfifier. This value is used to identify the algorithm
+in the database.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
 <dt><a class="reference internal" href="#salmon.backend.alg.Runner.clear" title="salmon.backend.alg.Runner.clear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear</span></code></a></dt><dd><p>Should the queries be cleared from the database?</p>
 </dd>
 </dl>
@@ -214,7 +222,7 @@
 <td><p>Process answers.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#salmon.backend.alg.Runner.reset" title="salmon.backend.alg.Runner.reset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset</span></code></a>(client, rj)</p></td>
-<td><p>Reset the algorithm.</p></td>
+<td><p>Stop the algorithm.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#salmon.backend.alg.Runner.run" title="salmon.backend.alg.Runner.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>(client, rj)</p></td>
 <td><p>Run the algorithm.</p></td>
@@ -223,11 +231,23 @@
 </table>
 <table class="docutils align-default">
 <colgroup>
-<col style="width: 44%" />
-<col style="width: 56%" />
+<col style="width: 66%" />
+<col style="width: 34%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><strong>save</strong></p></td>
+<tr class="row-odd"><td><p><strong>clear_queries</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>get_answers</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>post_queries</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>save</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>serialize_query</strong></p></td>
 <td></td>
 </tr>
 </tbody>
@@ -292,7 +312,7 @@ not sample queries of the same score unbiased.</p>
 <dl class="py method">
 <dt id="salmon.backend.alg.Runner.reset">
 <code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">client</span></em>, <em class="sig-param"><span class="n">rj</span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.backend.alg.Runner.reset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reset the algorithm. The algorithm will be deleted shortly after
+<dd><p>Stop the algorithm. The algorithm will be deleted shortly after
 this function is called.</p>
 </dd></dl>
 
@@ -324,7 +344,7 @@ this function should return if
 <p>Here are the details on the specific algorithms:</p>
 <dl class="py class">
 <dt id="salmon.triplets.algs.RandomSampling">
-<em class="property">class </em><code class="sig-prename descclassname">salmon.triplets.algs.</code><code class="sig-name descname">RandomSampling</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span></em>, <em class="sig-param"><span class="n">random_state</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.algs.RandomSampling" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">salmon.triplets.algs.</code><code class="sig-name descname">RandomSampling</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span></em>, <em class="sig-param"><span class="n">random_state</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ident</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.algs.RandomSampling" title="Permalink to this definition">¶</a></dt>
 <dd><p>Choose the triplet queries randomly, only ensuring objects are not repeated.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -333,7 +353,7 @@ this function should return if
 </dd>
 <dt><strong>random_state: Optional[int]</strong></dt><dd><p>Seed for random generateor</p>
 </dd>
-<dt><strong>name</strong><span class="classifier">str</span></dt><dd><p>Identifier of the algorithm</p>
+<dt><strong>ident</strong><span class="classifier">str</span></dt><dd><p>Identifier of the algorithm</p>
 </dd>
 </dl>
 </dd>
@@ -361,7 +381,7 @@ this function should return if
 <td><p>Process answers.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset</span></code>(client, rj)</p></td>
-<td><p>Reset the algorithm.</p></td>
+<td><p>Stop the algorithm.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code>(client, rj)</p></td>
 <td><p>Run the algorithm.</p></td>
@@ -370,31 +390,41 @@ this function should return if
 </table>
 <table class="docutils align-default">
 <colgroup>
-<col style="width: 57%" />
-<col style="width: 43%" />
+<col style="width: 66%" />
+<col style="width: 34%" />
 </colgroup>
 <tbody>
+<tr class="row-odd"><td><p><strong>clear_queries</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>get_answers</strong></p></td>
+<td></td>
+</tr>
 <tr class="row-odd"><td><p><strong>get_query</strong></p></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><p><strong>save</strong></p></td>
+<tr class="row-even"><td><p><strong>post_queries</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>save</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>serialize_query</strong></p></td>
 <td></td>
 </tr>
 </tbody>
 </table>
 <dl class="py method">
 <dt id="salmon.triplets.algs.RandomSampling.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span></em>, <em class="sig-param"><span class="n">random_state</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.algs.RandomSampling.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>name : str
-The algorithm name. This value is used to identify the algorithm
-in the database.</p>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span></em>, <em class="sig-param"><span class="n">random_state</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ident</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.algs.RandomSampling.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt id="salmon.triplets.algs.RoundRobin">
-<em class="property">class </em><code class="sig-prename descclassname">salmon.triplets.algs.</code><code class="sig-name descname">RoundRobin</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span></em>, <em class="sig-param"><span class="n">random_state</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.algs.RoundRobin" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">salmon.triplets.algs.</code><code class="sig-name descname">RoundRobin</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span></em>, <em class="sig-param"><span class="n">random_state</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ident</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.algs.RoundRobin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Let the head of the triplet query rotate through the available items while choosing the bottom two items randomly.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -403,7 +433,7 @@ in the database.</p>
 </dd>
 <dt><strong>random_state: Optional[int]</strong></dt><dd><p>Seed for random generateor</p>
 </dd>
-<dt><strong>name</strong><span class="classifier">str</span></dt><dd><p>Identifier of the algorithm</p>
+<dt><strong>ident</strong><span class="classifier">str</span></dt><dd><p>Identifier of the algorithm</p>
 </dd>
 </dl>
 </dd>
@@ -431,7 +461,7 @@ in the database.</p>
 <td><p>Process answers.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset</span></code>(client, rj)</p></td>
-<td><p>Reset the algorithm.</p></td>
+<td><p>Stop the algorithm.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code>(client, rj)</p></td>
 <td><p>Run the algorithm.</p></td>
@@ -440,21 +470,31 @@ in the database.</p>
 </table>
 <table class="docutils align-default">
 <colgroup>
-<col style="width: 44%" />
-<col style="width: 56%" />
+<col style="width: 66%" />
+<col style="width: 34%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><strong>save</strong></p></td>
+<tr class="row-odd"><td><p><strong>clear_queries</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>get_answers</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>post_queries</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>save</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>serialize_query</strong></p></td>
 <td></td>
 </tr>
 </tbody>
 </table>
 <dl class="py method">
 <dt id="salmon.triplets.algs.RoundRobin.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span></em>, <em class="sig-param"><span class="n">random_state</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.algs.RoundRobin.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>name : str
-The algorithm name. This value is used to identify the algorithm
-in the database.</p>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span></em>, <em class="sig-param"><span class="n">random_state</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ident</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.algs.RoundRobin.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
 </dd></dl>
