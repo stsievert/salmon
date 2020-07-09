@@ -28,11 +28,11 @@ from starlette.requests import Request
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.status import HTTP_401_UNAUTHORIZED
 
+import salmon
 from ..triplets import manager
 from . import plotting
 from .public import _ensure_initialized, app, templates
-from .utils import ServerException, _extract_zipfile, _format_target, get_logger
-import salmon
+from .utils import ServerException, _extract_zipfile, _format_target, get_logger, _format_targets
 
 security = HTTPBasic()
 
@@ -151,8 +151,12 @@ async def _get_config(exp: bytes, targets: bytes) -> Dict[str, Any]:
 
     if targets:
         fnames = _extract_zipfile(targets)
-        targets = [_format_target(f) for f in fnames]
-        exp_config["targets"] = targets
+        logger.info("fnames = %s", fnames)
+        if len(fnames) == 1 and ".csv" in fnames[0].suffixes:
+            exp_config["targets"] = _format_targets(fnames[0])
+        else:
+            targets = [_format_target(f) for f in fnames]
+            exp_config["targets"] = targets
     else:
         exp_config["targets"] = [str(x) for x in exp_config["targets"]]
 
