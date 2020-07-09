@@ -22,12 +22,17 @@ def test_active_basics(server):
     exp = Path(__file__).parent / "data" / "active.yaml"
     server.post("/init_exp", data={"exp": exp.read_bytes()})
 
-    # There are 5 choices for sampler
-    # So probability of ignoring one sample all ``n`` pulls is :math:`(4/5)^n`.
-    # With n=30, that's about 0.12% of the time.
-    for k in range(30):
+    with open(exp, "r") as f:
+        config = yaml.load(f, Loader=yaml.SafeLoader)
+    samplers = list(config["samplers"].keys())
+
+    for k in range(len(samplers) * 2):
         print(k)
         q = server.get("/query").json()
+
+        # Jerry rig this so this test isn't random (an algorithm is chosen at random)
+        q["alg_ident"] = samplers[k % len(samplers)]
+
         ans = {"winner": random.choice([q["left"], q["right"]]), "puid": "foo", **q}
         server.post("/answer", data=ans)
 
