@@ -1,6 +1,10 @@
 Installation
 ============
 
+This pages details how to get Salmon running, either on EC2 or locally on your
+machine. After you get Salmon running, detail on how to launch experiments in
+:ref:`getting-started`.
+
 Experimentalist
 ---------------
 
@@ -24,6 +28,9 @@ Experimentalist
 Then after this AMI is finished launching and initializing, go to
 
 - ``[url]:8421/init_exp`` to initialize an experiment
+- ``[url]:8421/docs`` to see the endpoint documentation. The Salmon version
+  displayed should match the most recent Salmon release in the `list of Salmon
+  releases`_.
 - ``[url]:8421/dashboard`` to view all relevant links, including links to
   the...
 
@@ -47,6 +54,8 @@ Then after this AMI is finished launching and initializing, go to
 .. code::
 
    http://ec2-35-164-240-184.us-west-2.compute.amazonaws.com:8421/foo
+
+.. _list of Salmon releases: https://github.com/stsievert/salmon/releases
 
 Local machine
 -------------
