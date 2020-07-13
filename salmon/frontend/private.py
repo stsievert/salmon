@@ -20,12 +20,11 @@ import requests as httpx
 import yaml
 from bokeh.embed import json_item
 from fastapi import Depends, File, HTTPException
-from fastapi.responses import PlainTextResponse, FileResponse
+from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse, FileResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from rejson import Client, Path
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.requests import Request
-from starlette.responses import HTMLResponse, JSONResponse
 from starlette.status import HTTP_401_UNAUTHORIZED
 
 import salmon
@@ -369,9 +368,14 @@ async def get_responses(authorized: bool = Depends(_authorize)) -> Dict[str, Any
     targets = exp_config["targets"]
     start = rj.jsonget("start_time")
     responses = await _get_responses()
-    out = await _format_responses(responses, targets, start)
-    return JSONResponse(
-        out, headers={"Content-Disposition": 'attachment; filename="responses.json"'}
+    json_responses = await _format_responses(responses, targets, start)
+    with StringIO() as f:
+        df = pd.DataFrame(json_responses)
+        df.to_csv(f, index=False)
+        out = f.getvalue()
+
+    return PlainTextResponse(
+        out, headers={"Content-Disposition": 'attachment; filename="responses.csv"'}
     )
 
 
