@@ -345,7 +345,7 @@ def reset(
 
 
 @app.get("/responses", tags=["private"])
-async def get_responses(authorized: bool = Depends(_authorize)) -> Dict[str, Any]:
+async def get_responses(authorized: bool = Depends(_authorize), json: Optional[bool] = True) -> Dict[str, Any]:
     """
     Get the recorded responses from the current experiments. This includes
     the following columns:
@@ -371,6 +371,10 @@ async def get_responses(authorized: bool = Depends(_authorize)) -> Dict[str, Any
     start = rj.jsonget("start_time")
     responses = await _get_responses()
     json_responses = await _format_responses(responses, targets, start)
+    if json:
+        return JSONResponse(
+            json_responses, headers={"Content-Disposition": 'attachment; filename="responses.json"'}
+        )
     with StringIO() as f:
         df = pd.DataFrame(json_responses)
         df.to_csv(f, index=False)
