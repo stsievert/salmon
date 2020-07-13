@@ -358,10 +358,12 @@ async def get_responses(authorized: bool = Depends(_authorize)) -> Dict[str, Any
     * `response_time`: the time spent between the providing the query and
       receiving the answer.
 
+    There may be additional columns.
+
     Returns
     -------
-    The list of responses as a JSON file. This file can be read by
-    Panda's `read_json` function.
+    The list of responses as a CSV file. This file can be read by
+    Panda's `read_csv` function.
 
     """
     exp_config = await _ensure_initialized()
