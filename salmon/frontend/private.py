@@ -592,7 +592,6 @@ async def get_model(alg_ident: str) -> Dict[str, Any]:
     if r.status_code != 200:
         msg = r.json()["detail"]
         raise ServerException(msg)
-    logger.info(r.text)
     return r.json()
 
 
