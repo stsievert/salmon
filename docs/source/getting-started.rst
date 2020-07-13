@@ -1,81 +1,120 @@
-Installation
-============
+Getting started
+===============
 
-Experimentalist
----------------
+Experiments can be initialized by vising ``[url]:8421/init_exp``. This supports
+the following options:
 
-.. warning::
+1. Upload of a YAML file completely detailing the experiment.
+2. Upload of a YAML file describing experiment, and ZIP file for the targets.
+3. Upload of a database dump from Salmon.
 
-   This process is only ready for testing. It is **not** ready for deployment.
+"YAML files" must obey a standard; see for a (human-readable) description of
+the specification https://learnxinyminutes.com/docs/yaml/. To see if your YAML
+is valid, go to https://yamlchecker.com/.
 
-1. Sign into Amazon AWS (http://aws.amazon.com/)
-2. Select the "Oregon" region (or ``us-west-2``) in the upper right.
-3. Go to Amazon EC2
-4. Launch a new instance (the big blue button or square orange button).
-5. Select AMI ``ami-0117acefda9941def`` titled "Salmon". It appears in
-   Community AMIs after searching "Salmon".
-6. Don't click the big blue button yet. Continue to the rules page, and add
-   these rules:
+After you launch your experiment and vist ``[url]:8421``, you will see a query
+page:
 
-.. image:: imgs/networking-rule.png
-   :width: 80%
+.. _YAML specification: https://yaml.org/
+
+.. image:: imgs/query_page.png
    :align: center
+   :width: 500px
 
-Then after this AMI is finished launching and initializing, go to
+.. note::
 
-- ``[url]:8421/init_exp`` to initialize an experiment
-- ``[url]:8421/dashboard`` to view all relevant links, including links to
-  the...
+   This image is almost certainly out of date.
 
-  * The **query page.** This is the URL that shows the relevant triplets. This
-    is the URL to be sent to a crowdsourcing service.
-  * **API documentation**. This includes information on how to launch an
-    experiment, and what files need to be uploaded. View the documentation for
-    the POST request ``/init_exp`` for more detail.
-  * **Responses**. To get all human responses.
-  * **Logs**. This is very useful for debugging.
+Now, let's describe three methods on how to launch this experiment:
 
-.. warning::
+Experiment initialization with YAML file
+----------------------------------------
 
-   If you have an issue with the machine running Salmon, be sure to include the
-   logs when contacting the Salmon developers. They'd also appreciate it if
-   you left the machine running.
+This section will specify the YAML file; including a ZIP file will only modify
+the ``targets`` key.
 
-``[url]`` is the Amazon public DNS or public IP. This means that going to
-``[url]:8421/foo`` might mean going to this URL:
+Here's an example YAML file for initialization:
 
-.. code::
+.. code-block:: yaml
 
-   http://ec2-35-164-240-184.us-west-2.compute.amazonaws.com:8421/foo
+   targets: [1, 2, 3, 4, 5]
+   instructions: Select the item on the bottom most similar to the item on the top.
+   debrief: Thanks! Use the participant ID below in Mechnical Turk.
+   max_queries: 25
+   samplers:
+     RandomSampling: {}
+     RoundRobin: {}
 
-Local machine
+The top-level elements like ``max_queries`` and ``targets`` are called "keys"
+in YAML jargon. Here's documentation for each key:
+
+* ``instructions``: text. The instructions for the participant.
+* ``debrief``: text. The message to show at the end of the experiment. This
+  debrief will show alongside the participant ID (which will be available
+  through in the responses).
+* ``max_queries``: int. The number of queries a participant should answer. Set
+  ``max_queries: -1`` for unlimited queries.
+* ``samplers``. See :ref:`adaptive-config` for more detail.
+* ``targets``, optional list. Choices:
+
+    * YAML list. This ``targets: ["vonn", "miller", "ligety", "shiffrin"]`` is
+      specified, the user will see plain text. If this text includes HTML, it
+      will be rendered. For example if one target is ``"<i>kildow</i>"`` the
+      user will see italic text when that target is displayed.
+
+    * Don't include the ``targets`` keyword and upload a ZIP file instead. This
+      will completely replace ``targets`` with the default renderings of the
+      contents of the ZIP file (detailed in the next section).
+
+
+YAML file with ZIP file
+-----------------------
+
+If you upload a ZIP file alongside a YAML file, the ``targets`` key above is
+configured. Here are the choices for different files to include in the ZIP
+file:
+
+- A bunch of images/videos. Support extensions
+
+    - Videos: ``mp4``, ``mov``
+    - Images: ``png``, ``gif``, ``jpg``, ``jpeg``
+
+- A single CSV file. Each textual target should be on a new line.
+
+For example, this is a valid CSV file that will render textual targets:
+
+.. code-block::
+
+   Bode Miller
+   Lindsey Kildow
+   Mikaela Shiffrin
+   <b>Ted Ligety</b>
+   Paula Moltzan
+   Jessie Diggins
+
+Again, every line here is valid HTML, so the crowdsourcing participant will see
+bolded text for "**Ted Ligety**." That means we can also render images:
+
+.. code-block::
+
+   <img width="300px" src="https://upload.wikimedia.org/wikipedia/commons/3/30/Bode_Miller_at_the_2010_Winter_Olympic_downhill.jpg" />
+   <img width="300px" src="https://upload.wikimedia.org/wikipedia/commons/8/89/Miller_Bode_2008_002.jpg" />
+   <img width="300px" src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Lindsey_Kildow_Aspen.jpg" />
+   <img width="300px" src="https://commons.wikimedia.org/wiki/File:Michael_Sablatnik_Slalom_Spital_am_Semmering_2008.jpg" />
+   <img width="300px" src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Kjetil_Jansrud_giant_slalom_Norway_2011.jpg" />
+
+One rendered target will be this image:
+
+.. raw:: html
+
+   <img width="300px" src="https://upload.wikimedia.org/wikipedia/commons/8/89/Miller_Bode_2008_002.jpg" />
+
+Database dump
 -------------
-On your local machine as a developer? Run this following code in a terminal:
 
-.. code:: shell
+The dashboard offers a link to download the experiment on the dashboard (that
+is, at ``[url]:8421/dashboard``). This will download a file called
+``dump-X.Y.Z.rdb``. Do not delete the numbers ``X.Y.Z``!
 
-   $ git clone https://github.com/stsievert/salmon.git
-
-First, `install Docker`_ and `install Git`_. After that, run the following code:
-
-.. _install Docker: https://www.docker.com/products/docker-desktop
-.. _install Git: https://git-scm.com/downloads
-
-.. code:: shell
-
-   $ cd salmon
-   $ docker-compose build
-   $ docker-compose up
-   $ # visit http://localhost:8421/init_exp or http://localhost:8421/docs
-
-Developer
----------
-Follow the instructions for local machine launch.
-
-If you make changes to this code, follow these instructions:
-
-.. code:: shell
-
-	$ docker-compose stop
-	$ docker-compose build
-	$ docker-compose up
+Salmon supports the upload of this file to the same version of Salmon. The
+upload of this file will restore the state of your experiment.
