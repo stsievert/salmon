@@ -1,5 +1,5 @@
-Getting started
-===============
+Installation
+============
 
 Experimentalist
 ---------------
@@ -47,37 +47,6 @@ Then after this AMI is finished launching and initializing, go to
 .. code::
 
    http://ec2-35-164-240-184.us-west-2.compute.amazonaws.com:8421/foo
-
-Experiment Launch
-^^^^^^^^^^^^^^^^^
-
-Visit ``[url]:8421/init_exp`` to initialize an experiment. This will ask for
-the following:
-
-* a file describing the experiment
-* a username and password
-
-Here's an example experiment file:
-
-.. literalinclude:: ../tests/data/exp.yaml
-   :language: yaml
-   :linenos:
-
-This file follows the `YAML specification`_.
-Each target is a piece of HTML, and will be rendered correctly on the
-experiment page.
-
-If you visit ``[url]``, you will see a query page:
-
-.. _YAML specification: https://yaml.org/
-
-.. image:: imgs/query_page.png
-   :align: center
-   :width: 500px
-
-.. note::
-
-   This image is almost certainly out of date.
 
 Local machine
 -------------
