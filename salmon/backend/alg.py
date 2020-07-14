@@ -1,3 +1,4 @@
+import itertools
 from time import time
 
 from typing import List, TypeVar, Tuple, Dict, Any
@@ -27,6 +28,12 @@ class Runner:
     def __init__(self, ident: str = ""):
         self.ident = ident
 
+    def dask_client(self):
+        return None
+
+    def redis_client(self, decode_responses=True) -> RedisClient:
+        return RedisClient(host="redis", port=6379, decode_responses=decode_responses)
+
     def run(self, client, rj: RedisClient):
         """
         Run the algorithm.
@@ -45,20 +52,25 @@ class Runner:
         ``"reset" in rj.keys() and rj.jsonget("reset")``.
 
         """
+        rj = self.redis_client()
+        client = self.dask_client()
+
         answers: List = []
         logger.info(f"Staring {self.ident}")
-        while True:
+        for k in itertools.count():
             _start = time()
             # TODO: integrate Dask
             queries, scores = self.get_queries()
             if answers:
-                logger.info(f"Processing {len(answers)} answers...")
+                logger.info(f"Processing {len(answers)} answers for k={k}")
                 self.process_answers(answers)
-                logger.info(f"Done processing answers.")
+                logger.info(f"Done processing answers for k={k}")
                 answers = []
             if self.clear:
+                logger.info(f"Clearing queries on k={k}")
                 self.clear_queries(rj)
             if len(queries):
+                logger.info(f"Posting queries on k={k}")
                 self.post_queries(queries, scores, rj)
             answers = self.get_answers(rj, clear=True)
             if "reset" in rj.keys() and rj.jsonget("reset"):
@@ -69,7 +81,7 @@ class Runner:
             _t = time() - _start
 
     def save(self) -> bool:
-        rj2 = RedisClient(host="redis", port=6379, decode_responses=False)
+        rj2 = self.redis_client(decode_responses=False)
         out = cloudpickle.dumps(self)
         rj2.set(f"state-{self.ident}", out)
 

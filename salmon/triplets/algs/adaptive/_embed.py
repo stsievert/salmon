@@ -151,6 +151,8 @@ class Embedding(BaseEstimator):
         """
         if not isinstance(answers, np.ndarray):
             answers = np.array(answers, dtype="uint16")
+        if not len(answers):
+            return self
         beg_meta = copy(self.meta_)
         while True:
             incidies = np.arange(len(answers), dtype="int")

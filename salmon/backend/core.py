@@ -3,6 +3,7 @@ import traceback
 from typing import Dict, Union
 
 import cloudpickle
+from dask.distributed import Client as DaskClient
 from fastapi import BackgroundTasks, FastAPI, HTTPException
 from fastapi.responses import PlainTextResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
@@ -111,10 +112,13 @@ async def init(ident: str, background_tasks: BackgroundTasks) -> bool:
         def _get_query():
             try:
                 q, score = alg.get_query()
-                return {"alg_ident": ident, "score": score, **q}
+                logger.debug("q, score = %s, %s", q, score)
             except Exception as e:
                 logger.exception(e)
-                raise e
+                raise HTTPException(status_code=500, detail=str(e))
+            if q is None:
+                raise HTTPException(status_code=404)
+            return {"alg_ident": ident, "score": score, **q}
 
     client = None
     logger.info(f"Starting algs={ident}")

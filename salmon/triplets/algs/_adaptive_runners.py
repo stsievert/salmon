@@ -1,5 +1,5 @@
 from textwrap import dedent
-from typing import List, TypeVar, Tuple, Dict, Any
+from typing import List, TypeVar, Tuple, Dict, Any, Optional
 
 from sklearn.utils import check_random_state
 import torch.optim
@@ -8,6 +8,7 @@ import salmon.triplets.algs.adaptive as adaptive
 from salmon.triplets.algs.adaptive import InfoGainScorer
 from salmon.backend import Runner
 from salmon.utils import get_logger
+from salmon.triplets.algs._random_sampling import _get_query as _random_query
 
 logger = get_logger(__name__)
 
@@ -45,8 +46,13 @@ class Adaptive(Runner):
         optimizer__momentum=0.9,
         initial_batch_size=4,
         random_state=None,
+        R: int = 10,
         **kwargs,
     ):
+
+        self.n = n
+        self.d = d
+        self.R = R
 
         super().__init__(ident=ident)
         Opt = getattr(adaptive, optimizer)
@@ -75,12 +81,23 @@ class Adaptive(Runner):
             random_state=random_state,
         )
         self.search.push([])
+        self.num_ans = 0
+
+    def get_query(self) -> Tuple[Optional[Dict[str, int]], Optional[float]]:
+        if self.num_ans <= self.R * self.n:
+            head, left, right = _random_query(self.n)
+            return {"head": int(head), "left": int(left), "right": int(right)}, 0.0
+        return None, None
 
     def get_queries(self, num=10_000) -> Tuple[List[Query], List[float]]:
         queries, scores = self.search.score(num=int(num * 1.1))
         return queries, scores
 
     def process_answers(self, answers: List[Answer]):
+        self.num_ans += len(answers)
+        logger.info("self.num_ans = %s", self.num_ans)
+        logger.info("self.R, self.n = %s, %s", self.R, self.n)
+
         alg_ans = [
             (
                 a["head"],
