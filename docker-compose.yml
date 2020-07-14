@@ -8,8 +8,10 @@ services:
       - SALMON_NO_AUTH
     ports:
       - "8421:8421"
+      - "8400:8400"
     expose:
       - 8421
+      - 8400
     volumes:
       - type: bind
         source: .

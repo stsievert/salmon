@@ -29,7 +29,8 @@ before_install:
 script:
   - set -e
   - pip install -r requirements.txt
-  - pytest tests
+  - pip install -e .
+  - pytest
   - rm -f salmon/out/*
   - cd docs
   - make html

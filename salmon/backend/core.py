@@ -38,39 +38,95 @@ async def http_exception_handler(request, exc):
     return PlainTextResponse(exc.detail, status_code=exc.status_code)
 
 
-@app.post("/init/{name}")
-async def init(name: str, background_tasks: BackgroundTasks) -> bool:
+@app.post("/init/{ident}")
+async def init(ident: str, background_tasks: BackgroundTasks) -> bool:
+    """
+    Start running an algorithm.
+
+    Parameters
+    ----------
+    ident : str
+        The identifier paired with this algorithm.
+
+    Returns
+    -------
+    success : bool
+
+    Notes
+    -----
+    This function has side effects: it launches background job with
+    algorithm class. This class runs the ``run`` function, which posts
+    queries to Redis and process answers posted to Redis.
+
+    If the algorithm class has a ``get_query`` method, the class will
+    respond to the API request ``/get_query``. The method ``run`` should
+    be modified to handle this.
+
+    params : Dict[str, Any]
+        Pulled from the experiment config and Redis.
+        Here's an example YAML configuration:
+
+    .. code:: yaml
+
+       targets:
+         - 1
+         - 2
+         - 3
+         - 4
+       samplers:
+         - RandomSampling
+         - random2
+           - class: RandomSampling
+           - foo: bar
+
+    """
     # TODO: Better handling of exceptions if params keys don't match
     logger.info("backend: initialized")
     config = rj.jsonget("exp_config")
 
     try:
-        if f"state-{name}" in rj.keys():
+        if f"state-{ident}" in rj.keys():
             # See https://github.com/andymccurdy/redis-py/issues/1006
             rj2 = Client(host="redis", port=6379, decode_responses=False)
-            state = rj2.get(f"state-{name}")
+            state = rj2.get(f"state-{ident}")
             alg = cloudpickle.loads(state)
         else:
-            params = config["samplers"][name]
-            _class = params.pop("class")
+            params = config["samplers"][ident]
+            _class = params.pop("module", ident)
             Alg = getattr(algs, _class)
-            alg = Alg(name=name, n=config["n"], **params)
+            params = {k: _fmt_params(k, v) for k, v in params.items()}
+            logger.warning("params = %s", params)
+            alg = Alg(ident=ident, n=config["n"], **params)
     except Exception as e:
         msg = exception_to_string(e)
-        logger.error(f"Error on alg={name} init: {msg}")
+        logger.error(f"Error on alg={ident} init: {msg}")
         raise ExpParsingError(status_code=500, detail=msg)
 
     if hasattr(alg, "get_query"):
 
-        @app.get(f"/query-{name}")
+        logger.info(f"Init'ing /query-{ident}")
+        @app.get(f"/query-{ident}")
         def _get_query():
-            q, score = alg.get_query()
-            return {"name": name, "score": score, **q}
+            try:
+                q, score = alg.get_query()
+                return {"alg_ident": ident, "score": score, **q}
+            except Exception as e:
+                logger.exception(e)
+                raise e
 
     client = None
-    logger.info(f"Starting algs={name}")
+    logger.info(f"Starting algs={ident}")
     background_tasks.add_task(alg.run, client, rj)
     return True
+
+
+def _fmt_params(k, v):
+    if isinstance(v, (str, int, float, bool, list)):
+        return v
+    elif isinstance(v, dict):
+        return {f"{k}__{ki}": _fmt_params(ki, vi) for ki, vi in v.items()}
+    raise ValueError(f"Error formatting key={k} with value {v}")
+
 
 
 @app.get("/model")

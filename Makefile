@@ -1,13 +1,13 @@
 FORCE: ;
 
-loop: FORCE
-	rm -f salmon/frontend/dump*.rdb
-	rm -f salmon/frontend/logs/*.log
-	docker-compose stop
+loop: clean stop
 	docker-compose rm -f
 	docker-compose build
 	docker-compose up -d  --remove-orphans  # start in background
 	docker-compose logs -f
+
+stop: FORCE
+	docker-compose stop
 
 release: FORCE
 	echo "Run these commands:\n\ngit tag -a VERSION\npython versioning.py\ngit add .; git commit --amend\ngit push --tags"
@@ -18,3 +18,8 @@ login: FORCE
 watch: FORCE
 	# for debugging on ec2, `sudo make watch`
 	docker-compose logs -f
+
+clean: FORCE
+	rm -f salmon/out/dump*.rdb
+	rm -f salmon/out/salmon*.log
+	rm -f salmon/out/redis.csv
