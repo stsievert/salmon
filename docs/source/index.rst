@@ -24,9 +24,11 @@ the same confidence.
    :maxdepth: 2
    :caption: Contents:
 
+   installation
    getting-started
-   adaptive
+   algorithms
    api
+   adaptive
    performance
 
 
