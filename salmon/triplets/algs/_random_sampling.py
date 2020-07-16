@@ -49,7 +49,10 @@ class RandomSampling(Runner):
     def process_answers(self, ans: List[Answer]):
         self.answers.extend(ans)
 
-    def run(self, client, rj):
+    def run(self):
+        rj = self.redis_client()
+        client = self.dask_client()
+
         answers: List = []
         while True:
             if answers:

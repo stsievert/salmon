@@ -78,12 +78,20 @@ async def _ensure_initialized():
         "samplers",
         "instructions",
         "n",
+        "d",
         "max_queries",
         "debrief",
     ]
     if not set(exp_config) == set(expected_keys):
-        msg = "Experiment keys are not correct. Expected {}, got {}"
-        raise ServerException(msg.format(expected_keys, list(exp_config.keys())))
+        msg = (
+            "Experiment keys are not correct. Expected {}, got {}.\n\n"
+            "Extra keys: {}\n"
+            "Missing keys: {}"
+        )
+        extra = set(exp_config) - set(expected_keys)
+        missing = set(expected_keys) - set(exp_config)
+        out = msg.format(expected_keys, list(exp_config.keys()), extra, missing)
+        raise ServerException()
     return exp_config
 
 

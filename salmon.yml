@@ -5,23 +5,23 @@ channels:
   - pytorch
   - anaconda
 dependencies:
-  - python>=3.8
+  - python=3.8
   - numba
-  - numpy
+  - numpy==1.18.1
   - scipy
-  - pandas
+  - pandas==1.0.1
   - scikit-learn
-  - ujson
-  - msgpack-python
   - pip
   - nomkl
-  - dask
-  - distributed
-  - pytorch
+  - dask==2.20.0
+  - distributed==2.20.0
+  - ujson
+  - msgpack-python
+  - pytorch==1.4
   - cpuonly
   - pip:
     - fastapi[all]
-    - skorch
+    - skorch==0.8.0
     - pyarrow
     - fastparquet
     - dask-ml
