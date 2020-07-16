@@ -68,6 +68,9 @@ in YAML jargon. Here's documentation for each key:
       will completely replace ``targets`` with the default renderings of the
       contents of the ZIP file (detailed in the next section).
 
+* ``skip_button``, optional boolean. Default ``false``. If ``true``, show a
+  button that says "new query."
+
 
 YAML file with ZIP file
 -----------------------
