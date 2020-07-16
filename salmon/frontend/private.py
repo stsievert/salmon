@@ -145,6 +145,7 @@ async def _get_config(exp: bytes, targets: bytes) -> Dict[str, Any]:
         "debrief": "Thanks!",
         "samplers": {"random": {"module": "RandomSampling"}},
         "max_queries": -1,
+        "skip_button": False,
     }
     exp_config.update(config)
 

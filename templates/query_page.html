@@ -81,10 +81,12 @@
   <div class="outline justify-content-center">
     <div class="fixed-bottom">
       <div style="padding: 5px; margin: 5px; color: #888;">
-          <span id="num-queries">0</span>
-          {% if max_queries > 0 %}
-          /{{ max_queries }}
-          {% endif %}
+          <span id="num-queries">0</span>{% if max_queries > 0 %}/{{ max_queries }} {% endif %}
+      </div>
+      <div id="skip-button">
+        {% if skip_button %}
+        <button type="button" class="btn btn-light" onclick="getquery()">New query</button>
+        {% endif %}
       </div>
     </div>
   </div>
