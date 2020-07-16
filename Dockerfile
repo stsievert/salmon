@@ -1,13 +1,24 @@
-FROM continuumio/miniconda3
+FROM continuumio/miniconda3:4.7.12
 WORKDIR /usr/src/salmon/
 
 RUN apt-get update
-RUN apt-get install -y gcc
-RUN conda install -y numpy scipy pandas scikit-learn ujson
-RUN conda install -y numba
+RUN apt-get install -y gcc cmake g++
 
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-RUN conda install -c anaconda msgpack-python
+# from https://hub.docker.com/r/daskdev/dask/dockerfile
+RUN conda install --yes \
+    -c conda-forge \
+    python==3.8 \
+    python-blosc \
+    cytoolz \
+    dask==2.20.0 \
+    lz4 \
+    nomkl \
+    numpy==1.18.1 \
+    pandas==1.0.1 \
+    tini==0.18.0
+
+RUN pip install --ignore-installed PyYAML
+COPY salmon.yml .
+RUN conda env update --file salmon.yml --prefix $(which python)/../..
 
 CMD ["bash", "launch.sh"]

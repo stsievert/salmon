@@ -34,7 +34,7 @@ class Runner:
     def redis_client(self, decode_responses=True) -> RedisClient:
         return RedisClient(host="redis", port=6379, decode_responses=decode_responses)
 
-    def run(self, client, rj: RedisClient):
+    async def run(self):
         """
         Run the algorithm.
 
@@ -79,6 +79,7 @@ class Runner:
                 return
             self.save()
             _t = time() - _start
+        return True
 
     def save(self) -> bool:
         rj2 = self.redis_client(decode_responses=False)

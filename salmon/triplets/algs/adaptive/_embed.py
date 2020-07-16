@@ -11,6 +11,9 @@ from torch.nn.modules.loss import _Loss
 from sklearn.base import BaseEstimator
 from sklearn.utils import check_random_state
 from scipy.special import binom
+from salmon.utils import get_logger
+
+logger = get_logger(__name__)
 
 from .search import gram_utils, score
 
@@ -165,6 +168,7 @@ class Embedding(BaseEstimator):
 
             self.meta_["num_answers"] += self.batch_size
             self.meta_["model_updates"] += 1
+            logger.info("%s", self.meta_)
             if self.meta_["num_answers"] - beg_meta["num_answers"] >= len(answers):
                 break
         return self
@@ -211,6 +215,12 @@ class Damper(Embedding):
             initial_batch_size=initial_batch_size,
             **kwargs,
         )
+
+    def initialize(self):
+        r = super().initialize()
+        if hasattr(self, "max_batch_size"):
+            self.max_batch_size_ = self.max_batch_size or 10 * self.module__n
+        return r
 
     def _set_lr(self, lr):
         opt = self.est_.optimizer_

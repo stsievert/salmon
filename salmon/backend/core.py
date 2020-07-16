@@ -4,6 +4,7 @@ from typing import Dict, Union
 
 import cloudpickle
 from dask.distributed import Client as DaskClient
+from dask.distributed import fire_and_forget
 from fastapi import BackgroundTasks, FastAPI, HTTPException
 from fastapi.responses import PlainTextResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
@@ -120,9 +121,9 @@ async def init(ident: str, background_tasks: BackgroundTasks) -> bool:
                 raise HTTPException(status_code=404)
             return {"alg_ident": ident, "score": score, **q}
 
-    client = None
+    client = DaskClient("dask-scheduler:8786", asynchronous=True)
     logger.info(f"Starting algs={ident}")
-    background_tasks.add_task(alg.run, client, rj)
+    fire_and_forget(client.submit(alg.run))
     return True
 
 
