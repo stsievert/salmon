@@ -77,7 +77,7 @@ class Adaptive(Runner):
 
         self.search = InfoGainScorer(
             embedding=self.opt.embedding(),
-            probs=self.opt.est_.module_.probs,
+            probs=self.opt.module_.probs,
             random_state=random_state,
         )
         self.search.push([])

@@ -2,6 +2,8 @@
 
 if [ $SALMON_DEBUG ]
 then
+    dask-scheduler --port 8786 --dashboard-address :8787 &
+    dask-worker --nprocs 4 localhost:8786 &
     uvicorn salmon:app_algs --reload --reload-dir salmon --port 8400 --host 0.0.0.0 &
     sleep 1
     uvicorn salmon:app --reload --reload-dir salmon --reload-dir templates --port 8421 --host 0.0.0.0

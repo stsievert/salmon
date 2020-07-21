@@ -1,3 +1,4 @@
+import os
 import random
 import traceback
 from typing import Dict, Union
@@ -13,6 +14,8 @@ from rejson import Client, Path
 from salmon.frontend.utils import ServerException
 from ..triplets import algs
 from ..utils import get_logger
+
+DEBUG = os.environ.get("SALMON_DEBUG", 0)
 
 logger = get_logger(__name__)
 
@@ -121,7 +124,7 @@ async def init(ident: str, background_tasks: BackgroundTasks) -> bool:
                 raise HTTPException(status_code=404)
             return {"alg_ident": ident, "score": score, **q}
 
-    client = DaskClient("dask-scheduler:8786", asynchronous=True)
+    client = DaskClient("localhost:8786", asynchronous=True)
     logger.info(f"Starting algs={ident}")
     fire_and_forget(client.submit(alg.run))
     return True

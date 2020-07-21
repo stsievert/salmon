@@ -8,20 +8,6 @@ import torch.nn as nn
 ArrayLike = Union[np.ndarray, torch.Tensor]
 
 
-def numpy_or_torch(f):
-    def wrapper(_, win2, lose2):
-        converted = False
-        if isinstance(win2, np.ndarray):
-            win2 = torch.from_numpy(win2)
-            lose2 = torch.from_numpy(lose2)
-            with torch.no_grad():
-                ret = f(_, win2, lose2)
-                return ret.detach().numpy()
-        return f(_, win2, lose2)
-
-    return wrapper
-
-
 class TripletDist(nn.Module):
     """
     A base class to find losses for the triplet embedding problem.
@@ -50,6 +36,20 @@ class TripletDist(nn.Module):
             torch.from_numpy(embedding), requires_grad=True
         )
 
+    def numpy_or_torch(self, f):
+        def wrapper(win2, lose2):
+            converted = False
+            if isinstance(win2, np.ndarray):
+                win2 = torch.from_numpy(win2)
+                lose2 = torch.from_numpy(lose2)
+                with torch.no_grad():
+                    ret = f(win2, lose2)
+                    return ret.detach().numpy()
+            return f(win2, lose2)
+
+        return wrapper
+
+
     def losses(self, win2: ArrayLike, lose2: ArrayLike) -> ArrayLike:
         """
         Calculate the losses of a this triplet model with the triplet
@@ -75,6 +75,9 @@ class TripletDist(nn.Module):
     @property
     def embedding(self):
         return self._embedding
+
+    def probs(self, win2, lose2):
+        return self.numpy_or_torch(self._probs)(win2, lose2)
 
     def _get_dists(self, h_w_l):
         heads = self._embedding[h_w_l[:, 0]]
@@ -105,8 +108,7 @@ class TripletDist(nn.Module):
 
 
 class STE(TripletDist):
-    @numpy_or_torch
-    def probs(self, win2, lose2):
+    def _probs(self, win2, lose2):
         ## Double the computation
         #  num = torch.exp(-win2)
         #  return num / (num + torch.exp(-lose2))
@@ -130,8 +132,7 @@ class TSTE(TripletDist):
         super().__init__(n=n, d=d, random_state=random_state)
         self.alpha = alpha
 
-    @numpy_or_torch
-    def probs(self, win2, lose2):
+    def _probs(self, win2, lose2):
         pwr = -(self.alpha + 1) / 2
         t1 = (1 + (win2 / self.alpha)) ** pwr
         t2 = (1 + (lose2 / self.alpha)) ** pwr
@@ -146,8 +147,7 @@ class CKL(TripletDist):
         super().__init__(n=n, d=d, random_state=random_state)
         self.mu = mu
 
-    @numpy_or_torch
-    def probs(self, win2, lose2):
+    def _probs(self, win2, lose2):
         num = self.mu + lose2
         return num / (num + self.mu + win2)
 
@@ -160,6 +160,5 @@ class GNMDS(TripletDist):
         zeros = torch.zeros(len(win2))
         return torch.max(zeros, win2 - lose2 + 1)
 
-    @numpy_or_torch
-    def probs(self, win2, lose2):
+    def _probs(self, win2, lose2):
         return win2 / (win2 + lose2 + 1e-6)

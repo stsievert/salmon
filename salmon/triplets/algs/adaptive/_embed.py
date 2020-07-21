@@ -8,7 +8,6 @@ import torch.optim as optim
 from numba import jit, prange
 from skorch.net import NeuralNet
 from torch.nn.modules.loss import _Loss
-from sklearn.base import BaseEstimator
 from sklearn.utils import check_random_state
 from scipy.special import binom
 from salmon.utils import get_logger
@@ -43,7 +42,7 @@ class Reduce:
         return torch.mean(input)
 
 
-class Embedding(BaseEstimator):
+class Embedding(_Embedding):
     """
     An triplet embedding algorithm.
 
@@ -67,49 +66,38 @@ class Embedding(BaseEstimator):
         max_epochs=1,
         **kwargs,
     ):
-        self.module = module
-        self.module__n = module__n
-        self.module__d = module__d
-        self.optimizer = optimizer
-        self.optimizer__lr = optimizer__lr
-        self.optimizer__momentum = optimizer__momentum
-        self.random_state = random_state
         self.initial_batch_size = initial_batch_size
-        self.warm_start = warm_start
-        self.max_epochs = max_epochs
-        self.kwargs = kwargs
-        super().__init__()
+        self.random_state = random_state
+        super().__init__(
+            module=module,
+            module__n=module__n,
+            module__d=module__d,
+            module__random_state=random_state,
+            optimizer=optimizer,
+            optimizer__lr=optimizer__lr,
+            optimizer__momentum=optimizer__momentum,
+            warm_start=warm_start,
+            **kwargs,
+            criterion=Reduce,
+            verbose=False,
+            batch_size=-1,
+            max_epochs=1,
+            optimizer__nesterov=True,
+            train_split=None,
+        )
 
     def initialize(self):
 
         rng = check_random_state(self.random_state)
-        est = _Embedding(
-            module=self.module,
-            criterion=Reduce,
-            #  criterion=lambda x: torch.mean(x)
-            module__n=self.module__n,
-            module__d=self.module__d,
-            module__random_state=self.random_state,
-            optimizer=self.optimizer,
-            optimizer__lr=self.optimizer__lr,
-            optimizer__momentum=self.optimizer__momentum,
-            optimizer__nesterov=True,
-            batch_size=-1,
-            max_epochs=1,
-            train_split=None,
-            verbose=False,
-            **self.kwargs,
-        )
-        est.initialize()
+        super().initialize()
 
-        self.est_ = est
         self.meta_ = {"num_answers": 0, "model_updates": 0}
         self.initialized_ = True
         self.random_state_ = rng
-        self.history_ = np.zeros((1000, 3), dtype="uint16")
+        self.answers_ = np.zeros((1000, 3), dtype="uint16")
 
     @property
-    def batch_size(self):
+    def batch_size_(self):
         return self.initial_batch_size
 
     def push(self, answers):
@@ -121,13 +109,13 @@ class Embedding(BaseEstimator):
                 np.array(answers) if len(answers) else np.empty((0, 3), dtype="uint16")
             )
         i = self.meta_["num_answers"]
-        if i + len(answers) >= len(self.history_):
-            n = len(answers) + len(self.history_)
+        if i + len(answers) >= len(self.answers_):
+            n = len(answers) + len(self.answers_)
             new_ans = np.zeros((n, 3), dtype="uint16")
-            self.history_ = np.vstack((self.history_, new_ans))
-        self.history_[i : i + len(answers)] = answers
-        self.meta_["history_bytes"] = self.history_.nbytes
-        return self.history_.nbytes
+            self.answers_ = np.vstack((self.answers_, new_ans))
+        self.answers_[i : i + len(answers)] = answers
+        self.meta_["answers_bytes"] = self.answers_.nbytes
+        return self.answers_.nbytes
 
     def partial_fit(self, answers):
         """
@@ -150,7 +138,7 @@ class Embedding(BaseEstimator):
         This impure function modifies
 
             * ``self.meta_`` keys ``model_updates`` and ``num_answers``
-            * ``self.est_``, the embedding.
+            * ``self.module_``, the embedding.
         """
         if not isinstance(answers, np.ndarray):
             answers = np.array(answers, dtype="uint16")
@@ -160,13 +148,13 @@ class Embedding(BaseEstimator):
         while True:
             incidies = np.arange(len(answers), dtype="int")
 
-            bs = self.batch_size
+            bs = self.batch_size_
 
             idx_train = self.random_state_.choice(len(answers), size=bs)
             train_ans = answers[idx_train].astype("int64")
-            _ = self.est_.partial_fit(train_ans)
+            _ = super().partial_fit(train_ans)
 
-            self.meta_["num_answers"] += self.batch_size
+            self.meta_["num_answers"] += self.batch_size_
             self.meta_["model_updates"] += 1
             logger.info("%s", self.meta_)
             if self.meta_["num_answers"] - beg_meta["num_answers"] >= len(answers):
@@ -176,17 +164,17 @@ class Embedding(BaseEstimator):
     def score(self, answers, y=None):
         if not (hasattr(self, "initialized_") and self.initialized_):
             self.initialize()
-        score = self.est_.score(answers)
+        score = super().score(answers)
         self.meta_["last_score"] = score
         return score
 
     def fit(self, X, y=None):
         for epoch in range(self.max_epochs):
-            self.partial_fit(self.history_)
-        raise NotImplementedError
+            self.partial_fit(self.answers_)
+        return self
 
     def embedding(self):
-        return self.est_.module_.embedding.detach().numpy()
+        return self.module_.embedding.detach().numpy()
 
 
 class Damper(Embedding):
@@ -223,12 +211,12 @@ class Damper(Embedding):
         return r
 
     def _set_lr(self, lr):
-        opt = self.est_.optimizer_
+        opt = self.module_.optimizer_
         for group in opt.param_groups:
             group["lr"] = lr
 
     @property
-    def batch_size(self):
+    def batch_size_(self):
         bs = self.damping()
         self.meta_["batch_size"] = bs
         if self.max_batch_size and bs > self.max_batch_size:

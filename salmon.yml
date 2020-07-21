@@ -5,7 +5,7 @@ channels:
   - pytorch
   - anaconda
 dependencies:
-  - python=3.8
+  - python==3.7.*  # skorch doesn't officialy support 3.8 yet
   - numba
   - numpy==1.18.1
   - scipy
@@ -17,7 +17,7 @@ dependencies:
   - distributed==2.20.0
   - ujson
   - msgpack-python
-  - pytorch==1.4
+  - pytorch==1.4.*  # skorch doesn't support 1.5 yet
   - cpuonly
   - pip:
     - fastapi[all]

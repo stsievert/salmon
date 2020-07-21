@@ -5,6 +5,7 @@ RUN apt-get update
 RUN apt-get install -y gcc cmake g++
 
 # from https://hub.docker.com/r/daskdev/dask/dockerfile
+RUN pip install --ignore-installed PyYAML
 RUN conda install --yes \
     -c conda-forge \
     python==3.8 \
@@ -20,5 +21,10 @@ RUN conda install --yes \
 RUN pip install --ignore-installed PyYAML
 COPY salmon.yml .
 RUN conda env update --file salmon.yml --prefix $(which python)/../..
+
+COPY setup.py versioneer.py setup.cfg ./
+COPY salmon/ salmon/
+RUN ls
+RUN pip install -e .
 
 CMD ["bash", "launch.sh"]
