@@ -32,7 +32,13 @@ import salmon
 from ..triplets import manager
 from . import plotting
 from .public import _ensure_initialized, app, templates
-from .utils import ServerException, _extract_zipfile, _format_target, get_logger, _format_targets
+from .utils import (
+    ServerException,
+    _extract_zipfile,
+    _format_target,
+    get_logger,
+    _format_targets,
+)
 
 security = HTTPBasic()
 
@@ -545,7 +551,9 @@ async def download(request: Request, authorized: bool = Depends(_authorize)):
     rj.save()
     fname = datetime.now().isoformat()[: 10 + 6]
     version = salmon.__version__
-    headers = {"Content-Disposition": f'attachment; filename="exp-{fname}-{version}.rdb"'}
+    headers = {
+        "Content-Disposition": f'attachment; filename="exp-{fname}-{version}.rdb"'
+    }
     save_dir = DIR.parent / "out"
     return FileResponse(str(save_dir / "dump.rdb"), headers=headers)
 

@@ -34,6 +34,7 @@ PARAMS = """
         The seed used to generate psuedo-random numbers.
     """
 
+
 class Adaptive(Runner):
     def __init__(
         self,
@@ -49,12 +50,12 @@ class Adaptive(Runner):
         R: int = 10,
         **kwargs,
     ):
+        super().__init__(ident=ident)
 
         self.n = n
         self.d = d
         self.R = R
 
-        super().__init__(ident=ident)
         Opt = getattr(adaptive, optimizer)
         Module = getattr(adaptive, module)
 
@@ -95,8 +96,8 @@ class Adaptive(Runner):
 
     def process_answers(self, answers: List[Answer]):
         self.num_ans += len(answers)
-        logger.info("self.num_ans = %s", self.num_ans)
-        logger.info("self.R, self.n = %s, %s", self.R, self.n)
+        logger.debug("self.num_ans = %s", self.num_ans)
+        logger.debug("self.R, self.n = %s, %s", self.R, self.n)
 
         alg_ans = [
             (
@@ -173,6 +174,7 @@ class TSTE(Adaptive):
            http://www.cs.cornell.edu/~kilian/papers/stochastictriplet.pdf
            van der Maaten, Weinberger.
     """
+
     def __init__(
         self,
         n: int,
@@ -228,6 +230,7 @@ class STE(Adaptive):
            http://www.cs.cornell.edu/~kilian/papers/stochastictriplet.pdf
            van der Maaten, Weinberger.
     """
+
     def __init__(
         self,
         n: int,
@@ -281,6 +284,7 @@ class GNMDS(Adaptive):
            Agarwal, Wills, Cayton, Lanckriet, Kriegman, and Belongie.
            http://proceedings.mlr.press/v2/agarwal07a/agarwal07a.pdf
     """
+
     def __init__(
         self,
         n: int,
@@ -330,6 +334,7 @@ class CKL(Adaptive):
     random_state : int, None, np.random.RandomState
         The seed used to generate psuedo-random numbers.
     """
+
     def __init__(
         self,
         n: int,

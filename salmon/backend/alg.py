@@ -160,7 +160,9 @@ class Runner:
     def post_queries(
         self, queries: List[Query], scores: List[float], rj: RedisClient
     ) -> bool:
-        q2 = {self.serialize_query(q): float(score) for q, score in zip(queries, scores)}
+        q2 = {
+            self.serialize_query(q): float(score) for q, score in zip(queries, scores)
+        }
         name = self.ident
         key = f"alg-{name}-queries"
         rj.zadd(key, q2)
@@ -171,9 +173,7 @@ class Runner:
         h, a, b = q
         return f"{h}-{a}-{b}"
 
-    def get_answers(
-        self, rj: RedisClient, clear: bool = True
-    ) -> List[Answer]:
+    def get_answers(self, rj: RedisClient, clear: bool = True) -> List[Answer]:
         if not clear:
             raise NotImplementedError
         pipe = rj.pipeline()

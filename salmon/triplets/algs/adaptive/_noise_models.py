@@ -49,7 +49,6 @@ class TripletDist(nn.Module):
 
         return wrapper
 
-
     def losses(self, win2: ArrayLike, lose2: ArrayLike) -> ArrayLike:
         """
         Calculate the losses of a this triplet model with the triplet
@@ -128,6 +127,7 @@ class TSTE(TripletDist):
     """
     For details
     """
+
     def __init__(self, n=None, d=2, alpha=1, random_state=None):
         super().__init__(n=n, d=d, random_state=random_state)
         self.alpha = alpha
@@ -143,6 +143,7 @@ class CKL(TripletDist):
     """
     The crowd kernel embedding.
     """
+
     def __init__(self, n=None, d=2, mu=1e-4, random_state=None):
         super().__init__(n=n, d=d, random_state=random_state)
         self.mu = mu
@@ -156,6 +157,7 @@ class GNMDS(TripletDist):
     """
     The global non-metric multidimensional scaling algorithm.
     """
+
     def losses(self, win2, lose2):
         zeros = torch.zeros(len(win2))
         return torch.max(zeros, win2 - lose2 + 1)

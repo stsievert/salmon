@@ -2,6 +2,7 @@ import os
 import random
 import traceback
 from typing import Dict, Union
+from multiprocessing import Process
 
 import cloudpickle
 from dask.distributed import Client as DaskClient
@@ -87,7 +88,7 @@ async def init(ident: str, background_tasks: BackgroundTasks) -> bool:
 
     """
     # TODO: Better handling of exceptions if params keys don't match
-    logger.info("backend: initialized")
+    logger.info("backend: initializing %s", ident)
     config = rj.jsonget("exp_config")
 
     try:
@@ -101,6 +102,7 @@ async def init(ident: str, background_tasks: BackgroundTasks) -> bool:
             _class = params.pop("module", ident)
             Alg = getattr(algs, _class)
             params = {k: _fmt_params(k, v) for k, v in params.items()}
+            logger.warning("Alg for %s = %s", ident, Alg)
             logger.warning("params = %s", params)
             alg = Alg(ident=ident, n=config["n"], d=config["d"], **params)
     except Exception as e:
@@ -109,7 +111,6 @@ async def init(ident: str, background_tasks: BackgroundTasks) -> bool:
         raise ExpParsingError(status_code=500, detail=msg)
 
     if hasattr(alg, "get_query"):
-
         logger.info(f"Init'ing /query-{ident}")
 
         @app.get(f"/query-{ident}")
@@ -124,9 +125,8 @@ async def init(ident: str, background_tasks: BackgroundTasks) -> bool:
                 raise HTTPException(status_code=404)
             return {"alg_ident": ident, "score": score, **q}
 
-    client = DaskClient("localhost:8786", asynchronous=True)
-    logger.info(f"Starting algs={ident}")
-    fire_and_forget(client.submit(alg.run))
+    process = Process(target=alg.run)
+    process.start()
     return True
 
 

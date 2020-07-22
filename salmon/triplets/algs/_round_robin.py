@@ -49,19 +49,13 @@ class RoundRobin(Runner):
         self.counter = 0
         super().__init__(ident=ident)
 
-    def get_queries(self) -> Query:
-        logger.info(f"get_queries, self.counter={self.counter}")
-        num = 10
-        queries = [
-            _get_query(
-                self.n, (self.counter + k) % self.n, random_state=self.random_state
-            )
-            for k in range(num)
-        ]
-        scores = [_score_query(q) for q in queries]
-        return queries, scores
+    def get_query(self) -> Query:
+        head = self.counter % self.n
+        a, b = self.random_state.choice(self.n, size=2, replace=False)
+        self.counter += 1
+        score = max(abs(head - a), abs(head - b))
+        return {"head": int(head), "left": int(a), "right": int(b)}, float(score)
 
     def process_answers(self, ans: List[Answer]):
         logger.info(f"p_a, self.counter={self.counter}, len(ans)={len(ans)}")
-        self.counter += len(ans)
         self.answers.extend(ans)
