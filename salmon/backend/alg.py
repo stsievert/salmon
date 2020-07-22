@@ -34,7 +34,7 @@ class Runner:
     def redis_client(self, decode_responses=True) -> RedisClient:
         return RedisClient(host="redis", port=6379, decode_responses=decode_responses)
 
-    async def run(self):
+    def run(self):
         """
         Run the algorithm.
 

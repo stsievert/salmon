@@ -1,8 +1,8 @@
 import os
 import random
 import traceback
+import threading
 from typing import Dict, Union
-from multiprocessing import Process
 
 import cloudpickle
 from dask.distributed import Client as DaskClient
@@ -125,8 +125,7 @@ async def init(ident: str, background_tasks: BackgroundTasks) -> bool:
                 raise HTTPException(status_code=404)
             return {"alg_ident": ident, "score": score, **q}
 
-    process = Process(target=alg.run)
-    process.start()
+    threading.Thread(target=alg.run, daemon=True).start()
     return True
 
 

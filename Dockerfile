@@ -22,9 +22,11 @@ RUN pip install --ignore-installed PyYAML
 COPY salmon.yml .
 RUN conda env update --file salmon.yml --prefix $(which python)/../..
 
-COPY setup.py versioneer.py setup.cfg ./
+COPY setup.py versioneer.py setup.cfg launch.sh ./
 COPY salmon/ salmon/
 RUN ls
 RUN pip install -e .
 
-CMD ["bash", "launch.sh"]
+RUN chmod +x launch.sh
+ENTRYPOINT bash launch.sh
+# CMD ["bash", "launch.sh"]

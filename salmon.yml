@@ -19,6 +19,7 @@ dependencies:
   - msgpack-python
   - pytorch==1.4.*  # skorch doesn't support 1.5 yet
   - cpuonly
+  - nb_conda_kernels
   - pip:
     - fastapi[all]
     - skorch==0.8.0
