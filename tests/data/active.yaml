@@ -2,6 +2,9 @@
 targets: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
 d: 1
 samplers:
+  CKL: {}
+  GNMDS: {}
+  STE: {}
   TSTE:
     alpha: 1.5
     optimizer: PadaDampG
@@ -11,6 +14,3 @@ samplers:
     alpha: 1
     optimizer: PadaDampG
     optimizer__lr: 0.1
-  CKL: {}
-  GNMDS: {}
-  STE: {}

@@ -1,11 +1,13 @@
 import json
 from pathlib import Path
 from typing import Tuple
+from logging import getLogger
 
 import pytest
 import requests
 import yaml
 
+logger = getLogger(__name__)
 
 class Server:
     def __init__(self, url):
@@ -13,6 +15,7 @@ class Server:
         self._authorized = False
 
     def auth(self) -> Tuple[str, str]:
+        logger.info("Getting auth")
         p = Path(__file__).parent.parent / "creds.yaml"
         if p.exists():
             creds = yaml.safe_load(p.read_text())
@@ -22,7 +25,9 @@ class Server:
     def get(self, endpoint, status_code=200, **kwargs):
         if self._authorized:
             kwargs.update({"auth": (self._username, self._password)})
+        logger.info(f"Getting {endpoint}")
         r = requests.get(self.url + endpoint, **kwargs)
+        logger.info("done")
         assert r.status_code == status_code, (r.status_code, status_code)
         return r
 
@@ -31,7 +36,9 @@ class Server:
             data = json.dumps(data)
         if self._authorized:
             kwargs.update({"auth": (self._username, self._password)})
+        logger.info(f"Getting {endpoint}")
         r = requests.post(self.url + endpoint, data=data, **kwargs)
+        logger.info("done")
         if not error:
             assert r.status_code == status_code, (r.status_code, status_code)
         return r
@@ -41,7 +48,9 @@ class Server:
             data = json.dumps(data)
         if self._authorized:
             kwargs.update({"auth": (self._username, self._password)})
+        logger.info(f"Getting {endpoint}...")
         r = requests.delete(self.url + endpoint, data=data, **kwargs)
+        logger.info("done")
         assert r.status_code == status_code, (r.status_code, status_code)
         return r
 

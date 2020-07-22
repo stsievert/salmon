@@ -14,16 +14,15 @@ from .utils import server
 
 
 def test_backend_basics(server):
-    exp = Path(__file__).parent / "data" / "exp-active.yaml"
+    exp = Path(__file__).parent / "data" / "round-robin.yaml"
     server.authorize()
     server.post("/init_exp", data={"exp": exp.read_bytes()})
     exp_config = yaml.safe_load(exp.read_bytes())
 
     # ran into a bug that happened with len(samplers) > 1
-    assert len(exp_config["samplers"]) == 2
+    assert len(exp_config["samplers"]) == 1
     puid = "puid-foo"
     for k in range(30):
-        print(k)
         _start = time()
         q = server.get("/query").json()
         score = max(abs(q["head"] - q["left"]), abs(q["head"] - q["right"]))
@@ -36,7 +35,7 @@ def test_backend_basics(server):
     r = server.get("/responses")
     print("Done responses...")
     df = pd.DataFrame(r.json())
-    assert (df.score > 0).all()
+    assert len(df) == 30
 
 
 def test_init_errors_propogate(server):

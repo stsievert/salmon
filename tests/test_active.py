@@ -20,7 +20,9 @@ from .utils import server
 def test_active_basics(server):
     server.authorize()
     exp = Path(__file__).parent / "data" / "active.yaml"
+    print("init'ing exp")
     server.post("/init_exp", data={"exp": exp.read_bytes()})
+    print("done")
 
     with open(exp, "r") as f:
         config = yaml.load(f, Loader=yaml.SafeLoader)
@@ -40,3 +42,24 @@ def test_active_basics(server):
     df = pd.DataFrame(r.json())
     assert (df["score"] <= 0).all()
     assert set(df.alg_ident.unique()) == {"TSTE", "STE", "CKL", "tste2", "GNMDS"}
+
+
+def test_round_robin(server):
+    server.authorize()
+    exp = Path(__file__).parent / "data" / "round-robin.yaml"
+    server.post("/init_exp", data={"exp": exp.read_bytes()})
+
+    with open(exp, "r") as f:
+        config = yaml.load(f, Loader=yaml.SafeLoader)
+    n = len(config["targets"])
+
+    for k in range(2 * n):
+        print(k)
+        q = server.get("/query").json()
+
+        ans = {"winner": random.choice([q["left"], q["right"]]), "puid": "foo", **q}
+        server.post("/answer", data=ans)
+
+    r = server.get("/responses")
+    df = pd.DataFrame(r.json())
+    assert all(df["head"] == np.arange(2 * n) % n)
