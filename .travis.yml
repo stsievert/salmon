@@ -20,7 +20,8 @@ before_cache:
 
 before_install:
   - chmod +x launch.sh
-  - chown -R $USER:$USER /home/travis/build/stsievert/salmon/
+  - echo $USER
+  - chown -R -H -L $USER:$USER /home/travis/build/stsievert/salmon/
   - docker load -i docker_images/images.tar || true
   # Build the images
   - SALMON_NO_AUTH=1 docker-compose up &
