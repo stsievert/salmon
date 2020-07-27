@@ -10,6 +10,7 @@ import numpy as np
 import requests as httpx
 from fastapi import FastAPI
 from rejson import Client, Path
+from redis.exceptions import ResponseError
 from starlette.requests import Request
 from starlette.staticfiles import StaticFiles
 from starlette.templating import Jinja2Templates
@@ -155,6 +156,12 @@ async def process_answer(ans: manager.Answer):
 
     # Save every 15 minutes
     if (datetime.now() - last_save) >= timedelta(seconds=60 * 15):
-        rj.bgsave()
+        try:
+            rj.bgsave()
+        except ResponseError as e:
+            if "Background save already in progress" in str(e):
+                pass
+            else:
+                raise e
 
     return {"success": True}

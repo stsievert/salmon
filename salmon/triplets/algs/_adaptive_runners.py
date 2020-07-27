@@ -82,10 +82,10 @@ class Adaptive(Runner):
             random_state=random_state,
         )
         self.search.push([])
-        self.num_ans = 0
+        self.meta = {"num_ans": 0, "model_updates": 0}
 
     def get_query(self) -> Tuple[Optional[Dict[str, int]], Optional[float]]:
-        if self.num_ans <= self.R * self.n:
+        if self.meta["num_ans"] <= self.R * self.n:
             head, left, right = _random_query(self.n)
             return {"head": int(head), "left": int(left), "right": int(right)}, 0.0
         return None, None
@@ -95,8 +95,8 @@ class Adaptive(Runner):
         return queries, scores
 
     def process_answers(self, answers: List[Answer]):
-        self.num_ans += len(answers)
-        logger.debug("self.num_ans = %s", self.num_ans)
+        self.meta["num_ans"] += len(answers)
+        logger.debug("self.meta = %s", self.meta)
         logger.debug("self.R, self.n = %s, %s", self.R, self.n)
 
         alg_ans = [
@@ -112,10 +112,12 @@ class Adaptive(Runner):
 
         self.opt.push(alg_ans)
         self.opt.partial_fit(alg_ans)
+        self.meta["model_updates"] += 1
 
     def get_model(self) -> Dict[str, Any]:
         return {
             "embedding": self.search.embedding.tolist(),
+            **self.meta,
         }
 
 
