@@ -24,6 +24,7 @@ root = Path.rootPath()
 rj = Client(host="redis", port=6379, decode_responses=True)
 
 app = FastAPI(title="salmon-backend")
+threads = []
 
 
 def exception_to_string(excp):
@@ -125,7 +126,9 @@ async def init(ident: str, background_tasks: BackgroundTasks) -> bool:
                 raise HTTPException(status_code=404)
             return {"alg_ident": ident, "score": score, **q}
 
-    threading.Thread(target=alg.run, daemon=True).start()
+    t = threading.Thread(target=alg.run, daemon=True)
+    t.start()
+    threads.append(t)
     return True
 
 
