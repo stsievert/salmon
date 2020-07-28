@@ -66,9 +66,16 @@
     <br>
     <p> {{instructions | safe}} </p>
     </div>
+    <br>
+    <div class="row justify-content-center">
+      <p>Target:</p>
+    </div>
     <div class="row justify-content-center">
       <div class="col-lg-10 justify-content-center center cell head" id="q-head">
       </div>
+    </div>
+    <div class="row justify-content-center">
+        <p>Comparisons:</p>
     </div>
     <div class="row justify-content-center" id="choices">
       <div class="cell answer col col-lg-5 center cell answer" id="q-left"></div>
@@ -85,7 +92,8 @@
       </div>
       <div id="skip-button">
         {% if skip_button %}
-        <button type="button" class="btn btn-light" onclick="getquery()">New query</button>
+        <button type="button" class="btn  btn-outline-info" onclick="getquery()">Skip this question
+        </button>
         {% endif %}
       </div>
     </div>
