@@ -7,6 +7,10 @@
 
 <!-- Bootstrap CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
 <title>Salmon</title>
 <style>
@@ -53,20 +57,12 @@
 </style>
 </head>
 <body>
-  <!-- Optional JavaScript -->
-  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-  <script src="https://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-<br>
 <div class="container">
   <div class="outline justify-content-center">
     <div class="row justify-content-center">
-    <br>
     <p> {{instructions | safe}} </p>
     </div>
-    <br>
+    <!-- <hr> -->
     <div class="row justify-content-center">
       <p>Target:</p>
     </div>
@@ -90,11 +86,15 @@
       <div style="padding: 5px; margin: 5px; color: #888;">
           <span id="num-queries">0</span>{% if max_queries > 0 %}/{{ max_queries }} {% endif %}
       </div>
-      <div id="skip-button">
-        {% if skip_button %}
-        <button type="button" class="btn  btn-outline-info" onclick="getquery()">Skip this question
-        </button>
-        {% endif %}
+      <div style="padding: 5px; margin: 5px; color: #888;">
+        <div id="skip-button">
+          {% if skip_button %}
+          <button type="button" class="btn btn-outline-info btn-sm" onclick="getquery()"
+              data-toggle="tooltip" data-placement="top" data-html="true"
+              title="Skip questions only if you know <em>nothing</em> about the items shown."
+          >Skip this question</button>
+          {% endif %}
+        </div>
       </div>
     </div>
   </div>
@@ -114,6 +114,11 @@
 </div>
 
 <script>
+// Enable every tool tip on the page
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
