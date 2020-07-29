@@ -23,6 +23,7 @@ before_install:
   - chmod +x launch.sh
   - echo $USER
   - chown -R -H -L $USER:$USER /home/travis/build/stsievert/salmon/
+  - sudo chown -R -H -L $USER:$USER /home/travis/build/stsievert/salmon/
   - docker load -i docker_images/images.tar || true
   # Build the images
   - SALMON_NO_AUTH=1 docker-compose up &
