@@ -28,5 +28,6 @@ RUN ls
 RUN pip install -e .
 
 RUN chmod +x launch.sh
+run chmod 777 .
 ENTRYPOINT bash launch.sh
 # CMD ["bash", "launch.sh"]
