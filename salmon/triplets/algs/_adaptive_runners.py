@@ -91,7 +91,7 @@ class Adaptive(Runner):
         return None, None
 
     def get_queries(self, num=10_000) -> Tuple[List[Query], List[float]]:
-        queries, scores = self.search.score(num=int(num * 1.1))
+        queries, scores = self.search.score(num=int(num * 1.1 + 3))
         return queries, scores
 
     def process_answers(self, answers: List[Answer]):

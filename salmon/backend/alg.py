@@ -1,7 +1,9 @@
 import itertools
 from time import time
 
+import numpy as np
 from typing import List, TypeVar, Tuple, Dict, Any
+from redis.exceptions import ResponseError
 from rejson import Client as RedisClient, Path
 import cloudpickle
 
@@ -58,27 +60,32 @@ class Runner:
         answers: List = []
         logger.info(f"Staring {self.ident}")
         for k in itertools.count():
-            _start = time()
-            # TODO: integrate Dask
-            queries, scores = self.get_queries()
-            if answers:
-                logger.info(f"Processing {len(answers)} answers for k={k}")
-                self.process_answers(answers)
-                logger.info(f"Done processing answers for k={k}")
-                answers = []
-            if self.clear:
-                logger.info(f"Clearing queries on k={k}")
-                self.clear_queries(rj)
-            if len(queries):
-                logger.info(f"Posting queries on k={k}")
-                self.post_queries(queries, scores, rj)
-            answers = self.get_answers(rj, clear=True)
-            if "reset" in rj.keys() and rj.jsonget("reset"):
+            try:
+                _start = time()
+                # TODO: integrate Dask
+                queries, scores = self.get_queries()
+                logger.warning(f"Model ident=%s on iteration %s", self.ident, k)
+                if answers:
+                    logger.info(f"Processing {len(answers)} answers for k={k}")
+                    self.process_answers(answers)
+                    logger.info(f"Done processing answers for k={k}")
+                    answers = []
+                if self.clear:
+                    logger.info(f"Clearing queries on k={k}")
+                    self.clear_queries(rj)
+                if len(queries):
+                    logger.info(f"Posting queries on k={k}")
+                    self.post_queries(queries, scores, rj)
+                answers = self.get_answers(rj, clear=True)
+                if "reset" in rj.keys() and rj.jsonget("reset"):
+                    self.save()
+                    self.reset(client, rj)
+                    return
                 self.save()
-                self.reset(client, rj)
-                return
-            self.save()
-            _t = time() - _start
+                _t = time() - _start
+            except Exception as e:
+                logger.exception(e)
+                continue
         return True
 
     def save(self) -> bool:
@@ -160,12 +167,14 @@ class Runner:
     def post_queries(
         self, queries: List[Query], scores: List[float], rj: RedisClient
     ) -> bool:
-        q2 = {
-            self.serialize_query(q): float(score) for q, score in zip(queries, scores)
+        queries2 = {
+            self.serialize_query(q): float(score)
+            for q, score in zip(queries, scores)
+            if not np.isnan(score)
         }
         name = self.ident
         key = f"alg-{name}-queries"
-        rj.zadd(key, q2)
+        rj.zadd(key, queries2)
         return True
 
     def serialize_query(self, q: Query) -> str:
