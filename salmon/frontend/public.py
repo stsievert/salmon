@@ -80,6 +80,7 @@ async def _ensure_initialized():
         "n",
         "max_queries",
         "debrief",
+        "skip_button",
     ]
     if not set(exp_config) == set(expected_keys):
         msg = "Experiment keys are not correct. Expected {}, got {}"
@@ -101,6 +102,7 @@ async def get_query_page(request: Request):
         "targets": exp_config["targets"],
         "max_queries": exp_config["max_queries"],
         "debrief": exp_config["debrief"],
+        "skip_button": exp_config["skip_button"],
     }
     items.update(request=request)
     return templates.TemplateResponse("query_page.html", items)
