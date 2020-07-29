@@ -45,3 +45,4 @@ Active Algorithms
    salmon.triplets.algs.STE
    salmon.triplets.algs.CKL
    salmon.triplets.algs.GNMDS
+
