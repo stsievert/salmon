@@ -22,15 +22,20 @@ the same confidence.
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Usage
 
    installation
    getting-started
    algorithms
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Algorithms
+
    api
    adaptive
    performance
-
+   developers
 
 Indices and tables
 ==================
