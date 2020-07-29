@@ -35,7 +35,8 @@ script:
   - set -e
   - pip install -r requirements.txt
   - pip install -e .
-  - sudo chown -R  g+w /home/travis/build/stsievert/salmon/
+  - sudo chown -R  travis:travis /home/travis/build/stsievert/salmon/
+  - chown -R  travis:travis /home/travis/build/stsievert/salmon/
   - pytest
   - rm -f salmon/out/*
   - cd docs
