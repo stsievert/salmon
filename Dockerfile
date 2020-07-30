@@ -21,6 +21,8 @@ RUN pip install --ignore-installed PyYAML
 COPY salmon.yml /salmon/salmon.yml
 RUN conda env update --file /salmon/salmon.yml --prefix $(which python)/../..
 
+VOLUME /salmon
+VOLUME /data
 COPY *.py *.cfg *.yml *.txt *.sh /salmon/
 COPY ./salmon/ /salmon/salmon/
 RUN ls /salmon
