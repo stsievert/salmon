@@ -554,7 +554,7 @@ async def download(request: Request, authorized: bool = Depends(_authorize)):
     headers = {
         "Content-Disposition": f'attachment; filename="exp-{fname}-{version}.rdb"'
     }
-    save_dir = DIR.parent / "out"
+    root_dir = DIR.parent.parent / "out"
     return FileResponse(str(save_dir / "dump.rdb"), headers=headers)
 
 
