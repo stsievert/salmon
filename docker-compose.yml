@@ -1,4 +1,5 @@
 version: '3.7'
+user: root
 services:
 
   server:
