@@ -28,6 +28,7 @@ RUN ls
 RUN pip install -e .
 
 RUN chmod +x launch.sh
-run chmod 777 .
+RUN chmod 777 .
+RUN chown -R $USER:$USER .
 ENTRYPOINT bash launch.sh
 # CMD ["bash", "launch.sh"]
