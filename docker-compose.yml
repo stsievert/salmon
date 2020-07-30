@@ -2,7 +2,8 @@ version: '3.7'
 services:
 
   server:
-    build: .
+    build:
+      context: .
     environment:
       - SALMON_DEBUG  # pass through to backend
       - SALMON_NO_AUTH
@@ -15,9 +16,7 @@ services:
       - 8400
       - 8787
     volumes:
-      - type: bind
-        source: .
-        target: /usr/src/salmon
+      - ".:/salmon:rw"
 
   redis:
     image: redislabs/rejson

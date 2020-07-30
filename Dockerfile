@@ -1,5 +1,4 @@
 FROM continuumio/miniconda3:4.7.12
-WORKDIR /usr/src/salmon/
 
 RUN apt-get update
 RUN apt-get install -y gcc cmake g++
@@ -19,16 +18,15 @@ RUN conda install --yes \
     tini==0.18.0
 
 RUN pip install --ignore-installed PyYAML
-COPY salmon.yml .
-RUN conda env update --file salmon.yml --prefix $(which python)/../..
+COPY salmon.yml /salmon/salmon.yml
+RUN conda env update --file /salmon/salmon.yml --prefix $(which python)/../..
 
-COPY setup.py versioneer.py setup.cfg launch.sh ./
-COPY salmon/ salmon/
-RUN ls
-RUN pip install -e .
+COPY *.py *.cfg *.yml *.txt *.sh /salmon/
+COPY ./salmon/ /salmon/salmon/
+RUN ls /salmon
+RUN pip install -e /salmon
 
-RUN chmod +x launch.sh
-RUN chmod 777 .
-RUN chown -R $USER:$USER .
-ENTRYPOINT bash launch.sh
-# CMD ["bash", "launch.sh"]
+RUN chmod +x /salmon/launch.sh
+# ENTRYPOINT bash launch.sh
+WORKDIR /salmon
+CMD ["bash", "launch.sh"]
