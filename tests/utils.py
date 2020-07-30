@@ -67,6 +67,7 @@ def server():
     username, password = server.auth()
     r = server.get("/reset?force=1", auth=(username, password))
     assert r.json() == {"success": True}
-    dump = Path(__file__).absolute().parent.parent / "frontend" / "dump.rdb"
+    dump = Path(__file__).absolute().parent.parent / "out" / "dump.rdb"
+    print(dump)
     if dump.exists():
         dump.unlink()

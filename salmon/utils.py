@@ -23,8 +23,9 @@ def get_logger(name, level=logging.INFO):
     ph.setLevel(level)
     handlers.append(ph)
 
-    DIR = Path(__file__).absolute().parent
-    out = DIR / "out" / f"{name}.log"
+    ROOT_DIR = Path(__file__).absolute().parent.parent
+
+    out = ROOT_DIR / "out" / f"{name}.log"
 
     try:
         fh = logging.FileHandler(str(out))
