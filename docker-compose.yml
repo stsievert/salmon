@@ -26,9 +26,7 @@ services:
     expose:
       - 6379
     volumes:
-      - type: bind
-        source: ./salmon/out
-        target: /data
+      - "./salmon/out:/data:rw"
     # also https://github.com/boot2docker/boot2docker/issues/1083#issuecomment-151380687
 
   redismonitor:
@@ -36,9 +34,7 @@ services:
     ports:
       - "7381:7389"
     volumes:
-      - type: bind
-        source: ./salmon/out
-        target: /logs
+      - "./salmon/out:/logs:rw"
     logging:
       driver: none
 

@@ -63,7 +63,12 @@ class Runner:
             try:
                 _start = time()
                 # TODO: integrate Dask
-                queries, scores = self.get_queries()
+                try:
+                    queries, scores = self.get_queries()
+                except NotImplementedError:
+                    queries = []
+                    pass
+
                 logger.warning(f"Model ident=%s on iteration %s", self.ident, k)
                 if answers:
                     logger.info(f"Processing {len(answers)} answers for k={k}")
@@ -93,8 +98,12 @@ class Runner:
         out = cloudpickle.dumps(self)
         rj2.set(f"state-{self.ident}", out)
 
-        out = cloudpickle.dumps(self.get_model())
-        rj2.set(f"model-{self.ident}", out)
+        try:
+            out = cloudpickle.dumps(self.get_model())
+        except NotImplementedError:
+            pass
+        else:
+            rj2.set(f"model-{self.ident}", out)
         return True
 
     def reset(self, client, rj):
