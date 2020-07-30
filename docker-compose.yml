@@ -29,6 +29,7 @@ services:
       - 6379
     volumes:
       - "./out:/data:rw"
+    entrypoint: /bin/sh -c "chown -v redis:redis /data && chmod -v 777 /data"
     # also https://github.com/boot2docker/boot2docker/issues/1083#issuecomment-151380687
 
   redismonitor:
