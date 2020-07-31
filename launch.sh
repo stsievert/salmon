@@ -3,8 +3,8 @@
 # Currently so don't have to rebuild docker machines; see
 # https://github.com/dask/dask-docker/pull/108
 
-dask-scheduler --host 0.0.0.0 --port 8786 --dashboard-address :8787 &
-dask-worker --nprocs 4 localhost:8786 &
+dask-scheduler --host 127.0.0.2 --port 8786 --dashboard-address :8787 &
+dask-worker --nprocs 4 127.0.0.2:8786 &
 
 if [ $SALMON_DEBUG ]
 then

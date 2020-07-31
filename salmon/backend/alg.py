@@ -32,7 +32,7 @@ class Runner:
         self.ident = ident
 
     async def dask_client(self):
-        return DaskClient("localhost:8786", asynchronous=True)
+        return DaskClient("127.0.0.2:8786", asynchronous=True)
 
     def redis_client(self, decode_responses=True) -> RedisClient:
         return RedisClient(host="redis", port=6379, decode_responses=decode_responses)
