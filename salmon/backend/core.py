@@ -111,6 +111,7 @@ async def init(ident: str, background_tasks: BackgroundTasks) -> bool:
         logger.error(f"Error on alg={ident} init: {msg}")
         raise ExpParsingError(status_code=500, detail=msg)
 
+    logger.info(f"alg={ident} initialized; now, does it have get_quer")
     if hasattr(alg, "get_query"):
         logger.info(f"Init'ing /query-{ident}")
 
@@ -126,7 +127,9 @@ async def init(ident: str, background_tasks: BackgroundTasks) -> bool:
                 raise HTTPException(status_code=404)
             return {"alg_ident": ident, "score": score, **q}
 
+    logger.info("Before adding init task")
     background_tasks.add_task(alg.run)
+    logger.info("Returning")
     return True
 
 
