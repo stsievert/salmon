@@ -30,11 +30,12 @@ class Runner:
 
     def __init__(self, ident: str = ""):
         self.ident = ident
+        self.meta_ = []
 
     def redis_client(self, decode_responses=True) -> RedisClient:
         return RedisClient(host="redis", port=6379, decode_responses=decode_responses)
 
-    def run(self, client):
+    def run(self, client: DaskClient):
         """
         Run the algorithm.
 
@@ -57,33 +58,45 @@ class Runner:
         answers: List = []
         logger.info(f"Staring {self.ident}")
         for k in itertools.count():
+            datum = {"iteration": k, "ident": self.ident}
             try:
-                _start = time()
+                _s = time()
                 # TODO: integrate Dask
                 if hasattr(self, "get_queries"):
-                    queries, scores = self.get_queries()
+                    #  queries, scores = self.get_queries()
+                    queries, scores = client.submit(type(self).get_queries, self).result()
                 else:
                     queries = []
+                datum.update({"search_time": time() - _s})
 
-                logger.warning(f"Model ident=%s on iteration %s", self.ident, k)
                 if answers:
+                    logger.warning(f"Model ident=%s on iteration %s", self.ident, k)
+                    _s = time()
                     logger.info(f"Processing {len(answers)} answers for k={k}")
                     self.process_answers(answers)
                     logger.info(f"Done processing answers for k={k}")
+                    datum.update({"process_answer_time": time() - _s})
                     answers = []
-                if self.clear:
-                    logger.info(f"Clearing queries on k={k}")
-                    self.clear_queries(rj)
+
+                    if self.clear:
+                        logger.info(f"Clearing queries on k={k}")
+                        _s = time()
+                        self.clear_queries(rj)
+                        datum.update({"clear_time": time() - _s})
+
                 if len(queries):
+                    _s = time()
                     logger.info(f"Posting queries on k={k}")
                     self.post_queries(queries, scores, rj)
+                    datum.update({"post_queries_time": time() - _s})
                 answers = self.get_answers(rj, clear=True)
+                _s = time()
+                self.save()
+                datum.update({"saving_time": time() - _s})
+                self.meta_.append(datum)
                 if "reset" in rj.keys() and rj.jsonget("reset"):
-                    self.save()
                     self.reset(client, rj)
                     return
-                self.save()
-                _t = time() - _start
             except Exception as e:
                 logger.exception(e)
                 continue

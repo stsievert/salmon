@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 from typing import Tuple
 from logging import getLogger
+from warnings import warn
 
 import pytest
 import requests
@@ -68,6 +69,36 @@ def server():
     r = server.get("/reset?force=1", auth=(username, password))
     assert r.json() == {"success": True}
     dump = Path(__file__).absolute().parent.parent / "out" / "dump.rdb"
-    print(dump)
     if dump.exists():
         dump.unlink()
+
+class LogError(Exception):
+    pass
+
+class Logs:
+    def __init__(self):
+        this_dir = Path(__file__).absolute().parent
+        root_dir = this_dir.parent
+        self.log_dir = root_dir / "out"
+        self.catch = True
+        self.warn = True
+
+    def __enter__(self):
+        # Clear logs
+        for log in self.log_dir.glob("*.log"):
+            log.write_text("")
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        if exc_type is not None:
+            raise exc_type(exc_value)
+        for log in self.log_dir.glob("*.log"):
+            lines = log.read_text().split("\n")
+            for line in lines:
+                if self.catch and ("error" in line or "except" in line):
+                    raise LogError("{}\n{}".format(log, line))
+                if self.warn and "warn" in line:
+                    warn("{}\n{}".format(log, line))
+
+@pytest.fixture()
+def logs():
+    return Logs()
