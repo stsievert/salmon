@@ -31,13 +31,13 @@ class Runner:
     def __init__(self, ident: str = ""):
         self.ident = ident
 
-    def dask_client(self):
-        return DaskClient("localhost:8786")
+    async def dask_client(self):
+        return DaskClient("localhost:8786", asynchronous=True)
 
     def redis_client(self, decode_responses=True) -> RedisClient:
         return RedisClient(host="redis", port=6379, decode_responses=decode_responses)
 
-    def run(self):
+    async def run(self):
         """
         Run the algorithm.
 
@@ -56,7 +56,7 @@ class Runner:
 
         """
         rj = self.redis_client()
-        client = self.dask_client()
+        client = await self.dask_client()
 
         answers: List = []
         logger.info(f"Staring {self.ident}")

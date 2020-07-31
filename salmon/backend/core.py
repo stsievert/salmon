@@ -126,9 +126,7 @@ async def init(ident: str, background_tasks: BackgroundTasks) -> bool:
                 raise HTTPException(status_code=404)
             return {"alg_ident": ident, "score": score, **q}
 
-    t = threading.Thread(target=alg.run, daemon=True)
-    t.start()
-    threads.append(t)
+    background_tasks.add_task(alg.run)
     return True
 
 
