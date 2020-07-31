@@ -127,8 +127,9 @@ async def init(ident: str, background_tasks: BackgroundTasks) -> bool:
                 raise HTTPException(status_code=404)
             return {"alg_ident": ident, "score": score, **q}
 
+    dask_client = DaskClient("127.0.0.2:8786")
     logger.info("Before adding init task")
-    background_tasks.add_task(alg.run)
+    background_tasks.add_task(alg.run, dask_client)
     logger.info("Returning")
     return True
 
