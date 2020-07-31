@@ -8,6 +8,7 @@ services:
     environment:
       - SALMON_DEBUG  # pass through to backend
       - SALMON_NO_AUTH
+      - LOG_LEVEL
     ports:
       - "8421:8421"
       - "8400:8400"

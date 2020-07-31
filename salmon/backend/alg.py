@@ -6,6 +6,7 @@ from typing import List, TypeVar, Tuple, Dict, Any
 from redis.exceptions import ResponseError
 from rejson import Client as RedisClient, Path
 import cloudpickle
+from dask.distributed import Client as DaskClient
 
 from ..utils import get_logger
 
@@ -31,7 +32,7 @@ class Runner:
         self.ident = ident
 
     def dask_client(self):
-        return None
+        return DaskClient("localhost:8786")
 
     def redis_client(self, decode_responses=True) -> RedisClient:
         return RedisClient(host="redis", port=6379, decode_responses=decode_responses)
@@ -63,11 +64,10 @@ class Runner:
             try:
                 _start = time()
                 # TODO: integrate Dask
-                try:
+                if hasattr(self, "get_queries"):
                     queries, scores = self.get_queries()
-                except NotImplementedError:
+                else:
                     queries = []
-                    pass
 
                 logger.warning(f"Model ident=%s on iteration %s", self.ident, k)
                 if answers:
@@ -136,7 +136,7 @@ class Runner:
         """
         raise NotImplementedError
 
-    def get_queries(self) -> Tuple[List[Query], List[float]]:
+        #  def get_queries(self) -> Tuple[List[Query], List[float]]:
         """
         Get queries.
 

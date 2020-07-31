@@ -48,18 +48,3 @@ class RandomSampling(Runner):
 
     def process_answers(self, ans: List[Answer]):
         self.answers.extend(ans)
-
-    def run(self):
-        rj = self.redis_client()
-        client = self.dask_client()
-
-        answers: List = []
-        while True:
-            if answers:
-                self.process_answers(answers)
-                answers = []
-            answers = self.get_answers(rj, clear=True)
-            if "reset" in rj.keys() and rj.jsonget("reset"):
-                self.reset(client, rj)
-                return
-            sleep(1)

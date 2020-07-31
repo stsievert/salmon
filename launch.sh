@@ -18,6 +18,7 @@ else
     # Set timeout=90 so Gunicorn checks less frequently.
     # Use preload to reduce startup time
     # Use 2 threads to heartbeat gets sent more often
+    export LOG_LEVEL="WARNING"
     gunicorn --preload --worker-tmp-dir /dev/shm --threads 2 --timeout 90 -w 1 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8400 salmon:app_algs &
     # uvicorn salmon:app_algs --reload --port 8400 --host 0.0.0.0 &
     sleep 1
