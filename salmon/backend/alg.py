@@ -1,6 +1,12 @@
+import itertools
+from time import time
+
+import numpy as np
 from typing import List, TypeVar, Tuple, Dict, Any
+from redis.exceptions import ResponseError
 from rejson import Client as RedisClient, Path
 import cloudpickle
+from dask.distributed import Client as DaskClient
 
 from ..utils import get_logger
 
@@ -24,8 +30,12 @@ class Runner:
 
     def __init__(self, ident: str = ""):
         self.ident = ident
+        self.meta_ = []
 
-    def run(self, client, rj: RedisClient):
+    def redis_client(self, decode_responses=True) -> RedisClient:
+        return RedisClient(host="redis", port=6379, decode_responses=decode_responses)
+
+    def run(self, client: DaskClient):
         """
         Run the algorithm.
 
@@ -43,29 +53,68 @@ class Runner:
         ``"reset" in rj.keys() and rj.jsonget("reset")``.
 
         """
+        rj = self.redis_client()
+
         answers: List = []
-        while True:
-            # TODO: integrate Dask
-            queries, scores = self.get_queries()
-            if answers:
-                logger.info(f"Processing {len(answers)} answers...")
-                self.process_answers(answers)
-                logger.info(f"Done processing answers.")
-                answers = []
-            if self.clear:
-                self.clear_queries(rj)
-            if len(queries):
-                self.post_queries(queries, scores, rj)
-            answers = self.get_answers(rj, clear=True)
-            if "reset" in rj.keys() and rj.jsonget("reset"):
-                self.reset(client, rj)
-                return
-            self.save()
+        logger.info(f"Staring {self.ident}")
+        for k in itertools.count():
+            datum = {"iteration": k, "ident": self.ident}
+            try:
+                _s = time()
+                # TODO: integrate Dask
+                if hasattr(self, "get_queries"):
+                    #  queries, scores = self.get_queries()
+                    queries, scores = client.submit(
+                        type(self).get_queries, self
+                    ).result()
+                else:
+                    queries = []
+                datum.update({"search_time": time() - _s})
+
+                if answers:
+                    logger.warning(f"Model ident=%s on iteration %s", self.ident, k)
+                    _s = time()
+                    logger.info(f"Processing {len(answers)} answers for k={k}")
+                    self.process_answers(answers)
+                    logger.info(f"Done processing answers for k={k}")
+                    datum.update({"process_answer_time": time() - _s})
+                    answers = []
+
+                    if self.clear:
+                        logger.info(f"Clearing queries on k={k}")
+                        _s = time()
+                        self.clear_queries(rj)
+                        datum.update({"clear_time": time() - _s})
+
+                if len(queries):
+                    _s = time()
+                    logger.info(f"Posting queries on k={k}")
+                    self.post_queries(queries, scores, rj)
+                    datum.update({"post_queries_time": time() - _s})
+                answers = self.get_answers(rj, clear=True)
+                _s = time()
+                self.save()
+                datum.update({"saving_time": time() - _s})
+                self.meta_.append(datum)
+                if "reset" in rj.keys() and rj.jsonget("reset"):
+                    self.reset(client, rj)
+                    return
+            except Exception as e:
+                logger.exception(e)
+                continue
+        return True
 
     def save(self) -> bool:
-        rj2 = RedisClient(host="redis", port=6379, decode_responses=False)
+        rj2 = self.redis_client(decode_responses=False)
         out = cloudpickle.dumps(self)
         rj2.set(f"state-{self.ident}", out)
+
+        try:
+            out = cloudpickle.dumps(self.get_model())
+        except NotImplementedError:
+            pass
+        else:
+            rj2.set(f"model-{self.ident}", out)
         return True
 
     def reset(self, client, rj):
@@ -98,7 +147,7 @@ class Runner:
         """
         raise NotImplementedError
 
-    def get_queries(self) -> Tuple[List[Query], List[float]]:
+        #  def get_queries(self) -> Tuple[List[Query], List[float]]:
         """
         Get queries.
 
@@ -138,10 +187,14 @@ class Runner:
     def post_queries(
         self, queries: List[Query], scores: List[float], rj: RedisClient
     ) -> bool:
-        q2 = {self.serialize_query(q): float(score) for q, score in zip(queries, scores)}
+        queries2 = {
+            self.serialize_query(q): float(score)
+            for q, score in zip(queries, scores)
+            if not np.isnan(score)
+        }
         name = self.ident
         key = f"alg-{name}-queries"
-        rj.zadd(key, q2)
+        rj.zadd(key, queries2)
         return True
 
     def serialize_query(self, q: Query) -> str:
@@ -149,14 +202,14 @@ class Runner:
         h, a, b = q
         return f"{h}-{a}-{b}"
 
-    def get_answers(
-        self, rj: RedisClient, clear: bool = True
-    ) -> List[Answer]:
+    def get_answers(self, rj: RedisClient, clear: bool = True) -> List[Answer]:
         if not clear:
             raise NotImplementedError
-        pipe = rj.pipeline()
-        name = self.ident
-        pipe.jsonget(f"alg-{name}-answers", Path("."))
-        pipe.jsonset(f"alg-{name}-answers", Path("."), [])
-        answers, success = pipe.execute()
-        return answers
+        key = f"alg-{self.ident}-answers"
+        if key in rj.keys():
+            pipe = rj.pipeline()
+            pipe.jsonget(key, Path("."))
+            pipe.jsonset(key, Path("."), [])
+            answers, success = pipe.execute()
+            return answers
+        return []

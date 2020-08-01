@@ -4,6 +4,9 @@ dask-worker-space
 salmon/out/dump*rdb
 salmon/out/*.csv
 salmon/out/*.log
+out/dump*rdb
+out/*.csv
+out/*.log
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -3,8 +3,11 @@
 from distutils.core import setup
 import versioneer
 
+#  with open("requirements.txt") as f:
+    #  requirements = f.read().splitlines()
+
 setup(
-    name="Salmon",
+    name="salmon",
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
     description="Efficient crowdsourcing of triplet queries",
@@ -12,4 +15,5 @@ setup(
     author_email="dev@stsievert.com",
     url="https://stsievert.com/salmon",
     packages=["salmon"],
+    #  install_requires=requirements,
 )

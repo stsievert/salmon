@@ -20,4 +20,5 @@ numpydoc
 sphinx_rtd_theme
 torch
 skorch
+distributed
 numba

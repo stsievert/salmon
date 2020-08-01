@@ -34,8 +34,9 @@ class RandomSampling(Runner):
 
     """
 
-    def __init__(self, n, random_state=None, ident=""):
+    def __init__(self, n, d=2, random_state=None, ident=""):
         self.n = n
+        self.d = d
         self.answers = []
         self.random_state = check_random_state(random_state)
         super().__init__(ident=ident)
@@ -47,15 +48,3 @@ class RandomSampling(Runner):
 
     def process_answers(self, ans: List[Answer]):
         self.answers.extend(ans)
-
-    def run(self, client, rj):
-        answers: List = []
-        while True:
-            if answers:
-                self.process_answers(answers)
-                answers = []
-            answers = self.get_answers(rj, clear=True)
-            if "reset" in rj.keys() and rj.jsonget("reset"):
-                self.reset(client, rj)
-                return
-            sleep(1)
