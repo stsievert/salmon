@@ -10,6 +10,9 @@ the following options:
 2. Upload of a YAML file describing experiment, and ZIP file for the targets.
 3. Upload of a database dump from Salmon.
 
+Through the documentation, the YAML file for initialization will be referred to
+as ``init.yaml``.
+
 "YAML files" must obey a standard; see for a (human-readable) description of
 the specification https://learnxinyminutes.com/docs/yaml/. To see if your YAML
 is valid, go to https://yamlchecker.com/.
@@ -35,10 +38,11 @@ Experiment initialization with YAML file
 This section will specify the YAML file; including a ZIP file will only modify
 the ``targets`` key.
 
-Here's an example YAML file for initialization:
+Here's an example ``init.yaml`` YAML file for initialization:
 
 .. code-block:: yaml
 
+   # file: init.yaml
    targets: [1, 2, 3, 4, 5]
    instructions: Select the item on the bottom most similar to the item on the top.
    debrief: Thanks! Use the participant ID below in Mechnical Turk.
@@ -75,9 +79,9 @@ in YAML jargon. Here's documentation for each key:
 YAML file with ZIP file
 -----------------------
 
-If you upload a ZIP file alongside a YAML file, the ``targets`` key above is
-configured. Here are the choices for different files to include in the ZIP
-file:
+If you upload a ZIP file alongside the ``init.yaml`` YAML file, the ``targets``
+key above will be configured to represent each object in the ZIP file. Here are
+the choices for different files to include in the ZIP file:
 
 - A bunch of images/videos. Support extensions
 
@@ -90,6 +94,7 @@ For example, this is a valid CSV file that will render textual targets:
 
 .. code-block::
 
+   # file: targets.csv. Zipped into targets.csv.zip and uploaded.
    Bode Miller
    Lindsey Kildow
    Mikaela Shiffrin
@@ -102,6 +107,7 @@ bolded text for "**Ted Ligety**." That means we can also render images:
 
 .. code-block::
 
+   # file: targets.csv. Zipped into targets.csv.zip and uploaded.
    <img width="300px" src="https://upload.wikimedia.org/wikipedia/commons/3/30/Bode_Miller_at_the_2010_Winter_Olympic_downhill.jpg" />
    <img width="300px" src="https://upload.wikimedia.org/wikipedia/commons/8/89/Miller_Bode_2008_002.jpg" />
    <img width="300px" src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Lindsey_Kildow_Aspen.jpg" />
