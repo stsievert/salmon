@@ -20,12 +20,11 @@ import requests as httpx
 import yaml
 from bokeh.embed import json_item
 from fastapi import Depends, File, HTTPException
-from fastapi.responses import PlainTextResponse, FileResponse
+from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse, FileResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from rejson import Client, Path
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.requests import Request
-from starlette.responses import HTMLResponse, JSONResponse
 from starlette.status import HTTP_401_UNAUTHORIZED
 
 import salmon
@@ -154,6 +153,7 @@ async def _get_config(exp: bytes, targets: bytes) -> Dict[str, Any]:
         "samplers": {"random": {"module": "RandomSampling"}},
         "max_queries": -1,
         "d": 2,
+        "skip_button": False,
     }
     exp_config.update(config)
 
@@ -354,7 +354,7 @@ def reset(
 
 
 @app.get("/responses", tags=["private"])
-async def get_responses(authorized: bool = Depends(_authorize)) -> Dict[str, Any]:
+async def get_responses(authorized: bool = Depends(_authorize), json: Optional[bool] = True) -> Dict[str, Any]:
     """
     Get the recorded responses from the current experiments. This includes
     the following columns:
@@ -367,19 +367,30 @@ async def get_responses(authorized: bool = Depends(_authorize)) -> Dict[str, Any
     * `response_time`: the time spent between the providing the query and
       receiving the answer.
 
+    There may be additional columns.
+
     Returns
     -------
-    The list of responses as a JSON file. This file can be read by
-    Panda's `read_json` function.
+    The list of responses as a CSV file. This file can be read by
+    Panda's `read_csv` function.
 
     """
     exp_config = await _ensure_initialized()
     targets = exp_config["targets"]
     start = rj.jsonget("start_time")
     responses = await _get_responses()
-    out = await _format_responses(responses, targets, start)
-    return JSONResponse(
-        out, headers={"Content-Disposition": 'attachment; filename="responses.json"'}
+    json_responses = await _format_responses(responses, targets, start)
+    if json:
+        return JSONResponse(
+            json_responses, headers={"Content-Disposition": 'attachment; filename="responses.json"'}
+        )
+    with StringIO() as f:
+        df = pd.DataFrame(json_responses)
+        df.to_csv(f, index=False)
+        out = f.getvalue()
+
+    return PlainTextResponse(
+        out, headers={"Content-Disposition": 'attachment; filename="responses.csv"'}
     )
 
 
