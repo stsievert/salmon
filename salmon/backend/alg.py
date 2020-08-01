@@ -64,7 +64,9 @@ class Runner:
                 # TODO: integrate Dask
                 if hasattr(self, "get_queries"):
                     #  queries, scores = self.get_queries()
-                    queries, scores = client.submit(type(self).get_queries, self).result()
+                    queries, scores = client.submit(
+                        type(self).get_queries, self
+                    ).result()
                 else:
                     queries = []
                 datum.update({"search_time": time() - _s})
@@ -203,9 +205,11 @@ class Runner:
     def get_answers(self, rj: RedisClient, clear: bool = True) -> List[Answer]:
         if not clear:
             raise NotImplementedError
-        pipe = rj.pipeline()
-        name = self.ident
-        pipe.jsonget(f"alg-{name}-answers", Path("."))
-        pipe.jsonset(f"alg-{name}-answers", Path("."), [])
-        answers, success = pipe.execute()
-        return answers
+        key = f"alg-{self.ident}-answers"
+        if key in rj.keys():
+            pipe = rj.pipeline()
+            pipe.jsonget(key, Path("."))
+            pipe.jsonset(key, Path("."), [])
+            answers, success = pipe.execute()
+            return answers
+        return []

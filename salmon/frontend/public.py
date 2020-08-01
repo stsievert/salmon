@@ -147,7 +147,7 @@ async def process_answer(ans: manager.Answer):
 
     """
     d = ujson.loads(ans.json())
-    d.update({"time_received": time()})
+    d.update({"time_received": round(time(), 3)})
     ident = d["alg_ident"]
     logger.warning(f"answer received: {d}")
     rj.jsonarrappend(f"alg-{ident}-answers", root, d)

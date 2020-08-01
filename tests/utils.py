@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from time import sleep
 from typing import Tuple
 from logging import getLogger
 from warnings import warn
@@ -60,14 +61,28 @@ class Server:
         self._authorized = True
 
 
+def _clear_logs(log=None):
+    if log:
+        log.write_text("")
+    else:
+        this_dir = Path(__file__).absolute().parent
+        root_dir = this_dir.parent
+        log_dir = root_dir / "out"
+        for log in log_dir.glob("*.log"):
+            log.write_text("")
+
 @pytest.fixture()
 def server():
     server = Server("http://127.0.0.1:8421")
     server.get("/reset?force=1", auth=server.auth())
+    sleep(4)
+    _clear_logs()
     yield server
     username, password = server.auth()
     r = server.get("/reset?force=1", auth=(username, password))
     assert r.json() == {"success": True}
+    sleep(4)
+    _clear_logs()
     dump = Path(__file__).absolute().parent.parent / "out" / "dump.rdb"
     if dump.exists():
         dump.unlink()
@@ -85,8 +100,7 @@ class Logs:
 
     def __enter__(self):
         # Clear logs
-        for log in self.log_dir.glob("*.log"):
-            log.write_text("")
+        _clear_logs()
 
     def __exit__(self, exc_type, exc_value, traceback):
         if exc_type is not None:

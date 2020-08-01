@@ -14,7 +14,7 @@ from joblib import Parallel, delayed
 from .utils import server, logs, LogError
 
 
-def test_backend_basics(server):
+def test_backend_basics(server, logs):
     exp = Path(__file__).parent / "data" / "round-robin.yaml"
     server.authorize()
     server.post("/init_exp", data={"exp": exp.read_bytes()})
@@ -23,14 +23,15 @@ def test_backend_basics(server):
     # ran into a bug that happened with len(samplers) > 1
     assert len(exp_config["samplers"]) == 1
     puid = "puid-foo"
-    for k in range(30):
-        _start = time()
-        q = server.get("/query").json()
-        score = max(abs(q["head"] - q["left"]), abs(q["head"] - q["right"]))
-        assert q["score"] == score
-        ans = {"winner": random.choice([q["left"], q["right"]]), "puid": puid, **q}
-        ans["response_time"] = time() - _start
-        server.post("/answer", data=ans)
+    with logs:
+        for k in range(30):
+            _start = time()
+            q = server.get("/query").json()
+            score = max(abs(q["head"] - q["left"]), abs(q["head"] - q["right"]))
+            assert q["score"] == score
+            ans = {"winner": random.choice([q["left"], q["right"]]), "puid": puid, **q}
+            ans["response_time"] = time() - _start
+            server.post("/answer", data=ans)
 
     print("Getting responses...")
     r = server.get("/responses")

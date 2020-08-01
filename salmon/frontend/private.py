@@ -251,7 +251,7 @@ async def _process_form(
     for name in names:
         rj.jsonset(f"alg-{name}-answers", root, [])
 
-        # Not set because rj.zadd doesn't require it -- don't touch!
+        # Don't touch! Not set because rj.zadd doesn't require it.
         # rj.jsonset(f"alg-{name}-queries", root, [])
 
         logger.info(f"initializing algorithm {name}...")
