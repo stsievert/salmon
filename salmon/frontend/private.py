@@ -32,7 +32,13 @@ import salmon
 from ..triplets import manager
 from . import plotting
 from .public import _ensure_initialized, app, templates
-from .utils import ServerException, _extract_zipfile, _format_target, get_logger, _format_targets
+from .utils import (
+    ServerException,
+    _extract_zipfile,
+    _format_target,
+    get_logger,
+    _format_targets,
+)
 
 security = HTTPBasic()
 
@@ -40,6 +46,7 @@ root = Path.rootPath()
 rj = Client(host="redis", port=6379, decode_responses=True)
 logger = get_logger(__name__)
 DIR = pathlib.Path(__file__).absolute().parent
+ROOT_DIR = DIR.parent.parent
 
 EXPECTED_PWORD = "331a5156c7f0a529ed1de8d9aba35da95655c341df0ca0bbb2b69b3be319ecf0"
 
@@ -244,7 +251,7 @@ async def _process_form(
     for name in names:
         rj.jsonset(f"alg-{name}-answers", root, [])
 
-        # Not set because rj.zadd doesn't require it -- don't touch!
+        # Don't touch! Not set because rj.zadd doesn't require it.
         # rj.jsonset(f"alg-{name}-queries", root, [])
 
         logger.info(f"initializing algorithm {name}...")
@@ -307,7 +314,7 @@ def reset(
         rj.save()
         now = datetime.now().isoformat()[: 10 + 6]
 
-        save_dir = DIR.parent / "out"
+        save_dir = ROOT_DIR / "out"
         files = [f.name for f in save_dir.glob("*")]
         logger.info(files)
         logger.info("dump.rdb" in files)
@@ -501,7 +508,7 @@ async def get_logs(request: Request, authorized: bool = Depends(_authorize)):
     logger.info("Getting logs")
 
     items = {"request": request}
-    log_dir = DIR.parent / "out"
+    log_dir = ROOT_DIR / "out"
     files = log_dir.glob("*.log")
     out = {}
     for file in files:
@@ -545,9 +552,10 @@ async def download(request: Request, authorized: bool = Depends(_authorize)):
     rj.save()
     fname = datetime.now().isoformat()[: 10 + 6]
     version = salmon.__version__
-    headers = {"Content-Disposition": f'attachment; filename="exp-{fname}-{version}.rdb"'}
-    save_dir = DIR.parent / "out"
-    return FileResponse(str(save_dir / "dump.rdb"), headers=headers)
+    headers = {
+        "Content-Disposition": f'attachment; filename="exp-{fname}-{version}.rdb"'
+    }
+    return FileResponse(str(ROOT_DIR / "out" / "dump.rdb"), headers=headers)
 
 
 @app.post("/restore", tags=["private"])
@@ -567,8 +575,7 @@ async def restore(
        compose up` or "Actions > Instance state > Reboot" on Amazon EC2.
 
     """
-    save_dir = DIR.parent / "out"
-    with open(str(save_dir / "dump.rdb"), "wb") as f:
+    with open(str(ROOT_DIR / "out" / "dump.rdb"), "wb") as f:
         f.write(rdb)
     msg = dedent(
         """

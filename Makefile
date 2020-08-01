@@ -20,6 +20,6 @@ watch: FORCE
 	docker-compose logs -f
 
 clean: FORCE
-	rm -f salmon/out/dump*.rdb
-	rm -f salmon/out/salmon*.log
-	rm -f salmon/out/redis.csv
+	rm -f out/dump*.rdb
+	rm -f out/salmon*.log
+	rm -f out/redis.csv

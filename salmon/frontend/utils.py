@@ -13,6 +13,7 @@ from ..utils import get_logger
 
 logger = get_logger(__name__)
 
+
 class ServerException(HTTPException):
     def __init__(self, msg):
         raise HTTPException(status_code=500, detail=msg)
@@ -61,6 +62,7 @@ def _format_target(file: Path):
             "Supported extensions are ['png', 'gif', 'jpg', 'bmp', "
             "'jpeg', 'svg', 'mov' or 'mp4']"
         )
+
 
 def _format_targets(file: Path):
     df = pd.read_csv(file, header=None)

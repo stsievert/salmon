@@ -2,22 +2,26 @@ version: '3.7'
 services:
 
   server:
-    build: .
+    user: root
+    build:
+      context: .
     environment:
       - SALMON_DEBUG  # pass through to backend
       - SALMON_NO_AUTH
+      - LOG_LEVEL
     ports:
       - "8421:8421"
       - "8400:8400"
+      - "8787:8787"
     expose:
       - 8421
       - 8400
+      - 8787
     volumes:
-      - type: bind
-        source: .
-        target: /usr/src/salmon
+      - ".:/salmon:rw"
 
   redis:
+    user: root
     image: redislabs/rejson
     sysctls:  # https://github.com/docker-library/redis/issues/191
       - net.core.somaxconn=65535
@@ -25,19 +29,20 @@ services:
     expose:
       - 6379
     volumes:
-      - type: bind
-        source: ./salmon/out
-        target: /data
+      - "./out:/data:rw"
+    command: /bin/sh -c "chmod -v 777 /data && redis-server --loadmodule /usr/lib/redis/modules/rejson.so"
+    # redis-server command from https://hub.docker.com/r/redislabs/rejson/dockerfile
+    #
+    # https://github.com/docker/compose/issues/3270
     # also https://github.com/boot2docker/boot2docker/issues/1083#issuecomment-151380687
 
   redismonitor:
+    user: root
     build: docker/redismonitor
     ports:
       - "7381:7389"
     volumes:
-      - type: bind
-        source: ./salmon/out
-        target: /logs
+      - "./out:/logs:rw"
     logging:
       driver: none
 

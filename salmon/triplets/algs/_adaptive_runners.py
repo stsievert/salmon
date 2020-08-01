@@ -34,6 +34,7 @@ PARAMS = """
         The seed used to generate psuedo-random numbers.
     """
 
+
 class Adaptive(Runner):
     def __init__(
         self,
@@ -49,12 +50,12 @@ class Adaptive(Runner):
         R: int = 10,
         **kwargs,
     ):
+        super().__init__(ident=ident)
 
         self.n = n
         self.d = d
         self.R = R
 
-        super().__init__(ident=ident)
         Opt = getattr(adaptive, optimizer)
         Module = getattr(adaptive, module)
 
@@ -77,26 +78,26 @@ class Adaptive(Runner):
 
         self.search = InfoGainScorer(
             embedding=self.opt.embedding(),
-            probs=self.opt.est_.module_.probs,
+            probs=self.opt.module_.probs,
             random_state=random_state,
         )
         self.search.push([])
-        self.num_ans = 0
+        self.meta = {"num_ans": 0, "model_updates": 0}
 
     def get_query(self) -> Tuple[Optional[Dict[str, int]], Optional[float]]:
-        if self.num_ans <= self.R * self.n:
+        if self.meta["num_ans"] <= self.R * self.n:
             head, left, right = _random_query(self.n)
             return {"head": int(head), "left": int(left), "right": int(right)}, 0.0
         return None, None
 
     def get_queries(self, num=10_000) -> Tuple[List[Query], List[float]]:
-        queries, scores = self.search.score(num=int(num * 1.1))
+        queries, scores = self.search.score(num=int(num * 1.1 + 3))
         return queries, scores
 
     def process_answers(self, answers: List[Answer]):
-        self.num_ans += len(answers)
-        logger.info("self.num_ans = %s", self.num_ans)
-        logger.info("self.R, self.n = %s, %s", self.R, self.n)
+        self.meta["num_ans"] += len(answers)
+        logger.debug("self.meta = %s", self.meta)
+        logger.debug("self.R, self.n = %s, %s", self.R, self.n)
 
         alg_ans = [
             (
@@ -111,10 +112,12 @@ class Adaptive(Runner):
 
         self.opt.push(alg_ans)
         self.opt.partial_fit(alg_ans)
+        self.meta["model_updates"] += 1
 
     def get_model(self) -> Dict[str, Any]:
         return {
             "embedding": self.search.embedding.tolist(),
+            **self.meta,
         }
 
 
@@ -173,6 +176,7 @@ class TSTE(Adaptive):
            http://www.cs.cornell.edu/~kilian/papers/stochastictriplet.pdf
            van der Maaten, Weinberger.
     """
+
     def __init__(
         self,
         n: int,
@@ -228,6 +232,7 @@ class STE(Adaptive):
            http://www.cs.cornell.edu/~kilian/papers/stochastictriplet.pdf
            van der Maaten, Weinberger.
     """
+
     def __init__(
         self,
         n: int,
@@ -281,6 +286,7 @@ class GNMDS(Adaptive):
            Agarwal, Wills, Cayton, Lanckriet, Kriegman, and Belongie.
            http://proceedings.mlr.press/v2/agarwal07a/agarwal07a.pdf
     """
+
     def __init__(
         self,
         n: int,
@@ -330,6 +336,7 @@ class CKL(Adaptive):
     random_state : int, None, np.random.RandomState
         The seed used to generate psuedo-random numbers.
     """
+
     def __init__(
         self,
         n: int,

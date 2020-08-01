@@ -1,9 +1,12 @@
+import os
 import random
 import traceback
+import threading
 from typing import Dict, Union
 
 import cloudpickle
 from dask.distributed import Client as DaskClient
+from dask.distributed import fire_and_forget
 from fastapi import BackgroundTasks, FastAPI, HTTPException
 from fastapi.responses import PlainTextResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
@@ -13,12 +16,15 @@ from salmon.frontend.utils import ServerException
 from ..triplets import algs
 from ..utils import get_logger
 
+DEBUG = os.environ.get("SALMON_DEBUG", 0)
+
 logger = get_logger(__name__)
 
 root = Path.rootPath()
 rj = Client(host="redis", port=6379, decode_responses=True)
 
 app = FastAPI(title="salmon-backend")
+threads = []
 
 
 def exception_to_string(excp):
@@ -83,7 +89,7 @@ async def init(ident: str, background_tasks: BackgroundTasks) -> bool:
 
     """
     # TODO: Better handling of exceptions if params keys don't match
-    logger.info("backend: initialized")
+    logger.info("backend: initializing %s", ident)
     config = rj.jsonget("exp_config")
 
     try:
@@ -97,6 +103,7 @@ async def init(ident: str, background_tasks: BackgroundTasks) -> bool:
             _class = params.pop("module", ident)
             Alg = getattr(algs, _class)
             params = {k: _fmt_params(k, v) for k, v in params.items()}
+            logger.warning("Alg for %s = %s", ident, Alg)
             logger.warning("params = %s", params)
             alg = Alg(ident=ident, n=config["n"], d=config["d"], **params)
     except Exception as e:
@@ -104,8 +111,8 @@ async def init(ident: str, background_tasks: BackgroundTasks) -> bool:
         logger.error(f"Error on alg={ident} init: {msg}")
         raise ExpParsingError(status_code=500, detail=msg)
 
+    logger.info(f"alg={ident} initialized; now, does it have get_quer")
     if hasattr(alg, "get_query"):
-
         logger.info(f"Init'ing /query-{ident}")
 
         @app.get(f"/query-{ident}")
@@ -120,9 +127,10 @@ async def init(ident: str, background_tasks: BackgroundTasks) -> bool:
                 raise HTTPException(status_code=404)
             return {"alg_ident": ident, "score": score, **q}
 
-    client = None
-    logger.info(f"Starting algs={ident}")
-    background_tasks.add_task(alg.run, client, rj)
+    dask_client = DaskClient("127.0.0.2:8786")
+    logger.info("Before adding init task")
+    background_tasks.add_task(alg.run, dask_client)
+    logger.info("Returning")
     return True
 
 
