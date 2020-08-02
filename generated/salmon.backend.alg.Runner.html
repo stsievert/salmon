@@ -1,0 +1,366 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>salmon.backend.alg.Runner &mdash; Salmon v0.3.6+11.g7788a26.dirty documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="salmon.triplets.algs.RandomSampling" href="salmon.triplets.algs.RandomSampling.html" />
+    <link rel="prev" title="Algorithm API" href="../api.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Salmon
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms.html">Algorithm configuration</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Algorithms</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">Algorithm API</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.backend.alg</span></code>.Runner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#passive-algorithms">Passive Algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#active-algorithms">Active Algorithms</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../adaptive.html">Adaptive algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html">Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers.html">Developing algorithms</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Salmon</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../api.html">Algorithm API</a> &raquo;</li>
+        
+      <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.backend.alg</span></code>.Runner</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/stsievert/salmon/blob/master/source/generated/salmon.backend.alg.Runner.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="salmon-backend-alg-runner">
+<h1><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.backend.alg</span></code>.Runner<a class="headerlink" href="#salmon-backend-alg-runner" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="salmon.backend.alg.Runner">
+<em class="property">class </em><code class="sig-prename descclassname">salmon.backend.alg.</code><code class="sig-name descname">Runner</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ident</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.backend.alg.Runner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a sampling algorithm. Provides hooks to connect with the database and
+the Dask cluster.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>ident</strong><span class="classifier">str</span></dt><dd><p>The algorithm idenfifier. This value is used to identify the algorithm
+in the database.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference internal" href="#salmon.backend.alg.Runner.clear" title="salmon.backend.alg.Runner.clear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear</span></code></a></dt><dd><p>Should the queries be cleared from the database?</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#salmon.backend.alg.Runner.get_model" title="salmon.backend.alg.Runner.get_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_model</span></code></a>()</p></td>
+<td><p>Get the model underlying the algorithm.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#salmon.backend.alg.Runner.process_answers" title="salmon.backend.alg.Runner.process_answers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">process_answers</span></code></a>(answers)</p></td>
+<td><p>Process answers.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#salmon.backend.alg.Runner.reset" title="salmon.backend.alg.Runner.reset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset</span></code></a>(client, rj)</p></td>
+<td><p>Stop the algorithm.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#salmon.backend.alg.Runner.run" title="salmon.backend.alg.Runner.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>(client)</p></td>
+<td><p>Run the algorithm.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 66%" />
+<col style="width: 34%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>clear_queries</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>get_answers</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>post_queries</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>redis_client</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>save</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>serialize_query</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt id="salmon.backend.alg.Runner.clear">
+<em class="property">property </em><code class="sig-name descname">clear</code><a class="headerlink" href="#salmon.backend.alg.Runner.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Should the queries be cleared from the database?</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="salmon.backend.alg.Runner.get_model">
+<code class="sig-name descname">get_model</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Dict<span class="p">[</span>str<span class="p">, </span>Any<span class="p">]</span><a class="headerlink" href="#salmon.backend.alg.Runner.get_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the model underlying the algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>state</strong><span class="classifier">Dict[str, Any]</span></dt><dd><p>The state of the algorithm. This can be used for display on the
+dashboard or with an HTTP get request.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="salmon.backend.alg.Runner.process_answers">
+<code class="sig-name descname">process_answers</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">answers</span><span class="p">:</span> <span class="n">List<span class="p">[</span>Answer<span class="p">]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.backend.alg.Runner.process_answers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Process answers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>answers</strong><span class="classifier">List[Answers]</span></dt><dd><p>Each answer is a dictionary. Each answer certainly has the keys
+“head”, “left”, “right” and “winner”, and may have the key
+“puid” for participant UID.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="salmon.backend.alg.Runner.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">client</span></em>, <em class="sig-param"><span class="n">rj</span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.backend.alg.Runner.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stop the algorithm. The algorithm will be deleted shortly after
+this function is called.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="salmon.backend.alg.Runner.run">
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">client</span><span class="p">:</span> <span class="n">distributed.client.Client</span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.backend.alg.Runner.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>client</strong><span class="classifier">DaskClient</span></dt><dd><p>A client to Dask.</p>
+</dd>
+<dt><strong>rj</strong><span class="classifier">RedisClient</span></dt><dd><p>A Redist Client, a rejson.Client</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function runs the adaptive algorithm. Because it’s asynchronous,
+this function should return if
+<code class="docutils literal notranslate"><span class="pre">&quot;reset&quot;</span> <span class="pre">in</span> <span class="pre">rj.keys()</span> <span class="pre">and</span> <span class="pre">rj.jsonget(&quot;reset&quot;)</span></code>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="clearer"></div></div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="salmon.triplets.algs.RandomSampling.html" class="btn btn-neutral float-right" title="salmon.triplets.algs.RandomSampling" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../api.html" class="btn btn-neutral float-left" title="Algorithm API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, Scott Sievert
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

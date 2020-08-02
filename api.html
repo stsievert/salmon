@@ -1,0 +1,302 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Algorithm API &mdash; Salmon v0.3.6+11.g7788a26.dirty documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="salmon.backend.alg.Runner" href="generated/salmon.backend.alg.Runner.html" />
+    <link rel="prev" title="Algorithm configuration" href="algorithms.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> Salmon
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.html">Algorithm configuration</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Algorithms</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Algorithm API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="generated/salmon.backend.alg.Runner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.backend.alg</span></code>.Runner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#passive-algorithms">Passive Algorithms</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/salmon.triplets.algs.RandomSampling.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.algs</span></code>.RandomSampling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/salmon.triplets.algs.RoundRobin.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.algs</span></code>.RoundRobin</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#active-algorithms">Active Algorithms</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/salmon.triplets.algs.TSTE.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.algs</span></code>.TSTE</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/salmon.triplets.algs.STE.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.algs</span></code>.STE</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/salmon.triplets.algs.CKL.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.algs</span></code>.CKL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/salmon.triplets.algs.GNMDS.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.algs</span></code>.GNMDS</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="adaptive.html">Adaptive algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html">Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developers.html">Developing algorithms</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Salmon</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Algorithm API</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/stsievert/salmon/blob/master/source/api.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="algorithm-api">
+<h1>Algorithm API<a class="headerlink" href="#algorithm-api" title="Permalink to this headline">¶</a></h1>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>These APIs are experimental and may change at any time.</p>
+</div>
+<p>All triplet embedding algorithms must conform to this API:</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/salmon.backend.alg.Runner.html#salmon.backend.alg.Runner" title="salmon.backend.alg.Runner"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.backend.alg.Runner</span></code></a>(ident)</p></td>
+<td><p>Run a sampling algorithm.</p></td>
+</tr>
+</tbody>
+</table>
+<p>This class enables running a triplet embedding algorithm on Salmon: it provides
+convenient hooks to the database like <code class="docutils literal notranslate"><span class="pre">get_queries</span></code> and <code class="docutils literal notranslate"><span class="pre">post_answers</span></code> if
+you want to customize the running of the algorithm. By default, the algorithm
+uses <code class="docutils literal notranslate"><span class="pre">Runner.run</span></code> to run the algorithm.</p>
+<p>Every class below inherits from <a class="reference internal" href="generated/salmon.backend.alg.Runner.html#salmon.backend.alg.Runner" title="salmon.backend.alg.Runner"><code class="xref py py-class docutils literal notranslate"><span class="pre">Runner</span></code></a>.</p>
+<div class="section" id="passive-algorithms">
+<h2>Passive Algorithms<a class="headerlink" href="#passive-algorithms" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/salmon.triplets.algs.RandomSampling.html#salmon.triplets.algs.RandomSampling" title="salmon.triplets.algs.RandomSampling"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.triplets.algs.RandomSampling</span></code></a>(n[, d, …])</p></td>
+<td><p>Choose the triplet queries randomly, only ensuring objects are not repeated.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/salmon.triplets.algs.RoundRobin.html#salmon.triplets.algs.RoundRobin" title="salmon.triplets.algs.RoundRobin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.triplets.algs.RoundRobin</span></code></a>(n[, d, …])</p></td>
+<td><p>Let the head of the triplet query rotate through the available items while choosing the bottom two items randomly.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="active-algorithms">
+<h2>Active Algorithms<a class="headerlink" href="#active-algorithms" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/salmon.triplets.algs.TSTE.html#salmon.triplets.algs.TSTE" title="salmon.triplets.algs.TSTE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.triplets.algs.TSTE</span></code></a>(n, d, ident, optimizer)</p></td>
+<td><p>The t-Distributed STE (t-STE) embedding algorithm <a class="reference internal" href="generated/salmon.triplets.algs.TSTE.html#r1d0c09ce08dd-1" id="id1"><span>[R1d0c09ce08dd-1]</span></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/salmon.triplets.algs.STE.html#salmon.triplets.algs.STE" title="salmon.triplets.algs.STE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.triplets.algs.STE</span></code></a>(n, d, ident, optimizer)</p></td>
+<td><p>The Stochastic Triplet Embedding <a class="reference internal" href="generated/salmon.triplets.algs.STE.html#r7fe386f21f90-1" id="id2"><span>[R7fe386f21f90-1]</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/salmon.triplets.algs.CKL.html#salmon.triplets.algs.CKL" title="salmon.triplets.algs.CKL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.triplets.algs.CKL</span></code></a>(n, d, ident, optimizer)</p></td>
+<td><p>The crowd kernel embedding.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/salmon.triplets.algs.GNMDS.html#salmon.triplets.algs.GNMDS" title="salmon.triplets.algs.GNMDS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.triplets.algs.GNMDS</span></code></a>(n, d, ident, …)</p></td>
+<td><p>The Generalized Non-metric Multidimensional Scaling embedding <a class="reference internal" href="generated/salmon.triplets.algs.GNMDS.html#r059ae300cbf9-1" id="id3"><span>[R059ae300cbf9-1]</span></a>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="generated/salmon.backend.alg.Runner.html" class="btn btn-neutral float-right" title="salmon.backend.alg.Runner" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="algorithms.html" class="btn btn-neutral float-left" title="Algorithm configuration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, Scott Sievert
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
