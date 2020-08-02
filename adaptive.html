@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Adaptive algorithms &mdash; Salmon v0.3.3r2+2.g1fdead4.dirty documentation</title>
+  <title>Adaptive algorithms &mdash; Salmon v0.3.6+2.g80d38e3 documentation</title>
   
 
   
@@ -38,8 +38,8 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Algorithm API" href="api.html" />
-    <link rel="prev" title="Getting started" href="getting-started.html" /> 
+    <link rel="next" title="Performance" href="performance.html" />
+    <link rel="prev" title="salmon.triplets.algs.GNMDS" href="generated/salmon.triplets.algs.GNMDS.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -84,15 +84,18 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul class="current">
+              <p class="caption"><span class="caption-text">Usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting started</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Adaptive algorithms</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#configuration">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.html">Algorithm configuration</a></li>
 </ul>
-</li>
+<p class="caption"><span class="caption-text">Algorithms</span></p>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="api.html">Algorithm API</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Adaptive algorithms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="performance.html">Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developers.html">Developing algorithms</a></li>
 </ul>
 
             
@@ -162,31 +165,64 @@
             
   <div class="section" id="adaptive-algorithms">
 <h1>Adaptive algorithms<a class="headerlink" href="#adaptive-algorithms" title="Permalink to this headline">¶</a></h1>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>These adaptive algorithms are (currently) experimental and may change at any
-time. Do not use these adaptive algorithms in deployment.</p>
-</div>
-<p>There are many queries to ask about in triplet queries: with <span class="math notranslate nohighlight">\(n\)</span> objects
-there are <span class="math notranslate nohighlight">\(\mathcal{O}(n^3)\)</span> questions that could be presented.</p>
-<p>So what question should be asked? That’s the task of an adaptive algorithm. The
-API the must conform to below:</p>
+<p>The API the must conform to below:</p>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="api.html#salmon.backend.alg.Runner" title="salmon.backend.alg.Runner"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.backend.alg.Runner</span></code></a>(ident)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/salmon.backend.alg.Runner.html#salmon.backend.alg.Runner" title="salmon.backend.alg.Runner"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.backend.alg.Runner</span></code></a>(ident)</p></td>
 <td><p>Run a sampling algorithm.</p></td>
 </tr>
 </tbody>
 </table>
-<div class="section" id="configuration">
-<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h2>
-<p>Every adaptive algorithm takes different parameters. How should the parameters
-be configured in the YAML file provided on upload?</p>
+<p>This API balances the fundamentally serial nature of adaptive algorithms with
+the parallel context of web servers.</p>
+<p>Typically, an adaptive algorithm looks like the following:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">best_query</span><span class="p">()</span>
+    <span class="n">ans</span> <span class="o">=</span> <span class="n">get_human_answer</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">ans</span><span class="p">)</span>
+</pre></div>
 </div>
+<p>However, web servers are different. They typically look something like the
+following:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/query&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">query</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">db</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;queries&quot;</span><span class="p">)</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/answer&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">process_answer</span><span class="p">(</span><span class="n">answer</span><span class="p">):</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">answer</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <a class="reference internal" href="generated/salmon.backend.alg.Runner.html#salmon.backend.alg.Runner" title="salmon.backend.alg.Runner"><code class="xref py py-class docutils literal notranslate"><span class="pre">Runner</span></code></a> API balances the two and runs the code
+to <cite>receive answers</cite> and <cite>process answers</cite> in separate processes.
+<cite>Processing the received answers</cite> is an optimization that needs to be performed
+quickly because <code class="docutils literal notranslate"><span class="pre">model.best_query</span></code> depends on the optimization.</p>
+<p>Essentially, the following code is run in addition to the web server code
+above:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">db</span> <span class="o">=</span> <span class="n">Database</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">run_alg</span><span class="p">():</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">queries</span> <span class="o">=</span> <span class="p">[</span><span class="n">model</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">random_query</span><span class="p">())</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10_000</span><span class="p">)]</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="s2">&quot;queries&quot;</span><span class="p">,</span> <span class="n">queries</span><span class="p">)</span>
+        <span class="n">answers</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">pop_all</span><span class="p">(</span><span class="s2">&quot;answers&quot;</span><span class="p">)</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">partial_fit</span><span class="p">(</span><span class="n">answers</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This means the web server can scale efficiently because the backend
+optimization doesn’t block the frontend query serving. However, that also means
+the adaptive algorithm needs to post queries quickly so users aren’t waiting.
+Of course, the computation required to perform the embedding needs to happen
+quickly too (otherwise adaptive algorithms are meaningless).</p>
+<p>Luckily, Salmon should scale sufficiently well for typical use cases (e.g,
+Mechnical Turk with about <span class="math notranslate nohighlight">\(n \approx 100\)</span> targets). The query search is
+fast enough to search 10,000 queries in 50ms with <span class="math notranslate nohighlight">\(n = 85\)</span> targets.</p>
 </div>
 
 
@@ -197,10 +233,10 @@ be configured in the YAML file provided on upload?</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="api.html" class="btn btn-neutral float-right" title="Algorithm API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="performance.html" class="btn btn-neutral float-right" title="Performance" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="getting-started.html" class="btn btn-neutral float-left" title="Getting started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="generated/salmon.triplets.algs.GNMDS.html" class="btn btn-neutral float-left" title="salmon.triplets.algs.GNMDS" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

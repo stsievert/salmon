@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Index &mdash; Salmon v0.3.3r2+2.g1fdead4.dirty documentation</title>
+  <title>Index &mdash; Salmon v0.3.6+2.g80d38e3 documentation</title>
   
 
   
@@ -82,12 +82,18 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p class="caption"><span class="caption-text">Usage</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="adaptive.html">Adaptive algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.html">Algorithm configuration</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Algorithms</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="api.html">Algorithm API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="adaptive.html">Adaptive algorithms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="performance.html">Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developers.html">Developing algorithms</a></li>
 </ul>
 
             
@@ -164,15 +170,25 @@
  | <a href="#G"><strong>G</strong></a>
  | <a href="#P"><strong>P</strong></a>
  | <a href="#R"><strong>R</strong></a>
+ | <a href="#S"><strong>S</strong></a>
+ | <a href="#T"><strong>T</strong></a>
  
 </div>
 <h2 id="_">_</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#salmon.triplets.algs.RandomSampling.__init__">__init__() (salmon.triplets.algs.RandomSampling method)</a>
+      <li><a href="generated/salmon.triplets.algs.CKL.html#salmon.triplets.algs.CKL.__init__">__init__() (salmon.triplets.algs.CKL method)</a>
 
       <ul>
-        <li><a href="api.html#salmon.triplets.algs.RoundRobin.__init__">(salmon.triplets.algs.RoundRobin method)</a>
+        <li><a href="generated/salmon.triplets.algs.GNMDS.html#salmon.triplets.algs.GNMDS.__init__">(salmon.triplets.algs.GNMDS method)</a>
+</li>
+        <li><a href="generated/salmon.triplets.algs.RandomSampling.html#salmon.triplets.algs.RandomSampling.__init__">(salmon.triplets.algs.RandomSampling method)</a>
+</li>
+        <li><a href="generated/salmon.triplets.algs.RoundRobin.html#salmon.triplets.algs.RoundRobin.__init__">(salmon.triplets.algs.RoundRobin method)</a>
+</li>
+        <li><a href="generated/salmon.triplets.algs.STE.html#salmon.triplets.algs.STE.__init__">(salmon.triplets.algs.STE method)</a>
+</li>
+        <li><a href="generated/salmon.triplets.algs.TSTE.html#salmon.triplets.algs.TSTE.__init__">(salmon.triplets.algs.TSTE method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -181,7 +197,11 @@
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#salmon.backend.alg.Runner.clear">clear() (salmon.backend.alg.Runner property)</a>
+      <li><a href="generated/salmon.triplets.algs.CKL.html#salmon.triplets.algs.CKL">CKL (class in salmon.triplets.algs)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/salmon.backend.alg.Runner.html#salmon.backend.alg.Runner.clear">clear() (salmon.backend.alg.Runner property)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -189,11 +209,11 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#salmon.backend.alg.Runner.get_model">get_model() (salmon.backend.alg.Runner method)</a>
+      <li><a href="generated/salmon.backend.alg.Runner.html#salmon.backend.alg.Runner.get_model">get_model() (salmon.backend.alg.Runner method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#salmon.backend.alg.Runner.get_queries">get_queries() (salmon.backend.alg.Runner method)</a>
+      <li><a href="generated/salmon.triplets.algs.GNMDS.html#salmon.triplets.algs.GNMDS">GNMDS (class in salmon.triplets.algs)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -201,7 +221,7 @@
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#salmon.backend.alg.Runner.process_answers">process_answers() (salmon.backend.alg.Runner method)</a>
+      <li><a href="generated/salmon.backend.alg.Runner.html#salmon.backend.alg.Runner.process_answers">process_answers() (salmon.backend.alg.Runner method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -209,17 +229,33 @@
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#salmon.triplets.algs.RandomSampling">RandomSampling (class in salmon.triplets.algs)</a>
+      <li><a href="generated/salmon.triplets.algs.RandomSampling.html#salmon.triplets.algs.RandomSampling">RandomSampling (class in salmon.triplets.algs)</a>
 </li>
-      <li><a href="api.html#salmon.backend.alg.Runner.reset">reset() (salmon.backend.alg.Runner method)</a>
+      <li><a href="generated/salmon.backend.alg.Runner.html#salmon.backend.alg.Runner.reset">reset() (salmon.backend.alg.Runner method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#salmon.triplets.algs.RoundRobin">RoundRobin (class in salmon.triplets.algs)</a>
+      <li><a href="generated/salmon.triplets.algs.RoundRobin.html#salmon.triplets.algs.RoundRobin">RoundRobin (class in salmon.triplets.algs)</a>
 </li>
-      <li><a href="api.html#salmon.backend.alg.Runner.run">run() (salmon.backend.alg.Runner method)</a>
+      <li><a href="generated/salmon.backend.alg.Runner.html#salmon.backend.alg.Runner.run">run() (salmon.backend.alg.Runner method)</a>
 </li>
-      <li><a href="api.html#salmon.backend.alg.Runner">Runner (class in salmon.backend.alg)</a>
+      <li><a href="generated/salmon.backend.alg.Runner.html#salmon.backend.alg.Runner">Runner (class in salmon.backend.alg)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="S">S</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/salmon.triplets.algs.STE.html#salmon.triplets.algs.STE">STE (class in salmon.triplets.algs)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="T">T</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/salmon.triplets.algs.TSTE.html#salmon.triplets.algs.TSTE">TSTE (class in salmon.triplets.algs)</a>
 </li>
   </ul></td>
 </tr></table>
