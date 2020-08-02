@@ -1,2 +1,0 @@
-include versioneer.py
-include salmon/_version.py
