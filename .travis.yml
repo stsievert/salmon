@@ -49,6 +49,7 @@ before_deploy:
   - ls docs/build/html
   - ls
   - doctr deploy --built-docs docs/build/html/  --no-require-master .
+  - ls -a
 
 deploy:
   provider: pages
