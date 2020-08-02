@@ -44,12 +44,15 @@ script:
   - cd ..
 
 before_deploy:
+  - set -e
   - pip install doctr
-  - doctr deploy --built-docs docs/build/html .
+  - ls
+  - ls docs/build/html
+  - doctr deploy --built-docs docs/build/html/ .
 
 deploy:
   provider: pages
-  skip_cleanup: true
+  skip_cleanup: true  # avoid deleting files in docs/build/html
   # Defined in the Travis CI repo settings page as a secure variable
   github_token: $GITHUBTOKEN
   target_branch: gh-pages
