@@ -10,7 +10,7 @@ functions:
 * ``get_queries() -> Tuple[Query, List[float]]``.
 * ``process_answers[List[Answers]]``.
 
-Details can be found in :class:`~salmon.backend.Runner`. Your algorithm should
+Details can be found in :class:`~salmon.backend.alg.Runner`. Your algorithm should
 be a class, and it can store internal state.
 
 After you have developed these functions, look at other algorithms in
@@ -18,11 +18,11 @@ After you have developed these functions, look at other algorithms in
 to figure out inheritance details. In short, the following details are
 important:
 
-* Inheriting from :class:`~salmon.backend.Runner` is important; that's what
+* Inheriting from :class:`~salmon.backend.alg.Runner` is important; that's what
   enables Salmon to work with custom algorithms. This class requires
   implementations of ``get_query``/``get_queries`` and ``process_answers``.
 * Accepting an ``ident: str`` keyword argument in ``__init__`` and passing that
-  argument to :class:`~salmon.backend.Runner`.
+  argument to :class:`~salmon.backend.alg.Runner`.
 
 I recommend the following when developing your algorithm. These aren't
 necessary but are highly encouraged:
@@ -39,7 +39,7 @@ Debugging
 ---------
 
 Let's say you've integrated most of your algorithm into
-:class:`~salmon.backend.Runner`. Now, you'd like to make sure everything is
+:class:`~salmon.backend.alg.Runner`. Now, you'd like to make sure everything is
 working properly.
 
 This script will help:

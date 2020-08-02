@@ -38,7 +38,7 @@ script:
   - sudo chown -R  travis:travis /home/travis/build/stsievert/salmon/
   - chown -R  travis:travis /home/travis/build/stsievert/salmon/
   - pytest
-  - rm -f salmon/out/*
+  - rm -f out/*
   - cd docs
   - make html
   - cd ..
@@ -55,7 +55,7 @@ deploy:
   target_branch: gh-pages
   keep_history: true
   on:
-    branch: master
+    branch: doc-fixes
 
-notifications:
-  email: false
+# notifications:
+  # email: false
