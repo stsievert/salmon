@@ -45,7 +45,7 @@ script:
 
 before_deploy:
   - pip install doctr
-  - doctr deploy --built-docs docs/_build/html .
+  - doctr deploy --built-docs docs/build/html .
 
 deploy:
   provider: pages
