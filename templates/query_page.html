@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- Required meta tags -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+<title>Salmon</title>
+<style>
+* {
+  max-width: inherit;
+  max-height: inherit;
+}
+.cell {
+  padding: 25px;
+  border: 1px solid #D8D8D8;
+  max-height: 100%;
+  max-width: 100%;
+}
+.answer {
+  background-color: #f1f1f1;
+  cursor: pointer;
+  margin: 2px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+.head {
+  background-color: #ffffff;
+  margin-bottom: 10px;
+  max-width: 70%;
+}
+.center {
+  text-align: center;
+}
+.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.answer:hover {
+  border-color: #0c0;
+  border-style: solid;
+  border-width: 2px;
+}
+.answer-sent {
+  border-color: #0c0;
+  border-style: solid;
+  border-width: 2px;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="outline justify-content-center">
+    <div class="row justify-content-center">
+    <p> {{instructions | safe}} </p>
+    </div>
+    <!-- <hr> -->
+    <div class="row justify-content-center">
+      <p>Target:</p>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-lg-10 justify-content-center center cell head" id="q-head">
+      </div>
+    </div>
+    <div class="row justify-content-center">
+        <p>Comparisons:</p>
+    </div>
+    <div class="row justify-content-center" id="choices">
+      <div class="cell answer col col-lg-5 center cell answer" id="q-left"></div>
+      <div class="cell answer col col-lg-5 center cell answer" id="q-right"></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="outline justify-content-center">
+    <div class="fixed-bottom">
+      <div style="padding: 5px; margin: 5px; color: #888;">
+          <span id="num-queries">0</span>{% if max_queries > 0 %}/{{ max_queries }} {% endif %}
+      </div>
+      <div style="padding: 5px; margin: 5px; color: #888;">
+        <div id="skip-button">
+          {% if skip_button %}
+          <button type="button" class="btn btn-outline-info btn-sm" onclick="getquery()"
+              data-toggle="tooltip" data-placement="top" data-html="true"
+              title="Skip questions only if you know <em>nothing</em> about the items shown."
+          >Skip this question</button>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- "Thanks for participating!" modal -->
+<div class="modal fade" id="debriefModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+     <div class="modal-body">
+         {{ debrief | safe }}
+     </div>
+     <div class="modal-body">
+         Participant ID: <span id="puid">{{ puid }}</span>
+    </div>
+  </div>
+</div>
+
+<script>
+// Enable every tool tip on the page
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+head = -1;
+left = -1;
+right = -1;
+puid = $("#puid").html();
+targets = {{ targets | safe }};
+function getTime(){
+  var d = new Date();
+    // getTime returns time in milliseconds since 1970-01-01, [1]
+    // [1]: https://www.w3schools.com/jsref/jsref_gettime.asp
+  return d.getTime() / 1000;
+}
+
+var start = -1;
+var start_latency = -1;
+var response_start = -1;
+var end_latency = -1;
+var latency = -1;
+var max_queries = {{ max_queries }};
+var num_queries = 0;  // queries submitted
+
+async function send(winner, id) {
+  var response_time = getTime() - response_start;
+  num_queries = num_queries + 1;
+  $('#q-left').addClass("disabled");
+  $('#q-right').addClass("disabled");
+  $("#num-queries").html("" + num_queries);
+  $.post("/answer",
+    JSON.stringify({
+        "head": head,
+        "left": left,
+        "right": right,
+        "winner": winner,
+        "puid": puid,
+        "response_time": response_time,
+        "network_latency": latency,
+        "score": score,
+        "alg_ident": ident,
+    })
+  );
+}
+
+
+function getquery(){
+  $.get("/query", function(data){
+      head = data["head"];
+      right = data["right"];
+      left = data["left"];
+      score = data["score"];
+      ident = data["alg_ident"];
+      $("#q-left").html(targets[left]);
+      $("#q-right").html(targets[right]);
+      $("#q-head").html(targets[head]);
+      end_latency = getTime();
+      latency = end_latency - start_latency;
+      response_start = getTime();
+      $('#q-left').removeClass("disabled");
+      $('#q-right').removeClass("disabled");
+  });
+}
+
+start_latency = getTime();
+getquery();
+end_latency = getTime();
+latency = end_latency - start_latency;
+
+function iterate(winner, id) {
+  send(winner, id);
+  if ((max_queries > 0) && (num_queries >= max_queries)){
+    $("#debriefModal").modal("show")
+    $("#q-left").addClass("no-more-queries");
+    $("#q-right").addClass("no-more-queries");
+  }
+  else {
+    getquery();
+  }
+}
+
+getquery();
+$("#q-right").click(function(){
+  start_latency = getTime();
+  iterate(right, "#q-right");
+});
+$("#q-left").click(function(){
+  start_latency = getTime();
+  iterate(left, "#q-left");
+});
+
+
+document.onkeydown = function checkKey(e) {
+  e = e || window.event;
+  // console.log(e.keyCode);
+  // console.log(e.keyCode == "37");
+
+  left_disabled = $("#q-left").hasClass("answer-sent");
+  right_disabled = $("#q-right").hasClass("answer-sent");
+  if (left_disabled || right_disabled){ return }
+  left_disabled = $("#q-left").hasClass("no-more-queries");
+  right_disabled = $("#q-right").hasClass("no-more-queries");
+  if (left_disabled || right_disabled){ return }
+
+  start_latency = getTime();
+  if (e.keyCode == '37') { // left arrow
+    iterate(left, "#q-left");
+    winner_id = "#q-left";
+  }
+  else if (e.keyCode == '39') { // right arrow
+    iterate(right, "#q-right");
+    winner_id = "#q-right";
+  }
+  else if (e.keyCode == '38') { // up arrow
+  }
+  else if (e.keyCode == '40') { // down arrow
+  }
+
+  $(winner_id).addClass("answer-sent");
+  $(winner_id).addClass("disabled");
+  setTimeout(function(){
+    $(winner_id).removeClass("disabled");
+    $(winner_id).removeClass("answer-sent");
+  }, 150);  // 215ms is median reaction time for humans
+}
+</script>
+</html>
