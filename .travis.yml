@@ -48,7 +48,7 @@ before_deploy:
   - pip install doctr
   - ls docs/build/html
   - ls
-  - doctr deploy --built-docs docs/build/html/ .
+  - doctr deploy --built-docs docs/build/html/  --no-require-master .
 
 deploy:
   provider: pages
