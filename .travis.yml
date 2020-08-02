@@ -46,8 +46,8 @@ script:
 before_deploy:
   - set -e
   - pip install doctr
-  - ls
   - ls docs/build/html
+  - ls
   - doctr deploy --built-docs docs/build/html/ .
 
 deploy:
