@@ -54,8 +54,8 @@ deploy:
   github_token: $GITHUBTOKEN
   target_branch: gh-pages
   keep_history: true
-  # on:
-      # branch: master
+  on:
+      branch: doc-fixes
 
 # notifications:
   # email: false
