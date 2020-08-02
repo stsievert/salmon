@@ -55,7 +55,7 @@ deploy:
   target_branch: gh-pages
   keep_history: true
   on:
-      branch: doc-fixes
+    branch: doc-fixes
 
 # notifications:
   # email: false
