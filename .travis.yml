@@ -24,11 +24,11 @@ before_install:
   - echo $USER
   - chown -R -H -L $USER:$USER /home/travis/build/stsievert/salmon/
   - sudo chown -R -H -L $USER:$USER /home/travis/build/stsievert/salmon/
-  - docker load -i docker_images/images.tar || true
-  # Build the images
-  - SALMON_NO_AUTH=1 docker-compose up &
-  - until curl 127.0.0.1:8421 > /dev/null 2>&1; do :; done  # wait for container to start
-  - docker ps
+  # - docker load -i docker_images/images.tar || true
+  # # Build the images
+  # - SALMON_NO_AUTH=1 docker-compose up &
+  # - until curl 127.0.0.1:8421 > /dev/null 2>&1; do :; done  # wait for container to start
+  # - docker ps
 
 
 script:
@@ -37,7 +37,7 @@ script:
   - pip install -e .
   - sudo chown -R  travis:travis /home/travis/build/stsievert/salmon/
   - chown -R  travis:travis /home/travis/build/stsievert/salmon/
-  - pytest
+  # - pytest
   - rm -f out/*
   - cd docs
   - make html
@@ -48,7 +48,7 @@ before_deploy:
   - pip install doctr
   - ls docs/build/html
   - ls
-  - doctr deploy --built-docs docs/build/html/ .
+  - doctr deploy --built-docs docs/build/html/  --no-require-master .
 
 deploy:
   provider: pages
