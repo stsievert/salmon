@@ -1,5 +1,9 @@
-Getting started
-===============
+Installation
+============
+
+This pages details how to get Salmon running, either on EC2 or locally on your
+machine. After you get Salmon running, detail on how to launch experiments in
+:ref:`getting-started`.
 
 Experimentalist
 ---------------
@@ -24,6 +28,9 @@ Experimentalist
 Then after this AMI is finished launching and initializing, go to
 
 - ``[url]:8421/init_exp`` to initialize an experiment
+- ``[url]:8421/docs`` to see the endpoint documentation. The Salmon version
+  displayed should match the most recent Salmon release in the `list of Salmon
+  releases`_.
 - ``[url]:8421/dashboard`` to view all relevant links, including links to
   the...
 
@@ -48,36 +55,7 @@ Then after this AMI is finished launching and initializing, go to
 
    http://ec2-35-164-240-184.us-west-2.compute.amazonaws.com:8421/foo
 
-Experiment Launch
-^^^^^^^^^^^^^^^^^
-
-Visit ``[url]:8421/init_exp`` to initialize an experiment. This will ask for
-the following:
-
-* a file describing the experiment
-* a username and password
-
-Here's an example experiment file:
-
-.. literalinclude:: ../tests/data/exp.yaml
-   :language: yaml
-   :linenos:
-
-This file follows the `YAML specification`_.
-Each target is a piece of HTML, and will be rendered correctly on the
-experiment page.
-
-If you visit ``[url]``, you will see a query page:
-
-.. _YAML specification: https://yaml.org/
-
-.. image:: imgs/query_page.png
-   :align: center
-   :width: 500px
-
-.. note::
-
-   This image is almost certainly out of date.
+.. _list of Salmon releases: https://github.com/stsievert/salmon/releases
 
 Local machine
 -------------

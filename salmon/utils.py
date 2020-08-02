@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import logging.handlers
+import os
 from logging.handlers import QueueHandler
 from logging import LogRecord
 from pathlib import Path
@@ -10,8 +11,10 @@ from pathlib import Path
 from queue import SimpleQueue as Queue
 from typing import List
 
+LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO")
 
-def get_logger(name, level=logging.INFO):
+
+def get_logger(name):
     # Config from https://docs.python-guide.org/writing/logging/ and
     # https://docs.python-guide.org/writing/logging/
     logger = logging.getLogger(name)
@@ -20,20 +23,18 @@ def get_logger(name, level=logging.INFO):
 
     ph = logging.StreamHandler()
     ph.setFormatter(formatter)
-    ph.setLevel(level)
+    LEVEL = getattr(logging, LOG_LEVEL)
+    ph.setLevel(LEVEL)
     handlers.append(ph)
 
-    DIR = Path(__file__).absolute().parent
-    out = DIR / "out" / f"{name}.log"
+    ROOT_DIR = Path(__file__).absolute().parent.parent
 
-    try:
-        fh = logging.FileHandler(str(out))
-    except PermissionError:
-        pass
-    else:
-        fh.setLevel(level)
-        fh.setFormatter(formatter)
-        handlers.append(fh)
+    out = ROOT_DIR / "out" / f"{name}.log"
+
+    fh = logging.FileHandler(str(out))
+    fh.setLevel(LEVEL)
+    fh.setFormatter(formatter)
+    handlers.append(fh)
 
     if False:
         # Works for uvicorn but not for gunicorn
@@ -41,6 +42,8 @@ def get_logger(name, level=logging.INFO):
     else:
         for handler in handlers:
             logger.addHandler(handler)
+    logging.getLogger("fastapi").setLevel(LEVEL)
+    logger.warning("initializing logger with LEVEL=%s", LEVEL)
     return logger
 
 

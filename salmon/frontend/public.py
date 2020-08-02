@@ -10,6 +10,7 @@ import numpy as np
 import requests as httpx
 from fastapi import FastAPI
 from rejson import Client, Path
+from redis.exceptions import ResponseError
 from starlette.requests import Request
 from starlette.staticfiles import StaticFiles
 from starlette.templating import Jinja2Templates
@@ -78,13 +79,21 @@ async def _ensure_initialized():
         "samplers",
         "instructions",
         "n",
+        "d",
         "max_queries",
         "debrief",
         "skip_button",
     ]
     if not set(exp_config) == set(expected_keys):
-        msg = "Experiment keys are not correct. Expected {}, got {}"
-        raise ServerException(msg.format(expected_keys, list(exp_config.keys())))
+        msg = (
+            "Experiment keys are not correct. Expected {}, got {}.\n\n"
+            "Extra keys: {}\n"
+            "Missing keys: {}"
+        )
+        extra = set(exp_config) - set(expected_keys)
+        missing = set(expected_keys) - set(exp_config)
+        out = msg.format(expected_keys, list(exp_config.keys()), extra, missing)
+        raise ServerException()
     return exp_config
 
 
@@ -140,15 +149,21 @@ async def process_answer(ans: manager.Answer):
 
     """
     d = ujson.loads(ans.json())
-    d.update({"time_received": time()})
+    d.update({"time_received": round(time(), 3)})
     ident = d["alg_ident"]
-    logger.warning("answer received: %s", d)
+    logger.warning(f"answer received: {d}")
     rj.jsonarrappend(f"alg-{ident}-answers", root, d)
     rj.jsonarrappend("all-responses", root, d)
     last_save = rj.lastsave()
 
     # Save every 15 minutes
     if (datetime.now() - last_save) >= timedelta(seconds=60 * 15):
-        rj.bgsave()
+        try:
+            rj.bgsave()
+        except ResponseError as e:
+            if "Background save already in progress" in str(e):
+                pass
+            else:
+                raise e
 
     return {"success": True}
