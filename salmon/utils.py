@@ -17,13 +17,13 @@ LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO")
 def get_logger(name):
     # Config from https://docs.python-guide.org/writing/logging/ and
     # https://docs.python-guide.org/writing/logging/
+    LEVEL = getattr(logging, LOG_LEVEL)
     logger = logging.getLogger(name)
     formatter = logging.Formatter("%(asctime)s %(name)s %(levelname)s: %(message)s")
     handlers = []
 
     ph = logging.StreamHandler()
     ph.setFormatter(formatter)
-    LEVEL = getattr(logging, LOG_LEVEL)
     ph.setLevel(LEVEL)
     handlers.append(ph)
 
@@ -43,7 +43,6 @@ def get_logger(name):
         for handler in handlers:
             logger.addHandler(handler)
     logging.getLogger("fastapi").setLevel(LEVEL)
-    logger.warning("initializing logger with LEVEL=%s", LEVEL)
     return logger
 
 
