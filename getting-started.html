@@ -1,0 +1,339 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Getting started &mdash; Salmon v0.3.6+18.g69b519b.dirty documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Algorithm configuration" href="algorithms.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> Salmon
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Usage</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#experiment-initialization-with-yaml-file">Experiment initialization with YAML file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#yaml-file-with-zip-file">YAML file with ZIP file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#database-dump">Database dump</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.html">Algorithm configuration</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Algorithms</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Algorithm API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="adaptive.html">Adaptive algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html">Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developers.html">Developing algorithms</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Salmon</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Getting started</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/stsievert/salmon/blob/master/source/getting-started.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="getting-started">
+<span id="id1"></span><h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
+<p>Experiments can be initialized by vising <code class="docutils literal notranslate"><span class="pre">[url]:8421/init_exp</span></code>. This supports
+the following options:</p>
+<ol class="arabic simple">
+<li><p>Upload of a YAML file completely detailing the experiment.</p></li>
+<li><p>Upload of a YAML file describing experiment, and ZIP file for the targets.</p></li>
+<li><p>Upload of a database dump from Salmon.</p></li>
+</ol>
+<p>Through the documentation, the YAML file for initialization will be referred to
+as <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code>.</p>
+<p>“YAML files” must obey a standard; see for a (human-readable) description of
+the specification <a class="reference external" href="https://learnxinyminutes.com/docs/yaml/">https://learnxinyminutes.com/docs/yaml/</a>. To see if your YAML
+is valid, go to <a class="reference external" href="https://yamlchecker.com/">https://yamlchecker.com/</a>.</p>
+<p>After you launch your experiment and vist <code class="docutils literal notranslate"><span class="pre">[url]:8421</span></code>, you will see a query
+page:</p>
+<a class="reference internal image-reference" href="_images/query_page.png"><img alt="_images/query_page.png" class="align-center" src="_images/query_page.png" style="width: 500px;" /></a>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This image is almost certainly out of date.</p>
+</div>
+<p>Now, let’s describe three methods on how to launch this experiment:</p>
+<div class="section" id="experiment-initialization-with-yaml-file">
+<h2>Experiment initialization with YAML file<a class="headerlink" href="#experiment-initialization-with-yaml-file" title="Permalink to this headline">¶</a></h2>
+<p>This section will specify the YAML file; including a ZIP file will only modify
+the <code class="docutils literal notranslate"><span class="pre">targets</span></code> key.</p>
+<p>Here’s an example <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code> YAML file for initialization:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: init.yaml</span>
+<span class="nt">targets</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">1</span><span class="p p-Indicator">,</span> <span class="nv">2</span><span class="p p-Indicator">,</span> <span class="nv">3</span><span class="p p-Indicator">,</span> <span class="nv">4</span><span class="p p-Indicator">,</span> <span class="nv">5</span><span class="p p-Indicator">]</span>
+<span class="nt">instructions</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Select the item on the bottom most similar to the item on the top.</span>
+<span class="nt">debrief</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Thanks! Use the participant ID below in Mechnical Turk.</span>
+<span class="nt">max_queries</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">25</span>
+<span class="nt">samplers</span><span class="p">:</span>
+  <span class="nt">RandomSampling</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
+  <span class="nt">RoundRobin</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
+</pre></div>
+</div>
+<p>The top-level elements like <code class="docutils literal notranslate"><span class="pre">max_queries</span></code> and <code class="docutils literal notranslate"><span class="pre">targets</span></code> are called “keys”
+in YAML jargon. Here’s documentation for each key:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">instructions</span></code>: text. The instructions for the participant.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">debrief</span></code>: text. The message to show at the end of the experiment. This
+debrief will show alongside the participant ID (which will be available
+through in the responses).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">max_queries</span></code>: int. The number of queries a participant should answer. Set
+<code class="docutils literal notranslate"><span class="pre">max_queries:</span> <span class="pre">-1</span></code> for unlimited queries.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">samplers</span></code>. See <a class="reference internal" href="algorithms.html#adaptive-config"><span class="std std-ref">Algorithm configuration</span></a> for more detail.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">targets</span></code>, optional list. Choices:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>YAML list. This <code class="docutils literal notranslate"><span class="pre">targets:</span> <span class="pre">[&quot;vonn&quot;,</span> <span class="pre">&quot;miller&quot;,</span> <span class="pre">&quot;ligety&quot;,</span> <span class="pre">&quot;shiffrin&quot;]</span></code> is
+specified, the user will see plain text. If this text includes HTML, it
+will be rendered. For example if one target is <code class="docutils literal notranslate"><span class="pre">&quot;&lt;i&gt;kildow&lt;/i&gt;&quot;</span></code> the
+user will see italic text when that target is displayed.</p></li>
+<li><p>Don’t include the <code class="docutils literal notranslate"><span class="pre">targets</span></code> keyword and upload a ZIP file instead. This
+will completely replace <code class="docutils literal notranslate"><span class="pre">targets</span></code> with the default renderings of the
+contents of the ZIP file (detailed in the next section).</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">skip_button</span></code>, optional boolean. Default <code class="docutils literal notranslate"><span class="pre">false</span></code>. If <code class="docutils literal notranslate"><span class="pre">true</span></code>, show a
+button that says “new query.”</p></li>
+</ul>
+</div>
+<div class="section" id="yaml-file-with-zip-file">
+<h2>YAML file with ZIP file<a class="headerlink" href="#yaml-file-with-zip-file" title="Permalink to this headline">¶</a></h2>
+<p>If you upload a ZIP file alongside the <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code> YAML file, the <code class="docutils literal notranslate"><span class="pre">targets</span></code>
+key above will be configured to represent each object in the ZIP file. Here are
+the choices for different files to include in the ZIP file:</p>
+<ul>
+<li><p>A bunch of images/videos. Support extensions</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Videos: <code class="docutils literal notranslate"><span class="pre">mp4</span></code>, <code class="docutils literal notranslate"><span class="pre">mov</span></code></p></li>
+<li><p>Images: <code class="docutils literal notranslate"><span class="pre">png</span></code>, <code class="docutils literal notranslate"><span class="pre">gif</span></code>, <code class="docutils literal notranslate"><span class="pre">jpg</span></code>, <code class="docutils literal notranslate"><span class="pre">jpeg</span></code></p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>A single CSV file. Each textual target should be on a new line.</p></li>
+</ul>
+<p>For example, this is a valid CSV file that will render textual targets:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: targets.csv. Zipped into targets.csv.zip and uploaded.</span>
+<span class="n">Bode</span> <span class="n">Miller</span>
+<span class="n">Lindsey</span> <span class="n">Kildow</span>
+<span class="n">Mikaela</span> <span class="n">Shiffrin</span>
+<span class="o">&lt;</span><span class="n">b</span><span class="o">&gt;</span><span class="n">Ted</span> <span class="n">Ligety</span><span class="o">&lt;/</span><span class="n">b</span><span class="o">&gt;</span>
+<span class="n">Paula</span> <span class="n">Moltzan</span>
+<span class="n">Jessie</span> <span class="n">Diggins</span>
+</pre></div>
+</div>
+<p>Again, every line here is valid HTML, so the crowdsourcing participant will see
+bolded text for “<strong>Ted Ligety</strong>.” That means we can also render images:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: targets.csv. Zipped into targets.csv.zip and uploaded.</span>
+<span class="o">&lt;</span><span class="n">img</span> <span class="n">width</span><span class="o">=</span><span class="s2">&quot;300px&quot;</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;https://upload.wikimedia.org/wikipedia/commons/3/30/Bode_Miller_at_the_2010_Winter_Olympic_downhill.jpg&quot;</span> <span class="o">/&gt;</span>
+<span class="o">&lt;</span><span class="n">img</span> <span class="n">width</span><span class="o">=</span><span class="s2">&quot;300px&quot;</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;https://upload.wikimedia.org/wikipedia/commons/8/89/Miller_Bode_2008_002.jpg&quot;</span> <span class="o">/&gt;</span>
+<span class="o">&lt;</span><span class="n">img</span> <span class="n">width</span><span class="o">=</span><span class="s2">&quot;300px&quot;</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;https://upload.wikimedia.org/wikipedia/commons/5/5e/Lindsey_Kildow_Aspen.jpg&quot;</span> <span class="o">/&gt;</span>
+<span class="o">&lt;</span><span class="n">img</span> <span class="n">width</span><span class="o">=</span><span class="s2">&quot;300px&quot;</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;https://commons.wikimedia.org/wiki/File:Michael_Sablatnik_Slalom_Spital_am_Semmering_2008.jpg&quot;</span> <span class="o">/&gt;</span>
+<span class="o">&lt;</span><span class="n">img</span> <span class="n">width</span><span class="o">=</span><span class="s2">&quot;300px&quot;</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;https://upload.wikimedia.org/wikipedia/commons/e/e9/Kjetil_Jansrud_giant_slalom_Norway_2011.jpg&quot;</span> <span class="o">/&gt;</span>
+</pre></div>
+</div>
+<p>One rendered target will be this image:</p>
+<img width="300px" src="https://upload.wikimedia.org/wikipedia/commons/8/89/Miller_Bode_2008_002.jpg" /></div>
+<div class="section" id="database-dump">
+<h2>Database dump<a class="headerlink" href="#database-dump" title="Permalink to this headline">¶</a></h2>
+<p>The dashboard offers a link to download the experiment on the dashboard (that
+is, at <code class="docutils literal notranslate"><span class="pre">[url]:8421/dashboard</span></code>). This will download a file called
+<code class="docutils literal notranslate"><span class="pre">dump-X.Y.Z.rdb</span></code>. Do not delete the numbers <code class="docutils literal notranslate"><span class="pre">X.Y.Z</span></code>!</p>
+<p>Salmon supports the upload of this file to the same version of Salmon. The
+upload of this file will restore the state of your experiment.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="algorithms.html" class="btn btn-neutral float-right" title="Algorithm configuration" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, Scott Sievert
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
