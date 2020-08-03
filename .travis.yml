@@ -41,7 +41,6 @@ script:
   - rm -f out/*
   - cd docs
   - make html
-  - touch build/html/.nojekyll
   - cd ..
   # push docs if they changed
   - pip install doctr
