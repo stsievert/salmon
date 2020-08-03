@@ -42,12 +42,9 @@ script:
   - cd docs
   - make html
   - cd ..
-  - set -e
+  # push docs if they changed
   - pip install doctr
-  - ls docs/build/html
-  - ls
   - doctr deploy --built-docs docs/build/html/  --no-require-master .
-  - ls -a
 
 # deploy:
   # provider: pages
