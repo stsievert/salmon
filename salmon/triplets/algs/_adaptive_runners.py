@@ -32,6 +32,9 @@ PARAMS = """
         gradient.
     random_state : int, None, np.random.RandomState
         The seed used to generate psuedo-random numbers.
+    sampling : str
+        "adaptive" by default. Use ``sampling="random"`` to perform random
+        sampling with the same optimization method and noise model.
     """
 
 
@@ -48,6 +51,7 @@ class Adaptive(Runner):
         initial_batch_size=4,
         random_state=None,
         R: int = 10,
+        sampling: str = "adaptive",
         **kwargs,
     ):
         super().__init__(ident=ident)
@@ -55,6 +59,7 @@ class Adaptive(Runner):
         self.n = n
         self.d = d
         self.R = R
+        self.sampling = sampling
 
         Opt = getattr(adaptive, optimizer)
         Module = getattr(adaptive, module)
@@ -85,7 +90,7 @@ class Adaptive(Runner):
         self.meta = {"num_ans": 0, "model_updates": 0}
 
     def get_query(self) -> Tuple[Optional[Dict[str, int]], Optional[float]]:
-        if self.meta["num_ans"] <= self.R * self.n:
+        if (self.meta["num_ans"] <= self.R * self.n) or self.sampling == "random":
             head, left, right = _random_query(self.n)
             return {"head": int(head), "left": int(left), "right": int(right)}, 0.0
         return None, None
@@ -146,6 +151,9 @@ class TSTE(Adaptive):
         gradient.
     random_state : int, None, np.random.RandomState
         The seed used to generate psuedo-random numbers.
+    sampling : str
+        "adaptive" by default. Use ``sampling="random"`` to perform random
+        sampling with the same optimization method and noise model.
 
 
     Notes
@@ -187,6 +195,7 @@ class TSTE(Adaptive):
         optimizer__momentum=0.9,
         initial_batch_size=4,
         random_state=None,
+        sampling="adaptive",
         alpha=1,
     ):
         super().__init__(
@@ -200,6 +209,7 @@ class TSTE(Adaptive):
             random_state=random_state,
             module__alpha=alpha,
             module="TSTE",
+            sampling=sampling,
         )
 
 
@@ -225,6 +235,9 @@ class STE(Adaptive):
         gradient.
     random_state : int, None, np.random.RandomState
         The seed used to generate psuedo-random numbers.
+    sampling : str
+        "adaptive" by default. Use ``sampling="random"`` to perform random
+        sampling with the same optimization method and noise model.
 
     References
     ----------
@@ -243,6 +256,7 @@ class STE(Adaptive):
         optimizer__momentum=0.9,
         initial_batch_size=4,
         random_state=None,
+        sampling="adaptive",
     ):
         super().__init__(
             n=n,
@@ -254,6 +268,7 @@ class STE(Adaptive):
             initial_batch_size=initial_batch_size,
             random_state=random_state,
             module="STE",
+            sampling=sampling,
         )
 
 
@@ -279,6 +294,9 @@ class GNMDS(Adaptive):
         gradient.
     random_state : int, None, np.random.RandomState
         The seed used to generate psuedo-random numbers.
+    sampling : str
+        "adaptive" by default. Use ``sampling="random"`` to perform random
+        sampling with the same optimization method and noise model.
 
     References
     ----------
@@ -297,6 +315,7 @@ class GNMDS(Adaptive):
         optimizer__momentum=0.9,
         initial_batch_size=4,
         random_state=None,
+        sampling="adaptive",
     ):
         super().__init__(
             n=n,
@@ -308,6 +327,7 @@ class GNMDS(Adaptive):
             initial_batch_size=initial_batch_size,
             random_state=random_state,
             module="GNMDS",
+            sampling=sampling,
         )
 
 
@@ -335,6 +355,9 @@ class CKL(Adaptive):
         gradient.
     random_state : int, None, np.random.RandomState
         The seed used to generate psuedo-random numbers.
+    sampling : str
+        "adaptive" by default. Use ``sampling="random"`` to perform random
+        sampling with the same optimization method and noise model.
     """
 
     def __init__(
@@ -348,6 +371,7 @@ class CKL(Adaptive):
         initial_batch_size=4,
         random_state=None,
         mu=1,
+        sampling="adaptive",
     ):
         super().__init__(
             n=n,
@@ -360,4 +384,5 @@ class CKL(Adaptive):
             random_state=random_state,
             module__mu=mu,
             module="CKL",
+            sampling=sampling,
         )

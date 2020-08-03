@@ -63,10 +63,10 @@ class Runner:
                 _s = time()
                 # TODO: integrate Dask
                 if hasattr(self, "get_queries"):
-                    #  queries, scores = self.get_queries()
-                    queries, scores = client.submit(
-                        type(self).get_queries, self
-                    ).result()
+                    queries, scores = self.get_queries()
+                    #  queries, scores = client.submit(
+                        #  type(self).get_queries, self
+                    #  ).result()
                 else:
                     queries = []
                 datum.update({"search_time": time() - _s})
