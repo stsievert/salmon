@@ -37,7 +37,7 @@ script:
   - pip install -e .
   - sudo chown -R  travis:travis /home/travis/build/stsievert/salmon/
   - chown -R  travis:travis /home/travis/build/stsievert/salmon/
-  # - pytest
+  - pytest
   - rm -f out/*
   - cd docs
   - make html
