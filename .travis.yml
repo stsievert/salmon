@@ -38,24 +38,23 @@ script:
   - sudo chown -R  travis:travis /home/travis/build/stsievert/salmon/
   - chown -R  travis:travis /home/travis/build/stsievert/salmon/
   - pytest
-  - rm -f salmon/out/*
+  - rm -f out/*
   - cd docs
   - make html
   - cd ..
-
-before_deploy:
+  # push docs if they changed
   - pip install doctr
-  - doctr deploy --built-docs docs/build/html .
+  - doctr deploy --built-docs docs/build/html/ .
 
-deploy:
-  provider: pages
-  skip_cleanup: true
-  # Defined in the Travis CI repo settings page as a secure variable
-  github_token: $GITHUBTOKEN
-  target_branch: gh-pages
-  keep_history: true
-  on:
-    branch: master
+# deploy:
+  # provider: pages
+  # skip_cleanup: true  # avoid deleting files in docs/build/html
+  # # Defined in the Travis CI repo settings page as a secure variable
+  # github_token: $GITHUBTOKEN
+  # target_branch: gh-pages
+  # keep_history: true
+  # on:
+    # branch: doc-fixes
 
-notifications:
-  email: false
+# notifications:
+  # email: false
