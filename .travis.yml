@@ -44,7 +44,7 @@ script:
   - cd ..
   # push docs if they changed
   - pip install doctr
-  - doctr deploy --built-docs docs/build/html/  --no-require-master .
+  - doctr deploy --built-docs docs/build/html/ .
 
 # deploy:
   # provider: pages
