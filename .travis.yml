@@ -42,8 +42,6 @@ script:
   - cd docs
   - make html
   - cd ..
-
-deploy:
   - set -e
   - pip install doctr
   - ls docs/build/html
