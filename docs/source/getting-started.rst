@@ -30,6 +30,12 @@ page:
 
    This image is almost certainly out of date.
 
+.. warning::
+
+   Please include the version in any bug reports or feature requests.
+   The version number is available at ``[url]:8421/docs`` and should look
+   something like ``v0.4.1``, typically shown right next to "Salmon."
+
 Now, let's describe three methods on how to launch this experiment:
 
 Experiment initialization with YAML file
