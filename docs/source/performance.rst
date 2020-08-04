@@ -1,5 +1,5 @@
-Performance
-===========
+Concurrent Users
+================
 
 Salmon v0.2.3 can handle up to at least 100 simultaneous users interacting
 with the system and answering questions. Here's the setup:
