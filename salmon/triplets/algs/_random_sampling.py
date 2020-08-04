@@ -1,6 +1,6 @@
 import logging
 from time import sleep
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 
 from sklearn.utils import check_random_state
 
@@ -41,10 +41,10 @@ class RandomSampling(Runner):
         self.random_state = check_random_state(random_state)
         super().__init__(ident=ident)
 
-    def get_query(self) -> Tuple[Query, float]:
+    def get_query(self) -> Tuple[Query, Optional[float]]:
         h, a, b = _get_query(self.n, random_state=self.random_state)
         query = {"head": int(h), "left": int(a), "right": int(b)}
-        return query, 0.0
+        return query, None
 
     def process_answers(self, ans: List[Answer]):
         self.answers.extend(ans)

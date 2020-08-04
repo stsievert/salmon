@@ -50,7 +50,7 @@ class Adaptive(Runner):
         optimizer__momentum=0.9,
         initial_batch_size=4,
         random_state=None,
-        R: int = 10,
+        R: float = 10,
         sampling: str = "adaptive",
         **kwargs,
     ):
@@ -88,11 +88,22 @@ class Adaptive(Runner):
         )
         self.search.push([])
         self.meta = {"num_ans": 0, "model_updates": 0}
+        self.params = {
+            "n": n,
+            "d": d,
+            "R": R,
+            "sampling": sampling,
+            "random_state": random_state,
+            "initial_batch_size": initial_batch_size,
+            "optimizer": optimizer,
+            "optimizer__lr": optimizer__lr,
+            "optimizer__momentum": optimizer__momentum,
+        }
 
     def get_query(self) -> Tuple[Optional[Dict[str, int]], Optional[float]]:
         if (self.meta["num_ans"] <= self.R * self.n) or self.sampling == "random":
             head, left, right = _random_query(self.n)
-            return {"head": int(head), "left": int(left), "right": int(right)}, 0.0
+            return {"head": int(head), "left": int(left), "right": int(right)}, 1.0
         return None, None
 
     def get_queries(self, num=10_000) -> Tuple[List[Query], List[float]]:
@@ -123,6 +134,7 @@ class Adaptive(Runner):
         return {
             "embedding": self.search.embedding.tolist(),
             **self.meta,
+            **self.params,
         }
 
 
