@@ -34,8 +34,13 @@ the same confidence.
 
    api
    adaptive
-   performance
    developers
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Benchmarks
+
+   performance
 
 Indices and tables
 ==================

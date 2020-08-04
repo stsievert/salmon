@@ -4,31 +4,39 @@ Developing algorithms
 Basics
 ------
 
-First, write an algorithm on your machine. It should define the following
-functions:
+First, write an algorithm on your machine. The basic interface requires two
+functions, one to get queries and one to process answers. Briefly, Salmon
+expects two functions:
 
-* ``get_queries() -> Tuple[Query, List[float]]``.
-* ``process_answers[List[Answers]]``.
+1. ``process_answers``, a function to process answers (which might involve
+   updating the model).
 
-Details can be found in :class:`~salmon.backend.alg.Runner`. Your algorithm should
-be a class, and it can store internal state.
+2. A function to get queries. There are two choices for this:
+
+    * ``get_query``, which returns a single query/score
+    * ``get_queries``, which returns a list of queries and scores. These are
+      saved in the database, and popped when a user requests a query.
+
+For complete documentation, see :ref:`alg-api`. In short, your algorithm should
+be a class that implement ``get_query`` and ``process_answers``.
 
 After you have developed these functions, look at other algorithms in
-`salmon/triplets/algs` (e.g, ``_adaptive_runners.py`` or ``_round_robin.py``)
+``salmon/triplets/algs`` (e.g, ``_adaptive_runners.py`` or ``_round_robin.py``)
 to figure out inheritance details. In short, the following details are
 important:
 
-* Inheriting from :class:`~salmon.backend.alg.Runner` is important; that's what
-  enables Salmon to work with custom algorithms. This class requires
-  implementations of ``get_query``/``get_queries`` and ``process_answers``.
-* Accepting an ``ident: str`` keyword argument in ``__init__`` and passing that
-  argument to :class:`~salmon.backend.alg.Runner`.
+* **Inheriting from** :class:`~salmon.backend.alg.Runner`, which enables Salmon
+  to work with custom algorithms.
+* **Accepting an** ``ident: str`` keyword argument in ``__init__`` **and
+  passing that argument to** ``super().__init__``. (``ident`` is passed to all
+  algorithms and is the unique identifier in the database).
 
 I recommend the following when developing your algorithm. These aren't
 necessary but are highly encouraged:
 
 * **Have you algorithm be serializable:** ``pickle.loads(pickle.dumps(alg))``
-  should work for your algorithm.
+  should work for your algorithm. Otherwise, your algorithm can't be restored
+  on a new machine.
 * **Ensure query searches are fast enough.** The user will be waiting if
   thousands of users come to Salmon and deplete all the searched queries.
 
@@ -60,7 +68,7 @@ This script will help:
        "optimizer__lr": 0.1,
        "optimizer__momentum": 0.75,
    }
-   alg = STE(n=10, **params)
+   alg = STE(n=10, **params)  # or your custom alg
    for k in range(1000):
        query, score = alg.get_query()
        if query is None:

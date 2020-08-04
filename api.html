@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Algorithm API &mdash; Salmon v0.3.6+3.g1df0ca1.dirty documentation</title>
+  <title>Algorithm API &mdash; Salmon v0.3.6+4.gccd7f0f.dirty documentation</title>
   
 
   
@@ -106,11 +106,15 @@
 <li class="toctree-l3"><a class="reference internal" href="generated/salmon.triplets.algs.GNMDS.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.algs</span></code>.GNMDS</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#interface">Interface</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="adaptive.html">Adaptive algorithms</a></li>
-<li class="toctree-l1"><a class="reference internal" href="performance.html">Performance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="developers.html">Developing algorithms</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Benchmarks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="performance.html">Concurrent Users</a></li>
 </ul>
 
             
@@ -179,7 +183,7 @@
            <div itemprop="articleBody">
             
   <div class="section" id="algorithm-api">
-<h1>Algorithm API<a class="headerlink" href="#algorithm-api" title="Permalink to this headline">¶</a></h1>
+<span id="alg-api"></span><h1>Algorithm API<a class="headerlink" href="#algorithm-api" title="Permalink to this headline">¶</a></h1>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>These APIs are experimental and may change at any time.</p>
@@ -240,6 +244,71 @@ uses <code class="docutils literal notranslate"><span class="pre">Runner.run</sp
 </tr>
 </tbody>
 </table>
+</div>
+<div class="section" id="interface">
+<h2>Interface<a class="headerlink" href="#interface" title="Permalink to this headline">¶</a></h2>
+<p>These algorithms all implement this interface:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">salmon.backend</span> <span class="kn">import</span> <span class="n">Runner</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Dict</span>
+
+<span class="k">class</span> <span class="nc">MyAlg</span><span class="p">(</span><span class="n">Runner</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">ident</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+        <span class="o">...</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">ident</span><span class="o">=</span><span class="n">ident</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_query</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]],</span> <span class="nb">float</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a single query for the user.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        query : Dict[str, int], None</span>
+<span class="sd">            The query for the user. Must contain keys `head`, `left` and</span>
+<span class="sd">            `right` for triplets.</span>
+
+<span class="sd">            If this function returns a None query, the default loop will pull</span>
+<span class="sd">            the highest scoring query from ``get_queries`` (through the</span>
+<span class="sd">            database; not directly).</span>
+
+<span class="sd">        score : float</span>
+<span class="sd">            The query score. Piped to the user, not used directly.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;head&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;left&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span> <span class="mf">0.0</span>
+
+    <span class="k">def</span> <span class="nf">process_answers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">answers</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Process the answers, or update the model.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        answers : list of answers.</span>
+<span class="sd">            Each answer is a dictionary with the same keys as the query</span>
+<span class="sd">            returned by `get_query`. In addition, at has keys for `winner`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">get_queries</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Score many queries.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        queries : array-like, List[Tuple[int, int, int]]</span>
+<span class="sd">            Queries to ask about. Queries take form `[head, left, right]` and</span>
+<span class="sd">            are expected to be integers.</span>
+
+<span class="sd">            Serialized in the database by `Runner.serialize_queries`, and</span>
+<span class="sd">            de-serialized by `manager.deserialize_queries`.</span>
+
+<span class="sd">        scores : array-like (floats)</span>
+<span class="sd">            The scores of the queries.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">queries</span><span class="p">,</span> <span class="n">scores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">score_queries</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">queries</span><span class="p">,</span> <span class="n">scores</span>
+</pre></div>
+</div>
 </div>
 </div>
 
