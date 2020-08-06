@@ -1,8 +1,8 @@
 from textwrap import dedent
 from typing import List, TypeVar, Tuple, Dict, Any, Optional
 
-from sklearn.utils import check_random_state
 import torch.optim
+from sklearn.utils import check_random_state
 
 import salmon.triplets.algs.adaptive as adaptive
 from salmon.triplets.algs.adaptive import InfoGainScorer
@@ -108,7 +108,7 @@ class Adaptive(Runner):
         if (self.meta["num_ans"] <= self.R * self.n) or self.sampling == "random":
             head, left, right = _random_query(self.n)
             return {"head": int(head), "left": int(left), "right": int(right)}, 1.0
-        return None, None
+        return None, -9999
 
     def get_queries(self, num=10_000) -> Tuple[List[Query], List[float]]:
         queries, scores = self.search.score(num=int(num * 1.1 + 3))

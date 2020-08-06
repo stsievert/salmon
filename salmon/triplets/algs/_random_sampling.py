@@ -2,6 +2,7 @@ import logging
 from time import sleep
 from typing import List, Tuple, Optional
 
+import numpy as np
 from sklearn.utils import check_random_state
 
 from .utils import Answer, Query
@@ -44,7 +45,7 @@ class RandomSampling(Runner):
     def get_query(self) -> Tuple[Query, Optional[float]]:
         h, a, b = _get_query(self.n, random_state=self.random_state)
         query = {"head": int(h), "left": int(a), "right": int(b)}
-        return query, None
+        return query, -9999
 
     def process_answers(self, ans: List[Answer]):
         self.answers.extend(ans)

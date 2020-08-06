@@ -30,7 +30,7 @@ class Server:
         logger.info(f"Getting {endpoint}")
         r = requests.get(self.url + endpoint, **kwargs)
         logger.info("done")
-        assert r.status_code == status_code, (r.status_code, status_code)
+        assert r.status_code == status_code, (r.status_code, status_code, r.text)
         return r
 
     def post(self, endpoint, data=None, status_code=200, error=False, **kwargs):
@@ -42,7 +42,7 @@ class Server:
         r = requests.post(self.url + endpoint, data=data, **kwargs)
         logger.info("done")
         if not error:
-            assert r.status_code == status_code, (r.status_code, status_code)
+            assert r.status_code == status_code, (r.status_code, status_code, r.text)
         return r
 
     def delete(self, endpoint, data=None, status_code=200, **kwargs):
@@ -53,7 +53,7 @@ class Server:
         logger.info(f"Getting {endpoint}...")
         r = requests.delete(self.url + endpoint, data=data, **kwargs)
         logger.info("done")
-        assert r.status_code == status_code, (r.status_code, status_code)
+        assert r.status_code == status_code, (r.status_code, status_code, r.text)
         return r
 
     def authorize(self):

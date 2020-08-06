@@ -96,12 +96,12 @@ class Runner:
                 self.save()
                 datum.update({"saving_time": time() - _s})
                 self.meta_.append(datum)
-                if "reset" in rj.keys() and rj.jsonget("reset"):
-                    self.reset(client, rj)
-                    return
             except Exception as e:
                 logger.exception(e)
                 continue
+            if "reset" in rj.keys() and rj.jsonget("reset"):
+                self.reset(client, rj)
+                return
         return True
 
     def save(self) -> bool:
