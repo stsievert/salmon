@@ -60,6 +60,10 @@ class Adaptive(Runner):
         self.d = d
         self.R = R
         self.sampling = sampling
+        if sampling not in ["adaptive", "random"]:
+            raise ValueError(
+                "Must pass sampling='adaptive' or sampling='random', not sampling={sampling}"
+            )
 
         Opt = getattr(adaptive, optimizer)
         Module = getattr(adaptive, module)
