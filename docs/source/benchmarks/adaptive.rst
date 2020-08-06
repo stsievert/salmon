@@ -18,7 +18,8 @@ crowdsourcing context:
 * The random and adaptive algorithms will be the same in every except in how
   how select queries.
 
-With that setup, how much of a difference does query selection matter?
+With that setup, how much of a difference does query selection matter? Here's
+an illustrative result:
 
 .. image:: imgs/adaptive.png
    :width: 400px
