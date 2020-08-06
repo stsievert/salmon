@@ -21,8 +21,11 @@ else
     # Use 2 threads to heartbeat gets sent more often
     echo "Launching gunicorn..."
     export LOG_LEVEL="WARNING"
-    gunicorn --preload --worker-tmp-dir /dev/shm --threads 2 --timeout 90 -w 1 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8400 salmon:app_algs &
-    # uvicorn salmon:app_algs --reload --port 8400 --host 0.0.0.0 &
+
+    ## Use uvicorn instead of gunicorn because FastAPI's background tasks are threads
+    ## in uvicorn, not processes.
+    # gunicorn --preload --worker-tmp-dir /dev/shm --threads 2 --timeout 90 -w 1 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8400 salmon:app_algs &
+    uvicorn salmon:app_algs --port 8400 --host 0.0.0.0 &
     sleep 1
-    gunicorn --preload --worker-tmp-dir /dev/shm --threads 2 --timeout 90 -w 4 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8421 salmon:app
+    gunicorn --worker-tmp-dir /dev/shm --threads 2 --timeout 90 -w 4 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8421 salmon:app
 fi
