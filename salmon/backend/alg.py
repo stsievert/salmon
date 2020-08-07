@@ -63,10 +63,10 @@ class Runner:
                 _s = time()
                 # TODO: integrate Dask
                 if hasattr(self, "get_queries"):
-                    #  queries, scores = self.get_queries()
-                    queries, scores = client.submit(
-                        type(self).get_queries, self
-                    ).result()
+                    queries, scores = self.get_queries()
+                    #  queries, scores = client.submit(
+                        #  type(self).get_queries, self
+                    #  ).result()
                 else:
                     queries = []
                 datum.update({"search_time": time() - _s})
@@ -96,12 +96,12 @@ class Runner:
                 self.save()
                 datum.update({"saving_time": time() - _s})
                 self.meta_.append(datum)
-                if "reset" in rj.keys() and rj.jsonget("reset"):
-                    self.reset(client, rj)
-                    return
             except Exception as e:
                 logger.exception(e)
                 continue
+            if "reset" in rj.keys() and rj.jsonget("reset"):
+                self.reset(client, rj)
+                return
         return True
 
     def save(self) -> bool:

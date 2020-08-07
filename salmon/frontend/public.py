@@ -123,7 +123,7 @@ async def get_query() -> Dict[str, Union[int, str, float]]:
     ident = random.choice(idents)
 
     r = httpx.get(f"http://localhost:8400/query-{ident}")
-    logger.info(f"r={r}")
+    logger.info(f"query r={r}")
     if r.status_code == 200:
         return r.json()
 

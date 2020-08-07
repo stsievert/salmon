@@ -68,6 +68,10 @@ class Embedding(_Embedding):
     ):
         self.initial_batch_size = initial_batch_size
         self.random_state = random_state
+
+        # Set init random state
+        # Set random state for eg order
+        #
         super().__init__(
             module=module,
             module__n=module__n,
@@ -146,8 +150,6 @@ class Embedding(_Embedding):
             return self
         beg_meta = copy(self.meta_)
         while True:
-            incidies = np.arange(len(answers), dtype="int")
-
             bs = self.batch_size_
 
             idx_train = self.random_state_.choice(len(answers), size=bs)

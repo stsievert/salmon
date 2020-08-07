@@ -1,8 +1,8 @@
 from textwrap import dedent
 from typing import List, TypeVar, Tuple, Dict, Any, Optional
 
-from sklearn.utils import check_random_state
 import torch.optim
+from sklearn.utils import check_random_state
 
 import salmon.triplets.algs.adaptive as adaptive
 from salmon.triplets.algs.adaptive import InfoGainScorer
@@ -32,6 +32,9 @@ PARAMS = """
         gradient.
     random_state : int, None, np.random.RandomState
         The seed used to generate psuedo-random numbers.
+    sampling : str
+        "adaptive" by default. Use ``sampling="random"`` to perform random
+        sampling with the same optimization method and noise model.
     """
 
 
@@ -47,7 +50,8 @@ class Adaptive(Runner):
         optimizer__momentum=0.9,
         initial_batch_size=4,
         random_state=None,
-        R: int = 10,
+        R: float = 10,
+        sampling: str = "adaptive",
         **kwargs,
     ):
         super().__init__(ident=ident)
@@ -55,6 +59,11 @@ class Adaptive(Runner):
         self.n = n
         self.d = d
         self.R = R
+        self.sampling = sampling
+        if sampling not in ["adaptive", "random"]:
+            raise ValueError(
+                "Must pass sampling='adaptive' or sampling='random', not sampling={sampling}"
+            )
 
         Opt = getattr(adaptive, optimizer)
         Module = getattr(adaptive, module)
@@ -83,12 +92,23 @@ class Adaptive(Runner):
         )
         self.search.push([])
         self.meta = {"num_ans": 0, "model_updates": 0}
+        self.params = {
+            "n": n,
+            "d": d,
+            "R": R,
+            "sampling": sampling,
+            "random_state": random_state,
+            "initial_batch_size": initial_batch_size,
+            "optimizer": optimizer,
+            "optimizer__lr": optimizer__lr,
+            "optimizer__momentum": optimizer__momentum,
+        }
 
     def get_query(self) -> Tuple[Optional[Dict[str, int]], Optional[float]]:
-        if self.meta["num_ans"] <= self.R * self.n:
+        if (self.meta["num_ans"] <= self.R * self.n) or self.sampling == "random":
             head, left, right = _random_query(self.n)
-            return {"head": int(head), "left": int(left), "right": int(right)}, 0.0
-        return None, None
+            return {"head": int(head), "left": int(left), "right": int(right)}, 1.0
+        return None, -9999
 
     def get_queries(self, num=10_000) -> Tuple[List[Query], List[float]]:
         queries, scores = self.search.score(num=int(num * 1.1 + 3))
@@ -118,6 +138,7 @@ class Adaptive(Runner):
         return {
             "embedding": self.search.embedding.tolist(),
             **self.meta,
+            **self.params,
         }
 
 
@@ -146,6 +167,9 @@ class TSTE(Adaptive):
         gradient.
     random_state : int, None, np.random.RandomState
         The seed used to generate psuedo-random numbers.
+    sampling : str
+        "adaptive" by default. Use ``sampling="random"`` to perform random
+        sampling with the same optimization method and noise model.
 
 
     Notes
@@ -187,6 +211,7 @@ class TSTE(Adaptive):
         optimizer__momentum=0.9,
         initial_batch_size=4,
         random_state=None,
+        sampling="adaptive",
         alpha=1,
     ):
         super().__init__(
@@ -200,6 +225,7 @@ class TSTE(Adaptive):
             random_state=random_state,
             module__alpha=alpha,
             module="TSTE",
+            sampling=sampling,
         )
 
 
@@ -225,6 +251,9 @@ class STE(Adaptive):
         gradient.
     random_state : int, None, np.random.RandomState
         The seed used to generate psuedo-random numbers.
+    sampling : str
+        "adaptive" by default. Use ``sampling="random"`` to perform random
+        sampling with the same optimization method and noise model.
 
     References
     ----------
@@ -243,6 +272,7 @@ class STE(Adaptive):
         optimizer__momentum=0.9,
         initial_batch_size=4,
         random_state=None,
+        sampling="adaptive",
     ):
         super().__init__(
             n=n,
@@ -254,6 +284,7 @@ class STE(Adaptive):
             initial_batch_size=initial_batch_size,
             random_state=random_state,
             module="STE",
+            sampling=sampling,
         )
 
 
@@ -279,6 +310,9 @@ class GNMDS(Adaptive):
         gradient.
     random_state : int, None, np.random.RandomState
         The seed used to generate psuedo-random numbers.
+    sampling : str
+        "adaptive" by default. Use ``sampling="random"`` to perform random
+        sampling with the same optimization method and noise model.
 
     References
     ----------
@@ -297,6 +331,7 @@ class GNMDS(Adaptive):
         optimizer__momentum=0.9,
         initial_batch_size=4,
         random_state=None,
+        sampling="adaptive",
     ):
         super().__init__(
             n=n,
@@ -308,6 +343,7 @@ class GNMDS(Adaptive):
             initial_batch_size=initial_batch_size,
             random_state=random_state,
             module="GNMDS",
+            sampling=sampling,
         )
 
 
@@ -335,6 +371,9 @@ class CKL(Adaptive):
         gradient.
     random_state : int, None, np.random.RandomState
         The seed used to generate psuedo-random numbers.
+    sampling : str
+        "adaptive" by default. Use ``sampling="random"`` to perform random
+        sampling with the same optimization method and noise model.
     """
 
     def __init__(
@@ -348,6 +387,7 @@ class CKL(Adaptive):
         initial_batch_size=4,
         random_state=None,
         mu=1,
+        sampling="adaptive",
     ):
         super().__init__(
             n=n,
@@ -360,4 +400,5 @@ class CKL(Adaptive):
             random_state=random_state,
             module__mu=mu,
             module="CKL",
+            sampling=sampling,
         )

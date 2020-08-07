@@ -88,7 +88,7 @@ def test_basics(server):
     assert expected_cols == set(df.columns)
     assert df.puid.nunique() == 1
 
-    assert np.allclose(df.score, 0)
+    assert np.allclose(df.score, -9999)  # -9999 is a proxy for nan here
 
     r = server.get("/responses", auth=(username, password))
     assert r.status_code == 200

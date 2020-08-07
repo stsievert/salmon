@@ -6,7 +6,7 @@ Algorithm configuration
 .. warning::
 
    These adaptive algorithms are (currently) experimental and may change at any
-   time. Do not use these adaptive algorithms in deployment.
+   time.
 
 There are many queries to ask about in triplet embedding tasks. Most of these
 queries aren't useful; chances are most queries will have obvious answers and
@@ -18,7 +18,7 @@ use all previous responses collected to determine the next query that will help
 improve the embedding the most.
 
 Let's start out with a simple ``init.yaml`` file, one suited for random
-sampling:
+sampling.
 
 .. code-block:: yaml
 
@@ -26,7 +26,7 @@ sampling:
    samplers:
      RandomSampling: {}
 
-By defualt, ``samplers`` defaults to ``RandomSampling: {}``. We have to customize the ``samplers`` key use adaptive sampling algorithms:
+By default, ``samplers`` defaults to ``RandomSampling: {}``. We have to customize the ``samplers`` key use adaptive sampling algorithms:
 
 .. code-block:: yaml
 
@@ -48,7 +48,7 @@ configuration:
        alpha: 1.1
 
 ``alpha`` is a keyword argument to
-:class:`~salmon.triplets.algs.adaptive.TSTE`.
+:class:`~salmon.triplets.algs.TSTE`.
 If we want to use two alternate configs for TSTE:
 
 .. code-block:: yaml
