@@ -1,3 +1,4 @@
+./_images/adaptive.png
 ./_images/delay-histogram.png
 ./_images/delay-percentils.png
 ./_images/networking-rule.png
@@ -6,6 +7,8 @@
 ./_sources/adaptive.rst.txt
 ./_sources/algorithms.rst.txt
 ./_sources/api.rst.txt
+./_sources/benchmarks/adaptive.rst.txt
+./_sources/benchmarks/server.rst.txt
 ./_sources/developers.rst.txt
 ./_sources/generated/salmon.backend.alg.Runner.rst.txt
 ./_sources/generated/salmon.triplets.algs.CKL.rst.txt
@@ -17,7 +20,6 @@
 ./_sources/getting-started.rst.txt
 ./_sources/index.rst.txt
 ./_sources/installation.rst.txt
-./_sources/performance.rst.txt
 ./_static/basic.css
 ./_static/css/badge_only.css
 ./_static/css/fonts/Roboto-Slab-Bold.woff
@@ -104,6 +106,8 @@
 ./adaptive.html
 ./algorithms.html
 ./api.html
+./benchmarks/adaptive.html
+./benchmarks/server.html
 ./developers.html
 ./generated/salmon.backend.alg.Runner.html
 ./generated/salmon.triplets.algs.CKL.html
@@ -117,6 +121,5 @@
 ./index.html
 ./installation.html
 ./objects.inv
-./performance.html
 ./search.html
 ./searchindex.js

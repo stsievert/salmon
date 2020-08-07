@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>salmon.triplets.algs.GNMDS &mdash; Salmon v0.3.6+4.gccd7f0f.dirty documentation</title>
+  <title>salmon.triplets.algs.GNMDS &mdash; Salmon v0.3.6+5.g62e8099.dirty documentation</title>
   
 
   
@@ -110,7 +110,8 @@
 </ul>
 <p class="caption"><span class="caption-text">Benchmarks</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../performance.html">Concurrent Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks/server.html">Concurrent Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks/adaptive.html">Adaptive algorithms</a></li>
 </ul>
 
             
@@ -184,7 +185,7 @@
 <h1><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.algs</span></code>.GNMDS<a class="headerlink" href="#salmon-triplets-algs-gnmds" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt id="salmon.triplets.algs.GNMDS">
-<em class="property">class </em><code class="sig-prename descclassname">salmon.triplets.algs.</code><code class="sig-name descname">GNMDS</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">d</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">2</span></em>, <em class="sig-param"><span class="n">ident</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">''</span></em>, <em class="sig-param"><span class="n">optimizer</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'Embedding'</span></em>, <em class="sig-param"><span class="n">optimizer__lr</span><span class="o">=</span><span class="default_value">0.075</span></em>, <em class="sig-param"><span class="n">optimizer__momentum</span><span class="o">=</span><span class="default_value">0.9</span></em>, <em class="sig-param"><span class="n">initial_batch_size</span><span class="o">=</span><span class="default_value">4</span></em>, <em class="sig-param"><span class="n">random_state</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.algs.GNMDS" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">salmon.triplets.algs.</code><code class="sig-name descname">GNMDS</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">d</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">2</span></em>, <em class="sig-param"><span class="n">ident</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">''</span></em>, <em class="sig-param"><span class="n">optimizer</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'Embedding'</span></em>, <em class="sig-param"><span class="n">optimizer__lr</span><span class="o">=</span><span class="default_value">0.075</span></em>, <em class="sig-param"><span class="n">optimizer__momentum</span><span class="o">=</span><span class="default_value">0.9</span></em>, <em class="sig-param"><span class="n">initial_batch_size</span><span class="o">=</span><span class="default_value">4</span></em>, <em class="sig-param"><span class="n">random_state</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">sampling</span><span class="o">=</span><span class="default_value">'adaptive'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.algs.GNMDS" title="Permalink to this definition">¶</a></dt>
 <dd><p>The Generalized Non-metric Multidimensional Scaling embedding <a class="reference internal" href="#r059ae300cbf9-1" id="id1">[1]</a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -205,6 +206,9 @@ gradient.</p>
 </dd>
 <dt><strong>random_state</strong><span class="classifier">int, None, np.random.RandomState</span></dt><dd><p>The seed used to generate psuedo-random numbers.</p>
 </dd>
+<dt><strong>sampling</strong><span class="classifier">str</span></dt><dd><p>“adaptive” by default. Use <code class="docutils literal notranslate"><span class="pre">sampling=&quot;random&quot;</span></code> to perform random
+sampling with the same optimization method and noise model.</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -218,7 +222,7 @@ Agarwal, Wills, Cayton, Lanckriet, Kriegman, and Belongie.
 </dl>
 <dl class="py method">
 <dt id="salmon.triplets.algs.GNMDS.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">d</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">2</span></em>, <em class="sig-param"><span class="n">ident</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">''</span></em>, <em class="sig-param"><span class="n">optimizer</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'Embedding'</span></em>, <em class="sig-param"><span class="n">optimizer__lr</span><span class="o">=</span><span class="default_value">0.075</span></em>, <em class="sig-param"><span class="n">optimizer__momentum</span><span class="o">=</span><span class="default_value">0.9</span></em>, <em class="sig-param"><span class="n">initial_batch_size</span><span class="o">=</span><span class="default_value">4</span></em>, <em class="sig-param"><span class="n">random_state</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.algs.GNMDS.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">d</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">2</span></em>, <em class="sig-param"><span class="n">ident</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">''</span></em>, <em class="sig-param"><span class="n">optimizer</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'Embedding'</span></em>, <em class="sig-param"><span class="n">optimizer__lr</span><span class="o">=</span><span class="default_value">0.075</span></em>, <em class="sig-param"><span class="n">optimizer__momentum</span><span class="o">=</span><span class="default_value">0.9</span></em>, <em class="sig-param"><span class="n">initial_batch_size</span><span class="o">=</span><span class="default_value">4</span></em>, <em class="sig-param"><span class="n">random_state</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">sampling</span><span class="o">=</span><span class="default_value">'adaptive'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.algs.GNMDS.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 

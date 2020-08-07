@@ -40,7 +40,9 @@ the same confidence.
    :maxdepth: 2
    :caption: Benchmarks
 
-   performance
+   benchmarks/server
+   benchmarks/adaptive
+
 
 Indices and tables
 ==================

@@ -1,0 +1,267 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Adaptive algorithms &mdash; Salmon v0.3.6+5.g62e8099.dirty documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Concurrent Users" href="server.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Salmon
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms.html">Algorithm configuration</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Algorithms</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Algorithm API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adaptive.html">Adaptive algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers.html">Developing algorithms</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Benchmarks</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="server.html">Concurrent Users</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Adaptive algorithms</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Salmon</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Adaptive algorithms</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/stsievert/salmon/blob/master/source/benchmarks/adaptive.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="adaptive-algorithms">
+<h1>Adaptive algorithms<a class="headerlink" href="#adaptive-algorithms" title="Permalink to this headline">¶</a></h1>
+<p>Adaptive algorithms decide which questions to ask about, instead of asking
+about a random question like random sampling. This can mean that higher
+accuracies are reached sooner, or that less human responses are required to
+reach a particular accuracy.</p>
+<p>Let’s run a quick benchmark with Salmon to see how well adaptive performs in
+the crowdsourcing context. This benchmark will accurately simulate a
+crowdsourcing context:</p>
+<ul>
+<li><p>Answers will be received by Salmon at a rate of 4 responses/second.</p></li>
+<li><p>The answers will come from the Zappos shoe dataset, an exhaustively sampled
+triplets dataset with 4 human responses to every possible question.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>This dataset has <span class="math notranslate nohighlight">\(n = 85\)</span> shoes, and I mirror Heim et. al and embed
+into <span class="math notranslate nohighlight">\(d = 2\)</span> dimensions <a class="footnote-reference brackets" href="#id3" id="id1">1</a>.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>The random and adaptive algorithms will be the same in every except in how
+how select queries.</p></li>
+</ul>
+<p>With that setup, how much of a difference does query selection matter? Here’s
+an illustrative result:</p>
+<a class="reference internal image-reference" href="../_images/adaptive.png"><img alt="../_images/adaptive.png" class="align-center" src="../_images/adaptive.png" style="width: 400px;" /></a>
+<p>By this measure, Salmon has better performance than NEXT for adaptive triplet
+embeddings. In NEXT’s introduction paper, the authors provided “no evidence for
+gains from adaptive sampling” for the triplet embedding problem <a class="footnote-reference brackets" href="#id4" id="id2">2</a>.</p>
+<dl class="footnote brackets">
+<dt class="label" id="id3"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dd><p>“Active Perceptual Similarity Modeling with Auxiliary Information” by E.
+Heim, M. Berger, and L. Seversky, and M. Hauskrecht. 2015.
+<a class="reference external" href="https://arxiv.org/pdf/1511.02254.pdf">https://arxiv.org/pdf/1511.02254.pdf</a></p>
+</dd>
+<dt class="label" id="id4"><span class="brackets"><a class="fn-backref" href="#id2">2</a></span></dt>
+<dd><p>“NEXT: A System for Real-World Development, Evaluation, and Application
+of Active Learning” by K. Jamieson, L. Jain, C. Fernandez, N. Glattard
+and R. Nowak. 2017.
+<a class="reference external" href="http://papers.nips.cc/paper/5868-next-a-system-for-real-world-development-evaluation-and-application-of-active-learning.pdf">http://papers.nips.cc/paper/5868-next-a-system-for-real-world-development-evaluation-and-application-of-active-learning.pdf</a></p>
+</dd>
+</dl>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="server.html" class="btn btn-neutral float-left" title="Concurrent Users" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, Scott Sievert
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

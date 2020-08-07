@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Algorithm configuration &mdash; Salmon v0.3.6+4.gccd7f0f.dirty documentation</title>
+  <title>Algorithm configuration &mdash; Salmon v0.3.6+5.g62e8099.dirty documentation</title>
   
 
   
@@ -98,7 +98,8 @@
 </ul>
 <p class="caption"><span class="caption-text">Benchmarks</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="performance.html">Concurrent Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarks/server.html">Concurrent Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarks/adaptive.html">Adaptive algorithms</a></li>
 </ul>
 
             
@@ -171,7 +172,7 @@
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>These adaptive algorithms are (currently) experimental and may change at any
-time. Do not use these adaptive algorithms in deployment.</p>
+time.</p>
 </div>
 <p>There are many queries to ask about in triplet embedding tasks. Most of these
 queries aren’t useful; chances are most queries will have obvious answers and
@@ -181,13 +182,13 @@ won’t improve the embedding much.</p>
 use all previous responses collected to determine the next query that will help
 improve the embedding the most.</p>
 <p>Let’s start out with a simple <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code> file, one suited for random
-sampling:</p>
+sampling.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">targets</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;obj1&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;obj2&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;foo&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;bar&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;foobar!&quot;</span><span class="p p-Indicator">]</span>
 <span class="nt">samplers</span><span class="p">:</span>
   <span class="nt">RandomSampling</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
 </pre></div>
 </div>
-<p>By defualt, <code class="docutils literal notranslate"><span class="pre">samplers</span></code> defaults to <code class="docutils literal notranslate"><span class="pre">RandomSampling:</span> <span class="pre">{}</span></code>. We have to customize the <code class="docutils literal notranslate"><span class="pre">samplers</span></code> key use adaptive sampling algorithms:</p>
+<p>By default, <code class="docutils literal notranslate"><span class="pre">samplers</span></code> defaults to <code class="docutils literal notranslate"><span class="pre">RandomSampling:</span> <span class="pre">{}</span></code>. We have to customize the <code class="docutils literal notranslate"><span class="pre">samplers</span></code> key use adaptive sampling algorithms:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">targets</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;obj1&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;obj2&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;foo&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;bar&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;foobar!&quot;</span><span class="p p-Indicator">]</span>
 <span class="nt">samplers</span><span class="p">:</span>
   <span class="nt">TSTE</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
@@ -205,7 +206,7 @@ configuration:</p>
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">alpha</span></code> is a keyword argument to
-<code class="xref py py-class docutils literal notranslate"><span class="pre">TSTE</span></code>.
+<a class="reference internal" href="generated/salmon.triplets.algs.TSTE.html#salmon.triplets.algs.TSTE" title="salmon.triplets.algs.TSTE"><code class="xref py py-class docutils literal notranslate"><span class="pre">TSTE</span></code></a>.
 If we want to use two alternate configs for TSTE:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">targets</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;obj1&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;obj2&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;foo&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;bar&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;foobar!&quot;</span><span class="p p-Indicator">]</span>
 <span class="nt">samplers</span><span class="p">:</span>
