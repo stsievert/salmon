@@ -86,19 +86,23 @@
       <div style="padding: 5px; margin: 5px; color: #888;">
           <span id="num-queries">0</span>{% if max_queries > 0 %}/{{ max_queries }} {% endif %}
       </div>
-      <div style="padding: 5px; margin: 5px; color: #888;">
+    </div>
+  </div>
+</div>
+
+{% if skip_button %}
+  <div class="">
+    <div class="fixed-bottom text-right">
+      <div style="padding: 5px; margin: 5px; color: #888; float: right !important;">
         <div id="skip-button">
-          {% if skip_button %}
           <button type="button" class="btn btn-outline-info btn-sm" onclick="getquery()"
               data-toggle="tooltip" data-placement="top" data-html="true"
               title="Skip questions only if you know <em>nothing</em> about the items shown."
           >Skip this question</button>
-          {% endif %}
         </div>
       </div>
-    </div>
   </div>
-</div>
+{% endif %}
 
 <!-- "Thanks for participating!" modal -->
 <div class="modal fade" id="debriefModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
