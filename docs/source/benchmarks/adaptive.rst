@@ -25,10 +25,9 @@ an illustrative result:
    :width: 400px
    :align: center
 
-This is an improvement over NEXT, the software that inspired Salmon. In NEXT's
-introduction paper, the authors concluded "there is no evidence for gains from
-adaptive sampling," [2]_, and their experimental results for t-STE (the same
-method as used above) did not motivate the use of adaptive sampling algorithms.
+By this measure, Salmon has better performance than NEXT for adaptive triplet
+embeddings. In NEXT's introduction paper, the authors provided "no evidence for
+gains from adaptive sampling" for the triplet embedding problem [2]_.
 
 .. [1] "Active Perceptual Similarity Modeling with Auxiliary Information" by E.
        Heim, M. Berger, and L. Seversky, and M. Hauskrecht. 2015.
