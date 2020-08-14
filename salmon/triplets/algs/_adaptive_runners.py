@@ -114,7 +114,7 @@ class Adaptive(Runner):
 
     def get_queries(self, num=10_000) -> Tuple[List[Query], List[float]]:
         queries, scores = self.search.score(num=int(num * 1.1 + 3))
-        return queries, scores
+        return queries[:num], scores[:num]
 
     def process_answers(self, answers: List[Answer]):
         self.meta["num_ans"] += len(answers)

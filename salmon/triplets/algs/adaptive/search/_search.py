@@ -265,13 +265,19 @@ def score(H: Array, W: Array, L: Array, tau: Array, D: Array, probs=STE_probs) -
     q = len(head)
 
     probs = probs(D[w], D[l])  # (q, n)
+    probs[np.isnan(probs)] = 0
+    assert probs.min() >= 0
+    eps = 1e-20
+    probs[probs < 1e-15] = 0
 
     p = (probs * tau[head]).sum(axis=1)  # (q, )
 
-    taub = tau[head] * probs  # (q, n)
-    taub /= taub.sum(axis=1).reshape(q, 1)
+    _taub = tau[head] * probs  # (q, n)
+    _taub[np.isnan(_taub)] = eps
+    taub = _taub / (_taub.sum(axis=1).reshape(q, 1) + eps)
 
-    tauc = tau[head] * (1 - probs)  # (q, n)
-    tauc /= tauc.sum(axis=1).reshape(q, 1)
+    _tauc = tau[head] * (1 - probs)  # (q, n)
+    _tauc[np.isnan(_tauc)] = eps
+    tauc = _tauc / (_tauc.sum(axis=1).reshape(q, 1) + eps)
 
     return -p * entropy(taub) - (1 - p) * entropy(tauc)

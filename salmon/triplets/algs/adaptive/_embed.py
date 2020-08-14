@@ -27,6 +27,11 @@ class _Embedding(NeuralNet):
             max_norm = 10 * self.module__d
             idx = norms > max_norm
             if idx.sum():
+                d = self.module_._embedding.shape[1]
+                if d > 1:
+                    norms = torch.cat((norms, ) * d, dim=1)
+                else:
+                    norms = norms.reshape(-1, 1)
                 self.module_._embedding[idx] *= max_norm / norms[idx]
 
         return r
