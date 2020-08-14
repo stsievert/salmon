@@ -29,10 +29,9 @@ def strange_fruit(head, left, right, rng=None):
     final = 0.9567
     p_correct = final / (1 + np.exp(-rate * (r - 0.5)))
 
-    winner = "left" if ldiff < rdiff else "right"
+    winner = 0 if ldiff < rdiff else 1
     if not rng:
         rng = np.random.RandomState()
     if rng.uniform() <= p_correct:
         return winner
-    loser = "right" if winner == "left" else "left"
-    return loser
+    return 1 - winner
