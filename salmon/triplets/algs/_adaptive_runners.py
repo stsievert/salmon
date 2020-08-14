@@ -2,6 +2,8 @@ from textwrap import dedent
 from typing import List, TypeVar, Tuple, Dict, Any, Optional
 
 import torch.optim
+import numpy as np
+import numpy.linalg as LA
 from sklearn.utils import check_random_state
 
 import salmon.triplets.algs.adaptive as adaptive
@@ -140,6 +142,47 @@ class Adaptive(Runner):
             **self.meta,
             **self.params,
         }
+
+    def predict(self, X):
+        """
+        Predict the answers of queries from the current embedding.
+
+        Parameters
+        ----------
+        X : array-like
+            Each row is ``[head, left, right]``. Each element in ``X`` or
+            ``X[i, j]`` is an index of the current embedding.
+
+        Returns
+        -------
+        y : array-like
+            The winner of each query. An element of ``y`` is 0 if the left
+            item is the predicted winner, and 1 if the right element is the
+            predicted winner.
+
+        """
+        head_idx = X[:, 0].flatten()
+        left_idx = X[:, 1].flatten()
+        right_idx = X[:, 2].flatten()
+
+        embedding = self.opt.embedding()
+        head = embedding[head_idx]
+        left = embedding[left_idx]
+        right = embedding[right_idx]
+
+
+        ldiff = LA.norm(head - left, axis=1)
+        rdiff = LA.norm(head - right, axis=1)
+        diff = rdiff - ldiff  # 1 if rdiff > ldiff, so ldiff should win
+        diff *= -1
+        indicator = (np.sign(diff) + 1) / 2
+        return indicator.astype("uint8")
+
+
+    def score(self, X, y):
+        y_hat = self.predict(X)
+        return (y_hat == y).mean()
+
 
 
 class TSTE(Adaptive):
