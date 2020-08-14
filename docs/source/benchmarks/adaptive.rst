@@ -19,15 +19,16 @@ crowdsourcing context:
   how select queries.
 
 With that setup, how much of a difference does query selection matter? Here's
-an illustrative result:
+a result that illustrates the benefit of adaptive algorithms:
 
 .. image:: imgs/adaptive.png
    :width: 400px
    :align: center
 
-By this measure, Salmon has better performance than NEXT for adaptive triplet
-embeddings. In NEXT's introduction paper, the authors provided "no evidence for
-gains from adaptive sampling" for the triplet embedding problem [2]_.
+This measure provide evidence to support the hypothesis that Salmon has better
+performance than NEXT for adaptive triplet embeddings. For reference, in NEXT's
+introduction paper, the authors provided "no evidence for gains from adaptive
+sampling" for the triplet embedding problem [2]_.
 
 .. [1] "Active Perceptual Similarity Modeling with Auxiliary Information" by E.
        Heim, M. Berger, and L. Seversky, and M. Hauskrecht. 2015.
