@@ -115,6 +115,9 @@ class Adaptive(Runner):
         return queries, scores
 
     def process_answers(self, answers: List[Answer]):
+        if not len(answers):
+            return self, False
+
         self.meta["num_ans"] += len(answers)
         logger.debug("self.meta = %s", self.meta)
         logger.debug("self.R, self.n = %s, %s", self.R, self.n)
@@ -133,6 +136,7 @@ class Adaptive(Runner):
         self.opt.push(alg_ans)
         self.opt.partial_fit(alg_ans)
         self.meta["model_updates"] += 1
+        return self, True
 
     def get_model(self) -> Dict[str, Any]:
         return {

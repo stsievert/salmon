@@ -57,48 +57,47 @@ class Runner:
 
         answers: List = []
         logger.info(f"Staring {self.ident}")
+        """
         for k in itertools.count():
-            datum = {"iteration": k, "ident": self.ident}
+            answers = get_answers()
+            f1 = model_update(answers)
+            self.clear_queries()
+            for pwr in itertools.count():
+                queries, scores = search_queries(num=2**pwr + 128)
+                post(queries, scores)
+                if f1.done():
+                    break
+        """
+        def submit(fn: str, *args, **kwargs):
+            return client.submit(getattr(type(self), fn), *args, **kwargs)
+
+        update = False
+        for k in itertools.count():
             try:
-                _s = time()
-                # TODO: integrate Dask
-                if hasattr(self, "get_queries"):
-                    queries, scores = self.get_queries()
-                    #  queries, scores = client.submit(
-                        #  type(self).get_queries, self
-                    #  ).result()
-                else:
-                    queries = []
-                datum.update({"search_time": time() - _s})
+                datum = {"iteration": k, "ident": self.ident}
 
-                if answers:
-                    logger.warning(f"Model ident=%s on iteration %s", self.ident, k)
-                    _s = time()
-                    logger.info(f"Processing {len(answers)} answers for k={k}")
-                    self.process_answers(answers)
-                    logger.info(f"Done processing answers for k={k}")
-                    datum.update({"process_answer_time": time() - _s})
-                    answers = []
-
-                    if self.clear:
-                        logger.info(f"Clearing queries on k={k}")
-                        _s = time()
-                        self.clear_queries(rj)
-                        datum.update({"clear_time": time() - _s})
-
-                if len(queries):
-                    _s = time()
-                    logger.info(f"Posting queries on k={k}")
-                    self.post_queries(queries, scores, rj)
-                    datum.update({"post_queries_time": time() - _s})
                 answers = self.get_answers(rj, clear=True)
-                _s = time()
-                self.save()
-                datum.update({"saving_time": time() - _s})
-                self.meta_.append(datum)
+                self_future = client.scatter(self)
+
+                f1 = submit("process_answers", self_future, answers)
+                if update:
+                    self.clear_queries(rj)
+                if hasattr(self, "get_queries"):
+                    deadline = time() + 1
+                    for pwr in itertools.count(start=10):
+                        f2 = submit("get_queries", self_future, num=2 ** pwr)
+                        queries, scores = f2.result()
+                        self.post_queries(queries, scores, rj)
+                        if f1.done() and time() > deadline:
+                            break
+                new_self, update = f1.result()
+                self.__dict__.update(new_self.__dict__)
+
             except Exception as e:
                 logger.exception(e)
                 continue
+
+            self.save()
             if "reset" in rj.keys() and rj.jsonget("reset"):
                 self.reset(client, rj)
                 return
@@ -144,6 +143,11 @@ class Runner:
             Each answer is a dictionary. Each answer certainly has the keys
             "head", "left", "right" and "winner", and may have the key
             "puid" for participant UID.
+
+        Returns
+        -------
+        data : dict
+            An update to self.__dict__.
         """
         raise NotImplementedError
 
