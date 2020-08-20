@@ -16,10 +16,10 @@ import yaml
 from joblib import Parallel, delayed
 from requests.auth import HTTPBasicAuth, HTTPDigestAuth
 
-from .utils import server
+from .utils import server, logs
 
 
-def test_basics(server):
+def test_basics(server, logs):
     """
     Requires `docker-compose up` in salmon directory
     """
@@ -40,14 +40,15 @@ def test_basics(server):
     puid = "puid-foo"
     answers = []
     print("Starting loop...")
-    for k in range(30):
-        _start = time()
-        q = server.get("/query").json()
-        ans = {"winner": random.choice([q["left"], q["right"]]), "puid": puid, **q}
-        answers.append(ans)
-        sleep(10e-3)
-        ans["response_time"] = time() - _start
-        server.post("/answer", data=ans)
+    with logs:
+        for k in range(30):
+            _start = time()
+            q = server.get("/query").json()
+            ans = {"winner": random.choice([q["left"], q["right"]]), "puid": puid, **q}
+            answers.append(ans)
+            sleep(10e-3)
+            ans["response_time"] = time() - _start
+            server.post("/answer", data=ans)
 
     r = server.get("/responses", auth=(username, password))
     for server_ans, actual_ans in zip(r.json(), answers):
@@ -203,7 +204,7 @@ def test_download_restore(server):
     assert dump.exists()
 
 
-def test_logs(server):
+def test_logs(server, logs):
     dump = Path(__file__).absolute().parent.parent / "salmon" / "out" / "dump.rdb"
     assert not dump.exists()
     server.authorize()
@@ -212,21 +213,22 @@ def test_logs(server):
     server.post("/init_exp", data={"exp": exp.read_bytes()})
     data = []
     puid = "adsfjkl4awjklra"
-    for k in range(10):
-        q = server.get("/query").json()
-        ans = {"winner": random.choice([q["left"], q["right"]]), "puid": k, **q}
-        server.post("/answer", data=ans)
-        data.append(ans)
+    with logs:
+        for k in range(10):
+            q = server.get("/query").json()
+            ans = {"winner": random.choice([q["left"], q["right"]]), "puid": k, **q}
+            server.post("/answer", data=ans)
+            data.append(ans)
 
-    r = server.get("/logs")
-    assert r.status_code == 200
-    logs = r.json()
-    query_logs = logs["salmon.frontend.public.log"]
+        r = server.get("/logs")
+        assert r.status_code == 200
+        logs = r.json()
+        query_logs = logs["salmon.frontend.public.log"]
 
-    str_answers = [q.strip("\n") for q in query_logs if "answer received" in q]
-    answers = [ast.literal_eval(q[q.find("{"):]) for q in str_answers]
-    puids = {ans["puid"] for ans in answers}
-    assert {str(i) for i in range(10)}.issubset(puids)
+        str_answers = [q.strip("\n") for q in query_logs if "answer received" in q]
+        answers = [ast.literal_eval(q[q.find("{"):]) for q in str_answers]
+        puids = {ans["puid"] for ans in answers}
+        assert {str(i) for i in range(10)}.issubset(puids)
 
 
 @pytest.mark.xfail(

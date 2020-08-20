@@ -64,7 +64,9 @@ def test_round_robin(server, logs):
 
         r = server.get("/responses")
         df = pd.DataFrame(r.json())
-        assert all(df["head"] == np.arange(2 * n) % n)
+        assert set(df["head"].unique()) == set(range(11))
+        diffs = np.abs(df["head"].diff().unique())
+        assert {int(d) for d in diffs if not np.isnan(d)} == {1, 10}
 
     # A traceback I got in this test once. I think I've fixed but am not sure;
     # my tests pass, but I'm not certain this error is deterministic.
