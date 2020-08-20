@@ -68,6 +68,7 @@ class Runner:
                 if f1.done():
                     break
         """
+
         def submit(fn: str, *args, **kwargs):
             return client.submit(getattr(type(self), fn), *args, **kwargs)
 
@@ -83,25 +84,30 @@ class Runner:
                 if update:
                     self.clear_queries(rj)
                 if hasattr(self, "get_queries"):
-                    deadline = time() + 1
+                    deadline = time() + self.min_search_length()
                     for pwr in itertools.count(start=10):
                         f2 = submit("get_queries", self_future, num=2 ** pwr)
                         queries, scores = f2.result()
                         self.post_queries(queries, scores, rj)
                         if f1.done() and time() > deadline:
                             break
+
+                # Future.result raises errors automatically
                 new_self, update = f1.result()
-                self.__dict__.update(new_self.__dict__)
+                if update:
+                    self.__dict__.update(new_self.__dict__)
 
             except Exception as e:
                 logger.exception(e)
-                continue
 
             self.save()
             if "reset" in rj.keys() and rj.jsonget("reset"):
                 self.reset(client, rj)
-                return
+                break
         return True
+
+    def min_search_length(self):
+        return 1
 
     def save(self) -> bool:
         rj2 = self.redis_client(decode_responses=False)
