@@ -61,6 +61,7 @@ def test_round_robin(server, logs):
 
             ans = {"winner": random.choice([q["left"], q["right"]]), "puid": "foo", **q}
             server.post("/answer", data=ans)
+            sleep(1)
 
         r = server.get("/responses")
         df = pd.DataFrame(r.json())

@@ -41,7 +41,7 @@ def test_basics(server, logs):
     answers = []
     print("Starting loop...")
     with logs:
-        for k in range(30):
+        for k in range(50):
             _start = time()
             q = server.get("/query").json()
             ans = {"winner": random.choice([q["left"], q["right"]]), "puid": puid, **q}
@@ -83,8 +83,9 @@ def test_basics(server, logs):
     }
     n = len(exp_config["targets"])
     assert (0 == df["head"].min()) and (df["head"].max() == n - 1)
-    assert (0 == df["left"].min()) and (df["left"].max() == n - 1)
-    assert (0 == df["right"].min()) and (df["right"].max() == n - 1)
+    assert ((0 == df["left"].min()) or (df["right"].min() == 0)) and (
+        (df["left"].max() == n - 1) or (df["right"].max() == n - 1)
+    )
     assert 10e-3 < df.response_time.min()
     assert expected_cols == set(df.columns)
     assert df.puid.nunique() == 1
@@ -95,7 +96,7 @@ def test_basics(server, logs):
     assert r.status_code == 200
     assert "exception" not in r.text
     df = pd.DataFrame(r.json())
-    assert len(df) == 30
+    assert len(df) == 50
 
     r = server.get("/dashboard", auth=(username, password))
     assert r.status_code == 200
@@ -226,7 +227,7 @@ def test_logs(server, logs):
         query_logs = logs["salmon.frontend.public.log"]
 
         str_answers = [q.strip("\n") for q in query_logs if "answer received" in q]
-        answers = [ast.literal_eval(q[q.find("{"):]) for q in str_answers]
+        answers = [ast.literal_eval(q[q.find("{") :]) for q in str_answers]
         puids = {ans["puid"] for ans in answers}
         assert {str(i) for i in range(10)}.issubset(puids)
 
