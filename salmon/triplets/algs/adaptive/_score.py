@@ -61,7 +61,7 @@ class QueryScorer:
         self.push([])
 
     def _random_queries(self, n, num=1000):
-        new_num = int(num * 1.1)
+        new_num = int(num * 1.1 + 3)
         queries = self.random_state_.choice(n, size=(new_num, 3))
         repeated = (
             (queries[:, 0] == queries[:, 1])

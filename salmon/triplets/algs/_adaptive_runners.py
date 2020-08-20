@@ -29,9 +29,6 @@ PARAMS = """
         be positive.
     optimizer__momentum : float
         The momentum to use with the optimizer.
-    initial_batch_size : int
-        The initial batch_size, the number of answers used to approximate the
-        gradient.
     random_state : int, None, np.random.RandomState
         The seed used to generate psuedo-random numbers.
     sampling : str
@@ -48,9 +45,8 @@ class Adaptive(Runner):
         ident: str = "",
         module: str = "TSTE",
         optimizer: str = "Embedding",
-        optimizer__lr=0.075,
+        optimizer__lr=0.050,
         optimizer__momentum=0.9,
-        initial_batch_size=4,
         random_state=None,
         R: float = 10,
         sampling: str = "adaptive",
@@ -79,7 +75,6 @@ class Adaptive(Runner):
             optimizer=torch.optim.SGD,
             optimizer__lr=optimizer__lr,
             optimizer__momentum=optimizer__momentum,
-            initial_batch_size=initial_batch_size,
             random_state=random_state,
             warm_start=True,
             max_epochs=1,
@@ -92,32 +87,34 @@ class Adaptive(Runner):
             probs=self.opt.module_.probs,
             random_state=random_state,
         )
+        self.random_state_ = check_random_state(random_state)
         self.search.push([])
-        self.meta = {"num_ans": 0, "model_updates": 0}
+        self.meta = {"num_ans": 0, "model_updates": 0, "process_answers_calls": 0}
         self.params = {
             "n": n,
             "d": d,
             "R": R,
             "sampling": sampling,
             "random_state": random_state,
-            "initial_batch_size": initial_batch_size,
             "optimizer": optimizer,
             "optimizer__lr": optimizer__lr,
             "optimizer__momentum": optimizer__momentum,
+            **kwargs,
         }
 
     def get_query(self) -> Tuple[Optional[Dict[str, int]], Optional[float]]:
         if (self.meta["num_ans"] <= self.R * self.n) or self.sampling == "random":
-            head, left, right = _random_query(self.n)
+            head, left, right = _random_query(self.n, random_state=self.random_state_)
             return {"head": int(head), "left": int(left), "right": int(right)}, 1.0
         return None, -9999
 
     def get_queries(self, num=10_000) -> Tuple[List[Query], List[float]]:
-        queries, scores = self.search.score(num=int(num * 1.1 + 3))
+        queries, scores = self.search.score(num=num)
         return queries[:num], scores[:num]
 
     def process_answers(self, answers: List[Answer]):
         self.meta["num_ans"] += len(answers)
+        self.meta["process_answers_calls"] += 1
         logger.debug("self.meta = %s", self.meta)
         logger.debug("self.R, self.n = %s, %s", self.R, self.n)
 
@@ -131,9 +128,14 @@ class Adaptive(Runner):
         ]
         self.search.push(alg_ans)
         self.search.embedding = self.opt.embedding()
-
         self.opt.push(alg_ans)
-        self.opt.partial_fit(alg_ans)
+
+        # Make sure only valid answers are passed to partial_fit;
+        # self.opt.answers_ has a bunch of extra space for new answers
+        n_ans = self.opt.meta_["num_answers"]
+        valid_ans = self.opt.answers_[:n_ans]
+
+        self.opt.partial_fit(valid_ans)
         self.meta["model_updates"] += 1
 
     def get_model(self) -> Dict[str, Any]:
@@ -170,7 +172,6 @@ class Adaptive(Runner):
         left = embedding[left_idx]
         right = embedding[right_idx]
 
-
         ldiff = LA.norm(head - left, axis=1)
         rdiff = LA.norm(head - right, axis=1)
         diff = rdiff - ldiff  # 1 if rdiff > ldiff, so ldiff should win
@@ -178,11 +179,9 @@ class Adaptive(Runner):
         indicator = (np.sign(diff) + 1) / 2
         return indicator.astype("uint8")
 
-
     def score(self, X, y):
         y_hat = self.predict(X)
         return (y_hat == y).mean()
-
 
 
 class TSTE(Adaptive):
@@ -205,14 +204,13 @@ class TSTE(Adaptive):
         be positive.
     optimizer__momentum : float
         The momentum to use with the optimizer.
-    initial_batch_size : int
-        The initial batch_size, the number of answers used to approximate the
-        gradient.
     random_state : int, None, np.random.RandomState
         The seed used to generate psuedo-random numbers.
     sampling : str
         "adaptive" by default. Use ``sampling="random"`` to perform random
         sampling with the same optimization method and noise model.
+    kwargs : dict
+        Arguments to pass to the optimization method.
 
 
     Notes
@@ -252,10 +250,10 @@ class TSTE(Adaptive):
         optimizer: str = "Embedding",
         optimizer__lr=0.075,
         optimizer__momentum=0.9,
-        initial_batch_size=4,
         random_state=None,
         sampling="adaptive",
         alpha=1,
+        **kwargs,
     ):
         super().__init__(
             n=n,
@@ -264,11 +262,11 @@ class TSTE(Adaptive):
             optimizer=optimizer,
             optimizer__lr=optimizer__lr,
             optimizer__momentum=optimizer__momentum,
-            initial_batch_size=initial_batch_size,
             random_state=random_state,
             module__alpha=alpha,
             module="TSTE",
             sampling=sampling,
+            **kwargs,
         )
 
 
@@ -289,9 +287,6 @@ class STE(Adaptive):
         be positive.
     optimizer__momentum : float
         The momentum to use with the optimizer.
-    initial_batch_size : int
-        The initial batch_size, the number of answers used to approximate the
-        gradient.
     random_state : int, None, np.random.RandomState
         The seed used to generate psuedo-random numbers.
     sampling : str
@@ -313,7 +308,6 @@ class STE(Adaptive):
         optimizer: str = "Embedding",
         optimizer__lr=0.075,
         optimizer__momentum=0.9,
-        initial_batch_size=4,
         random_state=None,
         sampling="adaptive",
     ):
@@ -324,7 +318,6 @@ class STE(Adaptive):
             optimizer=optimizer,
             optimizer__lr=optimizer__lr,
             optimizer__momentum=optimizer__momentum,
-            initial_batch_size=initial_batch_size,
             random_state=random_state,
             module="STE",
             sampling=sampling,
@@ -348,9 +341,6 @@ class GNMDS(Adaptive):
         be positive.
     optimizer__momentum : float
         The momentum to use with the optimizer.
-    initial_batch_size : int
-        The initial batch_size, the number of answers used to approximate the
-        gradient.
     random_state : int, None, np.random.RandomState
         The seed used to generate psuedo-random numbers.
     sampling : str
@@ -372,7 +362,6 @@ class GNMDS(Adaptive):
         optimizer: str = "Embedding",
         optimizer__lr=0.075,
         optimizer__momentum=0.9,
-        initial_batch_size=4,
         random_state=None,
         sampling="adaptive",
     ):
@@ -383,7 +372,6 @@ class GNMDS(Adaptive):
             optimizer=optimizer,
             optimizer__lr=optimizer__lr,
             optimizer__momentum=optimizer__momentum,
-            initial_batch_size=initial_batch_size,
             random_state=random_state,
             module="GNMDS",
             sampling=sampling,
@@ -409,9 +397,6 @@ class CKL(Adaptive):
         be positive.
     optimizer__momentum : float
         The momentum to use with the optimizer.
-    initial_batch_size : int
-        The initial batch_size, the number of answers used to approximate the
-        gradient.
     random_state : int, None, np.random.RandomState
         The seed used to generate psuedo-random numbers.
     sampling : str
@@ -427,7 +412,6 @@ class CKL(Adaptive):
         optimizer: str = "Embedding",
         optimizer__lr=0.075,
         optimizer__momentum=0.9,
-        initial_batch_size=4,
         random_state=None,
         mu=1,
         sampling="adaptive",
@@ -439,7 +423,6 @@ class CKL(Adaptive):
             optimizer=optimizer,
             optimizer__lr=optimizer__lr,
             optimizer__momentum=optimizer__momentum,
-            initial_batch_size=initial_batch_size,
             random_state=random_state,
             module__mu=mu,
             module="CKL",
