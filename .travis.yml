@@ -36,7 +36,7 @@ script:
   - pip install -r requirements.txt
   - pip install -e .
   - sudo chown -R  travis:travis /home/travis/build/stsievert/salmon/
-  - chown -R  travis:travis /home/travis/build/stsievert/salmon/
+  - chown -R travis:travis /home/travis/build/stsievert/salmon/
   - pytest
   - rm -f out/*
   - cd docs
@@ -44,7 +44,7 @@ script:
   - cd ..
   # push docs if they changed
   - pip install doctr
-  - doctr deploy --built-docs docs/build/html/ .
+  - doctr deploy --built-docs docs/build/html/ --exclude salmon/frontend/static .
 
 # deploy:
   # provider: pages
