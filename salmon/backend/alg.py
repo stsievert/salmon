@@ -1,5 +1,5 @@
 import itertools
-from time import time
+from time import perf_counter as time
 
 import numpy as np
 from typing import List, TypeVar, Tuple, Dict, Any
@@ -57,17 +57,6 @@ class Runner:
 
         answers: List = []
         logger.info(f"Staring {self.ident}")
-        """
-        for k in itertools.count():
-            answers = get_answers()
-            f1 = model_update(answers)
-            self.clear_queries()
-            for pwr in itertools.count():
-                queries, scores = search_queries(num=2**pwr + 128)
-                post(queries, scores)
-                if f1.done():
-                    break
-        """
 
         def submit(fn: str, *args, **kwargs):
             return client.submit(getattr(type(self), fn), *args, **kwargs)
@@ -78,29 +67,42 @@ class Runner:
                 datum = {"iteration": k, "ident": self.ident}
 
                 answers = self.get_answers(rj, clear=True)
+                datum["num_answers"] = len(answers)
                 self_future = client.scatter(self)
 
                 f1 = submit("process_answers", self_future, answers)
                 if update:
                     self.clear_queries(rj)
+                _start = time()
                 if hasattr(self, "get_queries"):
+                    queries_searched = 0
                     deadline = time() + self.min_search_length()
-                    for pwr in itertools.count(start=10):
+                    for pwr in itertools.count(start=11):
                         f2 = submit("get_queries", self_future, num=2 ** pwr)
                         queries, scores = f2.result()
+                        queries_searched += len(queries)
+
+                        _s = time()
                         self.post_queries(queries, scores, rj)
+                        datum["post_query_time"] = time() - _s
                         if f1.done() and time() > deadline:
+                            datum["queries_searched"] = queries_searched
                             break
 
                 # Future.result raises errors automatically
                 new_self, update = f1.result()
+                datum["time_model_update"] = time() - _start
                 if update:
+                    _s = time()
                     self.__dict__.update(new_self.__dict__)
+                    datum["time_update"] = time() - _s
 
             except Exception as e:
                 logger.exception(e)
 
+            _s = time()
             self.save()
+            datum["time_save"] = time() - _s
             if "reset" in rj.keys() and rj.jsonget("reset"):
                 self.reset(client, rj)
                 break
