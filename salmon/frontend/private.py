@@ -508,6 +508,7 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
     except Exception as e:
         logger.exception(e)
         alg_plots = {"/": "exception"}
+        models = {"/": ""}
 
     return templates.TemplateResponse(
         "dashboard.html",
