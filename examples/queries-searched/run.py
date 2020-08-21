@@ -55,7 +55,7 @@ def run(n_search, *, n=600, d=1, max_queries=60_000, n_test=10_000, n_partial_fi
     for k in itertools.count():
         search = search.partial_fit()
         acc = search.score(X, y)
-        e = search.alg.opt.embedding()
+        e = search.alg.opt.embedding().flatten()
         ranks = e.argsort()
         rank_diff = np.abs(ranks - np.arange(len(ranks)))
         datum = {
