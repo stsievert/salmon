@@ -30,3 +30,4 @@ up:
 
 down:
 	scp -r $(DNS):~/salmon/examples/queries-searched/data ./cluster-data
+	scp -r $(DNS):~/salmon/examples/queries-searched/data-d=2 ./cluster-data-d=2

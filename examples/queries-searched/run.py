@@ -1,21 +1,28 @@
 import collections
-from copy import copy
 import itertools
 import pickle
 import sys
+import zipfile
+from copy import copy
 from pprint import pprint
 from functools import partial
 from typing import Any, Dict
 from toolz.dicttoolz import merge
 from joblib import Parallel, delayed
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
 from dask.distributed import Client, as_completed
+from sklearn.base import BaseEstimator
+from sklearn.model_selection import train_test_split
 
 from salmon.triplets.algs import TSTE
+from salmon.triplets.algs.adaptive._embed import gram_utils
 from offline import OfflineSearch
 from datasets import strange_fruit
+
+DIR = Path(__file__).absolute().parent
 
 
 def _test_dataset(n, n_test, seed=42):
@@ -28,66 +35,183 @@ def _test_dataset(n, n_test, seed=42):
     return X, y
 
 
-def run(n_search, *, n=600, d=1, max_queries=60_000, n_test=10_000, n_partial_fit=100):
-    params = {
-        "optimizer": "Embedding",
-        "optimizer__lr": 0.10,
-        "optimizer__momentum": 0.75,
-        "random_state": 10023,
-    }
+class Test(BaseEstimator):
+    def __init__(
+        self,
+        n_search,
+        *,
+        n=600,
+        d=1,
+        max_queries=60_000,
+        n_test=10_000,
+        n_partial_fit=100,
+        random_state=42,
+        dataset="strange_fruit",
+        write=False,
+    ):
+        self.n_search = n_search
+        self.n = n
+        self.d = d
+        self.max_queries = max_queries
+        self.n_test = n_test
+        self.n_partial_fit = n_partial_fit
+        self.random_state = random_state
+        self.dataset = dataset
+        self.write = write
+        super().__init__()
 
-    alg = TSTE(n=n, d=d, **params)
-    search = OfflineSearch(alg, n_search=n_search, n_partial_fit=n_partial_fit)
+    def init(self):
+        params = {
+            "optimizer": "Embedding",
+            "optimizer__lr": 0.10,
+            "optimizer__momentum": 0.75,
+            "random_state": 10023,
+        }
 
-    static = {
-        "n": search.alg.n,
-        "d": search.alg.d,
-        "R": search.alg.R,
-        "n_search": n_search,
-        "max_queries": max_queries,
-        "n_test": n_test,
-        "n_partial_fit": n_partial_fit,
-        **search.alg.params,
-    }
+        alg = TSTE(n=self.n, d=self.d, **params)
+        search = OfflineSearch(
+            alg,
+            n_search=self.n_search,
+            n_partial_fit=self.n_partial_fit,
+            dataset=self.dataset,
+        )
 
-    X, y = _test_dataset(static["n"], static["n_test"], seed=42)
-    data = []
-    for k in itertools.count():
-        search = search.partial_fit()
-        acc = search.score(X, y)
-        e = search.alg.opt.embedding().flatten()
+        static = {
+            "n": search.alg.n,
+            "d": search.alg.d,
+            "R": search.alg.R,
+            **self.get_params(deep=False),
+            **search.alg.params,
+        }
+
+        self.alg_ = alg
+        self.search_ = search
+        self.static_ = static
+        self.params_ = params
+        self.initialized_ = True
+        self.data_ = []
+        return self
+
+    def inited(self):
+        inited = hasattr(self, "initialized_") and self.initialized_
+        return inited
+
+    def partial_fit(self, X=None, y=None):
+        if X is not None and y is not None:
+            raise ValueError("Expected X and y to be None")
+        if not self.inited():
+            self.init()
+
+        self.search_ = self.search_.partial_fit()
+
+    def fit(self, X=None, y=None):
+        if X is not None and y is not None:
+            raise ValueError("Expected X and y to be None")
+        if (
+            self.dataset == "zappos"
+            and (self.n != 85 or self.n is not None)
+            and self.d != 2
+        ):
+            raise ValueError("Incorrect parameters for self.dataset=zappos")
+
+        if self.dataset == "strange_fruit":
+            X_test, y_test = _test_dataset(self.n, self.n_test, seed=self.random_state)
+        elif self.dataset == "zappos":
+            X_test, y_test = self._get_zappos_test_set(), None
+        else:
+            raise ValueError(f"dataset={self.dataset} not recognized")
+
+        for k in itertools.count():
+            self.partial_fit()
+            self.score(X_test, y_test)
+            pprint(self.data_[-1])
+            if self.write:
+                df = pd.DataFrame(self.data_)
+                fparams = {**self.params_, **self.static_}
+                ident = "-".join(
+                    [f"{k}={v}" for k, v in sorted(tuple(fparams.items()))]
+                )
+                df.to_parquet(f"data/{ident}.parquet")
+            if self.search_.alg.meta["num_ans"] >= self.max_queries:
+                break
+
+        return self
+
+    def _get_zappos_test_set(self):
+        data_dir = DIR.parent / "datasets"
+        zappos_data = data_dir / "zappos" / "zappos.csv.zip"
+        with zipfile.ZipFile(str(zappos_data), "r") as myzip:
+            with myzip.open("zappos.csv", "r") as f:
+                responses = pd.read_csv(f, usecols=["head", "b", "c"])
+        responses.columns = ["head", "winner", "loser"]
+
+        N = responses["head"].nunique()
+
+        train, test = train_test_split(responses, random_state=42, test_size=0.2)
+        #  train_ans = train.to_numpy()
+        test_ans = test.to_numpy()
+        return test_ans
+
+    def score(self, X, y=None):
+        if self.dataset == "strange_fruit":
+            return self._score_fruit(X, y)
+        elif self.dataset == "zappos":
+            return self._score_zappos(X)
+        raise ValueError(f"dataset={self.dataset} not recognized")
+
+    def _score_zappos(self, queries):
+        """
+        queries : List[Answer]
+            Organized head, winner, loser
+        """
+        embedding = self.alg_.opt.embedding()
+        gram_matrix = gram_utils.gram_matrix(embedding)
+        dists = gram_utils.distances(gram_matrix)
+        # queries is organized as ["head", "winner", "loser"]
+        winner_dists = dists[queries[:, 0], queries[:, 1]]
+        loser_dists = dists[queries[:, 0], queries[:, 2]]
+        acc = (winner_dists <= loser_dists).mean()
+
+        datum = {
+            "acc": acc,
+            "embedding_max": embedding.max(),
+            "pf_time": self.search_.pf_time_,
+            **self.static_,
+            **self.search_.alg.meta,
+        }
+        self.data_.append(datum)
+        return acc
+
+    def _score_fruit(self, X, y):
+        acc = self.search_.score(X, y)
+        e = self.search_.alg.opt.embedding().flatten()
         ranks = e.argsort()
         rank_diff = np.abs(ranks - np.arange(len(ranks)))
         datum = {
             "acc": acc,
             "embedding_max": e.max(),
-            "pf_time": search.pf_time_,
-            "rank_diff_mean": rank_diff.mean(),
-            "rank_diff_median": np.median(rank_diff),
-            "rank_diff_max": rank_diff.max(),
-            "rank_diff_p95": np.percentile(rank_diff, 95),
-            "rank_diff_p90": np.percentile(rank_diff, 90),
-            "rank_diff_p80": np.percentile(rank_diff, 80),
-            "rank_diff_p70": np.percentile(rank_diff, 70),
-            "rank_diff_p60": np.percentile(rank_diff, 60),
-            **static,
-            **search.alg.meta,
+            "pf_time": self.search_.pf_time_,
+            **self.static_,
+            **self.search_.alg.meta,
         }
+        if self.d == 1:
+            rank_data = {
+                "rank_diff_mean": rank_diff.mean(),
+                "rank_diff_median": np.median(rank_diff),
+                "rank_diff_max": rank_diff.max(),
+                "rank_diff_p95": np.percentile(rank_diff, 95),
+                "rank_diff_p90": np.percentile(rank_diff, 90),
+                "rank_diff_p80": np.percentile(rank_diff, 80),
+                "rank_diff_p70": np.percentile(rank_diff, 70),
+                "rank_diff_p60": np.percentile(rank_diff, 60),
+            }
+            datum.update(rank_data)
         assert all(
             isinstance(v, (int, str, float, np.int64, np.int32, np.float32, np.float64))
             for v in datum.values()
         )
-        data.append(datum)
-        if k % 1 == 0:
-            pprint({k: v for k, v in data[-1].items() if k != "sizeof"})
-            df = pd.DataFrame(data)
-            fparams = {**params, **static}
-            ident = "-".join([f"{k}={v}" for k, v in sorted(tuple(fparams.items()))])
-            df.to_parquet(f"data/{ident}.parquet")
-        if search.alg.meta["num_ans"] >= max_queries:
-            break
-
-    return data, {**params, **static}
+        self.data_.append(datum)
+        return acc
 
 
 if __name__ == "__main__":
@@ -97,6 +221,19 @@ if __name__ == "__main__":
 
     searches = [[1 * 10 ** i, 2 * 10 ** i, 5 * 10 ** i] for i in range(1, 6 + 1)]
     search = sum(searches, [])
-    results = Parallel(n_jobs=-1, backend="loky")(
-        delayed(run)(s, **config) for s in search
-    )
+
+    #  est = Test(10, n=100, dataset="strange_fruit", d=1, max_queries=2000)
+    #  est = Test(10, n=100, dataset="zappos", d=1, max_queries=2000)
+
+    Test(10, n=85, dataset="zappos", d=2, max_queries=2000).fit()
+    #  client = Client()
+    #  print(client.dashboard_link)
+    #  f = client.submit(
+    #  Test(10, n=85, dataset="zappos", d=2, max_queries=2000).fit
+    #  )
+    #  f.result()
+    #  results = Parallel(n_jobs=-1, backend="loky")(
+    #  delayed(run)(s, **config) for s in search
+    #  )
+
+    # Run with Zappos + strange fruit datasets
