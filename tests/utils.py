@@ -82,7 +82,6 @@ def server():
     r = server.get("/reset?force=1", auth=(username, password))
     assert r.json() == {"success": True}
     sleep(4)
-    _clear_logs()
     dump = Path(__file__).absolute().parent.parent / "out" / "dump.rdb"
     if dump.exists():
         dump.unlink()
@@ -105,6 +104,7 @@ class Logs:
     def __exit__(self, exc_type, exc_value, traceback):
         if exc_type is not None:
             raise exc_type(exc_value)
+        sleep(1)
         for log in self.log_dir.glob("*.log"):
             lines = log.read_text().split("\n")
             for line in lines:
@@ -112,6 +112,7 @@ class Logs:
                     raise LogError("{}\n{}".format(log, line))
                 if self.warn and "warn" in line:
                     warn("{}\n{}".format(log, line))
+        _clear_logs()
 
 @pytest.fixture()
 def logs():

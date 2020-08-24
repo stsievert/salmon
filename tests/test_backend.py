@@ -48,6 +48,7 @@ def test_init_errors_propogate(server):
     assert r.status_code == 500
     assert "module 'salmon.triplets.algs' has no attribute 'foobar'" in r.text
 
+
 def test_run_errors_logged(server, logs):
     server.authorize()
     server.get("/init_exp")
@@ -58,5 +59,9 @@ def test_run_errors_logged(server, logs):
         with logs:
             for k in range(10):
                 q = server.get("/query").json()
-                ans = {"winner": random.choice([q["left"], q["right"]]), "puid": "", **q}
+                ans = {
+                    "winner": random.choice([q["left"], q["right"]]),
+                    "puid": "",
+                    **q,
+                }
                 server.post("/answer", data=ans)

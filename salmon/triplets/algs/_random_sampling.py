@@ -48,4 +48,7 @@ class RandomSampling(Runner):
         return query, -9999
 
     def process_answers(self, ans: List[Answer]):
+        if not len(ans):
+            return self, False
         self.answers.extend(ans)
+        return self, True
