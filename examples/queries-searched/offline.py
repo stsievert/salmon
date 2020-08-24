@@ -23,7 +23,7 @@ class OfflineSearch:
         n_search=50,
         n_partial_fit=10,
         answers_per_search=4,
-        queries_per_search=4,
+        queries_per_search=1,
         random_state=42,
         dataset="strange_fruit",
     ):

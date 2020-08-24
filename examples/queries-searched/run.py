@@ -10,6 +10,7 @@ from typing import Any, Dict
 from toolz.dicttoolz import merge
 from joblib import Parallel, delayed
 from pathlib import Path
+from pprint import pprint
 
 import numpy as np
 import pandas as pd
@@ -20,9 +21,10 @@ from sklearn.model_selection import train_test_split
 from salmon.triplets.algs import TSTE
 from salmon.triplets.algs.adaptive._embed import gram_utils
 from offline import OfflineSearch
-from datasets import strange_fruit
 
 DIR = Path(__file__).absolute().parent
+sys.path.append(str(DIR.parent))
+from datasets import strange_fruit
 
 
 def _test_dataset(n, n_test, seed=42):
@@ -35,11 +37,16 @@ def _test_dataset(n, n_test, seed=42):
     return X, y
 
 
+def _correct_version():
+    import salmon
+
+    assert salmon.__version__ == "v0.3.6+18.g6f3da47.dirty"
+
+
 class Test(BaseEstimator):
     def __init__(
         self,
-        n_search,
-        *,
+        n_search=None,
         n=600,
         d=1,
         max_queries=60_000,
@@ -48,6 +55,7 @@ class Test(BaseEstimator):
         random_state=42,
         dataset="strange_fruit",
         write=False,
+        queries_per_search=1,
     ):
         self.n_search = n_search
         self.n = n
@@ -58,6 +66,7 @@ class Test(BaseEstimator):
         self.random_state = random_state
         self.dataset = dataset
         self.write = write
+        self.queries_per_search = queries_per_search
         super().__init__()
 
     def init(self):
@@ -74,6 +83,7 @@ class Test(BaseEstimator):
             n_search=self.n_search,
             n_partial_fit=self.n_partial_fit,
             dataset=self.dataset,
+            queries_per_search=self.queries_per_search,
         )
 
         static = {
@@ -105,6 +115,7 @@ class Test(BaseEstimator):
         self.search_ = self.search_.partial_fit()
 
     def fit(self, X=None, y=None):
+        _correct_version()
         if X is not None and y is not None:
             raise ValueError("Expected X and y to be None")
         if (
@@ -131,7 +142,7 @@ class Test(BaseEstimator):
                 ident = "-".join(
                     [f"{k}={v}" for k, v in sorted(tuple(fparams.items()))]
                 )
-                df.to_parquet(f"data/{ident}.parquet")
+                df.to_parquet(f"data/dataset={self.dataset}-d={self.d}/{ident}.parquet")
             if self.search_.alg.meta["num_ans"] >= self.max_queries:
                 break
 
@@ -215,25 +226,48 @@ class Test(BaseEstimator):
 
 
 if __name__ == "__main__":
+    _correct_version()
 
     config = {"max_queries": 50_000, "n": 600, "d": 1, "n_test": 10_000}
     assert "n_search" not in config
 
-    searches = [[1 * 10 ** i, 2 * 10 ** i, 5 * 10 ** i] for i in range(1, 6 + 1)]
-    search = sum(searches, [])
+    searches = [[1 * 10 ** i, 2 * 10 ** i, 5 * 10 ** i] for i in range(1, 5 + 1)]
+    searches = sum(searches, [])
+    datasets = ["zappos", "strange_fruit"]
+    D = [1, 2]
 
-    #  est = Test(10, n=100, dataset="strange_fruit", d=1, max_queries=2000)
-    #  est = Test(10, n=100, dataset="zappos", d=1, max_queries=2000)
-
-    Test(10, n=85, dataset="zappos", d=2, max_queries=2000).fit()
-    #  client = Client()
+    #  client = Client("localhost:8786")
+    #  client.upload_file("../datasets.py")
+    #  client.upload_file("offline.py")
+    #  client.upload_file("../datasets")
     #  print(client.dashboard_link)
-    #  f = client.submit(
-    #  Test(10, n=85, dataset="zappos", d=2, max_queries=2000).fit
-    #  )
-    #  f.result()
-    #  results = Parallel(n_jobs=-1, backend="loky")(
-    #  delayed(run)(s, **config) for s in search
-    #  )
 
-    # Run with Zappos + strange fruit datasets
+    search_dataset_d = list(itertools.product(searches, datasets, D))
+    kwargs = [
+        {"n_search": s, "dataset": dataset, "d": d}
+        for s, dataset, d in search_dataset_d
+        if not (dataset == "zappos" and d == 1)
+    ]
+    print(f"Total of launching {len(kwargs)} jobs")
+    print("First 5 kwargs:")
+    pprint(kwargs[:5])
+
+    static = {"write": True, "queries_per_search": 1}
+    fmt_kwargs = []
+    for kwarg in kwargs:
+        if kwarg["dataset"] == "zappos":
+            k = {
+                "n": 85,
+                "max_queries": 20_000,
+            }
+        else:
+            k = {
+                "n": 600,
+                "max_queries": 100_000,
+            }
+        kwarg.update(**static, **k)
+        fmt_kwargs.append(kwarg)
+
+    results = Parallel(n_jobs=-1, backend="loky")(
+        delayed(Test(**kwarg).fit)() for kwarg in kwargs
+    )

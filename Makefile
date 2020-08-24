@@ -26,7 +26,7 @@ clean: FORCE
 	rm -f out/redis.csv
 
 up:
-	rsync -r . $(DNS):~/salmon/
+	rsync -v -r . $(DNS):~/salmon/
 
 down:
 	scp -r $(DNS):~/salmon/examples/queries-searched/data ./cluster-data
