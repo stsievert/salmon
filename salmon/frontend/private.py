@@ -20,7 +20,12 @@ import requests as httpx
 import yaml
 from bokeh.embed import json_item
 from fastapi import Depends, File, HTTPException
-from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse, FileResponse
+from fastapi.responses import (
+    HTMLResponse,
+    JSONResponse,
+    PlainTextResponse,
+    FileResponse,
+)
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from rejson import Client, Path
 from starlette.exceptions import HTTPException as StarletteHTTPException
@@ -354,7 +359,9 @@ def reset(
 
 
 @app.get("/responses", tags=["private"])
-async def get_responses(authorized: bool = Depends(_authorize), json: Optional[bool] = True) -> Dict[str, Any]:
+async def get_responses(
+    authorized: bool = Depends(_authorize), json: Optional[bool] = True
+) -> Dict[str, Any]:
     """
     Get the recorded responses from the current experiments. This includes
     the following columns:
@@ -382,7 +389,8 @@ async def get_responses(authorized: bool = Depends(_authorize), json: Optional[b
     json_responses = await _format_responses(responses, targets, start)
     if json:
         return JSONResponse(
-            json_responses, headers={"Content-Disposition": 'attachment; filename="responses.json"'}
+            json_responses,
+            headers={"Content-Disposition": 'attachment; filename="responses.json"'},
         )
     with StringIO() as f:
         df = pd.DataFrame(json_responses)
@@ -487,6 +495,21 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
     if "/answer" in endpoints:
         i = endpoints.index("/answer")
         endpoints[1], endpoints[i] = endpoints[i], endpoints[1]
+
+    try:
+        idents = rj.jsonget("samplers")
+        models = {alg_ident: await get_model(alg_ident) for alg_ident in idents}
+        alg_plots = {
+            alg: await plotting.show_embedding(model["embedding"], targets, alg=alg)
+            for alg, model in models.items()
+        }
+        alg_plots = {k: json.dumps(json_item(v)) for k, v in alg_plots.items()}
+        logger.info(f"idents = {idents}")
+    except Exception as e:
+        logger.exception(e)
+        alg_plots = {"/": "exception"}
+        models = {"/": ""}
+
     return templates.TemplateResponse(
         "dashboard.html",
         {
@@ -498,6 +521,9 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
             "num_participants": df.puid.nunique(),
             "filenames": [_get_filename(html) for html in targets],
             "endpoints": endpoints,
+            "alg_models": models,
+            "alg_model_plots": alg_plots,
+            #  "alg_model_plots": plots,
             **plots,
         },
     )
