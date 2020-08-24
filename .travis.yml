@@ -38,6 +38,8 @@ script:
   - sudo chown -R  travis:travis /home/travis/build/stsievert/salmon/
   - chown -R travis:travis /home/travis/build/stsievert/salmon/
   - pytest
+  - sudo chown -R  travis:travis /home/travis/build/stsievert/salmon/
+  - chown -R travis:travis /home/travis/build/stsievert/salmon/
   - rm -f out/*
   - cd docs
   - make html
