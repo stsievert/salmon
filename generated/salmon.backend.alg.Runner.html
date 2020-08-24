@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>salmon.backend.alg.Runner &mdash; Salmon v0.4.0+1.g8ca02ef.dirty documentation</title>
+  <title>salmon.backend.alg.Runner &mdash; Salmon v0.4.0+2.g27e74e1.dirty documentation</title>
   
 
   
@@ -220,8 +220,8 @@ in the database.</p>
 </table>
 <table class="docutils align-default">
 <colgroup>
-<col style="width: 66%" />
-<col style="width: 34%" />
+<col style="width: 68%" />
+<col style="width: 32%" />
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><strong>clear_queries</strong></p></td>
@@ -230,16 +230,19 @@ in the database.</p>
 <tr class="row-even"><td><p><strong>get_answers</strong></p></td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><p><strong>post_queries</strong></p></td>
+<tr class="row-odd"><td><p><strong>min_search_length</strong></p></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><p><strong>redis_client</strong></p></td>
+<tr class="row-even"><td><p><strong>post_queries</strong></p></td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><p><strong>save</strong></p></td>
+<tr class="row-odd"><td><p><strong>redis_client</strong></p></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><p><strong>serialize_query</strong></p></td>
+<tr class="row-even"><td><p><strong>save</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>serialize_query</strong></p></td>
 <td></td>
 </tr>
 </tbody>
@@ -275,6 +278,12 @@ dashboard or with an HTTP get request.</p>
 <dt><strong>answers</strong><span class="classifier">List[Answers]</span></dt><dd><p>Each answer is a dictionary. Each answer certainly has the keys
 “head”, “left”, “right” and “winner”, and may have the key
 “puid” for participant UID.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>data</strong><span class="classifier">dict</span></dt><dd><p>An update to self.__dict__.</p>
 </dd>
 </dl>
 </dd>
