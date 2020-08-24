@@ -73,6 +73,7 @@ class Runner:
                 f1 = submit("process_answers", self_future, answers)
                 if update:
                     self.clear_queries(rj)
+
                 _start = time()
                 if hasattr(self, "get_queries"):
                     queries_searched = 0
