@@ -1,5 +1,5 @@
 import itertools
-from time import time
+from time import perf_counter as time
 
 import numpy as np
 from typing import List, TypeVar, Tuple, Dict, Any
@@ -57,52 +57,60 @@ class Runner:
 
         answers: List = []
         logger.info(f"Staring {self.ident}")
+
+        def submit(fn: str, *args, **kwargs):
+            return client.submit(getattr(type(self), fn), *args, **kwargs)
+
+        update = False
         for k in itertools.count():
-            datum = {"iteration": k, "ident": self.ident}
             try:
-                _s = time()
-                # TODO: integrate Dask
-                if hasattr(self, "get_queries"):
-                    queries, scores = self.get_queries()
-                    #  queries, scores = client.submit(
-                        #  type(self).get_queries, self
-                    #  ).result()
-                else:
-                    queries = []
-                datum.update({"search_time": time() - _s})
+                datum = {"iteration": k, "ident": self.ident}
 
-                if answers:
-                    logger.warning(f"Model ident=%s on iteration %s", self.ident, k)
-                    _s = time()
-                    logger.info(f"Processing {len(answers)} answers for k={k}")
-                    self.process_answers(answers)
-                    logger.info(f"Done processing answers for k={k}")
-                    datum.update({"process_answer_time": time() - _s})
-                    answers = []
-
-                    if self.clear:
-                        logger.info(f"Clearing queries on k={k}")
-                        _s = time()
-                        self.clear_queries(rj)
-                        datum.update({"clear_time": time() - _s})
-
-                if len(queries):
-                    _s = time()
-                    logger.info(f"Posting queries on k={k}")
-                    self.post_queries(queries, scores, rj)
-                    datum.update({"post_queries_time": time() - _s})
                 answers = self.get_answers(rj, clear=True)
-                _s = time()
-                self.save()
-                datum.update({"saving_time": time() - _s})
-                self.meta_.append(datum)
+                datum["num_answers"] = len(answers)
+                self_future = client.scatter(self)
+
+                f1 = submit("process_answers", self_future, answers)
+                if update:
+                    self.clear_queries(rj)
+
+                _start = time()
+                if hasattr(self, "get_queries"):
+                    queries_searched = 0
+                    deadline = time() + self.min_search_length()
+                    for pwr in itertools.count(start=11):
+                        f2 = submit("get_queries", self_future, num=2 ** pwr)
+                        queries, scores = f2.result()
+                        queries_searched += len(queries)
+
+                        _s = time()
+                        self.post_queries(queries, scores, rj)
+                        datum["post_query_time"] = time() - _s
+                        if f1.done() and time() > deadline:
+                            datum["queries_searched"] = queries_searched
+                            break
+
+                # Future.result raises errors automatically
+                new_self, update = f1.result()
+                datum["time_model_update"] = time() - _start
+                if update:
+                    _s = time()
+                    self.__dict__.update(new_self.__dict__)
+                    datum["time_update"] = time() - _s
+
             except Exception as e:
                 logger.exception(e)
-                continue
+
+            _s = time()
+            self.save()
+            datum["time_save"] = time() - _s
             if "reset" in rj.keys() and rj.jsonget("reset"):
                 self.reset(client, rj)
-                return
+                break
         return True
+
+    def min_search_length(self):
+        return 1
 
     def save(self) -> bool:
         rj2 = self.redis_client(decode_responses=False)
@@ -144,6 +152,11 @@ class Runner:
             Each answer is a dictionary. Each answer certainly has the keys
             "head", "left", "right" and "winner", and may have the key
             "puid" for participant UID.
+
+        Returns
+        -------
+        data : dict
+            An update to self.__dict__.
         """
         raise NotImplementedError
 

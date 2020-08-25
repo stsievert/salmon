@@ -1,17 +1,19 @@
 from math import pi
 from datetime import timedelta, datetime
+from typing import List
 import json
 
 from bokeh.plotting import figure, show
+from bokeh.models import ColumnDataSource, Grid, LinearAxis, Plot, Text, ImageURL
+
 from bokeh.embed import json_item
-from bokeh.models import ColumnDataSource
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import requests
 
-from .utils import get_logger
+from .utils import get_logger, image_url
 
 logger = get_logger(__name__)
 
@@ -83,7 +85,7 @@ async def activity(df: pd.DataFrame, start_sec: float):
         xlabel,
         bin_heights,
         edges,
-        toolbar_location="above",
+        toolbar_location=None,
         x_axis_type="datetime",
     )
     p.xaxis.major_label_orientation = pi / 4
@@ -116,7 +118,7 @@ async def response_time(df: pd.DataFrame):
         bin_heights,
         edges,
         width=300,
-        toolbar_location="below",
+        toolbar_location=None,
     )
     return p
 
@@ -133,9 +135,53 @@ async def network_latency(df: pd.DataFrame):
         bin_heights,
         edges,
         width=300,
-        toolbar_location="below",
+        toolbar_location=None,
     )
     return p
+
+
+async def show_embedding(embedding: np.ndarray, targets: List[str], alg: str=""):
+    embedding = np.asarray(embedding)
+
+    # scale each dimension between 0 and 1
+    for dim in range(embedding.shape[1]):
+        embedding[:, dim] = embedding[:, dim] - embedding[:, dim].min()
+        embedding[:, dim] /= embedding[:, dim].max()
+        embedding[:, dim] -= 0.5
+
+    images = [
+        k for k, target in enumerate(targets) if "img" in target or "video" in target
+    ]
+    image_urls = [image_url(target) for k, target in enumerate(targets) if k in images]
+
+    data = {
+        "x": embedding[images, 0],
+        "y": embedding[images, 1] if len(embedding[0]) > 1 else embedding[images, 0],
+        "image_url": image_urls,
+    }
+    source = ColumnDataSource(data=data)
+
+    plot = figure(
+        title=alg, plot_width=600, plot_height=500, toolbar_location="right",
+    )
+    #  glyph = Text(x="x", y="y", text="text", angle=0.3, text_color="#96deb3")
+    w = h = {"units": "data", "value": 0.1}
+    w = h = {"units": "screen", "value": 80}
+    glyph = ImageURL(x="x", y="y", url="image_url", w=w, h=h)
+    plot.add_glyph(source, glyph)
+
+    text = [k for k in range(len(targets)) if k not in images]
+    print(text)
+    print(alg, embedding.shape)
+    data = {
+        "x": embedding[text, 0],
+        "y": embedding[text, 1] if len(embedding[0]) > 1 else embedding[text, 0],
+        "text": [target for k, target in enumerate(targets) if k in text],
+    }
+    glyph = Text(x="x", y="y", text="text")
+    source = ColumnDataSource(data=data)
+    plot.add_glyph(source, glyph)
+    return plot
 
 
 async def _get_server_metrics():

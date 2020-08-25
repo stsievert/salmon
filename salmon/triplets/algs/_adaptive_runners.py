@@ -48,7 +48,7 @@ class Adaptive(Runner):
         optimizer: str = "Embedding",
         optimizer__lr=0.075,
         optimizer__momentum=0.9,
-        initial_batch_size=4,
+        initial_batch_size=128,
         random_state=None,
         R: float = 10,
         sampling: str = "adaptive",
@@ -126,6 +126,9 @@ class Adaptive(Runner):
         return queries, scores
 
     def process_answers(self, answers: List[Answer]):
+        if not len(answers):
+            return self, False
+
         self.meta["num_ans"] += len(answers)
         logger.debug("self.meta = %s", self.meta)
         logger.debug("self.R, self.n = %s, %s", self.R, self.n)
@@ -144,6 +147,7 @@ class Adaptive(Runner):
         self.opt.push(alg_ans)
         self.opt.partial_fit(alg_ans)
         self.meta["model_updates"] += 1
+        return self, True
 
     def get_model(self) -> Dict[str, Any]:
         return {
@@ -220,7 +224,7 @@ class TSTE(Adaptive):
         optimizer: str = "Embedding",
         optimizer__lr=0.075,
         optimizer__momentum=0.9,
-        initial_batch_size=4,
+        initial_batch_size=128,
         random_state=None,
         sampling="adaptive",
         alpha=1,
@@ -283,7 +287,7 @@ class STE(Adaptive):
         optimizer: str = "Embedding",
         optimizer__lr=0.075,
         optimizer__momentum=0.9,
-        initial_batch_size=4,
+        initial_batch_size=128,
         random_state=None,
         sampling="adaptive",
         scorer="infogain",
@@ -344,7 +348,7 @@ class GNMDS(Adaptive):
         optimizer: str = "Embedding",
         optimizer__lr=0.075,
         optimizer__momentum=0.9,
-        initial_batch_size=4,
+        initial_batch_size=128,
         random_state=None,
         sampling="adaptive",
         scorer="uncertainty"
@@ -400,7 +404,7 @@ class CKL(Adaptive):
         optimizer: str = "Embedding",
         optimizer__lr=0.075,
         optimizer__momentum=0.9,
-        initial_batch_size=4,
+        initial_batch_size=128,
         random_state=None,
         mu=1,
         sampling="adaptive",

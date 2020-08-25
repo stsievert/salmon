@@ -71,6 +71,12 @@ def _format_targets(file: Path):
     return df[df.columns[0]].tolist()
 
 
+def image_url(target: str) -> str:
+    i = target.find("src=")
+    t = target[i + 5 :]
+    return t[: t.find("'")]
+
+
 def sha256(x: Any) -> str:
     if not isinstance(x, (str, bytes)):
         x = str(x)
