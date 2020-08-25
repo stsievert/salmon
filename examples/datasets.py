@@ -31,8 +31,7 @@ def strange_fruit(head, left, right, random_state=None):
     p_correct = final / (1 + np.exp(-rate * (r - 0.5)))
 
     winner = 0 if ldiff < rdiff else 1
-    if not isinstance(random_state, np.random.RandomState):
-        random_state = check_random_state(random_state)
+    random_state = check_random_state(random_state)
     if random_state.uniform() <= p_correct:
         return winner
     return 1 - winner

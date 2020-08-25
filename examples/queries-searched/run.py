@@ -33,7 +33,7 @@ def _test_dataset(n, n_test, seed=42):
     repeats = (X[:, 0] == X[:, 1]) | (X[:, 0] == X[:, 2]) | (X[:, 1] == X[:, 2])
     X = X[~repeats]
     # assert len(X) >= 9500
-    y = np.array([strange_fruit(h, l, r) for (h, l, r) in X])
+    y = np.array([strange_fruit(h, l, r, random_state=38) for (h, l, r) in X])
     return X, y
 
 
@@ -138,7 +138,7 @@ class Test(BaseEstimator):
                 ident = "-".join(
                     [f"{k[:5]}={v}" for k, v in sorted(tuple(fparams.items()))]
                 )
-                df.to_parquet(f"data2/dataset={self.dataset}-d={self.d}/{ident}.parquet")
+                df.to_parquet(f"data3/dataset={self.dataset}-d={self.d}/{ident}.parquet")
             if self.search_.alg.meta["num_ans"] >= self.max_queries:
                 break
 
