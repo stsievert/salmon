@@ -5,7 +5,7 @@ import torch.optim
 from sklearn.utils import check_random_state
 
 import salmon.triplets.algs.adaptive as adaptive
-from salmon.triplets.algs.adaptive import InfoGainScorer
+from salmon.triplets.algs.adaptive import InfoGainScorer, UncertaintyScorer
 from salmon.backend import Runner
 from salmon.utils import get_logger
 from salmon.triplets.algs._random_sampling import _get_query as _random_query
@@ -52,6 +52,7 @@ class Adaptive(Runner):
         random_state=None,
         R: float = 10,
         sampling: str = "adaptive",
+        scorer: str = "infogain",
         **kwargs,
     ):
         super().__init__(ident=ident)
@@ -85,11 +86,21 @@ class Adaptive(Runner):
         )
         self.opt.initialize()
 
-        self.search = InfoGainScorer(
-            embedding=self.opt.embedding(),
-            probs=self.opt.module_.probs,
-            random_state=random_state,
-        )
+        if scorer == "infogain":
+            search = InfoGainScorer(
+                embedding=self.opt.embedding(),
+                probs=self.opt.module_.probs,
+                random_state=random_state,
+            )
+        elif scorer == "uncertainty":
+            search = UncertaintyScorer(
+                embedding=self.opt.embedding(),
+                random_state=random_state,
+            )
+        else:
+            raise ValueError(f"scorer={scorer} not in ['uncertainty', 'infogain']")
+
+        self.search = search
         self.search.push([])
         self.meta = {"num_ans": 0, "model_updates": 0}
         self.params = {
@@ -217,6 +228,7 @@ class TSTE(Adaptive):
         random_state=None,
         sampling="adaptive",
         alpha=1,
+        scorer="infogain",
     ):
         super().__init__(
             n=n,
@@ -230,6 +242,7 @@ class TSTE(Adaptive):
             module__alpha=alpha,
             module="TSTE",
             sampling=sampling,
+            scorer=scorer,
         )
 
 
@@ -277,6 +290,7 @@ class STE(Adaptive):
         initial_batch_size=128,
         random_state=None,
         sampling="adaptive",
+        scorer="infogain",
     ):
         super().__init__(
             n=n,
@@ -289,6 +303,7 @@ class STE(Adaptive):
             random_state=random_state,
             module="STE",
             sampling=sampling,
+            scorer=scorer,
         )
 
 
@@ -336,6 +351,7 @@ class GNMDS(Adaptive):
         initial_batch_size=128,
         random_state=None,
         sampling="adaptive",
+        scorer="uncertainty"
     ):
         super().__init__(
             n=n,
