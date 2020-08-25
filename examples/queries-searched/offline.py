@@ -13,8 +13,10 @@ sys.path.append(str(DIR.parent))
 
 from datasets import strange_fruit
 
+
 class NoData(Exception):
     pass
+
 
 class OfflineSearch:
     def __init__(
@@ -42,7 +44,10 @@ class OfflineSearch:
         dataset = self.dataset
         if dataset == "strange_fruit":
             ans = strange_fruit(
-                query["head"], query["left"], query["right"], rng=self.random_state_
+                query["head"],
+                query["left"],
+                query["right"],
+                random_state=self.random_state_,
             )
             winner = query["left"] if ans == 0 else query["right"]
             response = {"winner": winner, **query}
@@ -58,8 +63,7 @@ class OfflineSearch:
             if not o1_wins or not o2_wins:
                 raise NoData()
             answers = ([o1] * o1_wins) + ([o2] * o2_wins)
-            rng = check_random_state(self.random_state)
-            winner = rng.choice(answers)
+            winner = self.random_state_.choice(answers)
             return {"winner": winner, **query}
 
         raise ValueError(f"dataset={dataset} not recognized")

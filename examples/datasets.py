@@ -2,9 +2,10 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from sklearn.utils import check_random_state
 
 
-def strange_fruit(head, left, right, rng=None):
+def strange_fruit(head, left, right, random_state=None):
     """
     Parameters
     ----------
@@ -30,8 +31,8 @@ def strange_fruit(head, left, right, rng=None):
     p_correct = final / (1 + np.exp(-rate * (r - 0.5)))
 
     winner = 0 if ldiff < rdiff else 1
-    if not rng:
-        rng = np.random.RandomState()
-    if rng.uniform() <= p_correct:
+    if not isinstance(random_state, np.random.RandomState):
+        random_state = check_random_state(random_state)
+    if random_state.uniform() <= p_correct:
         return winner
     return 1 - winner

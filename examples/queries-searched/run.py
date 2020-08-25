@@ -222,9 +222,6 @@ class Test(BaseEstimator):
 
 
 if __name__ == "__main__":
-    config = {"max_queries": 50_000, "n": 600, "d": 1, "n_test": 10_000}
-    assert "n_search" not in config
-
     searches = [[1 * 10 ** i, 2 * 10 ** i, 5 * 10 ** i] for i in range(0, 5 + 1)]
     searches = sum(searches, [])
     datasets = ["zappos", "strange_fruit"]

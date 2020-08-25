@@ -29,5 +29,4 @@ up:
 	rsync --exclude '.git' --exclude '.mypy_cache' --exclude 'docs' -v -r . $(DNS):~/salmon/
 
 down:
-	scp -r $(DNS):~/salmon/examples/queries-searched/data ./cluster-data
-	scp -r $(DNS):~/salmon/examples/queries-searched/data-d=2 ./cluster-data-d=2
+	scp -r $(DNS):~/salmon/examples/queries-searched/data2 .
