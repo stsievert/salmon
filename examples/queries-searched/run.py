@@ -18,7 +18,7 @@ from dask.distributed import Client, as_completed
 from sklearn.base import BaseEstimator
 from sklearn.model_selection import train_test_split
 
-from salmon.triplets.algs import TSTE
+import salmon.triplets.algs as algs
 from salmon.triplets.algs.adaptive._embed import gram_utils
 from offline import OfflineSearch
 
@@ -37,15 +37,10 @@ def _test_dataset(n, n_test, seed=42):
     return X, y
 
 
-def _correct_version():
-    import salmon
-
-    assert salmon.__version__ == "v0.3.6+18.g6f3da47.dirty"
-
-
 class Test(BaseEstimator):
     def __init__(
         self,
+        noise_model="TSTE",
         n_search=None,
         n=600,
         d=1,
@@ -67,6 +62,7 @@ class Test(BaseEstimator):
         self.dataset = dataset
         self.write = write
         self.queries_per_search = queries_per_search
+        self.noise_model = noise_model
         super().__init__()
 
     def init(self):
@@ -77,7 +73,8 @@ class Test(BaseEstimator):
             "random_state": 10023,
         }
 
-        alg = TSTE(n=self.n, d=self.d, **params)
+        Alg = getattr(algs, self.noise_model)
+        alg = Alg(n=self.n, d=self.d, **params)
         search = OfflineSearch(
             alg,
             n_search=self.n_search,
@@ -115,7 +112,6 @@ class Test(BaseEstimator):
         self.search_ = self.search_.partial_fit()
 
     def fit(self, X=None, y=None):
-        _correct_version()
         if X is not None and y is not None:
             raise ValueError("Expected X and y to be None")
         if (
@@ -140,9 +136,9 @@ class Test(BaseEstimator):
                 df = pd.DataFrame(self.data_)
                 fparams = {**self.params_, **self.static_}
                 ident = "-".join(
-                    [f"{k}={v}" for k, v in sorted(tuple(fparams.items()))]
+                    [f"{k[:5]}={v}" for k, v in sorted(tuple(fparams.items()))]
                 )
-                df.to_parquet(f"data/dataset={self.dataset}-d={self.d}/{ident}.parquet")
+                df.to_parquet(f"data2/dataset={self.dataset}-d={self.d}/{ident}.parquet")
             if self.search_.alg.meta["num_ans"] >= self.max_queries:
                 break
 
@@ -226,26 +222,19 @@ class Test(BaseEstimator):
 
 
 if __name__ == "__main__":
-    _correct_version()
-
     config = {"max_queries": 50_000, "n": 600, "d": 1, "n_test": 10_000}
     assert "n_search" not in config
 
-    searches = [[1 * 10 ** i, 2 * 10 ** i, 5 * 10 ** i] for i in range(1, 5 + 1)]
+    searches = [[1 * 10 ** i, 2 * 10 ** i, 5 * 10 ** i] for i in range(0, 5 + 1)]
     searches = sum(searches, [])
     datasets = ["zappos", "strange_fruit"]
     D = [1, 2]
 
-    #  client = Client("localhost:8786")
-    #  client.upload_file("../datasets.py")
-    #  client.upload_file("offline.py")
-    #  client.upload_file("../datasets")
-    #  print(client.dashboard_link)
-
-    search_dataset_d = list(itertools.product(searches, datasets, D))
+    noises = ["TSTE", "CKL"]
+    search_dataset_d_noise = list(itertools.product(searches, datasets, D, noises))
     kwargs = [
-        {"n_search": s, "dataset": dataset, "d": d}
-        for s, dataset, d in search_dataset_d
+        {"n_search": s, "dataset": dataset, "d": d, "noise_model": noise}
+        for s, dataset, d, noise in search_dataset_d_noise
         if not (dataset == "zappos" and d == 1)
     ]
     print(f"Total of launching {len(kwargs)} jobs")

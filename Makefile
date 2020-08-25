@@ -26,7 +26,7 @@ clean: FORCE
 	rm -f out/redis.csv
 
 up:
-	rsync -v -r . $(DNS):~/salmon/
+	rsync --exclude '.git' --exclude '.mypy_cache' --exclude 'docs' -v -r . $(DNS):~/salmon/
 
 down:
 	scp -r $(DNS):~/salmon/examples/queries-searched/data ./cluster-data
