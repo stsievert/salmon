@@ -101,21 +101,6 @@
     </div>
   </div>
 </div>
-{% if skip_button %}
-<!--
-  <div class="">
-    <div class="fixed-bottom text-center">
-      <div style="padding: 25px; margin: 5px; color: #888; float: center !important;">
-        <div id="skip-button">
-          <button type="button" class="btn btn-outline-info btn-sm" onclick="getquery()"
-              data-toggle="tooltip" data-placement="top" data-html="true"
-              title="Skip questions only if you know <em>nothing</em> about the items shown."
-          >Skip this question</button>
-        </div>
-      </div>
-  </div>
--->
-{% endif %}
 
 <!-- "Thanks for participating!" modal -->
 <div class="modal fade" id="debriefModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -144,6 +129,7 @@ left = -1;
 right = -1;
 puid = $("#puid").html();
 targets = {{ targets | safe }};
+prev_queries = [];
 function getTime(){
   var d = new Date();
     // getTime returns time in milliseconds since 1970-01-01, [1]
@@ -180,6 +166,25 @@ async function send(winner, id) {
   );
 }
 
+class FixedLengthArray{
+  constructor(capacity) {
+    this.capacity = capacity;
+    this.arr = [];
+  }
+  push(val){
+    if(this.arr.length < this.capacity) {
+      this.arr.push(val);
+    } else {
+      this.arr.shift();  // remove the 1st element
+      this.arr.push(val);
+    }
+  }
+  includes (val) {
+    return this.arr.includes(val);
+  }
+}
+
+var prev_queries = new FixedLengthArray(5);
 
 function getquery(){
   $.get("/query", function(data){
@@ -188,14 +193,21 @@ function getquery(){
       left = data["left"];
       score = data["score"];
       ident = data["alg_ident"];
-      $("#q-left").html(targets[left]);
-      $("#q-right").html(targets[right]);
-      $("#q-head").html(targets[head]);
-      end_latency = getTime();
-      latency = end_latency - start_latency;
-      response_start = getTime();
-      $('#q-left').removeClass("disabled");
-      $('#q-right').removeClass("disabled");
+      query = [head, left, right].join("-");
+      console.log(prev_queries)
+      if (prev_queries.includes(query)) {
+        getquery();
+      } else {
+        prev_queries.push(query);
+        $("#q-left").html(targets[left]);
+        $("#q-right").html(targets[right]);
+        $("#q-head").html(targets[head]);
+        end_latency = getTime();
+        latency = end_latency - start_latency;
+        response_start = getTime();
+        $('#q-left').removeClass("disabled");
+        $('#q-right').removeClass("disabled");
+      }
   });
 }
 
