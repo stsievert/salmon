@@ -180,9 +180,8 @@ class Embedding(_Embedding):
         return self.module_.embedding.detach().numpy()
 
     def get_train_idx(self, n_ans):
-        n_grads = np.round(n_ans * 0.1).astype(int)
-        n_grads = min(10 * self.module__n, n_grads)
-        idx = self.random_state_.choice(n_ans, replace=False, size=n_grads)
+        bs = min(n_ans, 256)  # hard coded batch size
+        idx = self.random_state_.choice(n_ans, replace=False, size=bs)
         return idx
 
 
