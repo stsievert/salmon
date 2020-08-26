@@ -9,6 +9,7 @@ from functools import partial
 from typing import Any, Dict
 from toolz.dicttoolz import merge
 from joblib import Parallel, delayed
+from typing import List
 from pathlib import Path
 from pprint import pprint
 
@@ -44,6 +45,7 @@ class Test(BaseEstimator):
         n_search=None,
         n=600,
         d=1,
+        R=10,
         max_queries=60_000,
         n_test=10_000,
         n_partial_fit=100,
@@ -55,6 +57,7 @@ class Test(BaseEstimator):
         self.n_search = n_search
         self.n = n
         self.d = d
+        self.R = R
         self.max_queries = max_queries
         self.n_test = n_test
         self.n_partial_fit = n_partial_fit
@@ -68,13 +71,13 @@ class Test(BaseEstimator):
     def init(self):
         params = {
             "optimizer": "Embedding",
-            "optimizer__lr": 0.10,
+            "optimizer__lr": 0.05,
             "optimizer__momentum": 0.75,
             "random_state": 10023,
         }
 
         Alg = getattr(algs, self.noise_model)
-        alg = Alg(n=self.n, d=self.d, **params)
+        alg = Alg(n=self.n, d=self.d, R=self.R, **params)
         search = OfflineSearch(
             alg,
             n_search=self.n_search,
@@ -138,7 +141,7 @@ class Test(BaseEstimator):
                 ident = "-".join(
                     [f"{k[:5]}={v}" for k, v in sorted(tuple(fparams.items()))]
                 )
-                df.to_parquet(f"data3/dataset={self.dataset}-d={self.d}/{ident}.parquet")
+                df.to_parquet(f"data3/{ident}.parquet")
             if self.search_.alg.meta["num_ans"] >= self.max_queries:
                 break
 
@@ -222,10 +225,12 @@ class Test(BaseEstimator):
 
 
 if __name__ == "__main__":
-    searches = [[1 * 10 ** i, 2 * 10 ** i, 5 * 10 ** i] for i in range(0, 5 + 1)]
-    searches = sum(searches, [])
+    queries_per_search = 10
+    _searches = [[1 * 10 ** i, 2 * 10 ** i, 5 * 10 ** i] for i in range(0, 6 + 1)]
+    searches: List[int] = sum(_searches, [])
+    searches = [s for s in searches if s >= queries_per_search]
     datasets = ["zappos", "strange_fruit"]
-    D = [1, 2]
+    D = [2]
 
     noises = ["TSTE", "CKL"]
     search_dataset_d_noise = list(itertools.product(searches, datasets, D, noises))
@@ -238,18 +243,19 @@ if __name__ == "__main__":
     print("First 5 kwargs:")
     pprint(kwargs[:5])
 
-    static = {"write": True, "queries_per_search": 1}
+    static = {"write": True, "queries_per_search": queries_per_search}
     fmt_kwargs = []
     for kwarg in kwargs:
         if kwarg["dataset"] == "zappos":
             k = {
                 "n": 85,
-                "max_queries": 20_000,
+                "max_queries": 30_000,
             }
         else:
             k = {
-                "n": 600,
-                "max_queries": 100_000,
+                "n": 200,
+                "max_queries": 30_000,
+                "R": 2,
             }
         kwarg.update(**static, **k)
         fmt_kwargs.append(kwarg)

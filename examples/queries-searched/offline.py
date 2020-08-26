@@ -80,6 +80,8 @@ class OfflineSearch:
     def _partial_fit(self):
         self.pf_calls_ += 1
 
+        # Run this loop if a single query is returned
+        # Do one process_answers call
         for k in itertools.count():
             if k == 90:
                 breakpoint()
@@ -97,6 +99,8 @@ class OfflineSearch:
                     self.alg.process_answers([response])
                     return True
 
+        # Run this loop if multiple queries are returned
+        # Call process_answers once
         for k in itertools.count():
             if k >= 100:
                 raise ValueError("infinite loop?")
