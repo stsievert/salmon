@@ -226,7 +226,7 @@ def test_salmon_integration():
     err = np.abs(search.posterior_ / tau)
 
     # Making sure approximately correct (not exactly correct)
-    zero = tau <= 1e-6
+    zero = (tau <= 1e-10) | (post <= 1e-10)
     err = tau[~zero] / post[~zero]
     eps = 1e-3
     assert 1 - eps <= err.min() <= err.max() <= 1 + eps
