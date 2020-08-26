@@ -30,7 +30,7 @@ def test_probs():
     p3 = search.exp_STE_probs(d1, d2)
 
     i = p2 > 0.5
-    assert N / 3 < i.sum() < N * (1 - 1 / 3)
+    assert N / 3 <= i.sum() <= N * (1 - 1 / 3)
     assert (p3[i] > 0.5).all()
 
 

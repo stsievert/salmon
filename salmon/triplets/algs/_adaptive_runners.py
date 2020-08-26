@@ -7,7 +7,7 @@ import numpy.linalg as LA
 from sklearn.utils import check_random_state
 
 import salmon.triplets.algs.adaptive as adaptive
-from salmon.triplets.algs.adaptive import InfoGainScorer
+from salmon.triplets.algs.adaptive import InfoGainScorer, UncertaintyScorer
 from salmon.backend import Runner
 from salmon.utils import get_logger
 from salmon.triplets.algs._random_sampling import _get_query as _random_query
@@ -50,6 +50,7 @@ class Adaptive(Runner):
         random_state=None,
         R: float = 10,
         sampling: str = "adaptive",
+        scorer: str = "infogain",
         **kwargs,
     ):
         super().__init__(ident=ident)
@@ -82,12 +83,22 @@ class Adaptive(Runner):
         )
         self.opt.initialize()
 
-        self.search = InfoGainScorer(
-            embedding=self.opt.embedding(),
-            probs=self.opt.module_.probs,
-            random_state=random_state,
-        )
+        if scorer == "infogain":
+            search = InfoGainScorer(
+                embedding=self.opt.embedding(),
+                probs=self.opt.module_.probs,
+                random_state=random_state,
+            )
+        elif scorer == "uncertainty":
+            search = UncertaintyScorer(
+                embedding=self.opt.embedding(),
+                random_state=random_state,
+            )
+        else:
+            raise ValueError(f"scorer={scorer} not in ['uncertainty', 'infogain']")
+
         self.random_state_ = check_random_state(random_state)
+        self.search = search
         self.search.push([])
         self.meta = {"num_ans": 0, "model_updates": 0, "process_answers_calls": 0}
         self.params = {
@@ -113,6 +124,9 @@ class Adaptive(Runner):
         return queries[:num], scores[:num]
 
     def process_answers(self, answers: List[Answer]):
+        if not len(answers):
+            return self, False
+
         self.meta["num_ans"] += len(answers)
         self.meta["process_answers_calls"] += 1
         logger.debug("self.meta = %s", self.meta)
@@ -137,6 +151,7 @@ class Adaptive(Runner):
 
         self.opt.partial_fit(valid_ans)
         self.meta["model_updates"] += 1
+        return self, True
 
     def get_model(self) -> Dict[str, Any]:
         return {
@@ -252,6 +267,7 @@ class TSTE(Adaptive):
         optimizer__momentum=0.9,
         random_state=None,
         sampling="adaptive",
+        scorer="infogain",
         alpha=1,
         **kwargs,
     ):
@@ -266,6 +282,7 @@ class TSTE(Adaptive):
             module__alpha=alpha,
             module="TSTE",
             sampling=sampling,
+            scorer=scorer,
             **kwargs,
         )
 
@@ -310,6 +327,8 @@ class STE(Adaptive):
         optimizer__momentum=0.9,
         random_state=None,
         sampling="adaptive",
+        scorer="infogain",
+        **kwargs,
     ):
         super().__init__(
             n=n,
@@ -321,6 +340,8 @@ class STE(Adaptive):
             random_state=random_state,
             module="STE",
             sampling=sampling,
+            scorer=scorer,
+            **kwargs,
         )
 
 
@@ -364,6 +385,8 @@ class GNMDS(Adaptive):
         optimizer__momentum=0.9,
         random_state=None,
         sampling="adaptive",
+        scorer="uncertainty",
+        **kwargs,
     ):
         super().__init__(
             n=n,
@@ -375,6 +398,7 @@ class GNMDS(Adaptive):
             random_state=random_state,
             module="GNMDS",
             sampling=sampling,
+            **kwargs,
         )
 
 
@@ -415,6 +439,7 @@ class CKL(Adaptive):
         random_state=None,
         mu=1,
         sampling="adaptive",
+        **kwargs,
     ):
         super().__init__(
             n=n,
@@ -427,4 +452,5 @@ class CKL(Adaptive):
             module__mu=mu,
             module="CKL",
             sampling=sampling,
+            **kwargs,
         )

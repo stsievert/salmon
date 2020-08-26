@@ -144,3 +144,31 @@ class InfoGainScorer(QueryScorer):
 
         scores = score(H, O1, O2, self.posterior_, D, probs=self.probs)
         return Q, scores
+
+
+class UncertaintyScorer(QueryScorer):
+    def score(self, *, queries=None, num=1000):
+        """
+        Score the queries using (almost) the information gain.
+
+        Parameters
+        ----------
+        queries : List[int, int, int]
+            The list of queries to score.
+        num : int
+            Number of random queries to generate.
+
+        """
+        if not hasattr(self, "initialized_"):
+            self._initialize()
+        D = self._distances()
+        if queries is not None and num != 1000:
+            raise ValueError("Only specify one of `queries` or `num`")
+        if queries is None:
+            queries = self._random_queries(len(self.embedding), num=num)
+        Q = np.array(queries).astype("int64")
+        H, O1, O2 = Q[:, 0], Q[:, 1], Q[:, 2]
+
+        # score is distance to the decision boundary.
+        scores = -np.abs(D[H, O1] - D[H, O2])
+        return Q, scores
