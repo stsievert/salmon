@@ -307,6 +307,7 @@ class PadaDampG(Damper):
         initial_batch_size=64,
         max_batch_size=None,
         growth_factor=1.01,
+        dwell=10,
         **kwargs,
     ):
         super().__init__(
