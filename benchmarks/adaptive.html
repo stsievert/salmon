@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Adaptive algorithms &mdash; Salmon v0.4.0+4.g02d0fad.dirty documentation</title>
+  <title>Adaptive algorithms &mdash; Salmon v0.4.0+5.gff8c78a.dirty documentation</title>
   
 
   
@@ -98,7 +98,11 @@
 <p class="caption"><span class="caption-text">Benchmarks</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="server.html">Concurrent Users</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Adaptive algorithms</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Adaptive algorithms</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#illustrative-result">Illustrative result</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#search-efficacy">Search efficacy</a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -172,6 +176,8 @@
 about a random question like random sampling. This can mean that higher
 accuracies are reached sooner, or that less human responses are required to
 reach a particular accuracy.</p>
+<div class="section" id="illustrative-result">
+<h2>Illustrative result<a class="headerlink" href="#illustrative-result" title="Permalink to this headline">¶</a></h2>
 <p>Let’s run a quick benchmark with Salmon to see how well adaptive performs in
 the crowdsourcing context. This benchmark will accurately simulate a
 crowdsourcing context:</p>
@@ -190,11 +196,12 @@ into <span class="math notranslate nohighlight">\(d = 2\)</span> dimensions <a c
 how select queries.</p></li>
 </ul>
 <p>With that setup, how much of a difference does query selection matter? Here’s
-an illustrative result:</p>
+a result that illustrates the benefit of adaptive algorithms:</p>
 <a class="reference internal image-reference" href="../_images/adaptive.png"><img alt="../_images/adaptive.png" class="align-center" src="../_images/adaptive.png" style="width: 400px;" /></a>
-<p>By this measure, Salmon has better performance than NEXT for adaptive triplet
-embeddings. In NEXT’s introduction paper, the authors provided “no evidence for
-gains from adaptive sampling” for the triplet embedding problem <a class="footnote-reference brackets" href="#id4" id="id2">2</a>.</p>
+<p>This measure provide evidence to support the hypothesis that Salmon has better
+performance than NEXT for adaptive triplet embeddings. For reference, in NEXT’s
+introduction paper, the authors provided “no evidence for gains from adaptive
+sampling” for the triplet embedding problem <a class="footnote-reference brackets" href="#id4" id="id2">2</a>.</p>
 <dl class="footnote brackets">
 <dt class="label" id="id3"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
 <dd><p>“Active Perceptual Similarity Modeling with Auxiliary Information” by E.
@@ -208,6 +215,38 @@ and R. Nowak. 2017.
 <a class="reference external" href="http://papers.nips.cc/paper/5868-next-a-system-for-real-world-development-evaluation-and-application-of-active-learning.pdf">http://papers.nips.cc/paper/5868-next-a-system-for-real-world-development-evaluation-and-application-of-active-learning.pdf</a></p>
 </dd>
 </dl>
+</div>
+<div class="section" id="search-efficacy">
+<h2>Search efficacy<a class="headerlink" href="#search-efficacy" title="Permalink to this headline">¶</a></h2>
+<p>Adaptive algorithms are more adaptive if they search more queries. Random sampling
+can be thought of as an adaptive algorithm that only searches over one possible
+query. An algorithm that searches over 50,000 queries is more adaptive than a
+algorithm that can only search 50 queries.</p>
+<p>How much do these searches matter? Let’s run another experiment with this setup:</p>
+<ul class="simple">
+<li><p>Dataset: strange fruit dataset. The response model will be determined from human
+responses. There will be <span class="math notranslate nohighlight">\(n=200\)</span> objects and that will be embedded into <span class="math notranslate nohighlight">\(d=2\)</span>
+dimensions.</p></li>
+<li><p>Let’s measure <strong>search efficacy.</strong> To aid this, let’s say model updates run instantly.
+That means we’ll run offline using essentially this code:</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">responses_per_search</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">n_search</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">alg</span> <span class="o">=</span> <span class="n">TSTE</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="n">d</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">count</span><span class="p">():</span>
+    <span class="n">queries</span><span class="p">,</span> <span class="n">scores</span> <span class="o">=</span> <span class="n">alg</span><span class="o">.</span><span class="n">score_queries</span><span class="p">(</span><span class="n">num</span><span class="o">=</span><span class="n">n_search</span> <span class="o">*</span> <span class="n">responses_per_search</span><span class="p">)</span>
+    <span class="n">queries</span> <span class="o">=</span> <span class="n">_get_top_N_queries</span><span class="p">(</span><span class="n">queries</span><span class="p">,</span> <span class="n">scores</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="n">responses_per_search</span><span class="p">)</span>
+    <span class="n">answers</span> <span class="o">=</span> <span class="p">[</span><span class="n">_get_answer</span><span class="p">(</span><span class="n">query</span><span class="p">)</span> <span class="k">for</span> <span class="n">query</span> <span class="ow">in</span> <span class="n">queries</span><span class="p">]</span>
+
+    <span class="n">alg</span><span class="o">.</span><span class="n">partial_fit</span><span class="p">(</span><span class="n">answers</span><span class="p">)</span>  <span class="c1"># performs 1 pass over all answers received thus far</span>
+</pre></div>
+</div>
+<p>With that, we see this performance:</p>
+<a class="reference internal image-reference" href="../_images/search-efficacy.png"><img alt="../_images/search-efficacy.png" class="align-center" src="../_images/search-efficacy.png" style="width: 600px;" /></a>
+<p>If you only have the budget for 4,000 queries the most complete search will reach about 82% accuracy. The least complete search will only reach about 60% accuracy.</p>
+<p>If you want to reach 80% accuracy, the most complete searches will require about 3,800 queries. The least complete searches will require 5,100 queries.</p>
+</div>
 </div>
 
 
