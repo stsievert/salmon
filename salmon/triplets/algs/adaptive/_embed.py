@@ -27,6 +27,11 @@ class _Embedding(NeuralNet):
             max_norm = 10 * self.module__d
             idx = norms > max_norm
             if idx.sum():
+                d = self.module_._embedding.shape[1]
+                if d > 1:
+                    norms = torch.cat((norms,) * d, dim=1)
+                else:
+                    norms = norms.reshape(-1, 1)
                 self.module_._embedding[idx] *= max_norm / norms[idx]
 
         return r
@@ -61,17 +66,12 @@ class Embedding(_Embedding):
         optimizer__lr=0.05,
         optimizer__momentum=0.9,
         random_state=None,
-        initial_batch_size=64,
         warm_start=True,
         max_epochs=1,
         **kwargs,
     ):
-        self.initial_batch_size = initial_batch_size
         self.random_state = random_state
 
-        # Set init random state
-        # Set random state for eg order
-        #
         super().__init__(
             module=module,
             module__n=module__n,
@@ -95,30 +95,26 @@ class Embedding(_Embedding):
         rng = check_random_state(self.random_state)
         super().initialize()
 
-        self.meta_ = {"num_answers": 0, "model_updates": 0}
+        self.meta_ = {"num_answers": 0, "model_updates": 0, "num_grad_comps": 0}
         self.initialized_ = True
         self.random_state_ = rng
         self.answers_ = np.zeros((1000, 3), dtype="uint16")
 
-    @property
-    def batch_size_(self):
-        return self.initial_batch_size
-
     def push(self, answers):
-        if not (hasattr(self, "initialized_") and self.initialized_):
-            self.initialize()
-
         if isinstance(answers, list):
             answers = (
                 np.array(answers) if len(answers) else np.empty((0, 3), dtype="uint16")
             )
-        i = self.meta_["num_answers"]
-        if i + len(answers) >= len(self.answers_):
+        num_ans = copy(self.meta_["num_answers"])
+
+        if num_ans + len(answers) >= len(self.answers_):
             n = len(answers) + len(self.answers_)
             new_ans = np.zeros((n, 3), dtype="uint16")
             self.answers_ = np.vstack((self.answers_, new_ans))
-        self.answers_[i : i + len(answers)] = answers
+        self.answers_[num_ans : num_ans + len(answers)] = answers
+
         self.meta_["answers_bytes"] = self.answers_.nbytes
+        self.meta_["num_answers"] += len(answers)
         return self.answers_.nbytes
 
     def partial_fit(self, answers):
@@ -141,25 +137,29 @@ class Embedding(_Embedding):
 
         This impure function modifies
 
-            * ``self.meta_`` keys ``model_updates`` and ``num_answers``
+            * ``self.meta_`` keys ``model_updates`` and ``num_grad_comps``
             * ``self.module_``, the embedding.
         """
+        if not (hasattr(self, "initialized_") and self.initialized_):
+            self.initialize()
         if not isinstance(answers, np.ndarray):
             answers = np.array(answers, dtype="uint16")
-        if not len(answers):
-            return self
-        beg_meta = copy(self.meta_)
-        while True:
-            bs = self.batch_size_
 
-            idx_train = self.random_state_.choice(len(answers), size=bs)
+        if self.meta_["num_answers"] <= self.module__n:
+            return self
+
+        beg_meta = copy(self.meta_)
+
+        while True:
+            idx_train = self.get_train_idx(self.meta_["num_answers"])
             train_ans = answers[idx_train].astype("int64")
             _ = super().partial_fit(train_ans)
 
-            self.meta_["num_answers"] += self.batch_size_
+            self.meta_["num_grad_comps"] += len(idx_train)
             self.meta_["model_updates"] += 1
             logger.info("%s", self.meta_)
-            if self.meta_["num_answers"] - beg_meta["num_answers"] >= len(answers):
+            n_ans = len(answers)
+            if self.meta_["num_grad_comps"] - beg_meta["num_grad_comps"] >= n_ans:
                 break
         return self
 
@@ -172,11 +172,17 @@ class Embedding(_Embedding):
 
     def fit(self, X, y=None):
         for epoch in range(self.max_epochs):
-            self.partial_fit(self.answers_)
+            n_ans = copy(self.meta_["num_answers"])
+            self.partial_fit(self.answers_[:n_ans])
         return self
 
     def embedding(self):
         return self.module_.embedding.detach().numpy()
+
+    def get_train_idx(self, n_ans):
+        bs = min(n_ans, 256)  # hard coded batch size
+        idx = self.random_state_.choice(n_ans, replace=False, size=bs)
+        return idx
 
 
 class Damper(Embedding):
@@ -184,7 +190,7 @@ class Damper(Embedding):
         self,
         module,
         module__n=85,
-        module__d=85,
+        module__d=2,
         optimizer=None,
         optimizer__lr=None,
         optimizer__momentum=0.9,
@@ -193,6 +199,7 @@ class Damper(Embedding):
         max_batch_size=None,
         **kwargs,
     ):
+        self.initial_batch_size = initial_batch_size
         self.max_batch_size = max_batch_size
         super().__init__(
             module=module,
@@ -202,9 +209,13 @@ class Damper(Embedding):
             optimizer__lr=optimizer__lr,
             optimizer__momentum=optimizer__momentum,
             random_state=random_state,
-            initial_batch_size=initial_batch_size,
             **kwargs,
         )
+
+    def get_train_idx(self, len_ans):
+        bs = self.batch_size_
+        idx_train = self.random_state_.choice(len_ans, size=bs)
+        return idx_train
 
     def initialize(self):
         r = super().initialize()
@@ -213,7 +224,7 @@ class Damper(Embedding):
         return r
 
     def _set_lr(self, lr):
-        opt = self.module_.optimizer_
+        opt = self.optimizer_
         for group in opt.param_groups:
             group["lr"] = lr
 
@@ -233,20 +244,70 @@ class Damper(Embedding):
         raise NotImplementedError
 
 
+class LRDamper(Damper):
+    def __init__(
+        self,
+        module,
+        module__n=85,
+        module__d=2,
+        optimizer=None,
+        optimizer__lr=None,
+        optimizer__momentum=0.9,
+        random_state=None,
+        initial_batch_size=128,
+        **kwargs,
+    ):
+        super().__init__(
+            module=module,
+            module__n=module__n,
+            module__d=module__d,
+            optimizer=optimizer,
+            optimizer__lr=optimizer__lr,
+            optimizer__momentum=optimizer__momentum,
+            random_state=random_state,
+            initial_batch_size=initial_batch_size,
+            **kwargs,
+        )
+
+        self.batch_size = initial_batch_size
+        self.max_batch_size = initial_batch_size
+
+
+class CntsLRDamper(LRDamper):
+    """
+    Decays the learning rate like 1 / (1 + mu) like Thm. 4.7 of [1]_.
+
+    References
+    ----------
+    1. Bottou, L. A. C., Frank E and Nocedal, Jorge. (2018).
+       Optimization methods for large-scale machine learning.
+       SIAM Review, 60, 223-223. Retrieved from https://arxiv.org/abs/1606.04838
+    """
+    def __init__(self, *args, rate=0.05, **kwargs):
+        self.rate = rate
+        super().__init__(*args, **kwargs)
+
+    def damping(self):
+        mu = self.meta_["model_updates"]
+        damping = int(self.batch_size * (1 + self.rate * mu))
+        self.meta_["damping"] = damping
+        return damping
+
+
 class PadaDampG(Damper):
     def __init__(
         self,
         module,
         module__n=85,
-        module__d=85,
+        module__d=2,
         optimizer=None,
         optimizer__lr=None,
         optimizer__momentum=0.9,
         random_state=None,
         initial_batch_size=64,
         max_batch_size=None,
-        dwell=10,
         growth_factor=1.01,
+        dwell=10,
         **kwargs,
     ):
         super().__init__(
@@ -279,7 +340,7 @@ class GeoDamp(Damper):
         self,
         module,
         module__n=85,
-        module__d=85,
+        module__d=2,
         optimizer=None,
         optimizer__lr=None,
         optimizer__momentum=0.9,

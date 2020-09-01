@@ -61,7 +61,7 @@ class QueryScorer:
         self.push([])
 
     def _random_queries(self, n, num=1000):
-        new_num = int(num * 1.1)
+        new_num = int(num * 1.1 + 3)
         queries = self.random_state_.choice(n, size=(new_num, 3))
         repeated = (
             (queries[:, 0] == queries[:, 1])
@@ -98,12 +98,17 @@ class QueryScorer:
         logger.info("history = %s", history)
         if len(history):
             for k, (head, w, l) in enumerate(history):
-                a = np.log(self.probs(D[w], D[l]))
+                probs = self.probs(D[w], D[l])
+                probs[np.isnan(probs)] = 0
+                probs[probs <= 0] = 1e-20
+                a = np.log(probs)
                 self._tau_[head] += a
 
-        tau = np.exp(self._tau_)
+        idx = self._tau_ >= -60
+        tau = np.zeros_like(self._tau_)
+        tau[idx] = np.exp(self._tau_[idx])
         s = tau.sum(axis=1)  # the sum of each row
-        tau = (tau.T / s).T
+        tau = (tau.T / (s + 1e-20)).T
         return tau
 
     def push(self, history):

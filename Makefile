@@ -1,4 +1,5 @@
 FORCE: ;
+DNS:=ssievert@opt-a001.discovery.wisc.edu
 
 loop: clean stop
 	docker-compose rm -f
@@ -23,3 +24,10 @@ clean: FORCE
 	rm -f out/dump*.rdb
 	rm -f out/salmon*.log
 	rm -f out/redis.csv
+
+up:
+	rsync --exclude '.git' --exclude '.mypy_cache' --exclude 'docs' -v -r . $(DNS):~/salmon/
+
+down:
+	scp -r $(DNS):~/salmon2/examples/queries-searched/data3-reversed-score cluster-data3-reversed-score/
+	scp -r $(DNS):~/salmon/examples/queries-searched/data3 cluster-data3/
