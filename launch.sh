@@ -8,6 +8,7 @@ dask-worker --nprocs 4 127.0.0.2:8786 &
 
 if [ $SALMON_DEBUG ]
 then
+    export LOG_LEVEL=INFO
     echo "Launching uvicorn..."
     uvicorn salmon:app_algs --reload --reload-dir salmon --port 8400 --host 0.0.0.0 &
     sleep 1
@@ -20,7 +21,7 @@ else
     # Use preload to reduce startup time
     # Use 2 threads to heartbeat gets sent more often
     echo "Launching gunicorn..."
-    export LOG_LEVEL="WARNING"
+    export LOG_LEVEL=WARNING
 
     ## Use uvicorn instead of gunicorn because FastAPI's background tasks are threads
     ## in uvicorn, not processes.
