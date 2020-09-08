@@ -11,6 +11,7 @@ Stats to record include accuracy and distances to nearest neighbor (median, mean
 """
 
 import asyncio
+import json
 import sys
 from pathlib import Path
 from time import time
@@ -18,6 +19,7 @@ from typing import Optional, Tuple, Union
 
 import httpx
 import numpy as np
+import msgpack
 import pandas as pd
 import yaml
 from scipy.spatial import distance_matrix
@@ -47,11 +49,12 @@ class SalmonExperiment(BaseEstimator):
         self.random_state = random_state
 
     def init(self):
+        httpx.get(self.salmon + "/reset?force=1", auth=("username", "password"), timeout=20)
         self.random_state_ = check_random_state(self.random_state)
         if self.dataset == "strange_fruit":
             init = {
                 "d": self.d,
-                "samplers": {"TSTE": {"alpha": 1, "random_state": self.random_state}},
+                "samplers": {"TSTE": {"alpha": 1, "random_state": self.random_state, "R": 1}},
                 "targets": list(range(self.n)),
             }
             httpx.post(
@@ -86,32 +89,50 @@ class User(BaseEstimator):
     def init(self):
         self.initialized_ = True
         self.random_state_ = check_random_state(self.random_state)
+        self.data_ = []
         return self
 
     async def _partial_fit(self, X=None, y=None):
         if not hasattr(self, "initialized_") or not self.initialized_:
             self.init()
 
-        for _ in range(self.n_responses):
-            response = await self.http.get(self.salmon + "/query")
-            query = response.json()
-            _ans = datasets.strange_fruit(
-                query["head"],
-                query["left"],
-                query["right"],
-                random_state=self.random_state_,
-            )
-            winner = query["left"] if _ans == 0 else query["right"]
-            sleep_time = self.random_state_.normal(loc=self.response_time, scale=0.25)
-            sleep_time = max(0.75, sleep_time)
-            answer = {
-                "winner": winner,
-                "puid": self.uid,
-                "response_time": sleep_time,
-                **query,
-            }
-            await asyncio.sleep(self.response_time)
-            await self.http.post(self.salmon + "/answer", data=answer)
+        for k in range(self.n_responses):
+            try:
+                datum = {"num_responses": k, "puid": self.uid, "salmon": self.salmon}
+                sleep_time = self.random_state_.uniform(0, 5)
+                await asyncio.sleep(sleep_time)
+
+                _s = time()
+                r = await self.http.get(self.salmon + "/query", timeout=20)
+                datum.update({"time_get_query": time() - _s})
+                assert r.status_code == 200
+
+                query = r.json()
+                _ans = datasets.strange_fruit(
+                    query["head"],
+                    query["left"],
+                    query["right"],
+                    random_state=self.random_state_,
+                )
+                winner = query["left"] if _ans == 0 else query["right"]
+                sleep_time = self.random_state_.normal(loc=self.response_time, scale=0.25)
+                sleep_time = max(0.75, sleep_time)
+                answer = {
+                    "winner": winner,
+                    "puid": self.uid,
+                    "response_time": sleep_time,
+                    **query,
+                }
+                await asyncio.sleep(sleep_time)
+                datum.update({"sleep_time": sleep_time})
+                _s = time()
+                r = await self.http.post(self.salmon + "/answer", data=json.dumps(answer), timeout=20)
+                datum.update({"time_post_answer": time() - _s})
+                assert r.status_code == 200
+                self.data_.append(datum)
+            except Exception as e:
+                print("Exception!")
+                print(e)
         return self
 
     def partial_fit(self, X=None, y=None):
@@ -139,21 +160,38 @@ class Stats:
         self.X = X
         self.y = y
 
+    def _fmt_responses(self, responses):
+        return [
+            [
+                r["head"],
+                r["winner"],
+                r["left"] if r["winner"] == r["right"] else r["right"],
+                r["score"],
+            ]
+            for r in responses
+        ]
+
     async def collect(self):
         response = await self.http.get(self.salmon + f"/model/{self.sampler}")
         stats = response.json()
         stats["time"] = time()
+        if "embedding" not in stats.keys():
+            print("Embedding not in keys!")
+            print(stats)
+            return {"error": True}
         embedding = np.asarray(stats.pop("embedding"))
         accuracy = self._get_acc(embedding)
         nn_acc, nn_diffs = self._get_nn_diffs(embedding)
 
         diff_stats = {
-            "nn_diff_p{k}": np.percentile(nn_diffs, k)
+            f"nn_diff_p{k}": np.percentile(nn_diffs, k)
             for k in [99, 95, 90, 80, 70, 60, 50, 40, 30, 20, 10, 5, 1]
         }
 
-        r = await self.http.get(self.salmon + f"/responses")
-        responses = r.json()
+        r = await self.http.get(
+            self.salmon + f"/responses", auth=("username", "password")
+        )
+        responses = self._fmt_responses(r.json())
 
         return {
             "accuracy": accuracy,
@@ -161,6 +199,7 @@ class Stats:
             "nn_diff_mean": nn_diffs.mean(),
             "nn_acc": nn_acc,
             "responses": responses,
+            "error": False,
             **diff_stats,
             **stats,
         }
@@ -184,9 +223,11 @@ class Stats:
             deadline = time() + 5
             datum = await self.collect()
             self.history_.append(datum)
-            pd.DataFrame(self.history_).to_parquet(self.fname, index=False)
+            fname = self.fname.format(n_users=self.config["n_users"])
+            with open(fname, "wb") as f:
+                msgpack.dump(self.history_, f)
             if event.is_set():
-                return self.history_
+                return self.history_, fname
             while time() < deadline:
                 await asyncio.sleep(0.1)
 
@@ -196,7 +237,7 @@ async def main(**config):
     exp = SalmonExperiment(**kwargs).init()
 
     X, y = _test_dataset(config["n"], config["n_test"])
-    n_responses = (config["n_users"] // config["max_queries"]) + 1
+    n_responses = (config["max_queries"] // config["n_users"]) + 1
 
     async with httpx.AsyncClient() as client:
         users = [
@@ -207,24 +248,30 @@ async def main(**config):
         completed = asyncio.Event()
         algs = list(exp.config["samplers"].keys())
         assert len(algs) == 1
-        stats = Stats(X, y, config=config, sampler=algs[0], http=client)
+        stats = Stats(
+            X, y, config=config, sampler=algs[0], http=client, fname=config["fname"]
+        )
         task = asyncio.create_task(stats.run_until(completed))
         await asyncio.gather(*responses)
+        user_data = sum([user.data_ for user in users], [])
         completed.set()
         while not task.done():
             await asyncio.sleep(0.1)
-        history = task.result()
-    return history
+        history, fname = task.result()
+    return history, fname, user_data
 
 
 if __name__ == "__main__":
     config = {
-        "n_users": 1,
-        "max_queries": 4,
-        "n": 200,
+        "n_users": 10,
+        "max_queries": 10_000,
+        "n": 50,
         "d": 2,
         "dataset": "strange_fruit",
         "random_state": 42,
         "n_test": 10_000,
+        "fname": "history-n_users={n_users}.msgpack",
     }
-    asyncio.run(main(**config))
+    history, fname, user_data = asyncio.run(main(**config))
+    with open(f"user-{fname}", "wb") as f:
+        msgpack.dump(user_data, f)
