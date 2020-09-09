@@ -64,6 +64,7 @@ class Runner:
         update = False
         for k in itertools.count():
             try:
+                loop_start = time()
                 datum = {"iteration": k, "ident": self.ident}
 
                 answers = self.get_answers(rj, clear=True)
@@ -78,16 +79,22 @@ class Runner:
                 if hasattr(self, "get_queries"):
                     queries_searched = 0
                     deadline = time() + self.min_search_length()
-                    for pwr in itertools.count(start=11):
+                    pwr_start = 13
+                    datum["time_posting_queries"] = 0
+                    datum["time_searching_queries"] = 0
+                    for pwr in itertools.count(start=pwr_start):
+                        _s = time()
                         f2 = submit("get_queries", self_future, num=2 ** pwr)
                         queries, scores = f2.result()
+                        datum["time_searching_queries"] += time() - _s
                         queries_searched += len(queries)
 
                         _s = time()
                         self.post_queries(queries, scores, rj)
-                        datum["post_query_time"] = time() - _s
+                        datum["time_posting_queries"] += time() - _s
                         if f1.done() and time() > deadline:
                             datum["queries_searched"] = queries_searched
+                            datum["query_searches_submitted"] = pwr + 1 - pwr_start
                             break
 
                 # Future.result raises errors automatically
@@ -96,7 +103,7 @@ class Runner:
                 if update:
                     _s = time()
                     self.__dict__.update(new_self.__dict__)
-                    datum["time_update"] = time() - _s
+                    datum["time_update_self"] = time() - _s
 
             except Exception as e:
                 logger.exception(e)
@@ -104,13 +111,17 @@ class Runner:
             _s = time()
             self.save()
             datum["time_save"] = time() - _s
+            datum["time_loop"] = time() - loop_start
+            logger.info(datum)
+            from pprint import pprint
+            pprint(datum)
             if "reset" in rj.keys() and rj.jsonget("reset"):
                 self.reset(client, rj)
                 break
         return True
 
     def min_search_length(self):
-        return 1
+        return 0
 
     def save(self) -> bool:
         rj2 = self.redis_client(decode_responses=False)
