@@ -68,9 +68,11 @@ class Embedding(_Embedding):
         random_state=None,
         warm_start=True,
         max_epochs=1,
+        initial_batch_size=256,
         **kwargs,
     ):
         self.random_state = random_state
+        self.initial_batch_size = initial_batch_size
 
         super().__init__(
             module=module,
@@ -180,7 +182,7 @@ class Embedding(_Embedding):
         return self.module_.embedding.detach().numpy()
 
     def get_train_idx(self, n_ans):
-        bs = min(n_ans, 256)  # hard coded batch size
+        bs = min(n_ans, self.initial_batch_size)
         idx = self.random_state_.choice(n_ans, replace=False, size=bs)
         return idx
 
@@ -255,6 +257,7 @@ class LRDamper(Damper):
         optimizer__momentum=0.9,
         random_state=None,
         initial_batch_size=128,
+        max_batch_size=None,
         **kwargs,
     ):
         super().__init__(
@@ -269,8 +272,8 @@ class LRDamper(Damper):
             **kwargs,
         )
 
-        self.batch_size = initial_batch_size
-        self.max_batch_size = initial_batch_size
+        self.initial_batch_size = initial_batch_size
+        self.max_batch_size = max_batch_size
 
 
 class CntsLRDamper(LRDamper):
@@ -289,7 +292,7 @@ class CntsLRDamper(LRDamper):
 
     def damping(self):
         mu = self.meta_["model_updates"]
-        damping = int(self.batch_size * (1 + self.rate * mu))
+        damping = int(self.initial_batch_size * (1 + self.rate * mu))
         self.meta_["damping"] = damping
         return damping
 
