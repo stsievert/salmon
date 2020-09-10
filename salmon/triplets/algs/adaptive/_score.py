@@ -100,16 +100,24 @@ class QueryScorer:
             for k, (head, w, l) in enumerate(history):
                 probs = self.probs(D[w], D[l])
                 probs[np.isnan(probs)] = 0
-                probs[probs <= 0] = 1e-20
+                # probs[probs <= 0] = 1e-20
                 a = np.log(probs)
                 self._tau_[head] += a
 
-        idx = self._tau_ >= -60
+        # idx = self._tau_ >= -np.inf
         tau = np.zeros_like(self._tau_)
-        tau[idx] = np.exp(self._tau_[idx])
+        # tau[idx] = np.exp(self._tau_[idx])
+        tau = np.exp(self._tau_)
         s = tau.sum(axis=1)  # the sum of each row
-        tau = (tau.T / (s + 1e-20)).T
-        return tau
+
+        s *= 1e3
+        tau *= 1e3
+
+        eps = min(s[s > 0].min() * 1e-2, 1e-20)
+        s = np.clip(s, eps, np.inf)
+
+        tau2 = (tau.T / (s + 0)).T  # transpose to make broadcasting work
+        return tau2
 
     def push(self, history):
         if not hasattr(self, "initialized_"):
