@@ -113,7 +113,11 @@ class QueryScorer:
         s *= 1e3
         tau *= 1e3
 
-        eps = min(s[s > 0].min() * 1e-2, 1e-20)
+        if (s > 0).any():
+            eps = min(s[s > 0].min() * 1e-2, 1e-20)
+        else:
+            eps = 1e-40
+
         s = np.clip(s, eps, np.inf)
 
         tau2 = (tau.T / (s + 0)).T  # transpose to make broadcasting work

@@ -73,6 +73,7 @@ class Runner:
 
                 f1 = submit("process_answers", self_future, answers)
                 if update:
+                    datum["cleared_queries"] = True
                     self.clear_queries(rj)
 
                 _start = time()
@@ -204,15 +205,16 @@ class Runner:
         raise NotImplementedError
 
     def clear_queries(self, rj: RedisClient) -> bool:
-        name = self.ident
-        rj.delete(f"alg-{name}.queries")
+        key = f"alg-{self.ident}-queries"
+        rj.delete(key)
+        assert rj.zcard(key) == 0, "Queries should be cleared from database"
         return True
 
     def post_queries(
         self, queries: List[Query], scores: List[float], rj: RedisClient
     ) -> bool:
         queries2 = {
-            self.serialize_query(q): float(score)
+            self.serialize_query(q): np.float64(score)
             for q, score in zip(queries, scores)
             if not np.isnan(score)
         }

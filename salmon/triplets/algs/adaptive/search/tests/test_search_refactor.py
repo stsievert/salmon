@@ -221,6 +221,7 @@ def test_salmon_integration():
     search.push(history)
     queries, scores = search.score()
 
+    # This is the right order: queries are stored in next as (w, l, h). See myApp.py#L93.
     next_history = [[w, l, h] for h, w, l in history]
     tau = utilsSTE.getSTETauDistribution(X, next_history)
 
