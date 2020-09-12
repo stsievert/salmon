@@ -40,12 +40,13 @@ SALMON = "http://localhost:8421"
 
 class SalmonExperiment(BaseEstimator):
     def __init__(
-        self, salmon=SALMON, dataset="strange_fruit", n=200, d=2, random_state=None
+        self, salmon=SALMON, dataset="strange_fruit", n=200, d=2, R=10, random_state=None
     ):
         self.salmon = salmon
         self.dataset = dataset
         self.n = n
         self.d = d
+        self.R = R
         self.random_state = random_state
 
     def init(self):
@@ -54,7 +55,7 @@ class SalmonExperiment(BaseEstimator):
         if self.dataset == "strange_fruit":
             init = {
                 "d": self.d,
-                "samplers": {"TSTE": {"alpha": 1, "random_state": self.random_state, "R": 1}},
+                "samplers": {"TSTE": {"alpha": 1, "random_state": self.random_state, "R": self.R}},
                 "targets": list(range(self.n)),
             }
             httpx.post(
@@ -123,6 +124,19 @@ class User(BaseEstimator):
                     "response_time": sleep_time,
                     **query,
                 }
+                if self.uid == "0":
+                    h = answer["head"]
+                    l = answer["left"]
+                    r = answer["right"]
+                    w = answer["winner"]
+                    dl = abs(h - l)
+                    dr = abs(h - r)
+                    if w == l:
+                        print(f"DL={dl}, dr={dr}. (h, l, r, w) = {(h, l, r, w)}")
+                    elif w == r:
+                        print(f"dl={dl}, DR={dr}. (h, l, r, w) = {(h, l, r, w)}")
+                    else:
+                        raise ValueError(f"h, l, r, w = {(h, l, r, w)}")
                 await asyncio.sleep(sleep_time)
                 datum.update({"sleep_time": sleep_time})
                 _s = time()
@@ -266,7 +280,8 @@ if __name__ == "__main__":
         "n_users": 10,
         "max_queries": 10_000,
         "n": 50,
-        "d": 2,
+        "d": 1,
+        "R": 10,
         "dataset": "strange_fruit",
         "random_state": 42,
         "n_test": 10_000,
