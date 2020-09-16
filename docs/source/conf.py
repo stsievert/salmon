@@ -36,6 +36,13 @@ html_context = {
     "conf_py_path": "/source/",  # Path in the checkout to the docs root
 }
 
+html_theme_options = {
+    "style_nav_header_background": "#494646",
+    "logo_only": True,
+}
+
+html_logo = "imgs/logo.png"
+
 # -- General configuration ---------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be
