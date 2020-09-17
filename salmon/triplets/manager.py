@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from typing import Any, Dict, List
+import random
 
 from pydantic import BaseModel
 
@@ -27,6 +28,9 @@ class Answer(BaseModel):
 
 def deserialize_query(serialized_query: str) -> Dict[str, int]:
     h, l, r = serialized_query.split("-")
+    flip = random.choice([True, False])
+    if flip:
+        l, r = r, l
     return {
         "head": int(h),
         "left": int(l),
