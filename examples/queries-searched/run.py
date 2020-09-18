@@ -141,7 +141,7 @@ class Test(BaseEstimator):
                 ident = "-".join(
                     [f"{k[:5]}={v}" for k, v in sorted(tuple(fparams.items()))]
                 )
-                df.to_parquet(f"data3/{ident}.parquet")
+                df.to_parquet(f"data/{ident}.parquet")
             if self.search_.alg.meta["num_ans"] >= self.max_queries:
                 break
 
@@ -228,11 +228,12 @@ if __name__ == "__main__":
     queries_per_search = 10
     _searches = [[1 * 10 ** i, 2 * 10 ** i, 5 * 10 ** i] for i in range(0, 6 + 1)]
     searches: List[int] = sum(_searches, [])
+
     searches = [s for s in searches if s >= queries_per_search]
     datasets = ["zappos", "strange_fruit"]
     D = [2]
+    noises = ["TSTE"]
 
-    noises = ["TSTE", "CKL"]
     search_dataset_d_noise = list(itertools.product(searches, datasets, D, noises))
     kwargs = [
         {"n_search": s, "dataset": dataset, "d": d, "noise_model": noise}
@@ -249,13 +250,12 @@ if __name__ == "__main__":
         if kwarg["dataset"] == "zappos":
             k = {
                 "n": 85,
-                "max_queries": 30_000,
+                "max_queries": 15_000,
             }
         else:
             k = {
-                "n": 200,
-                "max_queries": 30_000,
-                "R": 2,
+                "n": 85,
+                "max_queries": 15_000,
             }
         kwarg.update(**static, **k)
         fmt_kwargs.append(kwarg)
