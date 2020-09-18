@@ -64,7 +64,6 @@ class QueryScorer:
     def _random_queries(self, n, num=1000, random_state=None, trim=True):
         new_num = int(num * 1.1 + 3)
         rng = self.random_state_
-        print("rs:67", random_state)
         if random_state is not None:
             rng = check_random_state(random_state)
         queries = rng.choice(n, size=(new_num, 3))
@@ -173,7 +172,6 @@ class UncertaintyScorer(QueryScorer):
             raise ValueError("Only specify one of `queries` or `num`")
         if queries is None:
             queries = self._random_queries(len(self.embedding), num=num, random_state=random_state, trim=trim)
-        print("rs:176", random_state)
         Q = np.array(queries).astype("int64")
         H, O1, O2 = Q[:, 0], Q[:, 1], Q[:, 2]
 
