@@ -1,6 +1,6 @@
 import itertools
 from pprint import pprint
-from time import perf_counter as time
+from time import time
 from typing import List, TypeVar, Tuple, Dict, Any, Optional
 
 import cloudpickle
@@ -80,26 +80,55 @@ class Runner:
                 scores_f = client.scatter(scores)
                 if update:
                     self.clear_queries(rj)
-                f_post = submit("post_queries", self_future, queries_f, scores_f)
-                f_proc = submit("process_answers", self_future, answers)
-
                 done = distributed.Event(name="pa_finished")
+                done.clear()
+                f_post = submit(
+                    "post_queries", self_future, queries_f, scores_f, done=done
+                )
+                f_model = submit("process_answers", self_future, answers)
+
                 if hasattr(self, "get_queries"):
-                    f_search = submit("get_queries", self_future, random_state=k, stop=done)
-                f_proc.add_done_callback(lambda _: done.set())
+                    f_search = submit(
+                        "get_queries", self_future, random_state=k, stop=done
+                    )
+                else:
+                    f_search = client.submit(lambda x: x, 1)
+
+                time_model = 0
+                time_post = 0
+                time_search = 0
+
+                def _model_done(_):
+                    nonlocal time_model
+                    done.set()
+                    time_model += time() - _start
+
+                def _post_done(_):
+                    nonlocal time_post
+                    time_post += time() - _start
+
+                def _search_done(_):
+                    nonlocal time_search
+                    time_search += time() - _start
+
+                f_model.add_done_callback(_model_done)
+                f_post.add_done_callback(_post_done)
+                f_search.add_done_callback(_search_done)
 
                 # Future.result raises errors automatically
-                new_self, update = f_proc.result()
-                datum["time_model_update"] = time() - _start
-                queries, scores, meta = f_search.result()
-                datum["time_search"] = time() - _start
                 posted = f_post.result()
+                new_self, update = f_model.result()
+                queries, scores = f_search.result()
 
                 _datum_update = {
                     "n_queries_posted": posted,
                     "update": update,
                     "n_db_queries": rj.zcard(f"alg-{self.ident}-queries"),
                     "n_model_updates": n_model_updates,
+                    "time_posting_queries": time_post,
+                    "time_model_update": time_model,
+                    "time_search": time_search,
+                    "time": time(),
                 }
                 datum.update(_datum_update)
                 if update:
@@ -214,19 +243,39 @@ class Runner:
         queries: List[Query],
         scores: List[float],
         rj: Optional[RedisClient] = None,
+        done=None,
     ) -> int:
         if rj is None:
             rj = self.redis_client()
-        queries2 = {
-            self.serialize_query(q): float(score)
-            for q, score in zip(queries, scores)
-            if not np.isnan(score)
-        }
-        name = self.ident
-        key = f"alg-{name}-queries"
-        if len(queries2):
-            rj.zadd(key, queries2)
-        return len(queries2)
+
+        if isinstance(queries, np.ndarray) and isinstance(scores, np.ndarray):
+            idx = np.argsort(-scores)
+            scores = scores[idx]  # high to low scores
+            queries = queries[idx]
+
+        if not len(queries):
+            return 0
+
+        n_chunks = len(queries) // 500
+        split_queries = np.array_split(queries, max(n_chunks, 1))
+        split_scores = np.array_split(scores, max(n_chunks, 1))
+
+        n_queries = 0
+        for _queries, _scores in zip(split_queries, split_scores):
+            queries2 = {
+                self.serialize_query(q): float(score)
+                for q, score in zip(_queries, _scores)
+                if not np.isnan(score)
+            }
+            name = self.ident
+            key = f"alg-{name}-queries"
+            if len(queries2):
+                rj.zadd(key, queries2)
+            n_queries += len(queries2)
+            if done is not None and done.is_set():
+                break
+
+        return n_queries
 
     def serialize_query(self, q: Query) -> str:
         # TODO: use ast.literal_eval or json.loads
