@@ -1,3 +1,5 @@
+import itertools
+from time import time
 from textwrap import dedent
 from typing import List, TypeVar, Tuple, Dict, Any, Optional
 
@@ -119,9 +121,27 @@ class Adaptive(Runner):
             return {"head": int(head), "left": int(left), "right": int(right)}, 1.0
         return None, -9999
 
-    def get_queries(self, num=10_000) -> Tuple[List[Query], List[float]]:
-        queries, scores = self.search.score(num=num)
-        return queries[:num], scores[:num]
+    def get_queries(self, num=10_000, stop=None, random_state=None) -> Tuple[List[Query], List[float], Dict[str, Any]]:
+        if num:
+            queries, scores = self.search.score(num=num, random_state=random_state)
+            return queries[:num], scores[:num], {"queries_searched": 0}
+        ret_queries = []
+        ret_scores = []
+        n_queries = 0
+        deadline = time() + self.min_search_length()
+        rng = None
+        if random_state:
+            rng = check_random_state(random_state)
+        for pwr in itertools.count(start=12):
+            queries, scores = self.search.score(num=2 ** pwr, trim=False, random_state=rng)
+            ret_queries.append(queries)
+            ret_scores.append(scores)
+            n_queries += len(queries)
+            if time() >= deadline and stop.is_set():
+                break
+        meta = {"queries_searched": n_queries}
+        return np.concenate(ret_queries), np.concatenate(ret_scores), meta
+
 
     def process_answers(self, answers: List[Answer]):
         if not len(answers):

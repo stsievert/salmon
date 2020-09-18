@@ -1,11 +1,13 @@
 import itertools
+from pprint import pprint
 from time import perf_counter as time
+from typing import List, TypeVar, Tuple, Dict, Any, Optional
 
+import cloudpickle
 import numpy as np
-from typing import List, TypeVar, Tuple, Dict, Any
+import dask.distributed as distributed
 from redis.exceptions import ResponseError
 from rejson import Client as RedisClient, Path
-import cloudpickle
 from dask.distributed import Client as DaskClient
 
 from ..utils import get_logger
@@ -57,11 +59,15 @@ class Runner:
 
         answers: List = []
         logger.info(f"Staring {self.ident}")
+        print(f"Staring {self.ident}")
 
         def submit(fn: str, *args, **kwargs):
             return client.submit(getattr(type(self), fn), *args, **kwargs)
 
         update = False
+        queries = np.array([])
+        scores = np.array([])
+        n_model_updates = 0
         for k in itertools.count():
             try:
                 datum = {"iteration": k, "ident": self.ident}
@@ -70,33 +76,40 @@ class Runner:
                 datum["num_answers"] = len(answers)
                 self_future = client.scatter(self)
 
-                f1 = submit("process_answers", self_future, answers)
+                _start = time()
+                queries_f = client.scatter(queries)
+                scores_f = client.scatter(scores)
                 if update:
                     self.clear_queries(rj)
+                f_post = submit("post_queries", self_future, queries_f, scores_f)
+                f_proc = submit("process_answers", self_future, answers)
 
-                _start = time()
+                done = distributed.Event(name="pa_finished")
                 if hasattr(self, "get_queries"):
-                    queries_searched = 0
-                    deadline = time() + self.min_search_length()
-                    for pwr in itertools.count(start=11):
-                        f2 = submit("get_queries", self_future, num=2 ** pwr)
-                        queries, scores = f2.result()
-                        queries_searched += len(queries)
-
-                        _s = time()
-                        self.post_queries(queries, scores, rj)
-                        datum["post_query_time"] = time() - _s
-                        if f1.done() and time() > deadline:
-                            datum["queries_searched"] = queries_searched
-                            break
+                    f_search = submit("get_queries", self_future, random_state=k, stop=done)
+                f_proc.add_done_callback(lambda _: done.set())
 
                 # Future.result raises errors automatically
-                new_self, update = f1.result()
+                new_self, update = f_proc.result()
                 datum["time_model_update"] = time() - _start
+                queries, scores, meta = f_search.result()
+                datum["time_search"] = time() - _start
+                posted = f_post.result()
+
+                _datum_update = {
+                    "n_queries_posted": posted,
+                    "update": update,
+                    "n_db_queries": rj.zcard(f"alg-{self.ident}-queries"),
+                    "n_model_updates": n_model_updates,
+                    "scores0": scores[0],
+                    "queries0": queries[0],
+                }
+                datum.update(_datum_update)
                 if update:
                     _s = time()
                     self.__dict__.update(new_self.__dict__)
                     datum["time_update"] = time() - _s
+                    n_model_updates += 1
 
             except Exception as e:
                 logger.exception(e)
@@ -107,6 +120,8 @@ class Runner:
             if "reset" in rj.keys() and rj.jsonget("reset"):
                 self.reset(client, rj)
                 break
+            logger.info(datum)
+            pprint(datum)
         return True
 
     def min_search_length(self):
@@ -194,12 +209,17 @@ class Runner:
 
     def clear_queries(self, rj: RedisClient) -> bool:
         name = self.ident
-        rj.delete(f"alg-{name}.queries")
+        rj.delete(f"alg-{name}-queries")
         return True
 
     def post_queries(
-        self, queries: List[Query], scores: List[float], rj: RedisClient
-    ) -> bool:
+        self,
+        queries: List[Query],
+        scores: List[float],
+        rj: Optional[RedisClient] = None,
+    ) -> int:
+        if rj is None:
+            rj = self.redis_client()
         queries2 = {
             self.serialize_query(q): float(score)
             for q, score in zip(queries, scores)
@@ -207,8 +227,9 @@ class Runner:
         }
         name = self.ident
         key = f"alg-{name}-queries"
-        rj.zadd(key, queries2)
-        return True
+        if len(queries2):
+            rj.zadd(key, queries2)
+        return len(queries2)
 
     def serialize_query(self, q: Query) -> str:
         # TODO: use ast.literal_eval or json.loads

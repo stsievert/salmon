@@ -2,6 +2,7 @@ from sklearn.base import BaseEstimator
 from numba import jit, prange
 import numpy as np
 from joblib import Parallel, delayed
+from sklearn.utils import check_random_state
 
 from .search import gram_utils, score
 import salmon.utils as utils
@@ -60,16 +61,22 @@ class QueryScorer:
         self._tau_ = np.zeros((n, n), dtype="float32")
         self.push([])
 
-    def _random_queries(self, n, num=1000):
+    def _random_queries(self, n, num=1000, random_state=None, trim=True):
         new_num = int(num * 1.1 + 3)
-        queries = self.random_state_.choice(n, size=(new_num, 3))
+        rng = self.random_state_
+        print("rs:67", random_state)
+        if random_state is not None:
+            rng = check_random_state(random_state)
+        queries = rng.choice(n, size=(new_num, 3))
         repeated = (
             (queries[:, 0] == queries[:, 1])
             | (queries[:, 1] == queries[:, 2])
             | (queries[:, 0] == queries[:, 2])
         )
         queries = queries[~repeated]
-        return queries[:num]
+        if trim:
+            return queries[:num]
+        return queries
 
     def _distances(self):
         G = gram_utils.gram_matrix(self.embedding)
@@ -120,7 +127,7 @@ class QueryScorer:
 
 
 class InfoGainScorer(QueryScorer):
-    def score(self, *, queries=None, num=1000):
+    def score(self, *, queries=None, num=1000, random_state=None):
         """
         Score the queries using (almost) the information gain.
 
@@ -138,7 +145,7 @@ class InfoGainScorer(QueryScorer):
         if queries is not None and num != 1000:
             raise ValueError("Only specify one of `queries` or `num`")
         if queries is None:
-            queries = self._random_queries(len(self.embedding), num=num)
+            queries = self._random_queries(len(self.embedding), num=num, random_state=random_state)
         Q = np.array(queries).astype("int64")
         H, O1, O2 = Q[:, 0], Q[:, 1], Q[:, 2]
 
@@ -147,7 +154,7 @@ class InfoGainScorer(QueryScorer):
 
 
 class UncertaintyScorer(QueryScorer):
-    def score(self, *, queries=None, num=1000):
+    def score(self, *, queries=None, num=1000, trim=True, random_state=None):
         """
         Score the queries using (almost) the information gain.
 
@@ -165,7 +172,8 @@ class UncertaintyScorer(QueryScorer):
         if queries is not None and num != 1000:
             raise ValueError("Only specify one of `queries` or `num`")
         if queries is None:
-            queries = self._random_queries(len(self.embedding), num=num)
+            queries = self._random_queries(len(self.embedding), num=num, random_state=random_state, trim=trim)
+        print("rs:176", random_state)
         Q = np.array(queries).astype("int64")
         H, O1, O2 = Q[:, 0], Q[:, 1], Q[:, 2]
 
