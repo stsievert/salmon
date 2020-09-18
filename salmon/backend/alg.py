@@ -59,7 +59,6 @@ class Runner:
 
         answers: List = []
         logger.info(f"Staring {self.ident}")
-        print(f"Staring {self.ident}")
 
         def submit(fn: str, *args, **kwargs):
             return client.submit(getattr(type(self), fn), *args, **kwargs)
@@ -101,8 +100,6 @@ class Runner:
                     "update": update,
                     "n_db_queries": rj.zcard(f"alg-{self.ident}-queries"),
                     "n_model_updates": n_model_updates,
-                    "scores0": scores[0],
-                    "queries0": queries[0],
                 }
                 datum.update(_datum_update)
                 if update:
