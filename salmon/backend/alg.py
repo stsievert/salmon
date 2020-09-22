@@ -1,11 +1,13 @@
 import itertools
-from time import perf_counter as time
+from pprint import pprint
+from time import time
+from typing import List, TypeVar, Tuple, Dict, Any, Optional
 
+import cloudpickle
 import numpy as np
-from typing import List, TypeVar, Tuple, Dict, Any
+import dask.distributed as distributed
 from redis.exceptions import ResponseError
 from rejson import Client as RedisClient, Path
-import cloudpickle
 from dask.distributed import Client as DaskClient
 
 from ..utils import get_logger
@@ -62,6 +64,9 @@ class Runner:
             return client.submit(getattr(type(self), fn), *args, **kwargs)
 
         update = False
+        queries = np.array([])
+        scores = np.array([])
+        n_model_updates = 0
         for k in itertools.count():
             try:
                 loop_start = time()
@@ -71,40 +76,68 @@ class Runner:
                 datum["num_answers"] = len(answers)
                 self_future = client.scatter(self)
 
-                f1 = submit("process_answers", self_future, answers)
+                _start = time()
+                queries_f = client.scatter(queries)
+                scores_f = client.scatter(scores)
                 if update:
                     datum["cleared_queries"] = True
                     self.clear_queries(rj)
+                done = distributed.Event(name="pa_finished")
+                done.clear()
+                f_post = submit(
+                    "post_queries", self_future, queries_f, scores_f, done=done
+                )
+                f_model = submit("process_answers", self_future, answers)
 
-                _start = time()
                 if hasattr(self, "get_queries"):
-                    queries_searched = 0
-                    deadline = time() + self.min_search_length()
-                    pwr_start = 13
-                    datum["time_posting_queries"] = 0
-                    datum["time_searching_queries"] = 0
-                    for pwr in itertools.count(start=pwr_start):
-                        _s = time()
-                        f2 = submit("get_queries", self_future, num=2 ** pwr)
-                        queries, scores = f2.result()
-                        datum["time_searching_queries"] += time() - _s
-                        queries_searched += len(queries)
+                    f_search = submit(
+                        "get_queries", self_future, random_state=k, stop=done
+                    )
+                else:
+                    f_search = client.submit(lambda x: x, 1)
 
-                        _s = time()
-                        self.post_queries(queries, scores, rj)
-                        datum["time_posting_queries"] += time() - _s
-                        if f1.done() and time() > deadline:
-                            datum["queries_searched"] = queries_searched
-                            datum["query_searches_submitted"] = pwr + 1 - pwr_start
-                            break
+                time_model = 0
+                time_post = 0
+                time_search = 0
+
+                def _model_done(_):
+                    nonlocal time_model
+                    done.set()
+                    time_model += time() - _start
+
+                def _post_done(_):
+                    nonlocal time_post
+                    time_post += time() - _start
+
+                def _search_done(_):
+                    nonlocal time_search
+                    time_search += time() - _start
+
+                f_model.add_done_callback(_model_done)
+                f_post.add_done_callback(_post_done)
+                f_search.add_done_callback(_search_done)
 
                 # Future.result raises errors automatically
-                new_self, update = f1.result()
-                datum["time_model_update"] = time() - _start
+                posted = f_post.result()
+                new_self, update = f_model.result()
+                queries, scores = f_search.result()
+
+                _datum_update = {
+                    "n_queries_posted": posted,
+                    "update": update,
+                    "n_db_queries": rj.zcard(f"alg-{self.ident}-queries"),
+                    "n_model_updates": n_model_updates,
+                    "time_posting_queries": time_post,
+                    "time_model_update": time_model,
+                    "time_search": time_search,
+                    "time": time(),
+                }
+                datum.update(_datum_update)
                 if update:
                     _s = time()
                     self.__dict__.update(new_self.__dict__)
-                    datum["time_update_self"] = time() - _s
+                    datum["time_update"] = time() - _s
+                    n_model_updates += 1
 
             except Exception as e:
                 logger.exception(e)
@@ -115,10 +148,13 @@ class Runner:
             datum["time_loop"] = time() - loop_start
             logger.info(datum)
             from pprint import pprint
+
             pprint(datum)
             if "reset" in rj.keys() and rj.jsonget("reset"):
                 self.reset(client, rj)
                 break
+            logger.info(datum)
+            pprint(datum)
         return True
 
     def min_search_length(self):
@@ -205,23 +241,48 @@ class Runner:
         raise NotImplementedError
 
     def clear_queries(self, rj: RedisClient) -> bool:
-        key = f"alg-{self.ident}-queries"
-        rj.delete(key)
-        assert rj.zcard(key) == 0, "Queries should be cleared from database"
+        name = self.ident
+        rj.delete(f"alg-{name}-queries")
         return True
 
     def post_queries(
-        self, queries: List[Query], scores: List[float], rj: RedisClient
-    ) -> bool:
-        queries2 = {
-            self.serialize_query(q): np.float64(score)
-            for q, score in zip(queries, scores)
-            if not np.isnan(score)
-        }
-        name = self.ident
-        key = f"alg-{name}-queries"
-        rj.zadd(key, queries2)
-        return True
+        self,
+        queries: List[Query],
+        scores: List[float],
+        rj: Optional[RedisClient] = None,
+        done=None,
+    ) -> int:
+        if rj is None:
+            rj = self.redis_client()
+
+        if isinstance(queries, np.ndarray) and isinstance(scores, np.ndarray):
+            idx = np.argsort(-scores)
+            scores = scores[idx]  # high to low scores
+            queries = queries[idx]
+
+        if not len(queries):
+            return 0
+
+        n_chunks = len(queries) // 500
+        split_queries = np.array_split(queries, max(n_chunks, 1))
+        split_scores = np.array_split(scores, max(n_chunks, 1))
+
+        n_queries = 0
+        for _queries, _scores in zip(split_queries, split_scores):
+            queries2 = {
+                self.serialize_query(q): float(score)
+                for q, score in zip(_queries, _scores)
+                if not np.isnan(score)
+            }
+            name = self.ident
+            key = f"alg-{name}-queries"
+            if len(queries2):
+                rj.zadd(key, queries2)
+            n_queries += len(queries2)
+            if done is not None and done.is_set():
+                break
+
+        return n_queries
 
     def serialize_query(self, q: Query) -> str:
         # TODO: use ast.literal_eval or json.loads
