@@ -61,7 +61,12 @@ def test_same_salmon_next(n=40, d=2, num_ans=4000):
     flipped = [30, 10]
     useful = np.isin(Q[:, 0], flipped) | np.isin(Q[:, 1], flipped) | np.isin(Q[:, 2], flipped)
     useful = np.isin(Q[:, 1], flipped) & np.isin(Q[:, 2], flipped)
-    useful &= np.isin(Q[:, 0], [28, 29, 31, 32, 8, 9, 11, 12])
+    useful &= np.isin(Q[:, 0], [29, 31, 9, 11])
     assert scores[useful].mean() > scores[~useful].mean()
     assert np.median(scores[useful]) > np.median(scores[~useful])
-    assert np.percentile(scores[useful], 25) > np.percentile(scores[~useful], 60)
+
+    assert np.percentile(scores[~useful], 50) < np.percentile(scores[useful], 23)
+    assert np.percentile(scores[~useful], 60) < np.percentile(scores[useful], 25)
+    assert np.percentile(scores[~useful], 70) < np.percentile(scores[useful], 30)
+    assert np.percentile(scores[~useful], 80) < np.percentile(scores[useful], 50)
+    assert np.percentile(scores[~useful], 90) < np.percentile(scores[useful], 75)
