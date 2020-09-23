@@ -16,6 +16,7 @@ logger = get_logger(__name__)
 
 Query = TypeVar("Query")
 Answer = TypeVar("Answer")
+root = Path.rootPath()
 
 
 class Runner:
@@ -67,6 +68,8 @@ class Runner:
         queries = np.array([])
         scores = np.array([])
         n_model_updates = 0
+        rj.jsonset(f"alg-perf-{self.ident}", root, [])
+        save_deadline = time()
         for k in itertools.count():
             try:
                 loop_start = time()
@@ -143,9 +146,12 @@ class Runner:
                 logger.exception(e)
 
             _s = time()
-            self.save()
+            if time() >= save_deadline:
+                save_deadline = time() + 10 * 60
+                self.save()
             datum["time_save"] = time() - _s
             datum["time_loop"] = time() - loop_start
+            rj.jsonarrappend(f"alg-perf-{self.ident}", root, datum)
             logger.info(datum)
             from pprint import pprint
 
@@ -162,6 +168,7 @@ class Runner:
 
     def save(self) -> bool:
         rj2 = self.redis_client(decode_responses=False)
+
         out = cloudpickle.dumps(self)
         rj2.set(f"state-{self.ident}", out)
 

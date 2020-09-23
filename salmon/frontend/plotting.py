@@ -5,8 +5,9 @@ import json
 
 from bokeh.plotting import figure, show
 from bokeh.models import ColumnDataSource, Grid, LinearAxis, Plot, Text, ImageURL
-
+from bokeh.palettes import brewer
 from bokeh.embed import json_item
+
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
@@ -140,7 +141,7 @@ async def network_latency(df: pd.DataFrame):
     return p
 
 
-async def show_embedding(embedding: np.ndarray, targets: List[str], alg: str=""):
+async def show_embedding(embedding: np.ndarray, targets: List[str], alg: str = ""):
     embedding = np.asarray(embedding)
 
     # scale each dimension between 0 and 1
@@ -161,9 +162,7 @@ async def show_embedding(embedding: np.ndarray, targets: List[str], alg: str="")
     }
     source = ColumnDataSource(data=data)
 
-    plot = figure(
-        title=alg, plot_width=600, plot_height=500, toolbar_location="right",
-    )
+    plot = figure(title=alg, plot_width=600, plot_height=500, toolbar_location="right",)
     #  glyph = Text(x="x", y="y", text="text", angle=0.3, text_color="#96deb3")
     w = h = {"units": "data", "value": 0.1}
     w = h = {"units": "screen", "value": 80}
@@ -277,3 +276,32 @@ async def get_endpoint_time_plots():
         p.yaxis.minor_tick_line_color = None  # turn off x-axis minor ticks
         out[e] = p
     return out
+
+
+async def _get_alg_perf(df):
+    cols = [c for c in df.columns if "time_" == c[:5] and c != "time_loop"]
+
+    s = df[cols + ["time"]].copy()
+    s["timedelta"] = pd.to_timedelta(s["time"] - s["time"].min(), unit="s")
+    s = s.rolling(window="30s", on="timedelta").mean()
+
+    source = ColumnDataSource(s)
+
+    p = figure(
+        title="Algorithm timing",
+        x_axis_label="Time since start",
+        y_axis_label="Time spent per task (s)",
+        x_axis_type="datetime",
+        width=600,
+        height=300,
+    )
+    names = list(reversed(cols))
+    p.varea_stack(
+        x="timedelta",
+        stackers=list(reversed(names)),
+        legend_label=names,
+        color=brewer["Spectral"][len(names)],
+        source=source,
+    )
+    p.legend.location = "top_left"
+    return p
