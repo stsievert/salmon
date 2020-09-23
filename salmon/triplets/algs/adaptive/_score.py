@@ -116,13 +116,10 @@ class QueryScorer:
         tau = np.exp(self._tau_)
         s = tau.sum(axis=1)  # the sum of each row
 
+        eps = min(s[s > 0].min(), 1e-40)
+
         s *= 1e3
         tau *= 1e3
-
-        if (s > 0).any():
-            eps = min(s[s > 0].min() * 1e-2, 1e-20)
-        else:
-            eps = 1e-40
 
         s = np.clip(s, eps, np.inf)
 

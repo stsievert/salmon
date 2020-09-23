@@ -298,7 +298,7 @@ async def _get_alg_perf(df):
     names = list(reversed(cols))
     p.varea_stack(
         x="timedelta",
-        stackers=list(reversed(names)),
+        stackers=names,
         legend_label=names,
         color=brewer["Spectral"][len(names)],
         source=source,

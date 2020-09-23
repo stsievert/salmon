@@ -33,7 +33,7 @@ class _Embedding(NeuralNet):
                 else:
                     norms = norms.reshape(-1, 1)
                 self.module_._embedding[idx] *= max_norm / norms[idx]
-
+        self.optimizer_.zero_grad()
         return r
 
     def score(self, answers, y=None):
