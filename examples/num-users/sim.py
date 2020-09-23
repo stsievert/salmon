@@ -76,6 +76,7 @@ class User(BaseEstimator):
         salmon=SALMON,
         n_responses=100,
         response_time=1,
+        reaction_time=0.75,
         random_state=None,
         http=None,
         uid="",
@@ -84,6 +85,7 @@ class User(BaseEstimator):
         self.response_time = response_time
         self.n_responses = n_responses
         self.random_state = random_state
+        self.reaction_time = reaction_time
         self.http = http
         self.uid = uid
 
@@ -117,7 +119,7 @@ class User(BaseEstimator):
                 )
                 winner = query["left"] if _ans == 0 else query["right"]
                 sleep_time = self.random_state_.normal(loc=self.response_time, scale=0.25)
-                sleep_time = max(0.75, sleep_time)
+                sleep_time = max(self.reaction_time, sleep_time)
                 answer = {
                     "winner": winner,
                     "puid": self.uid,
@@ -253,9 +255,10 @@ async def main(**config):
     X, y = _test_dataset(config["n"], config["n_test"])
     n_responses = (config["max_queries"] // config["n_users"]) + 1
 
+    kwargs = {k: config[k] for k in ["reaction_time", "response_time"]}
     async with httpx.AsyncClient() as client:
         users = [
-            User(http=client, random_state=i, uid=str(i), n_responses=n_responses)
+            User(http=client, random_state=i, uid=str(i), n_responses=n_responses, **kwargs)
             for i in range(config["n_users"])
         ]
         responses = [user.partial_fit() for user in users]
@@ -286,7 +289,9 @@ if __name__ == "__main__":
         "random_state": 42,
         "n_test": 10_000,
         "fname": "history-n_users={n_users}.msgpack",
+        "reaction_time": 0,
+        "response_time": 0.1,
     }
     history, fname, user_data = asyncio.run(main(**config))
-    with open(f"user-{fname}", "wb") as f:
-        ck.dump(user_data, f)
+    with open(f"user-{fname}.json", "w") as f:
+        json.dump(history, f)
