@@ -177,7 +177,7 @@ class Adaptive(Runner):
             **self.params,
         }
 
-    def predict(self, X, embedding=None):
+    def predict(self, X):
         """
         Predict the answers of queries from the current embedding.
 
@@ -199,8 +199,7 @@ class Adaptive(Runner):
         left_idx = X[:, 1].flatten()
         right_idx = X[:, 2].flatten()
 
-        if embedding is None:
-            embedding = self.opt.embedding()
+        embedding = self.opt.embedding()
         head = embedding[head_idx]
         left = embedding[left_idx]
         right = embedding[right_idx]
