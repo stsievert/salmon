@@ -69,7 +69,7 @@ class Runner:
         scores = np.array([])
         n_model_updates = 0
         rj.jsonset(f"alg-perf-{self.ident}", root, [])
-        save_deadline = time()
+        save_deadline = 0  # right away
         for k in itertools.count():
             try:
                 loop_start = time()
@@ -147,7 +147,8 @@ class Runner:
 
             _s = time()
             if time() >= save_deadline:
-                save_deadline = time() + 10 * 60
+                minute = 60
+                save_deadline = time() + 10 * minute
                 self.save()
             datum["time_save"] = time() - _s
             datum["time_loop"] = time() - loop_start

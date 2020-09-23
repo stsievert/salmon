@@ -48,13 +48,11 @@ class Server:
             assert r.status_code == status_code, (r.status_code, status_code, r.text)
         return r
 
-    def delete(self, endpoint, data=None, status_code=200, **kwargs):
-        if isinstance(data, dict) and "exp" not in data:
-            data = json.dumps(data)
+    def delete(self, endpoint, status_code=200, **kwargs):
         if self._authorized:
             kwargs.update({"auth": (self._username, self._password)})
         logger.info(f"Getting {endpoint}...")
-        r = requests.delete(self.url + endpoint, data=data, **kwargs)
+        r = requests.delete(self.url + endpoint, **kwargs)
         logger.info("done")
         assert r.status_code == status_code, (r.status_code, status_code, r.text)
         return r
