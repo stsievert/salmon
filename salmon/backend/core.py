@@ -159,6 +159,7 @@ async def get_model(alg_ident: str):
     model = cloudpickle.loads(ir)
     return model
 
+
 @app.get("/meta/perf/{alg_ident}")
 async def get_timings(alg_ident: str):
     samplers = rj.jsonget("samplers")
@@ -170,5 +171,7 @@ async def get_timings(alg_ident: str):
     keys = list(sorted(rj.keys()))
     if f"alg-perf-{alg_ident}" not in keys:
         logger.warning("rj.keys() = %s", keys)
-        raise ServerException(f"Performance data has not been created for alg_ident='{alg_ident}'. Database has keys {keys}")
+        raise ServerException(
+            f"Performance data has not been created for alg_ident='{alg_ident}'. Database has keys {keys}"
+        )
     return rj.jsonget(f"alg-perf-{alg_ident}")

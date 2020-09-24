@@ -652,6 +652,7 @@ async def get_model(alg_ident: str) -> Dict[str, Any]:
         raise ServerException(msg)
     return r.json()
 
+
 async def _get_alg_perf(ident: str) -> Dict[str, Any]:
     logger.info("In private _get_alg_perf with rj.keys() == %s", rj.keys())
     r = httpx.get(f"http://localhost:8400/meta/perf/{ident}")
@@ -659,6 +660,7 @@ async def _get_alg_perf(ident: str) -> Dict[str, Any]:
         msg = r.json()["detail"]
         raise ServerException(msg)
     return r.json()
+
 
 def _get_filename(html):
     html = str(html)

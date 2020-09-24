@@ -164,9 +164,6 @@ class Runner:
             pprint(datum)
         return True
 
-    def min_search_length(self):
-        return 0
-
     def save(self) -> bool:
         rj2 = self.redis_client(decode_responses=False)
 

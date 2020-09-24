@@ -116,7 +116,8 @@ class QueryScorer:
         tau = np.exp(self._tau_)
         s = tau.sum(axis=1)  # the sum of each row
 
-        eps = min(s[s > 0].min(), 1e-40)
+        gt0 = s > 0
+        eps = min(s[gt0].min(), 1e-40) if gt0.any() else 1e-40
 
         s *= 1e3
         tau *= 1e3
@@ -153,7 +154,9 @@ class InfoGainScorer(QueryScorer):
         if queries is not None and num != 1000:
             raise ValueError("Only specify one of `queries` or `num`")
         if queries is None:
-            queries = self._random_queries(len(self.embedding), num=num, random_state=random_state)
+            queries = self._random_queries(
+                len(self.embedding), num=num, random_state=random_state
+            )
         Q = np.array(queries).astype("int64")
         H, O1, O2 = Q[:, 0], Q[:, 1], Q[:, 2]
 
@@ -180,7 +183,9 @@ class UncertaintyScorer(QueryScorer):
         if queries is not None and num != 1000:
             raise ValueError("Only specify one of `queries` or `num`")
         if queries is None:
-            queries = self._random_queries(len(self.embedding), num=num, random_state=random_state, trim=trim)
+            queries = self._random_queries(
+                len(self.embedding), num=num, random_state=random_state, trim=trim
+            )
         Q = np.array(queries).astype("int64")
         H, O1, O2 = Q[:, 0], Q[:, 1], Q[:, 2]
 

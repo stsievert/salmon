@@ -1,6 +1,7 @@
 from time import sleep
 from ._random_sampling import RandomSampling
 
+
 class Test(RandomSampling):
     def __init__(self, *args, **kwargs):
         self.counter = 0

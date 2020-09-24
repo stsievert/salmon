@@ -286,6 +286,7 @@ class CntsLRDamper(LRDamper):
        Optimization methods for large-scale machine learning.
        SIAM Review, 60, 223-223. Retrieved from https://arxiv.org/abs/1606.04838
     """
+
     def __init__(self, *args, rate=0.05, **kwargs):
         self.rate = rate
         super().__init__(*args, **kwargs)
