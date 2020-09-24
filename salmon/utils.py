@@ -17,8 +17,8 @@ LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO")
 def get_logger(name):
     # Config from https://docs.python-guide.org/writing/logging/ and
     # https://docs.python-guide.org/writing/logging/
-    LEVEL = getattr(logging, LOG_LEVEL)
     logger = logging.getLogger(name)
+    LEVEL = getattr(logging, LOG_LEVEL)
     formatter = logging.Formatter("%(asctime)s %(name)s %(levelname)s: %(message)s")
     handlers = []
 

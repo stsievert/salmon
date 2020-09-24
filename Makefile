@@ -10,9 +10,6 @@ loop: clean stop
 stop: FORCE
 	docker-compose stop
 
-release: FORCE
-	echo "Run these commands:\n\ngit tag -a VERSION\npython versioning.py\ngit add .; git commit --amend\ngit push --tags"
-
 login: FORCE
 	docker run -i -t salmon_server /bin/bash
 
@@ -29,5 +26,5 @@ up:
 	rsync --exclude '.git' --exclude '.mypy_cache' --exclude 'docs' -v -r . $(DNS):~/salmon/
 
 down:
-	scp -r $(DNS):~/salmon2/examples/queries-searched/data3-reversed-score cluster-data3-reversed-score/
-	scp -r $(DNS):~/salmon/examples/queries-searched/data3 cluster-data3/
+	# scp -r $(DNS):~/salmon/examples/queries-searched/data-score-probs cluster-data-score-probs
+	scp -r $(DNS):~/salmon/examples/queries-searched/data cluster-data-rev_score-probs

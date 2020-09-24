@@ -26,6 +26,7 @@ the same confidence.
 
    installation
    getting-started
+   monitoring
    algorithms
 
 .. toctree::

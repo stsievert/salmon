@@ -498,8 +498,8 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
         i = endpoints.index("/answer")
         endpoints[1], endpoints[i] = endpoints[i], endpoints[1]
 
+    idents = rj.jsonget("samplers")
     try:
-        idents = rj.jsonget("samplers")
         models = {alg_ident: await get_model(alg_ident) for alg_ident in idents}
         alg_plots = {
             alg: await plotting.show_embedding(model["embedding"], targets, alg=alg)
@@ -511,6 +511,17 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
         logger.exception(e)
         alg_plots = {"/": "exception"}
         models = {"/": ""}
+
+    try:
+        perfs = {ident: await _get_alg_perf(ident) for ident in idents}
+        _alg_perfs = {
+            alg: await plotting._get_alg_perf(pd.DataFrame(data))
+            for alg, data in perfs.items()
+        }
+        alg_perfs = {k: json.dumps(json_item(v)) for k, v in _alg_perfs.items()}
+    except Exception as e:
+        logger.exception(e)
+        alg_perfs = {"/": "exception"}
 
     return templates.TemplateResponse(
         "dashboard.html",
@@ -525,6 +536,7 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
             "endpoints": endpoints,
             "alg_models": models,
             "alg_model_plots": alg_plots,
+            "alg_perfs": alg_perfs,
             #  "alg_model_plots": plots,
             **plots,
         },
@@ -635,6 +647,15 @@ async def restore(
 async def get_model(alg_ident: str) -> Dict[str, Any]:
     logger.info("In public get_model with rj.keys() == %s", rj.keys())
     r = httpx.get(f"http://localhost:8400/model/{alg_ident}")
+    if r.status_code != 200:
+        msg = r.json()["detail"]
+        raise ServerException(msg)
+    return r.json()
+
+
+async def _get_alg_perf(ident: str) -> Dict[str, Any]:
+    logger.info("In private _get_alg_perf with rj.keys() == %s", rj.keys())
+    r = httpx.get(f"http://localhost:8400/meta/perf/{ident}")
     if r.status_code != 200:
         msg = r.json()["detail"]
         raise ServerException(msg)

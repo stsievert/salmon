@@ -16,6 +16,7 @@ logger = get_logger(__name__)
 
 Query = TypeVar("Query")
 Answer = TypeVar("Answer")
+root = Path.rootPath()
 
 
 class Runner:
@@ -67,8 +68,11 @@ class Runner:
         queries = np.array([])
         scores = np.array([])
         n_model_updates = 0
+        rj.jsonset(f"alg-perf-{self.ident}", root, [])
+        save_deadline = 0.0  # right away
         for k in itertools.count():
             try:
+                loop_start = time()
                 datum = {"iteration": k, "ident": self.ident}
 
                 answers = self.get_answers(rj, clear=True)
@@ -79,6 +83,7 @@ class Runner:
                 queries_f = client.scatter(queries)
                 scores_f = client.scatter(scores)
                 if update:
+                    datum["cleared_queries"] = True
                     self.clear_queries(rj)
                 done = distributed.Event(name="pa_finished")
                 done.clear()
@@ -141,8 +146,17 @@ class Runner:
                 logger.exception(e)
 
             _s = time()
-            self.save()
+            if time() >= save_deadline:
+                minute = 60
+                save_deadline = time() + 2 * minute
+                self.save()
             datum["time_save"] = time() - _s
+            datum["time_loop"] = time() - loop_start
+            rj.jsonarrappend(f"alg-perf-{self.ident}", root, datum)
+            logger.info(datum)
+            from pprint import pprint
+
+            pprint(datum)
             if "reset" in rj.keys() and rj.jsonget("reset"):
                 self.reset(client, rj)
                 break
@@ -150,11 +164,9 @@ class Runner:
             pprint(datum)
         return True
 
-    def min_search_length(self):
-        return 1
-
     def save(self) -> bool:
         rj2 = self.redis_client(decode_responses=False)
+
         out = cloudpickle.dumps(self)
         rj2.set(f"state-{self.ident}", out)
 

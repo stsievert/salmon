@@ -93,8 +93,7 @@ class Adaptive(Runner):
             )
         elif scorer == "uncertainty":
             search = UncertaintyScorer(
-                embedding=self.opt.embedding(),
-                random_state=random_state,
+                embedding=self.opt.embedding(), random_state=random_state,
             )
         else:
             raise ValueError(f"scorer={scorer} not in ['uncertainty', 'infogain']")
@@ -121,7 +120,9 @@ class Adaptive(Runner):
             return {"head": int(head), "left": int(left), "right": int(right)}, 1.0
         return None, -9999
 
-    def get_queries(self, num=10_000, stop=None, random_state=None) -> Tuple[List[Query], List[float]]:
+    def get_queries(
+        self, num=10_000, stop=None, random_state=None
+    ) -> Tuple[List[Query], List[float]]:
         if num:
             queries, scores = self.search.score(num=num, random_state=random_state)
             return queries[:num], scores[:num]
@@ -132,13 +133,14 @@ class Adaptive(Runner):
             rng = check_random_state(random_state)
         deadline = time() + self.min_search_length()
         for pwr in itertools.count(start=12):
-            queries, scores = self.search.score(num=2 ** pwr, trim=False, random_state=rng)
+            queries, scores = self.search.score(
+                num=2 ** pwr, trim=False, random_state=rng
+            )
             ret_queries.append(queries)
             ret_scores.append(scores)
             if time() >= deadline and stop.is_set():
                 break
         return np.concenate(ret_queries), np.concatenate(ret_scores)
-
 
     def process_answers(self, answers: List[Answer]):
         if not len(answers):
@@ -177,7 +179,7 @@ class Adaptive(Runner):
             **self.params,
         }
 
-    def predict(self, X):
+    def predict(self, X, embedding=None):
         """
         Predict the answers of queries from the current embedding.
 
@@ -199,7 +201,8 @@ class Adaptive(Runner):
         left_idx = X[:, 1].flatten()
         right_idx = X[:, 2].flatten()
 
-        embedding = self.opt.embedding()
+        if embedding is None:
+            embedding = self.opt.embedding()
         head = embedding[head_idx]
         left = embedding[left_idx]
         right = embedding[right_idx]

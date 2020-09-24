@@ -1,4 +1,5 @@
 import os
+import json
 import random
 import traceback
 import threading
@@ -157,3 +158,20 @@ async def get_model(alg_ident: str):
     ir = rj2.get(f"model-{alg_ident}")
     model = cloudpickle.loads(ir)
     return model
+
+
+@app.get("/meta/perf/{alg_ident}")
+async def get_timings(alg_ident: str):
+    samplers = rj.jsonget("samplers")
+    if alg_ident not in samplers:
+        raise ServerException(
+            f"Can't find key for alg_ident='{alg_ident}'. "
+            f"Valid choices for alg_ident are {samplers}"
+        )
+    keys = list(sorted(rj.keys()))
+    if f"alg-perf-{alg_ident}" not in keys:
+        logger.warning("rj.keys() = %s", keys)
+        raise ServerException(
+            f"Performance data has not been created for alg_ident='{alg_ident}'. Database has keys {keys}"
+        )
+    return rj.jsonget(f"alg-perf-{alg_ident}")

@@ -106,16 +106,26 @@ class QueryScorer:
             for k, (head, w, l) in enumerate(history):
                 probs = self.probs(D[w], D[l])
                 probs[np.isnan(probs)] = 0
-                probs[probs <= 0] = 1e-20
+                # probs[probs <= 0] = 1e-20
                 a = np.log(probs)
                 self._tau_[head] += a
 
-        idx = self._tau_ >= -60
+        # idx = self._tau_ >= -np.inf
         tau = np.zeros_like(self._tau_)
-        tau[idx] = np.exp(self._tau_[idx])
+        # tau[idx] = np.exp(self._tau_[idx])
+        tau = np.exp(self._tau_)
         s = tau.sum(axis=1)  # the sum of each row
-        tau = (tau.T / (s + 1e-20)).T
-        return tau
+
+        gt0 = s > 0
+        eps = min(s[gt0].min(), 1e-40) if gt0.any() else 1e-40
+
+        s *= 1e3
+        tau *= 1e3
+
+        s = np.clip(s, eps, np.inf)
+
+        tau2 = (tau.T / (s + 0)).T  # transpose to make broadcasting work
+        return tau2
 
     def push(self, history):
         if not hasattr(self, "initialized_"):
@@ -144,7 +154,9 @@ class InfoGainScorer(QueryScorer):
         if queries is not None and num != 1000:
             raise ValueError("Only specify one of `queries` or `num`")
         if queries is None:
-            queries = self._random_queries(len(self.embedding), num=num, random_state=random_state)
+            queries = self._random_queries(
+                len(self.embedding), num=num, random_state=random_state
+            )
         Q = np.array(queries).astype("int64")
         H, O1, O2 = Q[:, 0], Q[:, 1], Q[:, 2]
 
@@ -171,7 +183,9 @@ class UncertaintyScorer(QueryScorer):
         if queries is not None and num != 1000:
             raise ValueError("Only specify one of `queries` or `num`")
         if queries is None:
-            queries = self._random_queries(len(self.embedding), num=num, random_state=random_state, trim=trim)
+            queries = self._random_queries(
+                len(self.embedding), num=num, random_state=random_state, trim=trim
+            )
         Q = np.array(queries).astype("int64")
         H, O1, O2 = Q[:, 0], Q[:, 1], Q[:, 2]
 
