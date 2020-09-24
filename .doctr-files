@@ -1,10 +1,14 @@
 ./_images/adaptive.png
+./_images/alg-timing.png
+./_images/basic.png
+./_images/client-side.png
 ./_images/delay-histogram.png
 ./_images/delay-percentils.png
 ./_images/networking-rule.png
 ./_images/query.png
 ./_images/query_page.png
 ./_images/search-efficacy.png
+./_images/server-side.png
 ./_sources/adaptive.rst.txt
 ./_sources/algorithms.rst.txt
 ./_sources/api.rst.txt
@@ -21,6 +25,7 @@
 ./_sources/getting-started.rst.txt
 ./_sources/index.rst.txt
 ./_sources/installation.rst.txt
+./_sources/monitoring.rst.txt
 ./_static/basic.css
 ./_static/css/badge_only.css
 ./_static/css/fonts/Roboto-Slab-Bold.woff
@@ -110,6 +115,7 @@
 ./api.html
 ./benchmarks/adaptive.html
 ./benchmarks/server.html
+./dashboard.html
 ./developers.html
 ./generated/salmon.backend.alg.Runner.html
 ./generated/salmon.triplets.algs.CKL.html
@@ -122,6 +128,7 @@
 ./getting-started.html
 ./index.html
 ./installation.html
+./monitoring.html
 ./objects.inv
 ./search.html
 ./searchindex.js
