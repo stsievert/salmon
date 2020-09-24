@@ -40,7 +40,7 @@ SALMON = "http://localhost:8421"
 
 class SalmonExperiment(BaseEstimator):
     def __init__(
-        self, salmon=SALMON, dataset="strange_fruit", n=200, d=2, R=10, random_state=None
+        self, salmon=SALMON, dataset="strange_fruit", n=200, d=2, R=10, random_state=None, init=True,
     ):
         self.salmon = salmon
         self.dataset = dataset
@@ -48,16 +48,21 @@ class SalmonExperiment(BaseEstimator):
         self.d = d
         self.R = R
         self.random_state = random_state
+        self.init = init
 
-    def init(self):
-        httpx.get(self.salmon + "/reset?force=1", auth=("username", "password"), timeout=20)
+    def initialize(self):
         self.random_state_ = check_random_state(self.random_state)
+        if self.init:
+            httpx.get(self.salmon + "/reset?force=1", auth=("username", "password"), timeout=20)
         if self.dataset == "strange_fruit":
             init = {
                 "d": self.d,
                 "samplers": {"TSTE": {"alpha": 1, "random_state": self.random_state, "R": self.R}},
                 "targets": list(range(self.n)),
             }
+            if not self.init:
+                self.config = init
+                return self
             httpx.post(
                 self.salmon + "/init_exp",
                 data={"exp": yaml.dump(init)},
@@ -249,8 +254,8 @@ class Stats:
 
 
 async def main(**config):
-    kwargs = {k: config[k] for k in ["random_state", "dataset", "n", "d"]}
-    exp = SalmonExperiment(**kwargs).init()
+    kwargs = {k: config[k] for k in ["random_state", "dataset", "n", "d", "init"]}
+    exp = SalmonExperiment(**kwargs).initialize()
 
     X, y = _test_dataset(config["n"], config["n_test"])
     n_responses = (config["max_queries"] // config["n_users"]) + 1
@@ -281,7 +286,7 @@ async def main(**config):
 if __name__ == "__main__":
     config = {
         "n_users": 10,
-        "max_queries": 10_000,
+        "max_queries": 2000,
         "n": 50,
         "d": 1,
         "R": 10,
@@ -291,6 +296,7 @@ if __name__ == "__main__":
         "fname": "history-n_users={n_users}.msgpack",
         "reaction_time": 0,
         "response_time": 0.1,
+        "init": False,
     }
     history, fname, user_data = asyncio.run(main(**config))
     with open(f"user-{fname}.json", "w") as f:
