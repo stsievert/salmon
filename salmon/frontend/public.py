@@ -83,6 +83,7 @@ async def _ensure_initialized():
         "max_queries",
         "debrief",
         "skip_button",
+        "sampling_freq",
     ]
     if not set(exp_config) == set(expected_keys):
         msg = (
@@ -92,8 +93,9 @@ async def _ensure_initialized():
         )
         extra = set(exp_config) - set(expected_keys)
         missing = set(expected_keys) - set(exp_config)
-        out = msg.format(expected_keys, list(exp_config.keys()), extra, missing)
-        raise ServerException()
+        raise ServerException(
+            msg.format(expected_keys, list(exp_config.keys()), extra, missing)
+        )
     return exp_config
 
 
