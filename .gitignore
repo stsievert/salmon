@@ -9,6 +9,7 @@ out/*.csv
 out/*.log
 *.DS_Store
 *.swp
+salmon/frontend/static/targets/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

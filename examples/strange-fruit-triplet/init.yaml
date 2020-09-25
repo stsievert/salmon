@@ -1,0 +1,9 @@
+samplers:
+  TSTE:
+    random_state: 42
+  random:
+    module: RandomSampling
+    random_state: 42
+  test:
+    module: RandomSampling
+    random_state: 42

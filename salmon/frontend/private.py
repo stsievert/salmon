@@ -151,8 +151,6 @@ def upload_form():
 
 async def _get_config(exp: bytes, targets: bytes) -> Dict[str, Any]:
     config = yaml.load(exp, Loader=yaml.SafeLoader)
-    if isinstance(config["targets"], int):
-        config["targets"] = [str(x) for x in range(config["targets"])]
     exp_config: Dict = {
         "instructions": "Default instructions (can include <i>arbitrary</i> HTML)",
         "max_queries": None,
@@ -172,6 +170,8 @@ async def _get_config(exp: bytes, targets: bytes) -> Dict[str, Any]:
         else:
             targets = [_format_target(f) for f in fnames]
             exp_config["targets"] = targets
+    elif isinstance(config["targets"], int):
+        exp_config["targets"] = [str(x) for x in range(config["targets"])]
     else:
         exp_config["targets"] = [str(x) for x in exp_config["targets"]]
 
