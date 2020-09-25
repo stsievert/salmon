@@ -67,6 +67,8 @@ in YAML jargon. Here's documentation for each key:
 * ``max_queries``: int. The number of queries a participant should answer. Set
   ``max_queries: -1`` for unlimited queries.
 * ``samplers``. See :ref:`adaptive-config` for more detail.
+* ``sampling``. A dictionary with the key ``probs`` and percentage
+  probabilities for each algorithm.
 * ``targets``, optional list. Choices:
 
     * YAML list. This ``targets: ["vonn", "miller", "ligety", "shiffrin"]`` is
@@ -81,6 +83,9 @@ in YAML jargon. Here's documentation for each key:
 * ``skip_button``, optional boolean. Default ``false``. If ``true``, show a
   button that says "new query."
 
+Examples of these files are in `salmon/tests/data`_.
+
+.. _salmon/tests/data: https://github.com/stsievert/salmon/tree/master/tests/data
 
 YAML file with ZIP file
 -----------------------
