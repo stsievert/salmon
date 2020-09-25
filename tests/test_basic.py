@@ -108,7 +108,7 @@ def test_bad_file_upload(server):
     exp = Path(__file__).parent / "data" / "bad_exp.yaml"
     r = server.post("/init_exp", data={"exp": exp.read_bytes()}, error=True)
     assert r.status_code == 500
-    assert "Error!" in r.text
+    assert "Error" in r.text
     assert "yaml" in r.text
     assert "-\tfoo" in r.text
 

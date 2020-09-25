@@ -163,28 +163,28 @@ async def _get_config(exp: bytes, targets: bytes) -> Dict[str, Any]:
         "skip_button": False,
     }
     exp_config.update(config)
-    if "sampling_freq" not in exp_config:
+    if "sampling" not in exp_config:
         n = len(exp_config["samplers"])
         freqs = [100 // n] * n
         freqs[0] += 100 % n
-        sampling_freq = {k: f for k, f in zip(exp_config["samplers"], freqs)}
-        exp_config["sampling_freq"] = sampling_freq
+        sampling_percent = {k: f for k, f in zip(exp_config["samplers"], freqs)}
+        exp_config["sampling"] = {"probs": sampling_percent}
 
-    if set(exp_config["sampling_freq"]) != set(exp_config["samplers"]):
-        sf = set(exp_config["sampling_freq"])
+    if set(exp_config["sampling"]["probs"]) != set(exp_config["samplers"]):
+        sf = set(exp_config["sampling"]["probs"])
         s = set(exp_config["samplers"])
         msg = (
-            "sampling_freq keys={} are not the same as samplers keys={}.\n\n"
-            "Keys in sampling_freq but not in samplers: {}\n"
-            "Keys in samplers but but in sampling_freq: {}\n\n"
+            "sampling.probs keys={} are not the same as samplers keys={}.\n\n"
+            "Keys in sampling.probs but not in samplers: {}\n"
+            "Keys in samplers but but in sampling.probs: {}\n\n"
         )
         raise ValueError(msg.format(sf, s, sf - s, s - sf))
-    if sum(exp_config["sampling_freq"].values()) != 100:
+    if sum(exp_config["sampling"]["probs"].values()) != 100:
         msg = (
-            "The values in sampling_freq should add up to 100; however, "
-            "the passed sampling_freq={} adds up to {}"
+            "The values in sampling.probs should add up to 100; however, "
+            "the passed sampling.probs={} adds up to {}"
         )
-        s = exp_config["sampling_freq"]
+        s = exp_config["sampling"]["probs"]
         raise ValueError(msg.format(s, sum(s.values())))
 
     if targets:
@@ -282,7 +282,10 @@ async def _process_form(
 
     # Start the backend
     names = list(exp_config["samplers"].keys())
+    _probs = exp_config["sampling"]["probs"]
+    probs = [_probs[n] / 100 for n in names]
     rj.jsonset("samplers", root, names)
+    rj.jsonset("sampling_probs", root, probs)
     for name in names:
         rj.jsonset(f"alg-{name}-answers", root, [])
 

@@ -21,7 +21,7 @@ def test_active_wrong_proportion(server, logs):
     server.authorize()
     exp = {
         "targets": 10,
-        "sampling_freq": {"a1": 50, "a2": 40},
+        "sampling": {"probs": {"a1": 50, "a2": 40}},
         "samplers": {
             "a1": {"module": "RandomSampling"},
             "a2": {"module": "RandomSampling"},
@@ -29,21 +29,21 @@ def test_active_wrong_proportion(server, logs):
     }
     r = server.post("/init_exp", data={"exp": json.dumps(exp)}, error=True)
     assert r.status_code == 500
-    assert "values in sampling_freq should add up to 100" in r.text
+    assert "values in sampling.probs should add up to 100" in r.text
 
 
 def test_active_bad_keys(server, logs):
     server.authorize()
     exp = {
         "targets": 10,
-        "sampling_freq": {"a1": 50, "a2": 40},
+        "sampling": {"probs": {"a1": 50, "a2": 40}},
         "samplers": {"a1": {"module": "RandomSampling"}},
     }
     r = server.post("/init_exp", data={"exp": json.dumps(exp)}, error=True)
     assert r.status_code == 500
     assert all(
         x in r.text.lower()
-        for x in ["sampling_freq keys", "are not the same as samplers keys"]
+        for x in ["sampling.probs keys", "are not the same as samplers keys"]
     )
 
 

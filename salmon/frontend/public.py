@@ -83,7 +83,7 @@ async def _ensure_initialized():
         "max_queries",
         "debrief",
         "skip_button",
-        "sampling_freq",
+        "sampling",
     ]
     if not set(exp_config) == set(expected_keys):
         msg = (
@@ -122,7 +122,9 @@ async def get_query_page(request: Request):
 @app.get("/query", tags=["public"])
 async def get_query() -> Dict[str, Union[int, str, float]]:
     idents = rj.jsonget("samplers")
-    ident = random.choice(idents)
+    probs = rj.jsonget("sampling_probs")
+
+    ident = np.random.choice(idents, p=probs)
 
     r = httpx.get(f"http://localhost:8400/query-{ident}")
     logger.info(f"query r={r}")
