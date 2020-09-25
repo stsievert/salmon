@@ -151,6 +151,7 @@ async function send(winner, id) {
   $('#q-left').addClass("disabled");
   $('#q-right').addClass("disabled");
   $("#num-queries").html("" + num_queries);
+  console.log(ident);
   $.post("/answer",
     JSON.stringify({
         "head": head,

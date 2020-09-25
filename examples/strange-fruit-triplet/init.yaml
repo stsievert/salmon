@@ -1,3 +1,5 @@
+sampling:
+    probs: {"TSTE": 40, "random": 40, "test": 20}
 samplers:
   TSTE:
     random_state: 42

@@ -500,11 +500,14 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
         activity = await plotting.activity(df, start)
         response_times = await plotting.response_time(df)
         network_latency = await plotting.network_latency(df)
+        response_rate = await plotting.response_rate(df)
         plots = {
             "activity": activity,
             "response_times": response_times,
             "network_latency": network_latency,
+            "response_rate": response_rate,
         }
+        print({k: type(v) for k, v in plots.items()})
         plots = {k: json.dumps(json_item(v)) for k, v in plots.items()}
     except Exception as e:
         logger.exception(e)
