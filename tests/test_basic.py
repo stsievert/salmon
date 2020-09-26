@@ -96,7 +96,7 @@ def test_basics(server, logs):
     assert r.status_code == 200
     assert "exception" not in r.text
     df = pd.DataFrame(r.json())
-    assert len(df) == 50
+    assert len(df) == 70
 
     r = server.get("/dashboard", auth=(username, password))
     assert r.status_code == 200
