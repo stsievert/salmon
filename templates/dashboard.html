@@ -42,6 +42,13 @@
       Bokeh.embed.embed_item(plot, "activity-plot");
       </script>
     </div>
+    <div class="row justify-content-center">
+      <div id="concurrent-users"></div>
+      <script>
+      plot = JSON.parse({{ response_rate | tojson }});
+      Bokeh.embed.embed_item(plot, "concurrent-users");
+      </script>
+    </div>
     <br>
     <div class="row justify-content-center">
       <h3>Basic information</h3>
@@ -138,7 +145,7 @@
               <a class="nav-link {% if loop.first %}active{% endif %}"
                  id="{{endpoint}}-tab"
                  data-toggle="tab"
-                 href="#{{alg}}"
+                 href="#{{alg}}-perf"
                  role="tab"
                  aria-controls="{{endpoint}}"
                  aria-selected={% if loop.first %}"true"{% else %}"false"{% endif %}

@@ -80,8 +80,11 @@ class Runner:
                 self_future = client.scatter(self)
 
                 _start = time()
-                queries_f = client.scatter(queries)
-                scores_f = client.scatter(scores)
+                if len(queries) and len(scores):
+                    queries_f = client.scatter(queries)
+                    scores_f = client.scatter(scores)
+                else:
+                    queries_f = scores_f = []
                 if update:
                     datum["cleared_queries"] = True
                     self.clear_queries(rj)
@@ -97,7 +100,7 @@ class Runner:
                         "get_queries", self_future, random_state=k, stop=done
                     )
                 else:
-                    f_search = client.submit(lambda x: x, 1)
+                    f_search = client.submit(lambda x: ([], []), 0)
 
                 time_model = 0
                 time_post = 0

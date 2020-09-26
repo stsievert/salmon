@@ -285,7 +285,7 @@ async def main(**config):
 
 if __name__ == "__main__":
     config = {
-        "n_users": 10,
+        "n_users": 20,
         "max_queries": 2000,
         "n": 50,
         "d": 1,
@@ -294,9 +294,9 @@ if __name__ == "__main__":
         "random_state": 42,
         "n_test": 10_000,
         "fname": "history-n_users={n_users}.msgpack",
-        "reaction_time": 0,
+        "reaction_time": 0.1,
         "response_time": 0.1,
-        "init": False,
+        "init": True,
     }
     history, fname, user_data = asyncio.run(main(**config))
     with open(f"user-{fname}.json", "w") as f:

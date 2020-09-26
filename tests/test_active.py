@@ -17,6 +17,36 @@ from requests.auth import HTTPBasicAuth, HTTPDigestAuth
 from .utils import server, logs
 
 
+def test_active_wrong_proportion(server, logs):
+    server.authorize()
+    exp = {
+        "targets": 10,
+        "sampling": {"probs": {"a1": 50, "a2": 40}},
+        "samplers": {
+            "a1": {"module": "RandomSampling"},
+            "a2": {"module": "RandomSampling"},
+        },
+    }
+    r = server.post("/init_exp", data={"exp": json.dumps(exp)}, error=True)
+    assert r.status_code == 500
+    assert "values in sampling.probs should add up to 100" in r.text
+
+
+def test_active_bad_keys(server, logs):
+    server.authorize()
+    exp = {
+        "targets": 10,
+        "sampling": {"probs": {"a1": 50, "a2": 40}},
+        "samplers": {"a1": {"module": "RandomSampling"}},
+    }
+    r = server.post("/init_exp", data={"exp": json.dumps(exp)}, error=True)
+    assert r.status_code == 500
+    assert all(
+        x in r.text.lower()
+        for x in ["sampling.probs keys", "are not the same as samplers keys"]
+    )
+
+
 def test_active_basics(server, logs):
     server.authorize()
     exp = Path(__file__).parent / "data" / "active.yaml"
@@ -86,4 +116,3 @@ def test_round_robin(server, logs):
     #    File "/opt/conda/lib/python3.7/json/decoder.py", line 337, in decode
     #      obj, end = self.raw_decode(s, idx=_w(s, 0).end())
     #  TypeError: expected string or bytes-like object
-

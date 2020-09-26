@@ -294,6 +294,7 @@ async def _get_alg_perf(df):
         x_axis_type="datetime",
         width=600,
         height=300,
+        toolbar_location="above",
     )
     names = list(reversed(cols))
     p.varea_stack(
@@ -304,4 +305,35 @@ async def _get_alg_perf(df):
         source=source,
     )
     p.legend.location = "top_left"
+    return p
+
+async def response_rate(df, n_sec=30):
+    df = df.copy()
+    df["time_since_start"] = df["time_received"] - df["time_received"].min()
+    df["response_received"] = 1
+
+    s = df[["response_received", "time_since_start"]].copy()
+    s["time_since_start"] = s.time_since_start.apply(lambda x: timedelta(seconds=x))
+    base = s.copy()
+
+    for _sec in [1e-3, n_sec + 1e-3]:
+        t = base.copy()
+        t["time_since_start"] += timedelta(seconds=_sec)
+        t["response_received"] = 0
+        s = pd.concat((t, s))
+    s = s.sort_values(by="time_since_start").set_index("time_since_start")
+
+    ss = s.rolling(window=f"{n_sec}s").sum() / n_sec
+    source = ColumnDataSource(ss)
+
+    p = figure(
+        title="Responses per second",
+        x_axis_type="datetime",
+        x_axis_label="Time since start",
+        y_axis_label="(30s moving avg)",
+        width=600,
+        height=200,
+        toolbar_location="above",
+    )
+    p.varea(x="time_since_start", y1="response_received", source=source)
     return p

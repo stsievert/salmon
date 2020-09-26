@@ -31,6 +31,8 @@ from rejson import Client, Path
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.requests import Request
 from starlette.status import HTTP_401_UNAUTHORIZED
+from redis import ResponseError
+
 
 import salmon
 from ..triplets import manager
@@ -151,8 +153,6 @@ def upload_form():
 
 async def _get_config(exp: bytes, targets: bytes) -> Dict[str, Any]:
     config = yaml.load(exp, Loader=yaml.SafeLoader)
-    if isinstance(config["targets"], int):
-        config["targets"] = [str(x) for x in range(config["targets"])]
     exp_config: Dict = {
         "instructions": "Default instructions (can include <i>arbitrary</i> HTML)",
         "max_queries": None,
@@ -163,6 +163,29 @@ async def _get_config(exp: bytes, targets: bytes) -> Dict[str, Any]:
         "skip_button": False,
     }
     exp_config.update(config)
+    if "sampling" not in exp_config:
+        n = len(exp_config["samplers"])
+        freqs = [100 // n] * n
+        freqs[0] += 100 % n
+        sampling_percent = {k: f for k, f in zip(exp_config["samplers"], freqs)}
+        exp_config["sampling"] = {"probs": sampling_percent}
+
+    if set(exp_config["sampling"]["probs"]) != set(exp_config["samplers"]):
+        sf = set(exp_config["sampling"]["probs"])
+        s = set(exp_config["samplers"])
+        msg = (
+            "sampling.probs keys={} are not the same as samplers keys={}.\n\n"
+            "Keys in sampling.probs but not in samplers: {}\n"
+            "Keys in samplers but but in sampling.probs: {}\n\n"
+        )
+        raise ValueError(msg.format(sf, s, sf - s, s - sf))
+    if sum(exp_config["sampling"]["probs"].values()) != 100:
+        msg = (
+            "The values in sampling.probs should add up to 100; however, "
+            "the passed sampling.probs={} adds up to {}"
+        )
+        s = exp_config["sampling"]["probs"]
+        raise ValueError(msg.format(s, sum(s.values())))
 
     if targets:
         fnames = _extract_zipfile(targets)
@@ -172,6 +195,8 @@ async def _get_config(exp: bytes, targets: bytes) -> Dict[str, Any]:
         else:
             targets = [_format_target(f) for f in fnames]
             exp_config["targets"] = targets
+    elif isinstance(config["targets"], int):
+        exp_config["targets"] = [str(x) for x in range(config["targets"])]
     else:
         exp_config["targets"] = [str(x) for x in exp_config["targets"]]
 
@@ -181,13 +206,13 @@ async def _get_config(exp: bytes, targets: bytes) -> Dict[str, Any]:
 
 
 def exception_to_string(excp):
-    stack = traceback.extract_stack() + traceback.extract_tb(
-        excp.__traceback__
-    )  # add limit=??
+    stack = traceback.extract_stack() + traceback.extract_tb(excp.__traceback__)
     pretty = traceback.format_list(stack)
-    return "Error!\n\n\nSummary:\n\n{} {}\n\nFull traceback:\n\n".format(
-        excp.__class__, excp
-    ) + "".join(pretty)
+    return "Error:\n\n{}\n\nMessage:\n\n{}\n\n\nSummary:\n\n{} {}\n\nTraceback:\n\n".format(
+        str(excp), getattr(excp, "detail", ""), excp.__class__, excp
+    ) + "".join(
+        pretty
+    )
 
 
 class ExpParsingError(StarletteHTTPException):
@@ -229,8 +254,11 @@ async def process_form(
         - max_queries: 25
     """
     try:
-        return await _process_form(request, exp, targets, rdb)
+        ret = await _process_form(request, exp, targets, rdb)
+        await _ensure_initialized()
+        return ret
     except Exception as e:
+        logger.error(e)
         reset(force=True, timeout=2)
         if isinstance(e, ExpParsingError):
             raise e
@@ -254,7 +282,10 @@ async def _process_form(
 
     # Start the backend
     names = list(exp_config["samplers"].keys())
+    _probs = exp_config["sampling"]["probs"]
+    probs = [_probs[n] / 100 for n in names]
     rj.jsonset("samplers", root, names)
+    rj.jsonset("sampling_probs", root, probs)
     for name in names:
         rj.jsonset(f"alg-{name}-answers", root, [])
 
@@ -315,10 +346,13 @@ def reset(
         raise ServerException(msg)
 
     if authorized:
-        logger.error(
-            "Resetting, force=True and authorized. Removing data from database"
-        )
-        rj.save()
+        logger.error("Authorized reset, force=True. Removing data from database")
+        try:
+            rj.save()
+        except ResponseError as e:
+            if "save already in progress" not in str(e):
+                raise e
+
         now = datetime.now().isoformat()[: 10 + 6]
 
         save_dir = ROOT_DIR / "out"
@@ -466,10 +500,12 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
         activity = await plotting.activity(df, start)
         response_times = await plotting.response_time(df)
         network_latency = await plotting.network_latency(df)
+        response_rate = await plotting.response_rate(df)
         plots = {
             "activity": activity,
             "response_times": response_times,
             "network_latency": network_latency,
+            "response_rate": response_rate,
         }
         plots = {k: json.dumps(json_item(v)) for k, v in plots.items()}
     except Exception as e:
@@ -499,18 +535,20 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
         endpoints[1], endpoints[i] = endpoints[i], endpoints[1]
 
     idents = rj.jsonget("samplers")
-    try:
-        models = {alg_ident: await get_model(alg_ident) for alg_ident in idents}
-        alg_plots = {
-            alg: await plotting.show_embedding(model["embedding"], targets, alg=alg)
-            for alg, model in models.items()
-        }
-        alg_plots = {k: json.dumps(json_item(v)) for k, v in alg_plots.items()}
-        logger.info(f"idents = {idents}")
-    except Exception as e:
-        logger.exception(e)
-        alg_plots = {"/": "exception"}
-        models = {"/": ""}
+    models = {}
+    for alg in idents:
+        try:
+            models[alg] = await get_model(alg)
+        except Exception as e:
+            models[alg] = None
+    alg_plots = {
+        alg: await plotting.show_embedding(model["embedding"], targets, alg=alg)
+        for alg, model in models.items() if model
+    }
+    alg_plots = {k: json.dumps(json_item(v)) for k, v in alg_plots.items() if v}
+    if not len(alg_plots):
+        alg_plots = {"no embeddings": None}
+    logger.info(f"idents = {idents}")
 
     try:
         perfs = {ident: await _get_alg_perf(ident) for ident in idents}
@@ -648,8 +686,7 @@ async def get_model(alg_ident: str) -> Dict[str, Any]:
     logger.info("In public get_model with rj.keys() == %s", rj.keys())
     r = httpx.get(f"http://localhost:8400/model/{alg_ident}")
     if r.status_code != 200:
-        msg = r.json()["detail"]
-        raise ServerException(msg)
+        raise ServerException(r.json()["detail"])
     return r.json()
 
 
@@ -657,8 +694,7 @@ async def _get_alg_perf(ident: str) -> Dict[str, Any]:
     logger.info("In private _get_alg_perf with rj.keys() == %s", rj.keys())
     r = httpx.get(f"http://localhost:8400/meta/perf/{ident}")
     if r.status_code != 200:
-        msg = r.json()["detail"]
-        raise ServerException(msg)
+        raise ServerException(r.json()["detail"])
     return r.json()
 
 

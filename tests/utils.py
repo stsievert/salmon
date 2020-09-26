@@ -13,6 +13,7 @@ from sklearn.utils import check_random_state
 
 logger = getLogger(__name__)
 
+
 class Server:
     def __init__(self, url, async_client=None):
         self.url = url
@@ -72,6 +73,7 @@ def _clear_logs(log=None):
         for log in log_dir.glob("*.log"):
             log.write_text("")
 
+
 @pytest.fixture()
 def server():
     server = Server("http://127.0.0.1:8421")
@@ -87,8 +89,10 @@ def server():
     if dump.exists():
         dump.unlink()
 
+
 class LogError(Exception):
     pass
+
 
 class Logs:
     def __init__(self):
@@ -114,6 +118,7 @@ class Logs:
                 if self.warn and "warn" in line:
                     warn("{}\n{}".format(log, line))
         _clear_logs()
+
 
 @pytest.fixture()
 def logs():

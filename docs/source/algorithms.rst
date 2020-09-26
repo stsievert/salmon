@@ -56,9 +56,6 @@ If we want to use two alternate configs for TSTE:
    targets: ["obj1", "obj2", "foo", "bar", "foobar!"]
    samplers:
      RandomSampling: {}
-     TSTE:
-       optimizer: Embedding
-       optimizer__lr: 0.1
      tste1:
        module: TSTE
        optimizer: PadaDampG
@@ -67,6 +64,8 @@ If we want to use two alternate configs for TSTE:
        module: TSTE
        optimizer: GeoDamp
        optimizer__lr: 0.1
+   sampling:
+     probs: {"RandomSampling": 20, "tste1": 40, "tste2": 40}
 
 This would test out different optimization methods underlying the embedding.
 
