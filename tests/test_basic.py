@@ -41,7 +41,7 @@ def test_basics(server, logs):
     answers = []
     print("Starting loop...")
     with logs:
-        for k in range(50):
+        for k in range(70):
             _start = time()
             q = server.get("/query").json()
             ans = {"winner": random.choice([q["left"], q["right"]]), "puid": puid, **q}
