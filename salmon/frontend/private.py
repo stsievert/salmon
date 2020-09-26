@@ -507,7 +507,6 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
             "network_latency": network_latency,
             "response_rate": response_rate,
         }
-        print({k: type(v) for k, v in plots.items()})
         plots = {k: json.dumps(json_item(v)) for k, v in plots.items()}
     except Exception as e:
         logger.exception(e)
@@ -536,18 +535,20 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
         endpoints[1], endpoints[i] = endpoints[i], endpoints[1]
 
     idents = rj.jsonget("samplers")
-    try:
-        models = {alg_ident: await get_model(alg_ident) for alg_ident in idents}
-        alg_plots = {
-            alg: await plotting.show_embedding(model["embedding"], targets, alg=alg)
-            for alg, model in models.items()
-        }
-        alg_plots = {k: json.dumps(json_item(v)) for k, v in alg_plots.items()}
-        logger.info(f"idents = {idents}")
-    except Exception as e:
-        logger.exception(e)
-        alg_plots = {"/": "exception"}
-        models = {"/": ""}
+    models = {}
+    for alg in idents:
+        try:
+            models[alg] = await get_model(alg)
+        except Exception as e:
+            models[alg] = None
+    alg_plots = {
+        alg: await plotting.show_embedding(model["embedding"], targets, alg=alg)
+        for alg, model in models.items() if model
+    }
+    alg_plots = {k: json.dumps(json_item(v)) for k, v in alg_plots.items() if v}
+    if not len(alg_plots):
+        alg_plots = {"no embeddings": None}
+    logger.info(f"idents = {idents}")
 
     try:
         perfs = {ident: await _get_alg_perf(ident) for ident in idents}

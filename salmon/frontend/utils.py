@@ -16,6 +16,7 @@ logger = get_logger(__name__)
 
 class ServerException(HTTPException):
     def __init__(self, msg):
+        logger.error(msg)
         raise HTTPException(status_code=500, detail=msg)
 
 
