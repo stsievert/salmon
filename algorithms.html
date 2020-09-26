@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Algorithm configuration &mdash; Salmon v0.4.0+8.g47ec301.dirty documentation</title>
+  <title>Algorithm configuration &mdash; Salmon v0.4.0+9.gf523620.dirty documentation</title>
   
 
   
@@ -215,9 +215,6 @@ If we want to use two alternate configs for TSTE:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">targets</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;obj1&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;obj2&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;foo&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;bar&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;foobar!&quot;</span><span class="p p-Indicator">]</span>
 <span class="nt">samplers</span><span class="p">:</span>
   <span class="nt">RandomSampling</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
-  <span class="nt">TSTE</span><span class="p">:</span>
-    <span class="nt">optimizer</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Embedding</span>
-    <span class="nt">optimizer__lr</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.1</span>
   <span class="nt">tste1</span><span class="p">:</span>
     <span class="nt">module</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">TSTE</span>
     <span class="nt">optimizer</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">PadaDampG</span>
@@ -226,6 +223,8 @@ If we want to use two alternate configs for TSTE:</p>
     <span class="nt">module</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">TSTE</span>
     <span class="nt">optimizer</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">GeoDamp</span>
     <span class="nt">optimizer__lr</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.1</span>
+<span class="nt">sampling</span><span class="p">:</span>
+  <span class="nt">probs</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="s">&quot;RandomSampling&quot;</span><span class="p p-Indicator">:</span> <span class="nv">20</span><span class="p p-Indicator">,</span> <span class="s">&quot;tste1&quot;</span><span class="p p-Indicator">:</span> <span class="nv">40</span><span class="p p-Indicator">,</span> <span class="s">&quot;tste2&quot;</span><span class="p p-Indicator">:</span> <span class="nv">40</span><span class="p p-Indicator">}</span>
 </pre></div>
 </div>
 <p>This would test out different optimization methods underlying the embedding.</p>

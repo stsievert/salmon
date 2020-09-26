@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Getting started &mdash; Salmon v0.4.0+8.g47ec301.dirty documentation</title>
+  <title>Getting started &mdash; Salmon v0.4.0+9.gf523620.dirty documentation</title>
   
 
   
@@ -229,6 +229,8 @@ through in the responses).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">max_queries</span></code>: int. The number of queries a participant should answer. Set
 <code class="docutils literal notranslate"><span class="pre">max_queries:</span> <span class="pre">-1</span></code> for unlimited queries.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">samplers</span></code>. See <a class="reference internal" href="algorithms.html#adaptive-config"><span class="std std-ref">Algorithm configuration</span></a> for more detail.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sampling</span></code>. A dictionary with the key <code class="docutils literal notranslate"><span class="pre">probs</span></code> and percentage
+probabilities for each algorithm.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">targets</span></code>, optional list. Choices:</p>
 <blockquote>
 <div><ul class="simple">
@@ -245,6 +247,7 @@ contents of the ZIP file (detailed in the next section).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">skip_button</span></code>, optional boolean. Default <code class="docutils literal notranslate"><span class="pre">false</span></code>. If <code class="docutils literal notranslate"><span class="pre">true</span></code>, show a
 button that says “new query.”</p></li>
 </ul>
+<p>Examples of these files are in <a class="reference external" href="https://github.com/stsievert/salmon/tree/master/tests/data">salmon/tests/data</a>.</p>
 </div>
 <div class="section" id="yaml-file-with-zip-file">
 <h2>YAML file with ZIP file<a class="headerlink" href="#yaml-file-with-zip-file" title="Permalink to this headline">¶</a></h2>
