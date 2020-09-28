@@ -29,7 +29,7 @@ dependencies:
     - bokeh==2.0.1
     - cloudpickle
     - seaborn
-    - uvicorn
+    - uvicorn[standard]
     - jinja2
     - redis>=3.0.0
     - rejson
