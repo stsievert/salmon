@@ -307,6 +307,7 @@ async def _get_alg_perf(df):
     p.legend.location = "top_left"
     return p
 
+
 async def response_rate(df, n_sec=30):
     df = df.copy()
     df["time_since_start"] = df["time_received"] - df["time_received"].min()

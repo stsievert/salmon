@@ -543,7 +543,8 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
             models[alg] = None
     alg_plots = {
         alg: await plotting.show_embedding(model["embedding"], targets, alg=alg)
-        for alg, model in models.items() if model
+        for alg, model in models.items()
+        if model
     }
     alg_plots = {k: json.dumps(json_item(v)) for k, v in alg_plots.items() if v}
     if not len(alg_plots):
@@ -560,7 +561,8 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
 
     _alg_perfs = {
         alg: await plotting._get_alg_perf(pd.DataFrame(data))
-        for alg, data in perfs.items() if data
+        for alg, data in perfs.items()
+        if data
     }
     alg_perfs = {k: json.dumps(json_item(v)) for k, v in _alg_perfs.items()}
 
