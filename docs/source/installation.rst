@@ -18,7 +18,13 @@ Experimentalist
 4. Launch a new instance (the big blue button or square orange button).
 5. Select AMI ``ami-0117acefda9941def`` titled "Salmon". It appears in
    Community AMIs after searching "Salmon".
-6. Don't click the big blue button yet. Continue to the rules page, and add
+6. Select an appropriate instance type.
+
+    * ``t3.large`` is recommended for passive algorithms (i.e, random sampling
+      or round robin).
+    * ``t2.2xlarge`` is recommended for adaptive algorithms (e.g, TSTE).
+
+7. Don't click the big blue button yet. Continue to the rules page, and add
    these rules:
 
 .. image:: imgs/networking-rule.png
