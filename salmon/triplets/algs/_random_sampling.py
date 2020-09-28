@@ -38,7 +38,6 @@ class RandomSampling(Runner):
     def __init__(self, n, d=2, random_state=None, ident=""):
         self.n = n
         self.d = d
-        self.answers = []
         self.random_state = check_random_state(random_state)
         super().__init__(ident=ident)
 
@@ -48,7 +47,10 @@ class RandomSampling(Runner):
         return query, -9999
 
     def process_answers(self, ans: List[Answer]):
-        if not len(ans):
-            return self, False
-        self.answers.extend(ans)
-        return self, True
+        return self, False
+
+    def post_queries(self, *args, **kwargs):
+        return 0
+
+    def run(self, *args, **kwargs):
+        return True
