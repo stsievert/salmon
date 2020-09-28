@@ -4,7 +4,7 @@ from distutils.core import setup
 import versioneer
 
 #  with open("requirements.txt") as f:
-    #  requirements = f.read().splitlines()
+#  requirements = f.read().splitlines()
 
 setup(
     name="salmon",

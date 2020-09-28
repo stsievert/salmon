@@ -57,8 +57,10 @@ class RoundRobin(Runner):
         return {"head": int(head), "left": int(a), "right": int(b)}, float(score)
 
     def process_answers(self, ans: List[Answer]):
-        if not len(ans):
-            return self, False
-        logger.info(f"p_a, self.counter={self.counter}, len(ans)={len(ans)}")
-        self.answers.extend(ans)
-        return self, True
+        return self, False
+
+    def post_queries(self, *args, **kwargs):
+        return 0
+
+    def run(self, *args, **kwargs):
+        return True

@@ -543,23 +543,28 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
             models[alg] = None
     alg_plots = {
         alg: await plotting.show_embedding(model["embedding"], targets, alg=alg)
-        for alg, model in models.items() if model
+        for alg, model in models.items()
+        if model
     }
     alg_plots = {k: json.dumps(json_item(v)) for k, v in alg_plots.items() if v}
     if not len(alg_plots):
         alg_plots = {"no embeddings": None}
     logger.info(f"idents = {idents}")
 
-    try:
-        perfs = {ident: await _get_alg_perf(ident) for ident in idents}
-        _alg_perfs = {
-            alg: await plotting._get_alg_perf(pd.DataFrame(data))
-            for alg, data in perfs.items()
-        }
-        alg_perfs = {k: json.dumps(json_item(v)) for k, v in _alg_perfs.items()}
-    except Exception as e:
-        logger.exception(e)
-        alg_perfs = {"/": "exception"}
+    perfs = {}
+    for ident in idents:
+        try:
+            perfs[ident] = await _get_alg_perf(ident)
+        except Exception as e:
+            logger.exception(e)
+            perfs[ident] = None
+
+    _alg_perfs = {
+        alg: await plotting._get_alg_perf(pd.DataFrame(data))
+        for alg, data in perfs.items()
+        if data
+    }
+    alg_perfs = {k: json.dumps(json_item(v)) for k, v in _alg_perfs.items()}
 
     return templates.TemplateResponse(
         "dashboard.html",
