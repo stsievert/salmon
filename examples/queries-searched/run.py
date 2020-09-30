@@ -6,7 +6,7 @@ import zipfile
 from copy import copy
 from pprint import pprint
 from functools import partial
-from typing import Any, Dict
+from typing import Any, Dict, Union, List
 from toolz.dicttoolz import merge
 from joblib import Parallel, delayed
 from typing import List
@@ -41,18 +41,19 @@ def _test_dataset(n, n_test, seed=42):
 class Test(BaseEstimator):
     def __init__(
         self,
-        noise_model="TSTE",
-        n_search=None,
-        n=600,
-        d=1,
-        R=10,
-        max_queries=60_000,
-        n_test=10_000,
-        n_partial_fit=100,
+        noise_model: str = "TSTE",
+        n_search: int = None,
+        n: int = 600,
+        d: int = 1,
+        R: int = 10,
+        max_queries: int = 60_000,
+        n_test: int = 10_000,
+        n_partial_fit: int = 100,
         random_state=42,
-        dataset="strange_fruit",
-        write=False,
-        queries_per_search=1,
+        dataset: str = "strange_fruit",
+        write: bool = False,
+        queries_per_search: int = 1,
+        verbose: Union[int, bool, float] = True,
     ):
         self.n_search = n_search
         self.n = n
@@ -66,6 +67,7 @@ class Test(BaseEstimator):
         self.write = write
         self.queries_per_search = queries_per_search
         self.noise_model = noise_model
+        self.verbose = verbose
         super().__init__()
 
     def init(self):
@@ -134,7 +136,13 @@ class Test(BaseEstimator):
         for k in itertools.count():
             self.partial_fit()
             self.score(X_test, y_test)
-            pprint(self.data_[-1])
+            iters = (
+                int(1 / self.verbose)
+                if isinstance(self.verbose, float)
+                else int(self.verbose)
+            )
+            if k % iters == 0:
+                pprint(self.data_[-1])
             if self.write:
                 df = pd.DataFrame(self.data_)
                 fparams = {**self.params_, **self.static_}
@@ -225,17 +233,24 @@ class Test(BaseEstimator):
 
 
 if __name__ == "__main__":
+    import salmon
+
+    assert salmon.__version__ == "v0.4.1+0.g850c1fb.dirty"
+
     queries_per_search = 10
-    _searches = [[1 * 10 ** i, 2 * 10 ** i, 5 * 10 ** i] for i in range(0, 6 + 1)]
+    #  _searches = [[1 * 10 ** i, 2 * 10 ** i, 5 * 10 ** i] for i in range(0, 5 + 1)]
+    #  searches: List[int] = sum(_searches, [])
+    #  searches = [1 * 10 ** i for i in range(0, 5 + 1)]
+    _searches = [[1 * 10 ** i, 3 * 10 ** i] for i in range(0, 5 + 1)]
     searches: List[int] = sum(_searches, [])
 
     searches = [s for s in searches if s >= queries_per_search]
-    datasets = ["zappos", "strange_fruit"]
+    datasets = ["zappos"]
     D = [2]
-    noises = ["TSTE"]
+    noises = ["TSTE", "CKL", "STE"]
 
     search_dataset_d_noise = list(itertools.product(searches, datasets, D, noises))
-    kwargs = [
+    kwargs: List[Dict[str, Any]] = [
         {"n_search": s, "dataset": dataset, "d": d, "noise_model": noise}
         for s, dataset, d, noise in search_dataset_d_noise
         if not (dataset == "zappos" and d == 1)
@@ -244,22 +259,17 @@ if __name__ == "__main__":
     print("First 5 kwargs:")
     pprint(kwargs[:5])
 
-    static = {"write": True, "queries_per_search": queries_per_search}
-    fmt_kwargs = []
+    static = {
+        "write": True,
+        "queries_per_search": queries_per_search,
+        "verbose": 0.1,
+        "n": 85,
+        "max_queries": 20_000,
+    }
     for kwarg in kwargs:
-        if kwarg["dataset"] == "zappos":
-            k = {
-                "n": 85,
-                "max_queries": 15_000,
-            }
-        else:
-            k = {
-                "n": 85,
-                "max_queries": 15_000,
-            }
-        kwarg.update(**static, **k)
-        fmt_kwargs.append(kwarg)
+        kwarg.update(**static)
 
+    #  Test(**kwargs[0]).fit()
     results = Parallel(n_jobs=-1, backend="loky")(
         delayed(Test(**kwarg).fit)() for kwarg in kwargs
     )

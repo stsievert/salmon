@@ -2,11 +2,13 @@ import itertools
 import sys
 import zipfile
 from functools import lru_cache
+from typing import Dict, Any
 from time import time
 from pathlib import Path
 
 import msgpack
 from sklearn.utils import check_random_state
+import dask.array as da
 
 DIR = Path(__file__).absolute().parent
 sys.path.append(str(DIR.parent))
@@ -40,7 +42,8 @@ class OfflineSearch:
         self.pf_calls_ = 0
         self.random_state_ = check_random_state(self.random_state)
 
-    def _answer(self, query):
+    def _answer(self, query: Dict[str, Any]) -> Dict[str, Any]:
+        assert "winner" not in query
         dataset = self.dataset
         if dataset == "strange_fruit":
             ans = strange_fruit(
@@ -51,6 +54,16 @@ class OfflineSearch:
             )
             winner = query["left"] if ans == 0 else query["right"]
             response = {"winner": winner, **query}
+            show = {
+                "d_left": abs(response["head"] - response["left"]),
+                "d_right": abs(response["head"] - response["right"]),
+            }
+            if response["left"] == response["winner"]:
+                show["winner"] = "left"
+            elif response["right"] == response["winner"]:
+                show["winner"] = "right"
+            else:
+                raise ValueError(show)
             return response
         elif dataset == "zappos":
             freqs = self._get_zappos_train_freqs()
@@ -83,8 +96,8 @@ class OfflineSearch:
         # Run this loop if a single query is returned
         # Do one process_answers call
         for k in itertools.count():
-            if k == 90:
-                breakpoint()
+            #  if k == 90:
+                #  breakpoint()
             if k >= 100:
                 raise ValueError("infinite loop?")
             query, score = self.alg.get_query()
@@ -108,10 +121,12 @@ class OfflineSearch:
             assert len(queries) == self.n_search
             responses = []
             N = self.queries_per_search
-            top_N_idx = scores.argsort()
-            top_N_queries = queries[top_N_idx[-N:]]
-            for h, a, b in top_N_queries:
-                query = {"head": h, "left": a, "right": b, "score": scores.max()}
+            scores += self.random_state_.uniform(low=0, high=0.1, size=len(scores))
+            _scores = da.from_array(scores, chunks=-1)
+            top_N_idx = da.argtopk(_scores, k=N).compute()
+            top_N_queries = queries[top_N_idx]
+            for idx, (h, a, b) in zip(top_N_idx, top_N_queries):
+                query = {"head": h, "left": a, "right": b, "score": scores[idx]}
                 try:
                     ans = self._answer(query)
                 except NoData:
