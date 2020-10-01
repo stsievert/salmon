@@ -209,10 +209,11 @@ class Adaptive(Runner):
 
         ldiff = LA.norm(head - left, axis=1)
         rdiff = LA.norm(head - right, axis=1)
-        diff = rdiff - ldiff  # 1 if rdiff > ldiff, so ldiff should win
-        diff *= -1
-        indicator = (np.sign(diff) + 1) / 2
-        return indicator.astype("uint8")
+
+        # 1 if right closer; 0 if left closer
+        # (which matches the labeling scheme)
+        right_closer = rdiff < ldiff
+        return right_closer.astype("uint8")
 
     def score(self, X, y):
         y_hat = self.predict(X)

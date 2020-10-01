@@ -117,14 +117,14 @@ class QueryScorer:
         s = tau.sum(axis=1)  # the sum of each row
 
         gt0 = s > 0
-        eps = min(s[gt0].min(), 1e-40) if gt0.any() else s.min()
+        eps = s[gt0].min() if gt0.any() else s.min()
 
-        s *= 1e3
-        tau *= 1e3
+        s *= 1e4
+        tau *= 1e4
 
         s = np.clip(s, eps, np.inf)
 
-        tau2 = (tau.T / (s + 0)).T  # transpose to make broadcasting work
+        tau2 = (tau.T / s).T  # transpose to make broadcasting work
         return tau2
 
     def push(self, history):
