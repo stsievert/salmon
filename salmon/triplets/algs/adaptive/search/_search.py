@@ -282,4 +282,4 @@ def score(H: Array, W: Array, L: Array, tau: Array, D: Array, probs=STE_probs) -
     tauc = _tauc / (_tauc.sum(axis=1).reshape(q, 1) + eps)
 
     score = -p * entropy(taub) - (1 - p) * entropy(tauc)
-    return score
+    return -1 * score

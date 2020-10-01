@@ -117,7 +117,7 @@ class QueryScorer:
         s = tau.sum(axis=1)  # the sum of each row
 
         gt0 = s > 0
-        eps = min(s[gt0].min(), 1e-40) if gt0.any() else 1e-40
+        eps = min(s[gt0].min(), 1e-40) if gt0.any() else s.min()
 
         s *= 1e3
         tau *= 1e3
