@@ -40,7 +40,14 @@ SALMON = "http://localhost:8421"
 
 class SalmonExperiment(BaseEstimator):
     def __init__(
-        self, salmon=SALMON, dataset="strange_fruit", n=200, d=2, R=10, random_state=None, init=True,
+        self,
+        salmon=SALMON,
+        dataset="strange_fruit",
+        n=200,
+        d=2,
+        R=10,
+        random_state=None,
+        init=True,
     ):
         self.salmon = salmon
         self.dataset = dataset
@@ -53,11 +60,17 @@ class SalmonExperiment(BaseEstimator):
     def initialize(self):
         self.random_state_ = check_random_state(self.random_state)
         if self.init:
-            httpx.get(self.salmon + "/reset?force=1", auth=("username", "password"), timeout=20)
+            httpx.get(
+                self.salmon + "/reset?force=1",
+                auth=("username", "password"),
+                timeout=20,
+            )
         if self.dataset == "strange_fruit":
             init = {
                 "d": self.d,
-                "samplers": {"TSTE": {"alpha": 1, "random_state": self.random_state, "R": self.R}},
+                "samplers": {
+                    "TSTE": {"alpha": 1, "random_state": self.random_state, "R": self.R}
+                },
                 "targets": list(range(self.n)),
             }
             if not self.init:
@@ -123,7 +136,9 @@ class User(BaseEstimator):
                     random_state=self.random_state_,
                 )
                 winner = query["left"] if _ans == 0 else query["right"]
-                sleep_time = self.random_state_.normal(loc=self.response_time, scale=0.25)
+                sleep_time = self.random_state_.normal(
+                    loc=self.response_time, scale=0.25
+                )
                 sleep_time = max(self.reaction_time, sleep_time)
                 answer = {
                     "winner": winner,
@@ -147,7 +162,9 @@ class User(BaseEstimator):
                 await asyncio.sleep(sleep_time)
                 datum.update({"sleep_time": sleep_time})
                 _s = time()
-                r = await self.http.post(self.salmon + "/answer", data=json.dumps(answer), timeout=20)
+                r = await self.http.post(
+                    self.salmon + "/answer", data=json.dumps(answer), timeout=20
+                )
                 datum.update({"time_post_answer": time() - _s})
                 assert r.status_code == 200
                 self.data_.append(datum)
@@ -263,7 +280,13 @@ async def main(**config):
     kwargs = {k: config[k] for k in ["reaction_time", "response_time"]}
     async with httpx.AsyncClient() as client:
         users = [
-            User(http=client, random_state=i, uid=str(i), n_responses=n_responses, **kwargs)
+            User(
+                http=client,
+                random_state=i,
+                uid=str(i),
+                n_responses=n_responses,
+                **kwargs,
+            )
             for i in range(config["n_users"])
         ]
         responses = [user.partial_fit() for user in users]
