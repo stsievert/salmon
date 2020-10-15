@@ -29,17 +29,17 @@ def test_score_accurate():
     alg = TSTE(n=n, d=2)
     y_hat = alg.predict(X)
 
+    # Make sure perfect accuracy if the output aligns with the embedding
+    assert np.allclose(alg.score(X, y_hat), 1)
+
     # Make sure the score has the expected value (winner has minimum distance)
-    embed = alg.opt.embedding()
+    embed = alg.opt.embedding() * 1e3
     y_hat2 = []
-    y_hat3 = []
     for (head, left, right) in X:
         ldist = LA.norm(embed[head] - embed[left])
         rdist = LA.norm(embed[head] - embed[right])
 
         left_wins = ldist <= rdist
         y_hat2.append(0 if left_wins else 1)
-    assert y_hat.tolist() == y_hat2
 
-    # Make sure perfect accuracy if the output aligns with the embedding
-    assert np.allclose(alg.score(X, y_hat), 1)
+    assert y_hat.tolist() == y_hat2

@@ -75,7 +75,7 @@ class Test(BaseEstimator):
             "optimizer": "Embedding",
             "optimizer__lr": 0.05,
             "optimizer__momentum": 0.75,
-            "random_state": 10023,
+            "random_state": self.random_state,
         }
 
         Alg = getattr(algs, self.noise_model)
@@ -203,8 +203,6 @@ class Test(BaseEstimator):
     def _score_fruit(self, X, y):
         acc = self.search_.score(X, y)
         e = self.search_.alg.opt.embedding().flatten()
-        ranks = e.argsort()
-        rank_diff = np.abs(ranks - np.arange(len(ranks)))
         datum = {
             "acc": acc,
             "embedding_max": e.max(),
@@ -213,17 +211,22 @@ class Test(BaseEstimator):
             **self.search_.alg.meta,
         }
         if self.d == 1:
-            rank_data = {
-                "rank_diff_mean": rank_diff.mean(),
-                "rank_diff_median": np.median(rank_diff),
-                "rank_diff_max": rank_diff.max(),
-                "rank_diff_p95": np.percentile(rank_diff, 95),
-                "rank_diff_p90": np.percentile(rank_diff, 90),
-                "rank_diff_p80": np.percentile(rank_diff, 80),
-                "rank_diff_p70": np.percentile(rank_diff, 70),
-                "rank_diff_p60": np.percentile(rank_diff, 60),
-            }
-            datum.update(rank_data)
+            P = [1, 2, 5] + list(range(10, 100, 10)) + [95, 98, 99]
+            for factor, name in [(1, ""), (-1, "m1")]:
+                ranks = (factor * e).argsort()
+                rank_diff = np.abs(ranks - np.arange(len(ranks)))
+                rank_data = {
+                    f"rank{name}_diff_min": rank_diff.min(),
+                    f"rank{name}_diff_median": np.median(rank_diff),
+                    f"rank{name}_diff_mean": rank_diff.mean(),
+                    f"rank{name}_diff_max": rank_diff.max(),
+                    f"rank{name}_incorrect": (rank_diff > 0).sum(),
+                }
+                percentiles = {
+                    f"rank_diff{name}_p{p}": np.percentile(rank_diff, p) for p in P
+                }
+                datum.update(rank_data)
+                datum.update(percentiles)
         assert all(
             isinstance(v, (int, str, float, np.int64, np.int32, np.float32, np.float64))
             for v in datum.values()
@@ -235,7 +238,7 @@ class Test(BaseEstimator):
 if __name__ == "__main__":
     import salmon
 
-    assert salmon.__version__ == "v0.4.1+0.g850c1fb.dirty"
+    assert salmon.__version__ == "v0.4.1+4.geadba86.dirty"
 
     queries_per_search = 10
     #  _searches = [[1 * 10 ** i, 2 * 10 ** i, 5 * 10 ** i] for i in range(0, 5 + 1)]
@@ -245,8 +248,8 @@ if __name__ == "__main__":
     searches: List[int] = sum(_searches, [])
 
     searches = [s for s in searches if s >= queries_per_search]
-    datasets = ["zappos"]
-    D = [2]
+    datasets = ["strange_fruit"]
+    D = [1, 2]
     noises = ["TSTE", "CKL", "STE"]
 
     search_dataset_d_noise = list(itertools.product(searches, datasets, D, noises))
@@ -262,9 +265,11 @@ if __name__ == "__main__":
     static = {
         "write": True,
         "queries_per_search": queries_per_search,
-        "verbose": 0.1,
-        "n": 85,
+        "verbose": 0.05,
+        "n": 100,
         "max_queries": 20_000,
+        "n_partial_fit": 2,
+        "random_state": 139032,
     }
     for kwarg in kwargs:
         kwarg.update(**static)

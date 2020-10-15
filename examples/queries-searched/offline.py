@@ -121,7 +121,7 @@ class OfflineSearch:
             assert len(queries) == self.n_search
             responses = []
             N = self.queries_per_search
-            scores += self.random_state_.uniform(low=0, high=0.1, size=len(scores))
+            #  scores += self.random_state_.uniform(low=0, high=0.1, size=len(scores))
             _scores = da.from_array(scores, chunks=-1)
             top_N_idx = da.argtopk(_scores, k=N).compute()
             top_N_queries = queries[top_N_idx]
