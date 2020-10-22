@@ -1,4 +1,5 @@
 import itertools
+from collections import defaultdict
 from time import time
 from textwrap import dedent
 from typing import List, TypeVar, Tuple, Dict, Any, Optional
@@ -6,6 +7,7 @@ from typing import List, TypeVar, Tuple, Dict, Any, Optional
 import torch.optim
 import numpy as np
 import numpy.linalg as LA
+import pandas as pd
 from sklearn.utils import check_random_state
 
 import salmon.triplets.algs.adaptive as adaptive
@@ -306,6 +308,77 @@ class TSTE(Adaptive):
             scorer=scorer,
             **kwargs,
         )
+
+
+class RRTSTE(Adaptive):
+    def __init__(
+        self,
+        n: int,
+        d: int = 2,
+        ident: str = "",
+        optimizer: str = "Embedding",
+        optimizer__lr=0.075,
+        optimizer__momentum=0.9,
+        random_state=None,
+        sampling="adaptive",
+        scorer="infogain",
+        alpha=1,
+        **kwargs,
+    ):
+        super().__init__(
+            n=n,
+            d=d,
+            ident=ident,
+            optimizer=optimizer,
+            optimizer__lr=optimizer__lr,
+            optimizer__momentum=optimizer__momentum,
+            random_state=random_state,
+            module__alpha=alpha,
+            module="TSTE",
+            sampling=sampling,
+            scorer=scorer,
+            **kwargs,
+        )
+
+    def post_queries(
+        self,
+        queries: List[Query],
+        scores: List[float],
+        rj = None,
+        done=None,
+    ) -> int:
+        if rj is None:
+            rj = self.redis_client()
+
+        if not len(queries):
+            return 0
+
+        df = pd.DataFrame(queries, columns=["h", "l", "r"])
+        df["score"] = scores
+        cols = df.columns
+
+        top_scores_by_head = df.groupby(by="h")["score"].nlargest(n=5)
+        top_idx = top_scores_by_head.index.droplevel(0)
+
+        posted = defaultdict(list)
+        top_queries = df.loc[top_idx].sort_values(by="score", ascending=True)
+        for _, query in top_queries.iterrows():
+            idx = int(query["h"])
+            post = (int(query["h"]), int(query["l"]), int(query["r"]), query["score"])
+            posted[idx].append(post)
+
+        self.queries_ = posted
+        return sum([len(v) for v in self.queries_.values()])
+
+    def get_query(self):
+        if self.meta["num_ans"] <= self.R * self.n:
+            h, l, r = _random_query(self.n, random_state=self.random_state_)
+            return {"head": h, "left": l, "right": r}, -9999
+        k = self.random_state_.choice(list(self.queries_.keys()))
+        h, l, r, score = self.queries_[k].pop()
+        if self.random_state_.uniform(0, 1) <= 0.5:
+            r, l = l, r
+        return {"head": h, "left": l, "right": r, "score": score}, score
 
 
 class STE(Adaptive):

@@ -17,7 +17,7 @@ def _get_query(n, random_state=None) -> Tuple[int, int, int]:
         a, b, c = random_state.choice(n, size=3)
         if a != b and b != c and c != a:
             break
-    return a, b, c
+    return int(a), int(b), int(c)
 
 
 class RandomSampling(Runner):
