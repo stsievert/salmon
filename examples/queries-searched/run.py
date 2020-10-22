@@ -54,6 +54,8 @@ class Test(BaseEstimator):
         write: bool = False,
         queries_per_search: int = 1,
         verbose: Union[int, bool, float] = True,
+        noise: bool = False,
+        score_factor: int = 1,
     ):
         self.n_search = n_search
         self.n = n
@@ -68,6 +70,8 @@ class Test(BaseEstimator):
         self.queries_per_search = queries_per_search
         self.noise_model = noise_model
         self.verbose = verbose
+        self.noise = noise
+        self.score_factor = score_factor
         super().__init__()
 
     def init(self):
@@ -86,6 +90,8 @@ class Test(BaseEstimator):
             n_partial_fit=self.n_partial_fit,
             dataset=self.dataset,
             queries_per_search=self.queries_per_search,
+            noise=self.noise,
+            score_factor=self.score_factor,
         )
 
         static = {
@@ -196,6 +202,7 @@ class Test(BaseEstimator):
             "pf_time": self.search_.pf_time_,
             **self.static_,
             **self.search_.alg.meta,
+            **self.search_.meta_,
         }
         self.data_.append(datum)
         return acc
@@ -209,6 +216,7 @@ class Test(BaseEstimator):
             "pf_time": self.search_.pf_time_,
             **self.static_,
             **self.search_.alg.meta,
+            **self.search_.meta_,
         }
         if self.d == 1:
             P = [1, 2, 5] + list(range(10, 100, 10)) + [95, 98, 99]
@@ -238,25 +246,32 @@ class Test(BaseEstimator):
 if __name__ == "__main__":
     import salmon
 
-    assert salmon.__version__ == "v0.4.1+4.geadba86.dirty"
+    assert salmon.__version__ == "v0.4.1+6.g8418115.dirty"
 
     queries_per_search = 10
     #  _searches = [[1 * 10 ** i, 2 * 10 ** i, 5 * 10 ** i] for i in range(0, 5 + 1)]
     #  searches: List[int] = sum(_searches, [])
-    #  searches = [1 * 10 ** i for i in range(0, 5 + 1)]
-    _searches = [[1 * 10 ** i, 3 * 10 ** i] for i in range(0, 5 + 1)]
-    searches: List[int] = sum(_searches, [])
+    searches = [1 * 10 ** i for i in range(0, 5 + 1)]
+    #  _searches = [[1 * 10 ** i, 3 * 10 ** i] for i in range(0, 5 + 1)]
+    #  searches: List[int] = sum(_searches, [])
 
     searches = [s for s in searches if s >= queries_per_search]
-    datasets = ["strange_fruit"]
+    datasets = ["zappos", "strange_fruit"]
     D = [1, 2]
-    noises = ["TSTE", "CKL", "STE"]
+    noises = ["TSTE", "RRTSTE", "STE"]
+    factors = [1, -1]
 
-    search_dataset_d_noise = list(itertools.product(searches, datasets, D, noises))
+    sddnf = list(itertools.product(searches, datasets, D, noises, factors))
     kwargs: List[Dict[str, Any]] = [
-        {"n_search": s, "dataset": dataset, "d": d, "noise_model": noise}
-        for s, dataset, d, noise in search_dataset_d_noise
-        if not (dataset == "zappos" and d == 1)
+        {
+            "n_search": s,
+            "dataset": dset,
+            "d": d,
+            "noise_model": noise,
+            "score_factor": sf,
+        }
+        for s, dset, d, noise, sf in sddnf
+        if not (dset == "zappos" and d == 1)
     ]
     print(f"Total of launching {len(kwargs)} jobs")
     print("First 5 kwargs:")
@@ -265,14 +280,19 @@ if __name__ == "__main__":
     static = {
         "write": True,
         "queries_per_search": queries_per_search,
-        "verbose": 0.05,
-        "n": 100,
-        "max_queries": 20_000,
-        "n_partial_fit": 2,
+        "verbose": 0.10,
+        "n_partial_fit": 1,
         "random_state": 139032,
+        "noise": True,
+        "max_queries": 20_000,
     }
     for kwarg in kwargs:
-        kwarg.update(**static)
+        if kwarg["dataset"] == "zappos":
+            dynamic = {"n": 85}
+        else:
+            dynamic = {"n": 300}
+
+        kwarg.update(**static, **dynamic)
 
     #  Test(**kwargs[0]).fit()
     results = Parallel(n_jobs=-1, backend="loky")(

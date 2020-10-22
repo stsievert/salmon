@@ -6,6 +6,7 @@ from typing import Dict, Any
 from time import time
 from pathlib import Path
 
+import numpy as np
 import msgpack
 from sklearn.utils import check_random_state
 import dask.array as da
@@ -30,6 +31,8 @@ class OfflineSearch:
         queries_per_search=1,
         random_state=42,
         dataset="strange_fruit",
+        noise=False,
+        score_factor=1,
     ):
         self.alg = alg
         self.n_search = n_search
@@ -38,9 +41,12 @@ class OfflineSearch:
         self.queries_per_search = queries_per_search
         self.random_state = random_state
         self.dataset = dataset
+        self.noise = noise
+        self.score_factor = score_factor
 
         self.pf_calls_ = 0
         self.random_state_ = check_random_state(self.random_state)
+        self.meta_ = {}
 
     def _answer(self, query: Dict[str, Any]) -> Dict[str, Any]:
         assert "winner" not in query
@@ -73,10 +79,9 @@ class OfflineSearch:
             if key not in freqs:
                 raise NoData()
             o1_wins, o2_wins = freqs[key]
-            if not o1_wins or not o2_wins:
-                raise NoData()
-            answers = ([o1] * o1_wins) + ([o2] * o2_wins)
-            winner = self.random_state_.choice(answers)
+            po1 = o1_wins / (o1_wins + o2_wins)
+            po2 = o2_wins / (o1_wins + o2_wins)
+            winner = self.random_state_.choice([o1, o2], p=[po1, po2])
             return {"winner": winner, **query}
 
         raise ValueError(f"dataset={dataset} not recognized")
@@ -118,11 +123,18 @@ class OfflineSearch:
             if k >= 100:
                 raise ValueError("infinite loop?")
             queries, scores = self.alg.get_queries(num=self.n_search)
+            scores *= self.score_factor
+            percents = [1, 2, 5] + list(range(10, 100, 10)) + [95, 98, 99]
+            percentiles = {f"score_p{p}": np.percentile(scores, p) for p in percents}
+            self.meta_.update(percentiles)
+            if self.noise:
+                scores += self.random_state_.uniform(0.05)
             assert len(queries) == self.n_search
             responses = []
             N = self.queries_per_search
             #  scores += self.random_state_.uniform(low=0, high=0.1, size=len(scores))
             _scores = da.from_array(scores, chunks=-1)
+
             top_N_idx = da.argtopk(_scores, k=N).compute()
             top_N_queries = queries[top_N_idx]
             for idx, (h, a, b) in zip(top_N_idx, top_N_queries):
