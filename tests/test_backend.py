@@ -59,9 +59,7 @@ def test_run_errors_logged(server, logs):
         with logs:
             for k in range(10):
                 q = server.get("/query").json()
-                ans = {
-                    "winner": random.choice([q["left"], q["right"]]),
-                    "puid": "",
-                    **q,
-                }
+                winner = random.choice([q["left"], q["right"]])
+                ans = {"winner": winner, "puid": "", **q}
+                ans["left"] = 12
                 server.post("/answer", data=ans)
