@@ -1,11 +1,14 @@
 import itertools
-from time import time
+from collections import defaultdict
+from time import time, sleep
 from textwrap import dedent
 from typing import List, TypeVar, Tuple, Dict, Any, Optional
+from copy import deepcopy
 
 import torch.optim
 import numpy as np
 import numpy.linalg as LA
+import pandas as pd
 from sklearn.utils import check_random_state
 
 import salmon.triplets.algs.adaptive as adaptive
@@ -209,10 +212,11 @@ class Adaptive(Runner):
 
         ldiff = LA.norm(head - left, axis=1)
         rdiff = LA.norm(head - right, axis=1)
-        diff = rdiff - ldiff  # 1 if rdiff > ldiff, so ldiff should win
-        diff *= -1
-        indicator = (np.sign(diff) + 1) / 2
-        return indicator.astype("uint8")
+
+        # 1 if right closer; 0 if left closer
+        # (which matches the labeling scheme)
+        right_closer = rdiff < ldiff
+        return right_closer.astype("uint8")
 
     def score(self, X, y):
         y_hat = self.predict(X)
@@ -305,6 +309,53 @@ class TSTE(Adaptive):
             scorer=scorer,
             **kwargs,
         )
+
+
+class RR(Adaptive):
+    def __init__(
+        self,
+        n: int,
+        d: int = 2,
+        ident: str = "",
+        optimizer: str = "Embedding",
+        optimizer__lr=0.075,
+        optimizer__momentum=0.9,
+        random_state=None,
+        sampling="adaptive",
+        scorer="infogain",
+        module="TSTE",
+        **kwargs,
+    ):
+        super().__init__(
+            n=n,
+            d=d,
+            ident=ident,
+            optimizer=optimizer,
+            optimizer__lr=optimizer__lr,
+            optimizer__momentum=optimizer__momentum,
+            random_state=random_state,
+            module=module,
+            sampling=sampling,
+            scorer=scorer,
+            **kwargs,
+        )
+
+    def get_queries(self, *args, **kwargs):
+        queries, scores = super().get_queries(*args, **kwargs)
+
+        df = pd.DataFrame(queries, columns=["h", "l", "r"])
+        df["score"] = scores
+        cols = df.columns
+
+        top_scores_by_head = df.groupby(by="h")["score"].nlargest(n=3)
+        top_idx = top_scores_by_head.index.droplevel(0)
+
+        top_queries = df.loc[top_idx].sample(random_state=self.random_state_)
+        top_queries = top_queries.sample(random_state=self.random_state_)
+
+        queries = top_queries[["h", "l", "r"]].values.astype("int64")
+        scores = self.random_state_.uniform(size=len(queries))
+        return queries, scores
 
 
 class STE(Adaptive):

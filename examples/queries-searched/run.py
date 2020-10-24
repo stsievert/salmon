@@ -6,7 +6,7 @@ import zipfile
 from copy import copy
 from pprint import pprint
 from functools import partial
-from typing import Any, Dict
+from typing import Any, Dict, Union, List
 from toolz.dicttoolz import merge
 from joblib import Parallel, delayed
 from typing import List
@@ -41,18 +41,21 @@ def _test_dataset(n, n_test, seed=42):
 class Test(BaseEstimator):
     def __init__(
         self,
-        noise_model="TSTE",
-        n_search=None,
-        n=600,
-        d=1,
-        R=10,
-        max_queries=60_000,
-        n_test=10_000,
-        n_partial_fit=100,
+        noise_model: str = "TSTE",
+        n_search: int = None,
+        n: int = 600,
+        d: int = 1,
+        R: int = 10,
+        max_queries: int = 60_000,
+        n_test: int = 10_000,
+        n_partial_fit: int = 100,
         random_state=42,
-        dataset="strange_fruit",
-        write=False,
-        queries_per_search=1,
+        dataset: str = "strange_fruit",
+        write: bool = False,
+        queries_per_search: int = 1,
+        verbose: Union[int, bool, float] = True,
+        noise: bool = False,
+        score_factor: int = 1,
     ):
         self.n_search = n_search
         self.n = n
@@ -66,6 +69,9 @@ class Test(BaseEstimator):
         self.write = write
         self.queries_per_search = queries_per_search
         self.noise_model = noise_model
+        self.verbose = verbose
+        self.noise = noise
+        self.score_factor = score_factor
         super().__init__()
 
     def init(self):
@@ -73,7 +79,7 @@ class Test(BaseEstimator):
             "optimizer": "Embedding",
             "optimizer__lr": 0.05,
             "optimizer__momentum": 0.75,
-            "random_state": 10023,
+            "random_state": self.random_state,
         }
 
         Alg = getattr(algs, self.noise_model)
@@ -84,6 +90,8 @@ class Test(BaseEstimator):
             n_partial_fit=self.n_partial_fit,
             dataset=self.dataset,
             queries_per_search=self.queries_per_search,
+            noise=self.noise,
+            score_factor=self.score_factor,
         )
 
         static = {
@@ -134,7 +142,13 @@ class Test(BaseEstimator):
         for k in itertools.count():
             self.partial_fit()
             self.score(X_test, y_test)
-            pprint(self.data_[-1])
+            iters = (
+                int(1 / self.verbose)
+                if isinstance(self.verbose, float)
+                else int(self.verbose)
+            )
+            if k % iters == 0:
+                pprint(self.data_[-1])
             if self.write:
                 df = pd.DataFrame(self.data_)
                 fparams = {**self.params_, **self.static_}
@@ -188,6 +202,7 @@ class Test(BaseEstimator):
             "pf_time": self.search_.pf_time_,
             **self.static_,
             **self.search_.alg.meta,
+            **self.search_.meta_,
         }
         self.data_.append(datum)
         return acc
@@ -195,27 +210,31 @@ class Test(BaseEstimator):
     def _score_fruit(self, X, y):
         acc = self.search_.score(X, y)
         e = self.search_.alg.opt.embedding().flatten()
-        ranks = e.argsort()
-        rank_diff = np.abs(ranks - np.arange(len(ranks)))
         datum = {
             "acc": acc,
             "embedding_max": e.max(),
             "pf_time": self.search_.pf_time_,
             **self.static_,
             **self.search_.alg.meta,
+            **self.search_.meta_,
         }
         if self.d == 1:
-            rank_data = {
-                "rank_diff_mean": rank_diff.mean(),
-                "rank_diff_median": np.median(rank_diff),
-                "rank_diff_max": rank_diff.max(),
-                "rank_diff_p95": np.percentile(rank_diff, 95),
-                "rank_diff_p90": np.percentile(rank_diff, 90),
-                "rank_diff_p80": np.percentile(rank_diff, 80),
-                "rank_diff_p70": np.percentile(rank_diff, 70),
-                "rank_diff_p60": np.percentile(rank_diff, 60),
-            }
-            datum.update(rank_data)
+            P = [1, 2, 5] + list(range(10, 100, 10)) + [95, 98, 99]
+            for factor, name in [(1, ""), (-1, "m1")]:
+                ranks = (factor * e).argsort()
+                rank_diff = np.abs(ranks - np.arange(len(ranks)))
+                rank_data = {
+                    f"rank{name}_diff_min": rank_diff.min(),
+                    f"rank{name}_diff_median": np.median(rank_diff),
+                    f"rank{name}_diff_mean": rank_diff.mean(),
+                    f"rank{name}_diff_max": rank_diff.max(),
+                    f"rank{name}_incorrect": (rank_diff > 0).sum(),
+                }
+                percentiles = {
+                    f"rank_diff{name}_p{p}": np.percentile(rank_diff, p) for p in P
+                }
+                datum.update(rank_data)
+                datum.update(percentiles)
         assert all(
             isinstance(v, (int, str, float, np.int64, np.int32, np.float32, np.float64))
             for v in datum.values()
@@ -225,41 +244,58 @@ class Test(BaseEstimator):
 
 
 if __name__ == "__main__":
+    import salmon
+
+    assert salmon.__version__ == 'v0.4.1+8.geafdca2.dirty'
+
     queries_per_search = 10
-    _searches = [[1 * 10 ** i, 2 * 10 ** i, 5 * 10 ** i] for i in range(0, 6 + 1)]
-    searches: List[int] = sum(_searches, [])
+    #  _searches = [[1 * 10 ** i, 2 * 10 ** i, 5 * 10 ** i] for i in range(0, 5 + 1)]
+    #  searches: List[int] = sum(_searches, [])
+    searches = [1 * 10 ** i for i in range(0, 5 + 1)]
+    #  _searches = [[1 * 10 ** i, 3 * 10 ** i] for i in range(0, 5 + 1)]
+    #  searches: List[int] = sum(_searches, [])
 
     searches = [s for s in searches if s >= queries_per_search]
     datasets = ["zappos", "strange_fruit"]
-    D = [2]
-    noises = ["TSTE"]
+    D = [1, 2]
+    noises = ["TSTE", "STE", "CKL"]
+    factors = [1, -1]
 
-    search_dataset_d_noise = list(itertools.product(searches, datasets, D, noises))
-    kwargs = [
-        {"n_search": s, "dataset": dataset, "d": d, "noise_model": noise}
-        for s, dataset, d, noise in search_dataset_d_noise
-        if not (dataset == "zappos" and d == 1)
+    sddnf = list(itertools.product(searches, datasets, D, noises, factors))
+    kwargs: List[Dict[str, Any]] = [
+        {
+            "n_search": s,
+            "dataset": dset,
+            "d": d,
+            "noise_model": noise,
+            "score_factor": sf,
+        }
+        for s, dset, d, noise, sf in sddnf
+        if not (dset == "zappos" and d == 1)
     ]
     print(f"Total of launching {len(kwargs)} jobs")
     print("First 5 kwargs:")
+    np.random.shuffle(kwargs)
     pprint(kwargs[:5])
 
-    static = {"write": True, "queries_per_search": queries_per_search}
-    fmt_kwargs = []
+    static = {
+        "write": True,
+        "queries_per_search": queries_per_search,
+        "verbose": 0.10,
+        "n_partial_fit": 1,
+        "random_state": 139032,
+        "noise": True,
+        "max_queries": 20_000,
+    }
     for kwarg in kwargs:
         if kwarg["dataset"] == "zappos":
-            k = {
-                "n": 85,
-                "max_queries": 15_000,
-            }
+            dynamic = {"n": 85}
         else:
-            k = {
-                "n": 85,
-                "max_queries": 15_000,
-            }
-        kwarg.update(**static, **k)
-        fmt_kwargs.append(kwarg)
+            dynamic = {"n": 150}
 
-    results = Parallel(n_jobs=-1, backend="loky")(
+        kwarg.update(**static, **dynamic)
+
+    #  Test(**kwargs[0]).fit()
+    results = Parallel(n_jobs=60, backend="multiprocessing")(
         delayed(Test(**kwarg).fit)() for kwarg in kwargs
     )

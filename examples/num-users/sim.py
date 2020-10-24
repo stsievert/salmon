@@ -40,7 +40,14 @@ SALMON = "http://localhost:8421"
 
 class SalmonExperiment(BaseEstimator):
     def __init__(
-        self, salmon=SALMON, dataset="strange_fruit", n=200, d=2, R=10, random_state=None, init=True,
+        self,
+        salmon=SALMON,
+        dataset="strange_fruit",
+        n=200,
+        d=2,
+        R=10,
+        random_state=None,
+        init=True,
     ):
         self.salmon = salmon
         self.dataset = dataset
@@ -53,11 +60,17 @@ class SalmonExperiment(BaseEstimator):
     def initialize(self):
         self.random_state_ = check_random_state(self.random_state)
         if self.init:
-            httpx.get(self.salmon + "/reset?force=1", auth=("username", "password"), timeout=20)
+            httpx.get(
+                self.salmon + "/reset?force=1",
+                auth=("username", "password"),
+                timeout=20,
+            )
         if self.dataset == "strange_fruit":
             init = {
                 "d": self.d,
-                "samplers": {"TSTE": {"alpha": 1, "random_state": self.random_state, "R": self.R}},
+                "samplers": {
+                    "RRTSTE": {"alpha": 1, "random_state": self.random_state, "R": self.R}
+                },
                 "targets": list(range(self.n)),
             }
             if not self.init:
@@ -113,7 +126,7 @@ class User(BaseEstimator):
                 _s = time()
                 r = await self.http.get(self.salmon + "/query", timeout=20)
                 datum.update({"time_get_query": time() - _s})
-                assert r.status_code == 200
+                assert r.status_code == 200, r.text
 
                 query = r.json()
                 _ans = datasets.strange_fruit(
@@ -123,7 +136,9 @@ class User(BaseEstimator):
                     random_state=self.random_state_,
                 )
                 winner = query["left"] if _ans == 0 else query["right"]
-                sleep_time = self.random_state_.normal(loc=self.response_time, scale=0.25)
+                sleep_time = self.random_state_.normal(
+                    loc=self.response_time, scale=0.25
+                )
                 sleep_time = max(self.reaction_time, sleep_time)
                 answer = {
                     "winner": winner,
@@ -131,25 +146,29 @@ class User(BaseEstimator):
                     "response_time": sleep_time,
                     **query,
                 }
+                h = answer["head"]
+                l = answer["left"]
+                r = answer["right"]
+                w = answer["winner"]
+                dl = abs(h - l)
+                dr = abs(h - r)
                 if self.uid == "0":
-                    h = answer["head"]
-                    l = answer["left"]
-                    r = answer["right"]
-                    w = answer["winner"]
-                    dl = abs(h - l)
-                    dr = abs(h - r)
                     if w == l:
                         print(f"DL={dl}, dr={dr}. (h, l, r, w) = {(h, l, r, w)}")
                     elif w == r:
                         print(f"dl={dl}, DR={dr}. (h, l, r, w) = {(h, l, r, w)}")
                     else:
                         raise ValueError(f"h, l, r, w = {(h, l, r, w)}")
+                datum.update({"h": h, "l": l, "r": r, "w": w, "dl": dl, "dr": dr})
+                datum.update({"time": time()})
                 await asyncio.sleep(sleep_time)
                 datum.update({"sleep_time": sleep_time})
                 _s = time()
-                r = await self.http.post(self.salmon + "/answer", data=json.dumps(answer), timeout=20)
+                r = await self.http.post(
+                    self.salmon + "/answer", data=json.dumps(answer), timeout=20
+                )
                 datum.update({"time_post_answer": time() - _s})
-                assert r.status_code == 200
+                assert r.status_code == 200, r.text
                 self.data_.append(datum)
             except Exception as e:
                 print("Exception!")
@@ -263,13 +282,19 @@ async def main(**config):
     kwargs = {k: config[k] for k in ["reaction_time", "response_time"]}
     async with httpx.AsyncClient() as client:
         users = [
-            User(http=client, random_state=i, uid=str(i), n_responses=n_responses, **kwargs)
+            User(
+                http=client,
+                random_state=i,
+                uid=str(i),
+                n_responses=n_responses,
+                **kwargs,
+            )
             for i in range(config["n_users"])
         ]
         responses = [user.partial_fit() for user in users]
         completed = asyncio.Event()
         algs = list(exp.config["samplers"].keys())
-        assert len(algs) == 1
+        assert len(algs) == 1, "len(algs) = {}".format(len(algs))
         stats = Stats(
             X, y, config=config, sampler=algs[0], http=client, fname=config["fname"]
         )
@@ -286,18 +311,20 @@ async def main(**config):
 if __name__ == "__main__":
     config = {
         "n_users": 20,
-        "max_queries": 2000,
+        "max_queries": 10_000,
         "n": 50,
-        "d": 1,
+        "d": 2,
         "R": 10,
         "dataset": "strange_fruit",
         "random_state": 42,
         "n_test": 10_000,
-        "fname": "history-n_users={n_users}.msgpack",
+        "fname": "n_users={n_users}.msgpack",
         "reaction_time": 0.1,
         "response_time": 0.1,
         "init": True,
     }
     history, fname, user_data = asyncio.run(main(**config))
-    with open(f"user-{fname}.json", "w") as f:
-        json.dump(history, f)
+    with open(f"history-{fname}", "wb") as f:
+        msgpack.dump(history, f)
+    with open(f"user-data-{fname}", "wb") as f:
+        msgpack.dump(user_data, f)

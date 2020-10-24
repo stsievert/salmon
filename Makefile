@@ -23,8 +23,8 @@ clean: FORCE
 	rm -f out/redis.csv
 
 up:
-	rsync --exclude '.git' --exclude '.mypy_cache' --exclude 'docs' -v -r . $(DNS):~/salmon/
+	rsync --exclude '.mypy_cache' --exclude 'docs' -v -r . $(DNS):~/salmon/
 
 down:
 	# scp -r $(DNS):~/salmon/examples/queries-searched/data-score-probs cluster-data-score-probs
-	scp -r $(DNS):~/salmon/examples/queries-searched/data cluster-data-rev_score-probs
+	scp -r $(DNS):~/salmon/examples/queries-searched/data cluster-data-score-probs

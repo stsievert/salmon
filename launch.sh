@@ -4,7 +4,7 @@
 # https://github.com/dask/dask-docker/pull/108
 
 dask-scheduler --host 127.0.0.2 --port 8786 --dashboard-address :8787 &
-dask-worker --nprocs 4 127.0.0.2:8786 &
+dask-worker --nprocs 3 127.0.0.2:8786 &
 
 if [ $SALMON_DEBUG ]
 then
