@@ -36,6 +36,7 @@ sys.path.append(str(DIR.parent / "queries-searched"))
 from run import _test_dataset
 
 SALMON = "http://localhost:8421"
+SALMON = "http://ec2-44-234-145-236.us-west-2.compute.amazonaws.com:8421"
 
 
 class SalmonExperiment(BaseEstimator):
@@ -69,7 +70,7 @@ class SalmonExperiment(BaseEstimator):
             init = {
                 "d": self.d,
                 "samplers": {
-                    "RRTSTE": {"alpha": 1, "random_state": self.random_state, "R": self.R}
+                    "RR": {"random_state": self.random_state, "R": self.R}
                 },
                 "targets": list(range(self.n)),
             }
@@ -310,9 +311,9 @@ async def main(**config):
 
 if __name__ == "__main__":
     config = {
-        "n_users": 20,
-        "max_queries": 10_000,
-        "n": 50,
+        "n_users": 30,
+        "max_queries": 13_000,
+        "n": 58,
         "d": 2,
         "R": 10,
         "dataset": "strange_fruit",
@@ -321,7 +322,7 @@ if __name__ == "__main__":
         "fname": "n_users={n_users}.msgpack",
         "reaction_time": 0.1,
         "response_time": 0.1,
-        "init": True,
+        "init": False,
     }
     history, fname, user_data = asyncio.run(main(**config))
     with open(f"history-{fname}", "wb") as f:
