@@ -559,12 +559,15 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
             logger.exception(e)
             perfs[ident] = None
 
-    _alg_perfs = {
-        alg: await plotting._get_alg_perf(pd.DataFrame(data))
-        for alg, data in perfs.items()
-        if data
-    }
-    alg_perfs = {k: json.dumps(json_item(v)) for k, v in _alg_perfs.items()}
+    try:
+        _alg_perfs = {
+            alg: await plotting._get_alg_perf(pd.DataFrame(data))
+            for alg, data in perfs.items()
+            if data
+        }
+        alg_perfs = {k: json.dumps(json_item(v)) for k, v in _alg_perfs.items()}
+    except:
+        alg_perfs = {"/": "Error getting algorithm performance"}
 
     return templates.TemplateResponse(
         "dashboard.html",

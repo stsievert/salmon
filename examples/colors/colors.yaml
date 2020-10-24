@@ -1,0 +1,10 @@
+instructions: Which of the comparison colors is most similar to the target color?
+debrief: Thanks! Please enter this participant ID in the assignment.
+max_queries: 100  # about 2.94 minutes for 100 queries
+d: 2
+samplers:
+  RR:
+    random_state: 42
+    module: TSTE
+  RandomSampling:
+    random_state: 42
