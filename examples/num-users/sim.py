@@ -69,7 +69,7 @@ class SalmonExperiment(BaseEstimator):
             init = {
                 "d": self.d,
                 "samplers": {
-                    "TSTE": {"alpha": 1, "random_state": self.random_state, "R": self.R}
+                    "RRTSTE": {"alpha": 1, "random_state": self.random_state, "R": self.R}
                 },
                 "targets": list(range(self.n)),
             }
@@ -126,7 +126,7 @@ class User(BaseEstimator):
                 _s = time()
                 r = await self.http.get(self.salmon + "/query", timeout=20)
                 datum.update({"time_get_query": time() - _s})
-                assert r.status_code == 200
+                assert r.status_code == 200, r.text
 
                 query = r.json()
                 _ans = datasets.strange_fruit(
@@ -146,19 +146,21 @@ class User(BaseEstimator):
                     "response_time": sleep_time,
                     **query,
                 }
+                h = answer["head"]
+                l = answer["left"]
+                r = answer["right"]
+                w = answer["winner"]
+                dl = abs(h - l)
+                dr = abs(h - r)
                 if self.uid == "0":
-                    h = answer["head"]
-                    l = answer["left"]
-                    r = answer["right"]
-                    w = answer["winner"]
-                    dl = abs(h - l)
-                    dr = abs(h - r)
                     if w == l:
                         print(f"DL={dl}, dr={dr}. (h, l, r, w) = {(h, l, r, w)}")
                     elif w == r:
                         print(f"dl={dl}, DR={dr}. (h, l, r, w) = {(h, l, r, w)}")
                     else:
                         raise ValueError(f"h, l, r, w = {(h, l, r, w)}")
+                datum.update({"h": h, "l": l, "r": r, "w": w, "dl": dl, "dr": dr})
+                datum.update({"time": time()})
                 await asyncio.sleep(sleep_time)
                 datum.update({"sleep_time": sleep_time})
                 _s = time()
@@ -166,7 +168,7 @@ class User(BaseEstimator):
                     self.salmon + "/answer", data=json.dumps(answer), timeout=20
                 )
                 datum.update({"time_post_answer": time() - _s})
-                assert r.status_code == 200
+                assert r.status_code == 200, r.text
                 self.data_.append(datum)
             except Exception as e:
                 print("Exception!")
@@ -292,7 +294,7 @@ async def main(**config):
         responses = [user.partial_fit() for user in users]
         completed = asyncio.Event()
         algs = list(exp.config["samplers"].keys())
-        assert len(algs) == 1
+        assert len(algs) == 1, "len(algs) = {}".format(len(algs))
         stats = Stats(
             X, y, config=config, sampler=algs[0], http=client, fname=config["fname"]
         )
@@ -309,18 +311,20 @@ async def main(**config):
 if __name__ == "__main__":
     config = {
         "n_users": 20,
-        "max_queries": 2000,
+        "max_queries": 10_000,
         "n": 50,
-        "d": 1,
+        "d": 2,
         "R": 10,
         "dataset": "strange_fruit",
         "random_state": 42,
         "n_test": 10_000,
-        "fname": "history-n_users={n_users}.msgpack",
+        "fname": "n_users={n_users}.msgpack",
         "reaction_time": 0.1,
         "response_time": 0.1,
         "init": True,
     }
     history, fname, user_data = asyncio.run(main(**config))
-    with open(f"user-{fname}.json", "w") as f:
-        json.dump(history, f)
+    with open(f"history-{fname}", "wb") as f:
+        msgpack.dump(history, f)
+    with open(f"user-data-{fname}", "wb") as f:
+        msgpack.dump(user_data, f)

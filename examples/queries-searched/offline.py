@@ -79,6 +79,8 @@ class OfflineSearch:
             if key not in freqs:
                 raise NoData()
             o1_wins, o2_wins = freqs[key]
+            if o1_wins + o2_wins < 1:
+                raise NoData()
             po1 = o1_wins / (o1_wins + o2_wins)
             po2 = o2_wins / (o1_wins + o2_wins)
             winner = self.random_state_.choice([o1, o2], p=[po1, po2])

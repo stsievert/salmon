@@ -246,7 +246,7 @@ class Test(BaseEstimator):
 if __name__ == "__main__":
     import salmon
 
-    assert salmon.__version__ == "v0.4.1+6.g8418115.dirty"
+    assert salmon.__version__ == 'v0.4.1+8.geafdca2.dirty'
 
     queries_per_search = 10
     #  _searches = [[1 * 10 ** i, 2 * 10 ** i, 5 * 10 ** i] for i in range(0, 5 + 1)]
@@ -258,7 +258,7 @@ if __name__ == "__main__":
     searches = [s for s in searches if s >= queries_per_search]
     datasets = ["zappos", "strange_fruit"]
     D = [1, 2]
-    noises = ["TSTE", "RRTSTE", "STE"]
+    noises = ["TSTE", "STE", "CKL"]
     factors = [1, -1]
 
     sddnf = list(itertools.product(searches, datasets, D, noises, factors))
@@ -275,6 +275,7 @@ if __name__ == "__main__":
     ]
     print(f"Total of launching {len(kwargs)} jobs")
     print("First 5 kwargs:")
+    np.random.shuffle(kwargs)
     pprint(kwargs[:5])
 
     static = {
@@ -290,11 +291,11 @@ if __name__ == "__main__":
         if kwarg["dataset"] == "zappos":
             dynamic = {"n": 85}
         else:
-            dynamic = {"n": 300}
+            dynamic = {"n": 150}
 
         kwarg.update(**static, **dynamic)
 
     #  Test(**kwargs[0]).fit()
-    results = Parallel(n_jobs=-1, backend="loky")(
+    results = Parallel(n_jobs=60, backend="multiprocessing")(
         delayed(Test(**kwarg).fit)() for kwarg in kwargs
     )
