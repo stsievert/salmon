@@ -1,8 +1,9 @@
 import itertools
 from collections import defaultdict
-from time import time
+from time import time, sleep
 from textwrap import dedent
 from typing import List, TypeVar, Tuple, Dict, Any, Optional
+from copy import deepcopy
 
 import torch.optim
 import numpy as np
@@ -357,25 +358,33 @@ class RRTSTE(Adaptive):
         df["score"] = scores
         cols = df.columns
 
-        top_scores_by_head = df.groupby(by="h")["score"].nlargest(n=5)
+        top_scores_by_head = df.groupby(by="h")["score"].nlargest(n=3)
         top_idx = top_scores_by_head.index.droplevel(0)
 
-        posted = defaultdict(list)
-        top_queries = df.loc[top_idx].sort_values(by="score", ascending=True)
-        for _, query in top_queries.iterrows():
-            idx = int(query["h"])
-            post = (int(query["h"]), int(query["l"]), int(query["r"]), query["score"])
-            posted[idx].append(post)
+        top_queries = df.loc[top_idx].sample(random_state=self.random_state_)
+        top_queries = top_queries.sample(random_state=self.random_state_)
 
+        posted = [
+            (int(r["h"]), int(r["l"]), int(r["r"]), r["score"])
+            for _, r in top_queries.iterrows()
+        ]
         self.queries_ = posted
-        return sum([len(v) for v in self.queries_.values()])
+        return len(self.queries_)
 
     def get_query(self):
         if self.meta["num_ans"] <= self.R * self.n:
             h, l, r = _random_query(self.n, random_state=self.random_state_)
             return {"head": h, "left": l, "right": r}, -9999
-        k = self.random_state_.choice(list(self.queries_.keys()))
-        h, l, r, score = self.queries_[k].pop()
+
+        # Protect against race conditions when self.queries_ has just been erased
+        while True:
+            try:
+                h, l, r, score = self.queries_.pop()
+            except (ValueError, IndexError, AttributeError):
+                sleep(10e-3)
+            else:
+                break
+
         if self.random_state_.uniform(0, 1) <= 0.5:
             r, l = l, r
         return {"head": h, "left": l, "right": r, "score": score}, score

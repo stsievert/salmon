@@ -157,14 +157,10 @@ class Runner:
             datum["time_loop"] = time() - loop_start
             rj.jsonarrappend(f"alg-perf-{self.ident}", root, datum)
             logger.info(datum)
-            from pprint import pprint
-
-            pprint(datum)
             if "reset" in rj.keys() and rj.jsonget("reset"):
                 self.reset(client, rj)
                 break
             logger.info(datum)
-            pprint(datum)
         return True
 
     def save(self) -> bool:
