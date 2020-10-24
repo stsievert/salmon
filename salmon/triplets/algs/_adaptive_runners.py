@@ -353,9 +353,9 @@ class RR(Adaptive):
         top_queries = df.loc[top_idx].sample(random_state=self.random_state_)
         top_queries = top_queries.sample(random_state=self.random_state_)
 
-        queries = top_queries[["h", "l", "r"]].values.astype("int64")
-        scores = self.random_state_.uniform(size=len(queries))
-        return queries, scores
+        posted = top_queries[["h", "l", "r"]].values.astype("int64")
+        scores = self.random_state_.uniform(0, 1, size=len(queries))
+        return posted, scores
 
 
 class STE(Adaptive):
