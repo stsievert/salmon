@@ -311,7 +311,7 @@ class TSTE(Adaptive):
         )
 
 
-class RRTSTE(Adaptive):
+class RR(Adaptive):
     def __init__(
         self,
         n: int,
@@ -323,7 +323,7 @@ class RRTSTE(Adaptive):
         random_state=None,
         sampling="adaptive",
         scorer="infogain",
-        alpha=1,
+        module="TSTE",
         **kwargs,
     ):
         super().__init__(
@@ -334,25 +334,14 @@ class RRTSTE(Adaptive):
             optimizer__lr=optimizer__lr,
             optimizer__momentum=optimizer__momentum,
             random_state=random_state,
-            module__alpha=alpha,
-            module="TSTE",
+            module=module,
             sampling=sampling,
             scorer=scorer,
             **kwargs,
         )
 
-    def post_queries(
-        self,
-        queries: List[Query],
-        scores: List[float],
-        rj = None,
-        done=None,
-    ) -> int:
-        if rj is None:
-            rj = self.redis_client()
-
-        if not len(queries):
-            return 0
+    def get_queries(self, *args, **kwargs):
+        queries, scores = super().get_queries(*args, **kwargs)
 
         df = pd.DataFrame(queries, columns=["h", "l", "r"])
         df["score"] = scores
@@ -364,30 +353,9 @@ class RRTSTE(Adaptive):
         top_queries = df.loc[top_idx].sample(random_state=self.random_state_)
         top_queries = top_queries.sample(random_state=self.random_state_)
 
-        posted = [
-            (int(r["h"]), int(r["l"]), int(r["r"]), r["score"])
-            for _, r in top_queries.iterrows()
-        ]
-        self.queries_ = posted
-        return len(self.queries_)
-
-    def get_query(self):
-        if self.meta["num_ans"] <= self.R * self.n:
-            h, l, r = _random_query(self.n, random_state=self.random_state_)
-            return {"head": h, "left": l, "right": r}, -9999
-
-        # Protect against race conditions when self.queries_ has just been erased
-        while True:
-            try:
-                h, l, r, score = self.queries_.pop()
-            except (ValueError, IndexError, AttributeError):
-                sleep(10e-3)
-            else:
-                break
-
-        if self.random_state_.uniform(0, 1) <= 0.5:
-            r, l = l, r
-        return {"head": h, "left": l, "right": r, "score": score}, score
+        queries = top_queries[["h", "l", "r"]].values.astype("int64")
+        scores = self.random_state_.uniform(size=len(queries))
+        return queries, scores
 
 
 class STE(Adaptive):
