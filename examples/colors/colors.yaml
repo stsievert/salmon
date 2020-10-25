@@ -8,3 +8,19 @@ samplers:
     module: TSTE
   RandomSampling:
     random_state: 42
+css: >
+  body {
+    background-color: #414141;
+    color: #ddd;
+  }
+  .answer {
+    background-color: #595959;
+    border-color: #bbb;
+  }
+  .head {
+    background-color: #505050;
+    border-color: #000;
+  }
+  .debrief {
+    color: #000;
+  }

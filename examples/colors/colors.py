@@ -71,8 +71,8 @@ def _convert(r, g, b):
 
 def _fmt(hc):
     target = (
-        "<div class='center col-md-4 mx-auto'"
-        "style='width: 200px; height: 200px; border: 50px solid;"
+        "<div class='center col-md-5 mx-auto'"
+        "style='width: 125px; height: 125px; border: 0px solid;"
         "border-color: #595959;"
         f"padding: 50px; margin: 0px; background-color: {hc}'"
         "></div>"

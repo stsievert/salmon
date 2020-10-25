@@ -84,6 +84,7 @@ async def _ensure_initialized():
         "debrief",
         "skip_button",
         "sampling",
+        "css",
     ]
     if not set(exp_config) == set(expected_keys):
         msg = (
@@ -114,6 +115,7 @@ async def get_query_page(request: Request):
         "max_queries": exp_config["max_queries"],
         "debrief": exp_config["debrief"],
         "skip_button": exp_config["skip_button"],
+        "css": exp_config["css"]
     }
     items.update(request=request)
     return templates.TemplateResponse("query_page.html", items)

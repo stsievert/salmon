@@ -1,7 +1,7 @@
 .. _getting-started:
 
-Getting started
-===============
+Starting an experiment
+======================
 
 Experiments can be initialized by vising ``[url]:8421/init_exp``. This supports
 the following options:
@@ -82,10 +82,14 @@ in YAML jargon. Here's documentation for each key:
 
 * ``skip_button``, optional boolean. Default ``false``. If ``true``, show a
   button that says "new query."
+* ``css``, optional string. Defaults to ``""``. This CSS is inserted in the
+  ``<style>`` tag in the HTML query page. This allows customization of
+  colors/borders/etc.
 
-Examples of these files are in `salmon/tests/data`_.
+Examples of these files are in `salmon/tests/data`_ and `salmon/examples`_.
 
 .. _salmon/tests/data: https://github.com/stsievert/salmon/tree/master/tests/data
+.. _salmon/examples: https://github.com/stsievert/salmon/tree/master/examples
 
 YAML file with ZIP file
 -----------------------
