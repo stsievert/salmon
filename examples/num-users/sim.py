@@ -314,15 +314,15 @@ if __name__ == "__main__":
     config = {
         "n_users": 30,
         "max_queries": 13_000,
-        "n": 58,
+        "n": 30,
         "d": 2,
         "R": 10,
         "dataset": "strange_fruit",
         "random_state": 42,
         "n_test": 10_000,
         "fname": "n_users={n_users}.msgpack",
-        "reaction_time": 0.5,
-        "response_time": 0.5,
+        "reaction_time": 0.25,
+        "response_time": 0.75,
         "init": True,
     }
     history, fname, user_data = asyncio.run(main(**config))

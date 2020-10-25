@@ -345,16 +345,15 @@ class RR(Adaptive):
 
         df = pd.DataFrame(queries, columns=["h", "l", "r"])
         df["score"] = scores
-        cols = df.columns
 
-        top_scores_by_head = df.groupby(by="h")["score"].nlargest(n=5)
+        top_scores_by_head = df.groupby(by="h")["score"].nlargest(n=3)
         top_idx = top_scores_by_head.index.droplevel(0)
 
-        top_queries = df.loc[top_idx].sample(random_state=self.random_state_)
+        top_queries = df.loc[top_idx].sample(random_state=self.random_state_, frac=1)
         posted = top_queries[["h", "l", "r"]].values.astype("int64")
-        scores = 10 + self.random_state_.uniform(0, 1, size=len(posted))
+        scores = 10 + np.linspace(0, 1, num=len(posted))
 
-        random = df.sample(random_state=self.random_state_, n=min(len(df), 500))
+        random = df.sample(random_state=self.random_state_, n=min(len(df), 1000))
         random_q = random[["h", "l", "r"]].values.astype("int64")
         random_scores = 0 + self.random_state_.uniform(0, 1, size=len(random_q))
 

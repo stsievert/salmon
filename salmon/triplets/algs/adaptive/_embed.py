@@ -1,6 +1,7 @@
 import itertools
 from copy import copy
 from typing import List, Tuple
+from time import time
 
 import numpy as np
 import torch
@@ -151,7 +152,7 @@ class Embedding(_Embedding):
             return self
 
         beg_meta = copy(self.meta_)
-
+        deadline = time() + 15
         while True:
             idx_train = self.get_train_idx(self.meta_["num_answers"])
             train_ans = answers[idx_train].astype("int64")
@@ -161,7 +162,10 @@ class Embedding(_Embedding):
             self.meta_["model_updates"] += 1
             logger.info("%s", self.meta_)
             n_ans = len(answers)
-            if self.meta_["num_grad_comps"] - beg_meta["num_grad_comps"] >= n_ans:
+            if (
+                time() >= deadline
+                or self.meta_["num_grad_comps"] - beg_meta["num_grad_comps"] >= n_ans
+            ):
                 break
         return self
 
