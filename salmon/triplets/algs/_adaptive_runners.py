@@ -120,7 +120,7 @@ class Adaptive(Runner):
     def get_query(self) -> Tuple[Optional[Dict[str, int]], Optional[float]]:
         if (self.meta["num_ans"] <= self.R * self.n) or self.sampling == "random":
             head, left, right = _random_query(self.n, random_state=self.random_state_)
-            return {"head": int(head), "left": int(left), "right": int(right)}, 1.0
+            return {"head": int(head), "left": int(left), "right": int(right)}, -9999
         return None, -9999
 
     def get_queries(
@@ -347,15 +347,20 @@ class RR(Adaptive):
         df["score"] = scores
         cols = df.columns
 
-        top_scores_by_head = df.groupby(by="h")["score"].nlargest(n=3)
+        top_scores_by_head = df.groupby(by="h")["score"].nlargest(n=5)
         top_idx = top_scores_by_head.index.droplevel(0)
 
         top_queries = df.loc[top_idx].sample(random_state=self.random_state_)
-        top_queries = top_queries.sample(random_state=self.random_state_)
-
         posted = top_queries[["h", "l", "r"]].values.astype("int64")
-        scores = self.random_state_.uniform(0, 1, size=len(queries))
-        return posted, scores
+        scores = 10 + self.random_state_.uniform(0, 1, size=len(posted))
+
+        random = df.sample(random_state=self.random_state_, n=min(len(df), 500))
+        random_q = random[["h", "l", "r"]].values.astype("int64")
+        random_scores = 0 + self.random_state_.uniform(0, 1, size=len(random_q))
+
+        ret_q = np.concatenate((posted, random_q))
+        ret_score = np.concatenate((scores, random_scores))
+        return ret_q, ret_score
 
 
 class STE(Adaptive):

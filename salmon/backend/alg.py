@@ -90,6 +90,7 @@ class Runner:
                     self.clear_queries(rj)
                 done = distributed.Event(name="pa_finished")
                 done.clear()
+
                 f_post = submit(
                     "post_queries", self_future, queries_f, scores_f, done=done
                 )
@@ -102,9 +103,9 @@ class Runner:
                 else:
                     f_search = client.submit(lambda x: ([], []), 0)
 
-                time_model = 0
-                time_post = 0
-                time_search = 0
+                time_model = 0.0
+                time_post = 0.0
+                time_search = 0.0
 
                 def _model_done(_):
                     nonlocal time_model
@@ -161,6 +162,7 @@ class Runner:
                 self.reset(client, rj)
                 break
             logger.info(datum)
+            print(datum)
         return True
 
     def save(self) -> bool:
@@ -259,13 +261,16 @@ class Runner:
         if rj is None:
             rj = self.redis_client()
 
-        if isinstance(queries, np.ndarray) and isinstance(scores, np.ndarray):
-            idx = np.argsort(-scores)
-            scores = scores[idx]  # high to low scores
-            queries = queries[idx]
-
         if not len(queries):
             return 0
+
+        if isinstance(queries, np.ndarray) and isinstance(scores, np.ndarray):
+            idx = np.argsort(-1 * scores)
+            assert (
+                len(scores) == queries.shape[0]
+            ), f"Different lengths {scores.shape}, {queries.shape}"
+            scores = scores[idx]  # high to low scores
+            queries = queries[idx]
 
         n_chunks = len(queries) // 500
         split_queries = np.array_split(queries, max(n_chunks, 1))
@@ -274,9 +279,9 @@ class Runner:
         n_queries = 0
         for _queries, _scores in zip(split_queries, split_scores):
             queries2 = {
-                self.serialize_query(q): float(score)
-                for q, score in zip(_queries, _scores)
-                if not np.isnan(score)
+                self.serialize_query(q): float(s)
+                for q, s in zip(_queries, _scores)
+                if not np.isnan(s)
             }
             name = self.ident
             key = f"alg-{name}-queries"
