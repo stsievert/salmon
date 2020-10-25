@@ -112,13 +112,13 @@
 ./_static/underscore.js
 ./adaptive.html
 ./algorithms.html
+./alieneggs.html
 ./api.html
 ./benchmarks/adaptive.html
 ./benchmarks/server.html
 ./colors.html
 ./dashboard.html
 ./developers.html
-./eggs.html
 ./generated/salmon.backend.alg.Runner.html
 ./generated/salmon.triplets.algs.CKL.html
 ./generated/salmon.triplets.algs.GNMDS.html
