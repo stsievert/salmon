@@ -161,6 +161,7 @@ async def _get_config(exp: bytes, targets: bytes) -> Dict[str, Any]:
         "max_queries": -1,
         "d": 2,
         "skip_button": False,
+        "css": "",
     }
     exp_config.update(config)
     if "sampling" not in exp_config:
