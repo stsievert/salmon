@@ -49,8 +49,8 @@
   border-style: solid;
   border-width: 2px;
 }
-.answer-sent {
-  border-color: #0c0;
+.answersent {
+  border-color: #00cc00 !important;
   border-style: solid;
   border-width: 2px;
 }
@@ -154,6 +154,18 @@ async function send(winner, id) {
   $('#q-right').addClass("disabled");
   $("#num-queries").html("" + num_queries);
   console.log(ident);
+  setTimeout(function() {
+    $("#q-left").hide();
+    $("#q-right").hide();
+    $('#q-head').hide();
+  }, 100);
+  setTimeout(function() {
+    $('#q-left').removeClass("disabled");
+    $('#q-right').removeClass("disabled");
+    $('#q-left').show();
+    $('#q-right').show();
+    $('#q-head').show();
+  }, 200);
   $.post("/answer",
     JSON.stringify({
         "head": head,
@@ -208,8 +220,6 @@ function getquery(){
         end_latency = getTime();
         latency = end_latency - start_latency;
         response_start = getTime();
-        $('#q-left').removeClass("disabled");
-        $('#q-right').removeClass("disabled");
       }
   });
 }
@@ -247,33 +257,41 @@ document.onkeydown = function checkKey(e) {
   // console.log(e.keyCode);
   // console.log(e.keyCode == "37");
 
-  left_disabled = $("#q-left").hasClass("answer-sent");
-  right_disabled = $("#q-right").hasClass("answer-sent");
+  left_disabled = $("#q-left").hasClass("answersent");
+  right_disabled = $("#q-right").hasClass("answersent");
   if (left_disabled || right_disabled){ return }
   left_disabled = $("#q-left").hasClass("no-more-queries");
   right_disabled = $("#q-right").hasClass("no-more-queries");
   if (left_disabled || right_disabled){ return }
 
   start_latency = getTime();
+  _send = false;
   if (e.keyCode == '37') { // left arrow
-    iterate(left, "#q-left");
+    winner = left;
     winner_id = "#q-left";
+    _send = true;
   }
   else if (e.keyCode == '39') { // right arrow
-    iterate(right, "#q-right");
     winner_id = "#q-right";
+    winner = right;
+    _send = true;
   }
   else if (e.keyCode == '38') { // up arrow
   }
   else if (e.keyCode == '40') { // down arrow
   }
 
-  $(winner_id).addClass("answer-sent");
-  $(winner_id).addClass("disabled");
-  setTimeout(function(){
-    $(winner_id).removeClass("disabled");
-    $(winner_id).removeClass("answer-sent");
-  }, 150);  // 215ms is median reaction time for humans
+  if (_send) {
+    $(winner_id).addClass("answersent");
+    $(winner_id).addClass("disabled");
+    setTimeout(function(){
+      iterate(winner, winner_id);
+    }, 100);
+    setTimeout(function(){
+      $(winner_id).removeClass("disabled");
+      $(winner_id).removeClass("answersent");
+    }, 250);  // 215ms is median reaction time for humans
+  }
 }
 </script>
 </html>
