@@ -21,3 +21,6 @@ css: >
     background-color: #505050;
     border-color: #000;
   }
+  .debrief {
+    color: #000;
+  }

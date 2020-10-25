@@ -107,12 +107,13 @@
 <!-- "Thanks for participating!" modal -->
 <div class="modal fade" id="debriefModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
-    <div class="modal-content">
-     <div class="modal-body">
+    <div class="modal-content debrief">
+       <div class="modal-body">
          {{ debrief | safe }}
-     </div>
-     <div class="modal-body">
+       </div>
+       <div class="modal-body">
          Participant ID: <span id="puid">{{ puid }}</span>
+      </div>
     </div>
   </div>
 </div>

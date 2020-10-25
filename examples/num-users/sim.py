@@ -36,7 +36,7 @@ sys.path.append(str(DIR.parent / "queries-searched"))
 from run import _test_dataset
 
 SALMON = "http://localhost:8421"
-SALMON = "http://ec2-44-234-145-236.us-west-2.compute.amazonaws.com:8421"
+#  SALMON = "http://ec2-44-234-145-236.us-west-2.compute.amazonaws.com:8421"
 
 
 class SalmonExperiment(BaseEstimator):
@@ -160,6 +160,7 @@ class User(BaseEstimator):
                         print(f"dl={dl}, DR={dr}. (h, l, r, w) = {(h, l, r, w)}")
                     else:
                         raise ValueError(f"h, l, r, w = {(h, l, r, w)}")
+                    print(f"score={answer['score']}")
                 datum.update({"h": h, "l": l, "r": r, "w": w, "dl": dl, "dr": dr})
                 datum.update({"time": time()})
                 await asyncio.sleep(sleep_time)
@@ -320,9 +321,9 @@ if __name__ == "__main__":
         "random_state": 42,
         "n_test": 10_000,
         "fname": "n_users={n_users}.msgpack",
-        "reaction_time": 0.1,
-        "response_time": 0.1,
-        "init": False,
+        "reaction_time": 0.5,
+        "response_time": 0.5,
+        "init": True,
     }
     history, fname, user_data = asyncio.run(main(**config))
     with open(f"history-{fname}", "wb") as f:
