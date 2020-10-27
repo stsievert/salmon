@@ -5,9 +5,10 @@ d: 2
 samplers:
   RR:
     random_state: 42
-    module: TSTE
   RandomSampling:
     random_state: 42
+sampling:
+  probs: {"RandomSampling": 38, "RR": 62}
 css: >
   body {
     background-color: #414141;

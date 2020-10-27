@@ -154,12 +154,12 @@ class User(BaseEstimator):
                 dr = abs(h - r)
                 if self.uid == "0":
                     if w == l:
-                        print(f"DL={dl}, dr={dr}. (h, l, r, w) = {(h, l, r, w)}")
+                        msg = (f"DL={dl}, dr={dr}. (h, l, r, w) = {(h, l, r, w)}")
                     elif w == r:
-                        print(f"dl={dl}, DR={dr}. (h, l, r, w) = {(h, l, r, w)}")
+                        msg = (f"dl={dl}, DR={dr}. (h, l, r, w) = {(h, l, r, w)}")
                     else:
                         raise ValueError(f"h, l, r, w = {(h, l, r, w)}")
-                    print(f"score={answer['score']}")
+                    print(f"{msg}, score={answer['score']}")
                 datum.update({"h": h, "l": l, "r": r, "w": w, "dl": dl, "dr": dr})
                 datum.update({"time": time()})
                 await asyncio.sleep(sleep_time)
