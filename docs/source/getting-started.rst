@@ -140,7 +140,7 @@ Database dump
 
 The dashboard offers a link to download the experiment on the dashboard (that
 is, at ``[url]:8421/dashboard``). This will download a file called
-``dump-X.Y.Z.rdb``. Do not delete the numbers ``X.Y.Z``!
+``exp-[date]-vX.Y.Z.rdb``. Do not delete the numbers ``X.Y.Z``!
 
 Salmon supports the upload of this file to the same version of Salmon. The
 upload of this file will restore the state of your experiment.

@@ -60,7 +60,7 @@
     <div class="row justify-content-center">
       <h3>Downloads</h3>
     </div>
-    <div class="row col-lg-10 offset-lg-4">
+    <div class="row col-lg-10 offset-lg-3">
       <ul>
         <li>Responses:
             <b><a href="/responses?json=0">CSV</a></b>,&nbsp;
@@ -73,16 +73,15 @@
             (<a href="/docs#/private/get_config_config_get">docs</a>)
         </li>
         <li>
-            <b>
-                <a href="/download">Full experiment</a>&nbsp;</b>
-          (which can be re-uploaded to a new machine; <a href="/docs#/private/download_download_get">docs</a>)
+            <b><a href="/download">Full experiment</a></b>, which can be
+            uploaded to a new machine (<a href="/docs#/private/download_download_get">docs</a>)
         </li>
       </ul>
     </div>
     <div class="row justify-content-center">
       <h3>Useful links</h3>
     </div>
-    <div class="row col-lg-10 offset-lg-4">
+    <div class="row col-lg-10 offset-lg-3">
       <ul>
           <li><b><a href="/">Query page</a></b>, the interface users will see.</li>
         <li>
@@ -96,6 +95,10 @@
     </div>
     <div class="row justify-content-center">
       <h3>Server-side timing</h3>
+    </div>
+    <br>
+    <div class="row col-lg-8 offset-lg-3">
+      <p>Here's the computation time required to complete each of the API endpoints on this machine:</p>
     </div>
     <br>
     <div class="row justify-content-center">
@@ -127,17 +130,6 @@
     </div>
     <br>
     <div class="row justify-content-center">
-      <p>This shows the computation time required to complete each of the API endpoints on this machine.</p>
-    </div>
-    <br>
-    <div class="row justify-content-center">
-      <div id="concurrent-users"></div>
-      <script>
-      plot = JSON.parse({{ response_rate | tojson }});
-      Bokeh.embed.embed_item(plot, "concurrent-users");
-      </script>
-    </div>
-    <div class="row justify-content-center">
         <p>
         <a href="/" onclick="javascript:event.target.port=7381">
             Redis live monitoring</a>.
@@ -148,6 +140,9 @@
       <h3>Client-side timing</h3>
     </div>
     <br>
+    <div class="row col-lg-8 offset-lg-3">
+      <p>Here's how long users took to answer queries (left) and wait for a new query (right):</p>
+    </div>
     <div class="row justify-content-center">
       <span id="responses"></span>
       <span id="network-latency"></span>
@@ -159,6 +154,16 @@
       </script>
     </div>
     <br>
+    <div class="row col-lg-8 offset-lg-3">
+      <p>Here's the number of responses received per second by the sever:</p>
+    </div>
+    <div class="row justify-content-center">
+      <div id="concurrent-users"></div>
+      <script>
+      plot = JSON.parse({{ response_rate | tojson }});
+      Bokeh.embed.embed_item(plot, "concurrent-users");
+      </script>
+    </div>
     <div class="row justify-content-center">
       <h2>Algorithm timings</h2>
     </div>

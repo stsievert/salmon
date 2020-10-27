@@ -153,8 +153,6 @@ var num_queries = 0;  // queries submitted
 var show_queries = getTime();
 
 async function send(winner, id) {
-  $('#q-left').addClass("disabled");
-  $('#q-right').addClass("disabled");
   setTimeout(function() {
     $("#q-left").hide();
     $("#q-right").hide();
@@ -167,6 +165,8 @@ async function send(winner, id) {
   show_queries = getTime() + 200;
   if ($("#q-right").hasClass("disabled") || $("#q-left").hasClass("disabled")){
   } else {
+    $('#q-left').addClass("disabled");
+    $('#q-right').addClass("disabled");
     var response_time = getTime() - response_start;
     num_queries = num_queries + 1;
     $("#num-queries").html("" + num_queries);
@@ -305,10 +305,8 @@ document.onkeydown = function checkKey(e) {
 
   if (_send) {
     $(winner_id).addClass("answersent");
-    $(winner_id).addClass("disabled");
     iterate(winner, winner_id);
     setTimeout(function(){
-      $(winner_id).removeClass("disabled");
       $(winner_id).removeClass("answersent");
     }, 200);  // 215ms is median reaction time for humans
   }
