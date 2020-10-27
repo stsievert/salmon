@@ -57,11 +57,11 @@ If we want to use two alternate configs for TSTE:
    samplers:
      RandomSampling: {}
      tste1:
-       module: TSTE
+       class: TSTE
        optimizer: PadaDampG
        optimizer__lr: 0.1
      tste2:
-       module: TSTE
+       class: TSTE
        optimizer: GeoDamp
        optimizer__lr: 0.1
    sampling:
