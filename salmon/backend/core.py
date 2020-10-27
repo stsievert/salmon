@@ -101,7 +101,7 @@ async def init(ident: str, background_tasks: BackgroundTasks) -> bool:
             alg = cloudpickle.loads(state)
         else:
             params = config["samplers"][ident]
-            _class = params.pop("module", ident)
+            _class = params.pop("class", ident)
             Alg = getattr(algs, _class)
             params = {k: _fmt_params(k, v) for k, v in params.items()}
             logger.warning("Alg for %s = %s", ident, Alg)

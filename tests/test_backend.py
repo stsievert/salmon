@@ -46,13 +46,12 @@ def test_init_errors_propogate(server):
     exp = Path(__file__).parent / "data" / "exp-active-bad.yaml"
     r = server.post("/init_exp", data={"exp": exp.read_bytes()}, error=True)
     assert r.status_code == 500
-    assert "module 'salmon.triplets.algs' has no attribute 'foobar'" in r.text
+    assert "module 'salmon.triplets.algs' has no attribute 'FooBar'" in r.text
 
 
 def test_run_errors_logged(server, logs):
     server.authorize()
     server.get("/init_exp")
-    exp = Path(__file__).parent / "data" / "exp-active-bad.yaml"
     config = {"targets": list(range(10)), "d": 1, "samplers": {"Test": {}}}
     r = server.post("/init_exp", data={"exp": yaml.safe_dump(config)})
     with pytest.raises(LogError, match="Test error"):
@@ -62,4 +61,5 @@ def test_run_errors_logged(server, logs):
                 winner = random.choice([q["left"], q["right"]])
                 ans = {"winner": winner, "puid": "", **q}
                 ans["left"] = 12
+                sleep(0.1)
                 server.post("/answer", data=ans)
