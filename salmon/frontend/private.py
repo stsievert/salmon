@@ -205,6 +205,19 @@ async def _get_config(exp: bytes, targets: bytes) -> Dict[str, Any]:
     logger.info("initializing experinment with %s", exp_config)
     return exp_config
 
+@app.get("/config", tags=["private"])
+async def get_config(yaml: int = 0):
+    """Download the experiment configuration.
+
+    This configuration will be rendered with default values if they're ommited.
+    To override these defaults, include that key in the init.yaml file.
+    """
+    import yaml as yaml_module
+    config = await _ensure_initialized()
+    if not yaml:
+        return JSONResponse(config)
+    pretty_config = yaml_module.dump(config)
+    return PlainTextResponse(pretty_config, media_type="text/plain")
 
 def exception_to_string(excp):
     stack = traceback.extract_stack() + traceback.extract_tb(excp.__traceback__)
@@ -574,6 +587,7 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
         "dashboard.html",
         {
             "start": start_datetime.isoformat()[: 10 + 6],
+            "config": exp_config,
             "request": request,
             "targets": targets,
             "exp_config": exp_config,
@@ -584,6 +598,7 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
             "alg_models": models,
             "alg_model_plots": alg_plots,
             "alg_perfs": alg_perfs,
+            "samplers": list(exp_config["samplers"].keys()),
             #  "alg_model_plots": plots,
             **plots,
         },
