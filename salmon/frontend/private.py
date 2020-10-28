@@ -157,11 +157,10 @@ async def _get_config(exp: bytes, targets: bytes) -> Dict[str, Any]:
         "instructions": "Default instructions (can include <i>arbitrary</i> HTML)",
         "max_queries": None,
         "debrief": "Thanks!",
-        "samplers": {"random": {"class": "RandomSampling"}},
+        "samplers": {"random": {"module": "RandomSampling"}},
         "max_queries": -1,
         "d": 2,
         "skip_button": False,
-        "css": "",
     }
     exp_config.update(config)
     if "sampling" not in exp_config:
@@ -205,19 +204,6 @@ async def _get_config(exp: bytes, targets: bytes) -> Dict[str, Any]:
     logger.info("initializing experinment with %s", exp_config)
     return exp_config
 
-@app.get("/config", tags=["private"])
-async def get_config(yaml: int = 0):
-    """Download the experiment configuration.
-
-    This configuration will be rendered with default values if they're ommited.
-    To override these defaults, include that key in the init.yaml file.
-    """
-    import yaml as yaml_module
-    config = await _ensure_initialized()
-    if not yaml:
-        return JSONResponse(config)
-    pretty_config = yaml_module.dump(config)
-    return PlainTextResponse(pretty_config, media_type="text/plain")
 
 def exception_to_string(excp):
     stack = traceback.extract_stack() + traceback.extract_tb(excp.__traceback__)
@@ -269,6 +255,8 @@ async def process_form(
     """
     try:
         ret = await _process_form(request, exp, targets, rdb)
+        if rdb:
+            return ret
         await _ensure_initialized()
         return ret
     except Exception as e:
@@ -587,7 +575,6 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
         "dashboard.html",
         {
             "start": start_datetime.isoformat()[: 10 + 6],
-            "config": exp_config,
             "request": request,
             "targets": targets,
             "exp_config": exp_config,
@@ -598,8 +585,7 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
             "alg_models": models,
             "alg_model_plots": alg_plots,
             "alg_perfs": alg_perfs,
-            "samplers": list(exp_config["samplers"].keys()),
-            #  "alg_model_plots": plots,
+            "config": exp_config,
             **plots,
         },
     )
@@ -698,7 +684,10 @@ async def restore(
         <p>
         To do this on Amazon EC2, select the \"Actions > Instance State > Reboot\"
         </p>
-        <p>After you reboot, visit the dashboard.</p>
+        <p>For developers, a "restart" means <code>docker-compose stop; docker-compose start</code>.</p>
+        <p>After you reboot, visit the dashboard at
+        <code>[url]:8421/dashboard</code>.
+        <b>Do not visit the dashboard now</b>.</p>
         </div>
         """
     )
