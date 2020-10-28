@@ -30,6 +30,7 @@ def get_logger(name):
     ROOT_DIR = Path(__file__).absolute().parent.parent
 
     out = ROOT_DIR / "out" / f"{name}.log"
+    assert out.parent.exists()
 
     fh = logging.FileHandler(str(out))
     fh.setLevel(LEVEL)

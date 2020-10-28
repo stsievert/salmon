@@ -129,15 +129,21 @@ async def get_query() -> Dict[str, Union[int, str, float]]:
     ident = np.random.choice(idents, p=probs)
 
     r = httpx.get(f"http://localhost:8400/query-{ident}")
-    logger.info(f"query r={r}")
     if r.status_code == 200:
+        logger.info(f"query r={r}")
         return r.json()
 
     key = f"alg-{ident}-queries"
-    logger.info(f"bzpopmax'ing {key}")
-    queries = rj.bzpopmax(key)
-    _, serialized_query, score = queries
-    q = manager.deserialize_query(serialized_query)
+    logger.info(f"zpopmax'ing {key}")
+    queries = rj.zpopmax(key)
+    if len(queries):
+        serialized_query, score = queries[0]
+        q = manager.deserialize_query(serialized_query)
+    else:
+        config = await _get_config()
+        q = manager.random_query(config["n"])
+        score = -9999
+
     return {"alg_ident": ident, "score": score, **q}
 
 

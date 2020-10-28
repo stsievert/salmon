@@ -7,7 +7,7 @@ samplers:
     optimizer: PadaDampG
     optimizer__lr: 0.1
   tste2:
-    module: TSTE
+    class: TSTE
     alpha: 1
     optimizer: PadaDampG
     optimizer__lr: 0.1

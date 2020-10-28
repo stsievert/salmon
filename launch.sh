@@ -8,12 +8,15 @@ dask-worker --nprocs 3 127.0.0.2:8786 &
 
 if [ $SALMON_DEBUG ]
 then
+    # export SALMON_DEBUG=1 or export SALMON_DEBUG=0
     export LOG_LEVEL=INFO
     echo "Launching uvicorn..."
     uvicorn salmon:app_algs --reload --reload-dir salmon --port 8400 --host 0.0.0.0 &
     sleep 1
     uvicorn salmon:app --reload --reload-dir salmon --reload-dir templates --port 8421 --host 0.0.0.0
 else
+    # unset SALMON_DEBUG if already set in enviroment
+    #
     # Use shared memory for Gunicorn; apparelty can block on AWS
     # [1]:https://pythonspeed.com/articles/gunicorn-in-docker/
     #

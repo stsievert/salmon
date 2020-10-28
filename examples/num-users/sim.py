@@ -36,7 +36,6 @@ sys.path.append(str(DIR.parent / "queries-searched"))
 from run import _test_dataset
 
 SALMON = "http://localhost:8421"
-#  SALMON = "http://ec2-44-234-145-236.us-west-2.compute.amazonaws.com:8421"
 
 
 class SalmonExperiment(BaseEstimator):
@@ -155,12 +154,12 @@ class User(BaseEstimator):
                 dr = abs(h - r)
                 if self.uid == "0":
                     if w == l:
-                        print(f"DL={dl}, dr={dr}. (h, l, r, w) = {(h, l, r, w)}")
+                        msg = (f"DL={dl}, dr={dr}. (h, l, r, w) = {(h, l, r, w)}")
                     elif w == r:
-                        print(f"dl={dl}, DR={dr}. (h, l, r, w) = {(h, l, r, w)}")
+                        msg = (f"dl={dl}, DR={dr}. (h, l, r, w) = {(h, l, r, w)}")
                     else:
                         raise ValueError(f"h, l, r, w = {(h, l, r, w)}")
-                    print(f"score={answer['score']}")
+                    print(f"{msg}, score={answer['score']}")
                 datum.update({"h": h, "l": l, "r": r, "w": w, "dl": dl, "dr": dr})
                 datum.update({"time": time()})
                 await asyncio.sleep(sleep_time)
@@ -311,8 +310,11 @@ async def main(**config):
 
 
 if __name__ == "__main__":
+    r = httpx.get(SALMON + "/", timeout=20)
+    assert r.json()["detail"] == "No data has been uploaded"
+
     config = {
-        "n_users": 30,
+        "n_users": 10,
         "max_queries": 13_000,
         "n": 30,
         "d": 2,

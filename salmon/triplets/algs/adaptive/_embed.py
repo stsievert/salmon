@@ -1,6 +1,6 @@
 import itertools
 from copy import copy
-from typing import List, Tuple
+from typing import List, Tuple, Union
 from time import time
 
 import numpy as np
@@ -70,10 +70,12 @@ class Embedding(_Embedding):
         warm_start=True,
         max_epochs=1,
         initial_batch_size=256,
+        partial_fit_time=15,
         **kwargs,
     ):
         self.random_state = random_state
         self.initial_batch_size = initial_batch_size
+        self.partial_fit_time = partial_fit_time
 
         super().__init__(
             module=module,
@@ -88,7 +90,7 @@ class Embedding(_Embedding):
             criterion=Reduce,
             verbose=False,
             batch_size=-1,
-            max_epochs=1,
+            max_epochs=max_epochs,
             optimizer__nesterov=True,
             train_split=None,
         )
@@ -103,7 +105,9 @@ class Embedding(_Embedding):
         self.random_state_ = rng
         self.answers_ = np.zeros((1000, 3), dtype="uint16")
 
-    def push(self, answers):
+    def push(self, answers: Union[list, np.ndarray]):
+        if not (hasattr(self, "initialized_") and self.initialized_):
+            self.initialize()
         if isinstance(answers, list):
             answers = (
                 np.array(answers) if len(answers) else np.empty((0, 3), dtype="uint16")
@@ -152,7 +156,7 @@ class Embedding(_Embedding):
             return self
 
         beg_meta = copy(self.meta_)
-        deadline = time() + 15
+        deadline = time() + (self.partial_fit_time or np.inf)
         while True:
             idx_train = self.get_train_idx(self.meta_["num_answers"])
             train_ans = answers[idx_train].astype("int64")
@@ -169,7 +173,7 @@ class Embedding(_Embedding):
                 break
         return self
 
-    def score(self, answers, y=None):
+    def score(self, answers, y=None) -> float:
         if not (hasattr(self, "initialized_") and self.initialized_):
             self.initialize()
         score = super().score(answers)
@@ -177,13 +181,20 @@ class Embedding(_Embedding):
         return score
 
     def fit(self, X, y=None):
+        if not (hasattr(self, "initialized_") and self.initialized_):
+            self.initialize()
         for epoch in range(self.max_epochs):
             n_ans = copy(self.meta_["num_answers"])
+            print(epoch)
             self.partial_fit(self.answers_[:n_ans])
         return self
 
-    def embedding(self):
+    def embedding(self) -> np.ndarray:
         return self.module_.embedding.detach().numpy()
+
+    @property
+    def embedding_(self) -> np.ndarray:
+        return self.embedding()
 
     def get_train_idx(self, n_ans):
         bs = min(n_ans, self.initial_batch_size)

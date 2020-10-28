@@ -118,6 +118,9 @@
   </div>
 </div>
 
+<div id="preloadingtargets">
+</div>
+
 <script>
 // Enable every tool tip on the page
 $(function () {
@@ -127,12 +130,12 @@ $(function () {
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
-head = -1;
-left = -1;
-right = -1;
-puid = $("#puid").html();
-targets = {{ targets | safe }};
-prev_queries = [];
+var head = -1;
+var left = -1;
+var right = -1;
+var puid = $("#puid").html();
+var targets = {{ targets | safe }};
+var prev_queries = [];
 function getTime(){
   var d = new Date();
     // getTime returns time in milliseconds since 1970-01-01, [1]
@@ -147,41 +150,40 @@ var end_latency = -1;
 var latency = -1;
 var max_queries = {{ max_queries }};
 var num_queries = 0;  // queries submitted
+var show_queries = getTime();
 
 async function send(winner, id) {
-  var response_time = getTime() - response_start;
-  num_queries = num_queries + 1;
-  $('#q-left').addClass("disabled");
-  $('#q-right').addClass("disabled");
-  $("#num-queries").html("" + num_queries);
-  console.log(ident);
   setTimeout(function() {
     $("#q-left").hide();
     $("#q-right").hide();
     $('#q-head').hide();
     $('#comparison-text').hide();
+    $("#q-left").html("");
+    $("#q-right").html("");
+    $('#q-head').html("");
   }, 100);
-  setTimeout(function() {
-    $('#q-left').removeClass("disabled");
-    $('#q-right').removeClass("disabled");
-    $('#q-left').show();
-    $('#q-right').show();
-    $('#q-head').show();
-    $('#comparison-text').show();
-  }, 250);
-  $.post("/answer",
-    JSON.stringify({
-        "head": head,
-        "left": left,
-        "right": right,
-        "winner": winner,
-        "puid": puid,
-        "response_time": response_time,
-        "network_latency": latency,
-        "score": score,
-        "alg_ident": ident,
-    })
-  );
+  show_queries = getTime() + 200;
+  if ($("#q-right").hasClass("disabled") || $("#q-left").hasClass("disabled")){
+  } else {
+    $('#q-left').addClass("disabled");
+    $('#q-right').addClass("disabled");
+    var response_time = getTime() - response_start;
+    num_queries = num_queries + 1;
+    $("#num-queries").html("" + num_queries);
+    $.post("/answer",
+      JSON.stringify({
+          "head": head,
+          "left": left,
+          "right": right,
+          "winner": winner,
+          "puid": puid,
+          "response_time": response_time,
+          "network_latency": latency,
+          "score": score,
+          "alg_ident": ident,
+      })
+    );
+  }
 }
 
 class FixedLengthArray{
@@ -212,14 +214,31 @@ function getquery(){
       score = data["score"];
       ident = data["alg_ident"];
       query = [head, left, right].join("-");
-      console.log(prev_queries)
+      if (num_queries <= targets.length - 10) {
+        $("#preloadingtargets").hide();
+        var toload = [];
+        var num = Math.min(10, 2 * (num_queries + 1));
+        for (var i=0; i < num; i++){
+          toload.push(targets[num_queries + i]);
+        }
+        var html = $("#preloadingtargets").html();
+        $("#preloadingtargets").html(html + toload.join());
+      }
       if (prev_queries.includes(query)) {
         getquery();
       } else {
         prev_queries.push(query);
-        $("#q-left").html(targets[left]);
-        $("#q-right").html(targets[right]);
-        $("#q-head").html(targets[head]);
+        setTimeout(function() {
+          $("#q-left").html(targets[left]);
+          $("#q-right").html(targets[right]);
+          $("#q-head").html(targets[head]);
+          $('#q-left').removeClass("disabled");
+          $('#q-right').removeClass("disabled");
+          $('#q-left').show();
+          $('#q-right').show();
+          $('#q-head').show();
+          $('#comparison-text').show();
+        }, Math.max(0, show_queries - getTime()));
         end_latency = getTime();
         latency = end_latency - start_latency;
         response_start = getTime();
@@ -286,14 +305,10 @@ document.onkeydown = function checkKey(e) {
 
   if (_send) {
     $(winner_id).addClass("answersent");
-    $(winner_id).addClass("disabled");
+    iterate(winner, winner_id);
     setTimeout(function(){
-      iterate(winner, winner_id);
-    }, 100);
-    setTimeout(function(){
-      $(winner_id).removeClass("disabled");
       $(winner_id).removeClass("answersent");
-    }, 250);  // 215ms is median reaction time for humans
+    }, 200);  // 215ms is median reaction time for humans
   }
 }
 </script>

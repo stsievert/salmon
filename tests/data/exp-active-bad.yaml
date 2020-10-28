@@ -8,5 +8,5 @@ targets:
 max_queries: 20
 samplers:
   foobar:
-    class: RoundRobinFooBad
+    class: FooBar
     random_state: 42
