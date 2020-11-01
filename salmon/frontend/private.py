@@ -157,10 +157,11 @@ async def _get_config(exp: bytes, targets: bytes) -> Dict[str, Any]:
         "instructions": "Default instructions (can include <i>arbitrary</i> HTML)",
         "max_queries": None,
         "debrief": "Thanks!",
-        "samplers": {"random": {"module": "RandomSampling"}},
+        "samplers": {"random": {"class": "RandomSampling"}},
         "max_queries": -1,
         "d": 2,
         "skip_button": False,
+        "css": "",
     }
     exp_config.update(config)
     if "sampling" not in exp_config:
