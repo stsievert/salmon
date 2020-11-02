@@ -68,9 +68,7 @@ class SalmonExperiment(BaseEstimator):
         if self.dataset == "strange_fruit":
             init = {
                 "d": self.d,
-                "samplers": {
-                    "RR": {"random_state": self.random_state, "R": self.R}
-                },
+                "samplers": {"RR": {"random_state": self.random_state, "R": self.R}},
                 "targets": list(range(self.n)),
             }
             if not self.init:
@@ -154,9 +152,9 @@ class User(BaseEstimator):
                 dr = abs(h - r)
                 if self.uid == "0":
                     if w == l:
-                        msg = (f"DL={dl}, dr={dr}. (h, l, r, w) = {(h, l, r, w)}")
+                        msg = f"DL={dl}, dr={dr}. (h, l, r, w) = {(h, l, r, w)}"
                     elif w == r:
-                        msg = (f"dl={dl}, DR={dr}. (h, l, r, w) = {(h, l, r, w)}")
+                        msg = f"dl={dl}, DR={dr}. (h, l, r, w) = {(h, l, r, w)}"
                     else:
                         raise ValueError(f"h, l, r, w = {(h, l, r, w)}")
                     print(f"{msg}, score={answer['score']}")
@@ -311,7 +309,10 @@ async def main(**config):
 
 if __name__ == "__main__":
     r = httpx.get(SALMON + "/", timeout=20)
-    assert r.json()["detail"] == "No data has been uploaded"
+    assert (
+        r.json()["detail"] == "No data has been uploaded"
+        or "Experiment keys are not correct" in r.json()["detail"]
+    )
 
     config = {
         "n_users": 10,

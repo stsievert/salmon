@@ -66,13 +66,16 @@ def test_basics(server, logs):
         "right",
         "left",
         "winner",
+        "loser",
         "winner_object",
+        "loser_object",
         "right_object",
         "head_object",
         "left_object",
         "winner_filename",
         "right_filename",
         "left_filename",
+        "loser_filename",
         "head_filename",
         "puid",
         "response_time",
@@ -81,6 +84,9 @@ def test_basics(server, logs):
         "alg_ident",
         "score",
     }
+    assert (df["winner"] != df["loser"]).all()
+    assert (df["winner"] == df["left"]) | (df["winner"] == df["right"])
+    assert (df["loser"] == df["left"]) | (df["loser"] == df["right"])
     n = len(exp_config["targets"])
     assert (0 == df["head"].min()) and (df["head"].max() == n - 1)
     assert ((0 == df["left"].min()) or (df["right"].min() == 0)) and (

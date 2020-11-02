@@ -50,7 +50,7 @@ class _Embedding(NeuralNet):
                 factor = max_norm / norms[idx]
                 d = self.module_._embedding.shape[1]
                 if d > 1:
-                    factor = torch.stack((factor, ) * d).T
+                    factor = torch.stack((factor,) * d).T
                 self.module_._embedding[idx] *= factor
         self.optimizer_.zero_grad()
         return r
@@ -169,7 +169,6 @@ class Embedding(_Embedding):
             return self
 
         beg_meta = copy(self.meta_)
-        deadline = time() + (self.partial_fit_time or np.inf)
         while True:
             idx_train = self.get_train_idx(self.meta_["num_answers"])
             train_ans = answers[idx_train].astype("int64")
@@ -180,10 +179,7 @@ class Embedding(_Embedding):
             self.meta_["model_updates"] += 1
             logger.info("%s", self.meta_)
             n_ans = len(answers)
-            if (
-                time() >= deadline
-                or self.meta_["num_grad_comps"] - beg_meta["num_grad_comps"] >= n_ans
-            ):
+            if self.meta_["num_grad_comps"] - beg_meta["num_grad_comps"] >= n_ans:
                 break
         return self
 
