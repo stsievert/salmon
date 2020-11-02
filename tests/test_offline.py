@@ -2,6 +2,7 @@ import numpy as np
 import numpy.linalg as LA
 import pandas as pd
 from sklearn.model_selection import train_test_split
+from pathlib import Path
 
 from salmon.triplets.algs import TSTE
 from salmon.triplets.offline import OfflineEmbedding
@@ -49,7 +50,8 @@ def test_score_accurate():
 
 
 def test_offline_embedding():
-    df = pd.read_csv("data/responses.csv.zip")
+    p = Path(__file__).absolute().parent / "data" / "responses.csv.zip"
+    df = pd.read_csv(str(p))
     X = df[["head", "winner", "loser"]].to_numpy()
 
     n = int(X.max() + 1)
@@ -67,7 +69,8 @@ def test_offline_embedding():
 
 
 def test_offline_embedding_adaptive():
-    df = pd.read_csv("data/responses.csv.zip")
+    p = Path(__file__).absolute().parent / "data" / "responses.csv.zip"
+    df = pd.read_csv(str(p))
 
     n = int(df["head"].max() + 1)
     d = 2
