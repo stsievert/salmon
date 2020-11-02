@@ -49,20 +49,21 @@ def test_score_accurate():
 
 
 def test_offline_embedding():
-    df = pd.read_csv("data/responses.csv")
+    df = pd.read_csv("data/responses.csv.zip")
     X = df[["head", "winner", "loser"]].to_numpy()
 
     n = int(X.max() + 1)
     d = 2  # embed into 2 dimensions
 
     X_train, X_test = train_test_split(X, random_state=0, test_size=0.2)
-    model = OfflineEmbedding(n=n, d=d, max_epochs=1)
+    model = OfflineEmbedding(n=n, d=d, max_epochs=3)
     model.fit(X_train, X_test)
     assert isinstance(model.embedding_, np.ndarray)
     assert model.embedding_.shape == (n, d)
 
     assert isinstance(model.history_, list)
     assert all(isinstance(h, dict) for h in model.history_)
+    assert len(model.history_) == 3 + 1
 
 
 def test_offline_embedding_adaptive():
@@ -76,10 +77,11 @@ def test_offline_embedding_adaptive():
     X_test = df.loc[random, cols].to_numpy()
     X_train = df.loc[~random, cols].to_numpy()
 
-    model = OfflineEmbedding(n=n, d=d, max_epochs=1)
+    model = OfflineEmbedding(n=n, d=d, max_epochs=2)
     model.fit(X_train, X_test)
     assert isinstance(model.embedding_, np.ndarray)
     assert model.embedding_.shape == (n, d)
 
     assert isinstance(model.history_, list)
     assert all(isinstance(h, dict) for h in model.history_)
+    assert len(model.history_) == 2 + 1
