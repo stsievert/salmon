@@ -18,9 +18,28 @@ logger = get_logger(__name__)
 from .search import gram_utils, score
 
 
+class Reduce:
+    def __call__(self, input: torch.Tensor, target=None) -> torch.Tensor:
+        return torch.sum(input)
+
+
 class _Embedding(NeuralNet):
-    def partial_fit(self, *args, **kwargs):
-        r = super().partial_fit(*args, **kwargs)
+    def get_loss(self, y_pred, y_true, X, *args, **kwargs):
+        # override get_loss to use the sample_weight from X
+        loss_unreduced = super().get_loss(y_pred, y_true, X, *args, **kwargs)
+        if not isinstance(X, dict):
+            return loss_unreduced.mean()
+
+        sample_weight = X["sample_weight"]
+        loss_reduced = (sample_weight * loss_unreduced).mean()
+        return loss_reduced
+
+    def partial_fit(self, X, y=None, sample_weight=None):
+        if sample_weight:
+            _X = {"data": X, "sample_weight": sample_weight}
+        else:
+            _X = X
+        r = super().partial_fit(_X, y=None)
 
         # Project back onto norm ball
         with torch.no_grad():
@@ -28,12 +47,11 @@ class _Embedding(NeuralNet):
             max_norm = 10 * self.module__d
             idx = norms > max_norm
             if idx.sum():
-                d = self.module_._embedding.shape[1]
-                if d > 1:
-                    norms = torch.cat((norms,) * d, dim=1)
-                else:
-                    norms = norms.reshape(-1, 1)
-                self.module_._embedding[idx] *= max_norm / norms[idx]
+                for k, scale in enumerate(idx):
+                    if not scale:
+                        continue
+                    factor = max_norm / norms[k]
+                    self.module_._embedding[k] *= factor
         self.optimizer_.zero_grad()
         return r
 
@@ -41,11 +59,6 @@ class _Embedding(NeuralNet):
         win2, lose2 = self.module_._get_dists(answers)
         acc = (win2 < lose2).numpy().astype("float32").mean().item()
         return acc
-
-
-class Reduce:
-    def __call__(self, input: torch.Tensor, target=None) -> torch.Tensor:
-        return torch.mean(input)
 
 
 class Embedding(_Embedding):
@@ -124,7 +137,7 @@ class Embedding(_Embedding):
         self.meta_["num_answers"] += len(answers)
         return self.answers_.nbytes
 
-    def partial_fit(self, answers):
+    def partial_fit(self, answers, sample_weight=None):
         """
         Process the provided answers.
 
@@ -160,7 +173,8 @@ class Embedding(_Embedding):
         while True:
             idx_train = self.get_train_idx(self.meta_["num_answers"])
             train_ans = answers[idx_train].astype("int64")
-            _ = super().partial_fit(train_ans)
+            sw = None if sample_weight is None else sample_weight[idx_train]
+            _ = super().partial_fit(train_ans, sample_weight=sw)
 
             self.meta_["num_grad_comps"] += len(idx_train)
             self.meta_["model_updates"] += 1
@@ -200,6 +214,11 @@ class Embedding(_Embedding):
         bs = min(n_ans, self.initial_batch_size)
         idx = self.random_state_.choice(n_ans, replace=False, size=bs)
         return idx
+
+
+class GD(Embedding):
+    def get_train_idx(self, n_ans):
+        return np.arange(n_ans).astype(int)
 
 
 class Damper(Embedding):
