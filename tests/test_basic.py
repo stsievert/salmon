@@ -85,7 +85,7 @@ def test_basics(server, logs):
         "score",
     }
     assert (df["winner"] != df["loser"]).all()
-    assert (df["winner"] == df["left"]) | (df["winner"] == df["right"])
+    assert ((df["winner"] == df["left"]) | (df["winner"] == df["right"])).all()
     assert ((df["loser"] == df["left"]) | (df["loser"] == df["right"])).all()
     n = len(exp_config["targets"])
     assert (0 == df["head"].min()) and (df["head"].max() == n - 1)
