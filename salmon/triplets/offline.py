@@ -76,7 +76,7 @@ class OfflineEmbedding(BaseEstimator):
         for k in itertools.count():
             train_score = self.opt_.score(X_train)
             opt_params = {
-                f"opt__{k}": v for k, v in _get_params(self.opt_) if k != "opt"
+                f"opt__{k}": v for k, v in _get_params(self.opt_).items() if k != "opt"
             }
             datum = {
                 **self.opt_.meta_,
