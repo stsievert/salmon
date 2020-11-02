@@ -75,18 +75,19 @@ class OfflineEmbedding(BaseEstimator):
         _print_deadline = time() + self.verbose
         for k in itertools.count():
             train_score = self.opt_.score(X_train)
-            opt_params = {
-                f"opt__{k}": v for k, v in _get_params(self.opt_).items() if k != "opt"
-            }
             datum = {
                 **self.opt_.meta_,
-                **opt_params,
-                **self.get_params(),
                 "score_train": train_score,
                 "k": k,
                 "elapsed_time": time() - _start,
                 "train_data": len(X_train),
                 "test_data": len(X_test),
+                "n": self.n,
+                "d": self.d,
+                "max_epochs": self.max_epochs,
+                "verbose": self.verbose,
+                "weight": self.weight,
+                "ident": self.ident,
             }
             self.history_.append(datum)
             if k % 5 == 0:
