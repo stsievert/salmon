@@ -47,11 +47,11 @@ class _Embedding(NeuralNet):
             max_norm = 10 * self.module__d
             idx = norms > max_norm
             if idx.sum():
-                for k, scale in enumerate(idx):
-                    if not scale:
-                        continue
-                    factor = max_norm / norms[k]
-                    self.module_._embedding[k] *= factor
+                factor = max_norm / norms[idx]
+                d = self.module_._embedding.shape[1]
+                if d > 1:
+                    factor = torch.stack((factor, ) * d).T
+                self.module_._embedding[idx] *= factor
         self.optimizer_.zero_grad()
         return r
 
