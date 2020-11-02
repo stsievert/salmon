@@ -4,6 +4,7 @@ import numpy as np
 from time import time
 
 from sklearn.model_selection import train_test_split
+from sklearn.base import BaseEstimator
 import torch.optim as optim
 
 from salmon.triplets.algs.adaptive import GD
@@ -20,9 +21,16 @@ def _get_params(opt_):
     }
 
 
-class OfflineEmbedding:
+class OfflineEmbedding(BaseEstimator):
     def __init__(
-        self, n=None, d=None, max_epochs=25, opt=None, weight=False, verbose=10
+        self,
+        n=None,
+        d=None,
+        max_epochs=25,
+        opt=None,
+        weight=False,
+        verbose=10,
+        ident="",
     ):
         self.opt = opt
         self.n = n
@@ -30,6 +38,7 @@ class OfflineEmbedding:
         self.max_epochs = max_epochs
         self.weight = weight
         self.verbose = verbose
+        self.ident = ident
 
     def initialize(self, X_train):
         if self.opt is None:
@@ -54,7 +63,7 @@ class OfflineEmbedding:
             self.initialize(X_train)
 
         astart = self.n * 10
-        if self.weight and len(X_train) > a_start:
+        if self.weight and len(X_train) > astart:
             i = np.linspace(1, 300, num=len(X_train) - astart)
             sample_weight = np.ones(len(X_train))
             sample_weight[:astart] = 1
@@ -66,9 +75,13 @@ class OfflineEmbedding:
         _print_deadline = time() + self.verbose
         for k in itertools.count():
             train_score = self.opt_.score(X_train)
+            opt_params = {
+                f"opt__{k}": v for k, v in _get_params(self.opt_) if k != "opt"
+            }
             datum = {
                 **self.opt_.meta_,
-                **_get_params(self.opt_),
+                **opt_params,
+                **self.get_params(),
                 "score_train": train_score,
                 "k": k,
                 "elapsed_time": time() - _start,
