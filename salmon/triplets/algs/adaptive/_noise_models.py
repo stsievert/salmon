@@ -87,7 +87,7 @@ class TripletDist(nn.Module):
         lose_dist2 = torch.norm(heads - losers, dim=1) ** 2
         return win_dist2, lose_dist2
 
-    def forward(self, h_w_l: ArrayLike, y=None) -> ArrayLike:
+    def forward(self, h_w_l: ArrayLike, y=None, sample_weight=None) -> ArrayLike:
         """
         Calculate the probability of a triplet being satisified
 
@@ -96,6 +96,8 @@ class TripletDist(nn.Module):
         h_w_l : torch.Tensor, shape=(num_answers, 3)
             Each row in this 2D array is (head, winner, loser) from
             triplet query.
+        y : None, ignored.
+        sample_weight : None, ignored.
 
         Returns
         -------

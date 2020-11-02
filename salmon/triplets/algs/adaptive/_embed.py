@@ -9,6 +9,7 @@ import torch.optim as optim
 from numba import jit, prange
 from skorch.net import NeuralNet
 from torch.nn.modules.loss import _Loss
+
 from sklearn.utils import check_random_state
 from scipy.special import binom
 from salmon.utils import get_logger
@@ -26,17 +27,16 @@ class Reduce:
 class _Embedding(NeuralNet):
     def get_loss(self, y_pred, y_true, X, *args, **kwargs):
         # override get_loss to use the sample_weight from X
-        loss_unreduced = super().get_loss(y_pred, y_true, X, *args, **kwargs)
         if not isinstance(X, dict):
+            loss_unreduced = super().get_loss(y_pred, y_true, X, *args, **kwargs)
             return loss_unreduced.mean()
 
-        sample_weight = X["sample_weight"]
-        loss_reduced = (sample_weight * loss_unreduced).mean()
-        return loss_reduced
+        loss_unreduced = super().get_loss(y_pred, y_true, X["h_w_l"], *args, **kwargs)
+        return (X["sample_weight"] * loss_unreduced).mean()
 
     def partial_fit(self, X, y=None, sample_weight=None):
-        if sample_weight:
-            _X = {"data": X, "sample_weight": sample_weight}
+        if sample_weight is not None:
+            _X = {"h_w_l": X, "sample_weight": sample_weight}
         else:
             _X = X
         r = super().partial_fit(_X, y=None)

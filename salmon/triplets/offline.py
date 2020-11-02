@@ -58,16 +58,24 @@ class OfflineEmbedding(BaseEstimator):
         self.history_ = []
         self.initialized_ = True
 
-    def fit(self, X_train, X_test):
+    def fit(self, X_train, X_test, scores=None):
         if not (hasattr(self, "initialized_") and self.initialized_):
             self.initialize(X_train)
 
         astart = self.n * 10
         if self.weight and len(X_train) > astart:
-            i = np.linspace(1, 300, num=len(X_train) - astart)
+            if scores is None:
+                raise TypeError("Parameter `scores` is required if `weight=True`")
+            if len(scores) != len(X_train):
+                msg = "length mismatch; len(scores)={}, len(X_train)={}"
+                raise ValueError(msg.format(len(scores), len(X_train)))
+            random = (scores < -9990).to_numpy()
+            n_active = len(X_train) - random.sum()
+
+            i = np.linspace(1, 300, num=n_active)
             sample_weight = np.ones(len(X_train))
-            sample_weight[:astart] = 1
-            sample_weight[astart:] = 1 / i
+            sample_weight[random] = 1
+            sample_weight[~random] = 1 / i
         else:
             sample_weight = None
 

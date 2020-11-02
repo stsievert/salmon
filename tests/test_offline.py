@@ -3,6 +3,7 @@ import numpy.linalg as LA
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from pathlib import Path
+import pytest
 
 from salmon.triplets.algs import TSTE
 from salmon.triplets.offline import OfflineEmbedding
@@ -75,16 +76,21 @@ def test_offline_embedding_adaptive():
     n = int(df["head"].max() + 1)
     d = 2
 
-    random = df.alg_ident == "RandomSampling"
+    adaptive = df.alg_ident == "TSTE"
     cols = ["head", "winner", "loser"]
-    X_test = df.loc[random, cols].to_numpy()
-    X_train = df.loc[~random, cols].to_numpy()
+    X_test = df.loc[~adaptive, cols].to_numpy()
+    X_train = df.loc[adaptive, cols].to_numpy()
 
-    model = OfflineEmbedding(n=n, d=d, max_epochs=2)
-    model.fit(X_train, X_test)
+    model = OfflineEmbedding(n=n, d=d, max_epochs=4, weight=True)
+    with pytest.raises(TypeError, match="`scores` is required"):
+        model.fit(X_train, X_test)
+    with pytest.raises(ValueError, match="length mismatch"):
+        model.fit(X_train, X_test, scores=[1, 2, 3])
+
+    model.fit(X_train, X_test, scores=df.loc[adaptive, "score"])
     assert isinstance(model.embedding_, np.ndarray)
     assert model.embedding_.shape == (n, d)
 
     assert isinstance(model.history_, list)
     assert all(isinstance(h, dict) for h in model.history_)
-    assert len(model.history_) == 2 + 1
+    assert len(model.history_) == 4 + 1
