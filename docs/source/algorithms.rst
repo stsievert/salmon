@@ -32,7 +32,7 @@ By default, ``samplers`` defaults to ``RandomSampling: {}``. We have to customiz
 
    targets: ["obj1", "obj2", "foo", "bar", "foobar!"]
    samplers:
-     TSTE: {}
+     RR: {"module": "TSTE"}
 
 This will use :class:`~salmon.triplets.algs.TSTE`. If we want to customize to
 include different keyword arguments, we need to look close at the arguments for
@@ -44,7 +44,7 @@ configuration:
    targets: ["obj1", "obj2", "foo", "bar", "foobar!"]
    samplers:
      RandomSampling: {}
-     TSTE:
+     RR:
        alpha: 1.1
 
 ``alpha`` is a keyword argument to
@@ -58,11 +58,9 @@ If we want to use two alternate configs for TSTE:
      RandomSampling: {}
      tste1:
        class: TSTE
-       optimizer: PadaDampG
        optimizer__lr: 0.1
      tste2:
-       class: TSTE
-       optimizer: GeoDamp
+       class: RR
        optimizer__lr: 0.1
    sampling:
      probs: {"RandomSampling": 20, "tste1": 40, "tste2": 40}

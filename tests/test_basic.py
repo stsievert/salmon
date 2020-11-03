@@ -255,3 +255,21 @@ def test_zip_upload(server):
     server.post(
         "/init_exp", data={"exp": exp.read_bytes(), "targets": t},
     )
+
+
+def test_get_config(server):
+    server.authorize()
+    exp = Path(__file__).parent / "data" / "exp.yaml"
+    server.post("/init_exp", data={"exp": exp.read_bytes()})
+    r = server.get("/config")
+    my_config = yaml.safe_load(exp.read_text())
+    rendered_config = r.json()
+    assert set(my_config).issubset(rendered_config)
+    for k, v in my_config.items():
+        assert rendered_config[k] == v
+
+    yaml_config = server.get("/config?json=0").text
+    json.loads(yaml_config)
+    assert "\n" in yaml_config
+    assert yaml.safe_load(yaml_config) == rendered_config
+

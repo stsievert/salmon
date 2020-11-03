@@ -150,6 +150,13 @@ def upload_form():
     )
     return HTMLResponse(content=body)
 
+@app.get("/config", tags=["private"])
+async def _get_config_endpoint(json: bool = True):
+    exp_config = await _ensure_initialized()
+    print("json=", json, bool(json), not json)
+    if not json:
+        return PlainTextResponse(yaml.dump(exp_config))
+    return JSONResponse(exp_config)
 
 async def _get_config(exp: bytes, targets: bytes) -> Dict[str, Any]:
     config = yaml.load(exp, Loader=yaml.SafeLoader)
