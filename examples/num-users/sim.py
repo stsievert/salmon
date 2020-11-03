@@ -315,8 +315,8 @@ if __name__ == "__main__":
     )
 
     config = {
-        "n_users": 10,
-        "max_queries": 13_000,
+        "n_users": 100,
+        "max_queries": 30_000,
         "n": 30,
         "d": 2,
         "R": 10,

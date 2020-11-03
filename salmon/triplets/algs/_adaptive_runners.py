@@ -171,7 +171,7 @@ class Adaptive(Runner):
         n_ans = self.opt.meta_["num_answers"]
         valid_ans = self.opt.answers_[:n_ans]
 
-        self.opt.partial_fit(valid_ans, time_limit=30)
+        self.opt.partial_fit(valid_ans, time_limit=10)
         self.meta["model_updates"] += 1
         return self, True
 
@@ -346,7 +346,7 @@ class RR(Adaptive):
         df = pd.DataFrame(queries, columns=["h", "l", "r"])
         df["score"] = scores
 
-        top_scores_by_head = df.groupby(by="h")["score"].nlargest(n=3)
+        top_scores_by_head = df.groupby(by="h")["score"].nlargest(n=5)
         top_idx = top_scores_by_head.index.droplevel(0)
 
         top_queries = df.loc[top_idx].sample(random_state=self.random_state_, frac=1)
@@ -355,7 +355,7 @@ class RR(Adaptive):
 
         random = df.sample(random_state=self.random_state_, n=min(len(df), 1000))
         random_q = random[["h", "l", "r"]].values.astype("int64")
-        random_scores = 0 + self.random_state_.uniform(0, 1, size=len(random_q))
+        random_scores = -9998 + self.random_state_.uniform(0, 1, size=len(random_q))
 
         ret_q = np.concatenate((posted, random_q))
         ret_score = np.concatenate((scores, random_scores))
