@@ -98,6 +98,9 @@ def test_basics(server, logs):
 
     assert np.allclose(df.score, -9999)  # -9999 is a proxy for nan here
 
+    # Make sure ordered by time
+    assert df.time_received_since_start.diff().min() > 0
+
     r = server.get("/responses", auth=(username, password))
     assert r.status_code == 200
     assert "exception" not in r.text

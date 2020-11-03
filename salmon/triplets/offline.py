@@ -28,7 +28,6 @@ class OfflineEmbedding(BaseEstimator):
         d=None,
         max_epochs=25,
         opt=None,
-        weight=False,
         verbose=10,
         ident="",
     ):
@@ -36,7 +35,6 @@ class OfflineEmbedding(BaseEstimator):
         self.n = n
         self.d = d
         self.max_epochs = max_epochs
-        self.weight = weight
         self.verbose = verbose
         self.ident = ident
 
@@ -63,16 +61,19 @@ class OfflineEmbedding(BaseEstimator):
             self.initialize(X_train)
 
         astart = self.n * 10
-        if self.weight and len(X_train) > astart:
-            if scores is None:
-                raise TypeError("Parameter `scores` is required if `weight=True`")
+        if scores is not None and len(X_train) > astart:
             if len(scores) != len(X_train):
                 msg = "length mismatch; len(scores)={}, len(X_train)={}"
                 raise ValueError(msg.format(len(scores), len(X_train)))
-            random = (scores < -9990).to_numpy()
+            random = scores < -9990
+            if random.sum() == 0:
+                raise ValueError(
+                    "Some random samples are needed to create embedding; "
+                    f"got {len(random)} samples but 0 random samples"
+                )
             n_active = len(X_train) - random.sum()
 
-            i = np.linspace(1, 300, num=n_active)
+            i = np.linspace(1, 100, num=n_active)
             sample_weight = np.ones(len(X_train))
             sample_weight[random] = 1
             sample_weight[~random] = 1 / i
@@ -94,7 +95,7 @@ class OfflineEmbedding(BaseEstimator):
                 "d": self.d,
                 "max_epochs": self.max_epochs,
                 "verbose": self.verbose,
-                "weight": self.weight,
+                "weight": scores is not None,
                 "ident": self.ident,
             }
             self.history_.append(datum)

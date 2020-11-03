@@ -81,11 +81,14 @@ def test_offline_embedding_adaptive():
     X_test = df.loc[~adaptive, cols].to_numpy()
     X_train = df.loc[adaptive, cols].to_numpy()
 
-    model = OfflineEmbedding(n=n, d=d, max_epochs=4, weight=True)
-    with pytest.raises(TypeError, match="`scores` is required"):
-        model.fit(X_train, X_test)
+    model = OfflineEmbedding(n=n, d=d, max_epochs=4)
+
     with pytest.raises(ValueError, match="length mismatch"):
         model.fit(X_train, X_test, scores=[1, 2, 3])
+
+    with pytest.raises(ValueError, match="Some random samples"):
+        scores = -5 + np.random.uniform(size=len(X_train))
+        model.fit(X_train, X_test, scores=scores)
 
     model.fit(X_train, X_test, scores=df.loc[adaptive, "score"])
     assert isinstance(model.embedding_, np.ndarray)
