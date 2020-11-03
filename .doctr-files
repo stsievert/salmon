@@ -26,6 +26,7 @@
 ./_sources/index.rst.txt
 ./_sources/installation.rst.txt
 ./_sources/monitoring.rst.txt
+./_sources/offline.rst.txt
 ./_static/basic.css
 ./_static/css/badge_only.css
 ./_static/css/fonts/Roboto-Slab-Bold.woff
@@ -132,5 +133,6 @@
 ./installation.html
 ./monitoring.html
 ./objects.inv
+./offline.html
 ./search.html
 ./searchindex.js

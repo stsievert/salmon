@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Algorithm configuration &mdash; Salmon v0.4.2+2.gadd3f62.dirty documentation</title>
+  <title>Algorithm configuration &mdash; Salmon v0.4.3+0.g281b3d0.dirty documentation</title>
   
 
   
@@ -38,8 +38,8 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Algorithm API" href="api.html" />
-    <link rel="prev" title="Experiment monitoring" href="monitoring.html" /> 
+    <link rel="next" title="Adaptive algorithms" href="adaptive.html" />
+    <link rel="prev" title="Generating embeddings offline" href="offline.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -88,16 +88,17 @@
             
             
               <p class="caption"><span class="caption-text">Usage</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting-started.html">Starting an experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="monitoring.html">Experiment monitoring</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Algorithm configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="offline.html">Generating embeddings offline</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="api.html">Algorithm API</a></li>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Algorithm configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="adaptive.html">Adaptive algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Algorithm API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="developers.html">Developing algorithms</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Benchmarks</span></p>
@@ -195,7 +196,7 @@ sampling.</p>
 <p>By default, <code class="docutils literal notranslate"><span class="pre">samplers</span></code> defaults to <code class="docutils literal notranslate"><span class="pre">RandomSampling:</span> <span class="pre">{}</span></code>. We have to customize the <code class="docutils literal notranslate"><span class="pre">samplers</span></code> key use adaptive sampling algorithms:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">targets</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;obj1&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;obj2&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;foo&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;bar&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;foobar!&quot;</span><span class="p p-Indicator">]</span>
 <span class="nt">samplers</span><span class="p">:</span>
-  <span class="nt">TSTE</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
+  <span class="nt">RR</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="s">&quot;module&quot;</span><span class="p p-Indicator">:</span> <span class="s">&quot;TSTE&quot;</span><span class="p p-Indicator">}</span>
 </pre></div>
 </div>
 <p>This will use <a class="reference internal" href="generated/salmon.triplets.algs.TSTE.html#salmon.triplets.algs.TSTE" title="salmon.triplets.algs.TSTE"><code class="xref py py-class docutils literal notranslate"><span class="pre">TSTE</span></code></a>. If we want to customize to
@@ -205,7 +206,7 @@ configuration:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">targets</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;obj1&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;obj2&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;foo&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;bar&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;foobar!&quot;</span><span class="p p-Indicator">]</span>
 <span class="nt">samplers</span><span class="p">:</span>
   <span class="nt">RandomSampling</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
-  <span class="nt">TSTE</span><span class="p">:</span>
+  <span class="nt">RR</span><span class="p">:</span>
     <span class="nt">alpha</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1.1</span>
 </pre></div>
 </div>
@@ -216,12 +217,10 @@ If we want to use two alternate configs for TSTE:</p>
 <span class="nt">samplers</span><span class="p">:</span>
   <span class="nt">RandomSampling</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
   <span class="nt">tste1</span><span class="p">:</span>
-    <span class="nt">module</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">TSTE</span>
-    <span class="nt">optimizer</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">PadaDampG</span>
+    <span class="nt">class</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">TSTE</span>
     <span class="nt">optimizer__lr</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.1</span>
   <span class="nt">tste2</span><span class="p">:</span>
-    <span class="nt">module</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">TSTE</span>
-    <span class="nt">optimizer</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">GeoDamp</span>
+    <span class="nt">class</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">RR</span>
     <span class="nt">optimizer__lr</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.1</span>
 <span class="nt">sampling</span><span class="p">:</span>
   <span class="nt">probs</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="s">&quot;RandomSampling&quot;</span><span class="p p-Indicator">:</span> <span class="nv">20</span><span class="p p-Indicator">,</span> <span class="s">&quot;tste1&quot;</span><span class="p p-Indicator">:</span> <span class="nv">40</span><span class="p p-Indicator">,</span> <span class="s">&quot;tste2&quot;</span><span class="p p-Indicator">:</span> <span class="nv">40</span><span class="p p-Indicator">}</span>
@@ -247,10 +246,10 @@ except <code class="docutils literal notranslate"><span class="pre">CKL</span></
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="api.html" class="btn btn-neutral float-right" title="Algorithm API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="adaptive.html" class="btn btn-neutral float-right" title="Adaptive algorithms" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="monitoring.html" class="btn btn-neutral float-left" title="Experiment monitoring" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="offline.html" class="btn btn-neutral float-left" title="Generating embeddings offline" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
