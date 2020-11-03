@@ -137,7 +137,7 @@ class Embedding(_Embedding):
         self.meta_["num_answers"] += len(answers)
         return self.answers_.nbytes
 
-    def partial_fit(self, answers, sample_weight=None):
+    def partial_fit(self, answers, sample_weight=None, time_limit=None):
         """
         Process the provided answers.
 
@@ -169,6 +169,7 @@ class Embedding(_Embedding):
             return self
 
         beg_meta = copy(self.meta_)
+        deadline = time() + (time_limit or np.inf)
         while True:
             idx_train = self.get_train_idx(self.meta_["num_answers"])
             train_ans = answers[idx_train].astype("int64")
@@ -180,6 +181,8 @@ class Embedding(_Embedding):
             logger.info("%s", self.meta_)
             n_ans = len(answers)
             if self.meta_["num_grad_comps"] - beg_meta["num_grad_comps"] >= n_ans:
+                break
+            if time_limit and time() >= deadline:
                 break
         return self
 

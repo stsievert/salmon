@@ -594,6 +594,7 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
             "alg_model_plots": alg_plots,
             "alg_perfs": alg_perfs,
             "config": exp_config,
+            "samplers": idents,
             **plots,
         },
     )
