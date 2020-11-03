@@ -220,6 +220,12 @@ class GD(Embedding):
         return np.arange(n_ans).astype(int)
 
 
+class OGD(Embedding):
+    def get_train_idx(self, n_ans):
+        bs = 32 * (self.meta_["model_updates"] + 1)
+        return np.arange(min(bs, n_ans)).astype(int)
+
+
 class Damper(Embedding):
     def __init__(
         self,

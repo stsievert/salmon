@@ -7,7 +7,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.base import BaseEstimator
 import torch.optim as optim
 
-from salmon.triplets.algs.adaptive import GD
+from salmon.triplets.algs.adaptive import GD, OGD
 from salmon.triplets.algs.adaptive import TSTE
 
 
@@ -41,7 +41,7 @@ class OfflineEmbedding(BaseEstimator):
     def initialize(self, X_train):
         if self.opt is None:
             assert self.n is not None and self.d is not None, "Specify n and d"
-            self.opt = GD(
+            self.opt = OGD(
                 module=TSTE,
                 module__n=self.n,
                 module__d=self.d,
