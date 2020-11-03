@@ -150,6 +150,13 @@ def upload_form():
     )
     return HTMLResponse(content=body)
 
+@app.get("/config", tags=["private"])
+async def _get_config_endpoint(json: bool = True):
+    exp_config = await _ensure_initialized()
+    print("json=", json, bool(json), not json)
+    if not json:
+        return PlainTextResponse(yaml.dump(exp_config))
+    return JSONResponse(exp_config)
 
 async def _get_config(exp: bytes, targets: bytes) -> Dict[str, Any]:
     config = yaml.load(exp, Loader=yaml.SafeLoader)
@@ -157,10 +164,11 @@ async def _get_config(exp: bytes, targets: bytes) -> Dict[str, Any]:
         "instructions": "Default instructions (can include <i>arbitrary</i> HTML)",
         "max_queries": None,
         "debrief": "Thanks!",
-        "samplers": {"random": {"module": "RandomSampling"}},
+        "samplers": {"random": {"class": "RandomSampling"}},
         "max_queries": -1,
         "d": 2,
         "skip_button": False,
+        "css": "",
     }
     exp_config.update(config)
     if "sampling" not in exp_config:
@@ -586,6 +594,7 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
             "alg_model_plots": alg_plots,
             "alg_perfs": alg_perfs,
             "config": exp_config,
+            "samplers": idents,
             **plots,
         },
     )

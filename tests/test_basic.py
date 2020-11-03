@@ -66,13 +66,16 @@ def test_basics(server, logs):
         "right",
         "left",
         "winner",
+        "loser",
         "winner_object",
+        "loser_object",
         "right_object",
         "head_object",
         "left_object",
         "winner_filename",
         "right_filename",
         "left_filename",
+        "loser_filename",
         "head_filename",
         "puid",
         "response_time",
@@ -81,6 +84,9 @@ def test_basics(server, logs):
         "alg_ident",
         "score",
     }
+    assert (df["winner"] != df["loser"]).all()
+    assert ((df["winner"] == df["left"]) | (df["winner"] == df["right"])).all()
+    assert ((df["loser"] == df["left"]) | (df["loser"] == df["right"])).all()
     n = len(exp_config["targets"])
     assert (0 == df["head"].min()) and (df["head"].max() == n - 1)
     assert ((0 == df["left"].min()) or (df["right"].min() == 0)) and (
@@ -91,6 +97,9 @@ def test_basics(server, logs):
     assert df.puid.nunique() == 1
 
     assert np.allclose(df.score, -9999)  # -9999 is a proxy for nan here
+
+    # Make sure ordered by time
+    assert df.time_received_since_start.diff().min() > 0
 
     r = server.get("/responses", auth=(username, password))
     assert r.status_code == 200
@@ -117,7 +126,7 @@ def test_no_repeats(server):
     server.authorize()
     exp = Path(__file__).parent / "data" / "exp.yaml"
     server.post("/init_exp", data={"exp": exp.read_bytes()})
-    for k in range(100):
+    for k in range(50):
         q = server.get("/query").json()
         ans = {"winner": random.choice([q["left"], q["right"]]), "puid": "foo", **q}
         server.post("/answer", data=ans)
@@ -125,11 +134,11 @@ def test_no_repeats(server):
     r = server.get("/responses")
     df = pd.DataFrame(r.json())
     equal_targets = (
-        (df["head"] == df["right"]).any()
-        or (df["head"] == df["left"]).any()
-        or (df["left"] == df["right"]).any()
+        (df["head"] == df["right"])
+        | (df["head"] == df["left"])
+        | (df["left"] == df["right"])
     )
-    assert not equal_targets
+    assert not equal_targets.all()
 
 
 def test_meta(server):
@@ -246,3 +255,19 @@ def test_zip_upload(server):
     server.post(
         "/init_exp", data={"exp": exp.read_bytes(), "targets": t},
     )
+
+
+def test_get_config(server):
+    server.authorize()
+    exp = Path(__file__).parent / "data" / "exp.yaml"
+    server.post("/init_exp", data={"exp": exp.read_bytes()})
+    my_config = yaml.safe_load(exp.read_text())
+    rendered_config = server.get("/config").json()
+    assert set(my_config).issubset(rendered_config)
+    for k, v in my_config.items():
+        assert rendered_config[k] == v
+
+    yaml_config = server.get("/config?json=0").text
+    assert "\n" in yaml_config
+    assert yaml.safe_load(yaml_config) == rendered_config
+

@@ -49,11 +49,11 @@ def get_responses(answers: List[Dict[str, Any]], targets, start_time=0):
         )
         idxs = {
             key + "_object": targets[datum[key]]
-            for key in ["left", "right", "head", "winner"]
+            for key in ["left", "right", "head", "winner", "loser"]
         }
         names = {
             key + "_filename": _get_filename(idxs[f"{key}_object"])
-            for key in ["left", "right", "head", "winner"]
+            for key in ["left", "right", "head", "winner", "loser"]
         }
         meta = {
             "time_received_since_start": datum["time_received"] - start,

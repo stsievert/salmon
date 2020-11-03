@@ -115,7 +115,7 @@ async def get_query_page(request: Request):
         "max_queries": exp_config["max_queries"],
         "debrief": exp_config["debrief"],
         "skip_button": exp_config["skip_button"],
-        "css": exp_config["css"]
+        "css": exp_config["css"],
     }
     items.update(request=request)
     return templates.TemplateResponse("query_page.html", items)
@@ -161,7 +161,11 @@ async def process_answer(ans: manager.Answer):
 
     """
     d = ujson.loads(ans.json())
-    d.update({"time_received": round(time(), 3)})
+    _update = {
+        "time_received": round(time(), 3),
+        "loser": d["left"] if d["winner"] == d["right"] else d["right"],
+    }
+    d.update(_update)
     ident = d["alg_ident"]
     logger.warning(f"answer received: {d}")
     rj.jsonarrappend(f"alg-{ident}-answers", root, d)

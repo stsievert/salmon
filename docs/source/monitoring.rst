@@ -1,3 +1,5 @@
+.. _exp-monitoring:
+
 Experiment monitoring
 =====================
 
@@ -18,21 +20,35 @@ After users respond, the dashboard will show the following information:
 
 .. raw:: html
 
-   <p>An example is visible at <a href="./dashboard.html">dashboard.html</a>.
-   Here are some screenshots from that dashboard:</p>
+   <p>Below, we'll show examples of most of the dashboard, but leave out the
+   embedding and list of targets. A full dashboard example is visible at
+   <a href="./dashboard.html">dashboard.html</a>.
+   Here are some screenshots from the dashboard:</p>
 
+Basic information
+-----------------
 .. image:: imgs/dashboard/basic.png
    :align: center
-   :width: 250px
+   :width: 450px
+
+Bolded links are particularly useful. I download all bolded links before
+stopping or restarting the machine running Salmon (except the query page).
+
+Server side timing
+------------------
 
 .. image:: imgs/dashboard/server-side.png
    :align: center
    :width: 600px
 
+Client side timing
+------------------
 .. image:: imgs/dashboard/client-side.png
    :align: center
    :width: 500px
 
+Algorithm timing
+----------------
 .. image:: imgs/dashboard/alg-timing.png
    :align: center
    :width: 500px

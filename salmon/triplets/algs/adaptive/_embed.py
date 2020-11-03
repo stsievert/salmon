@@ -9,6 +9,7 @@ import torch.optim as optim
 from numba import jit, prange
 from skorch.net import NeuralNet
 from torch.nn.modules.loss import _Loss
+
 from sklearn.utils import check_random_state
 from scipy.special import binom
 from salmon.utils import get_logger
@@ -18,9 +19,27 @@ logger = get_logger(__name__)
 from .search import gram_utils, score
 
 
+class Reduce:
+    def __call__(self, input: torch.Tensor, target=None) -> torch.Tensor:
+        return torch.sum(input)
+
+
 class _Embedding(NeuralNet):
-    def partial_fit(self, *args, **kwargs):
-        r = super().partial_fit(*args, **kwargs)
+    def get_loss(self, y_pred, y_true, X, *args, **kwargs):
+        # override get_loss to use the sample_weight from X
+        if not isinstance(X, dict):
+            loss_unreduced = super().get_loss(y_pred, y_true, X, *args, **kwargs)
+            return loss_unreduced.mean()
+
+        loss_unreduced = super().get_loss(y_pred, y_true, X["h_w_l"], *args, **kwargs)
+        return (X["sample_weight"] * loss_unreduced).mean()
+
+    def partial_fit(self, X, y=None, sample_weight=None):
+        if sample_weight is not None:
+            _X = {"h_w_l": X, "sample_weight": sample_weight}
+        else:
+            _X = X
+        r = super().partial_fit(_X, y=None)
 
         # Project back onto norm ball
         with torch.no_grad():
@@ -28,12 +47,11 @@ class _Embedding(NeuralNet):
             max_norm = 10 * self.module__d
             idx = norms > max_norm
             if idx.sum():
+                factor = max_norm / norms[idx]
                 d = self.module_._embedding.shape[1]
                 if d > 1:
-                    norms = torch.cat((norms,) * d, dim=1)
-                else:
-                    norms = norms.reshape(-1, 1)
-                self.module_._embedding[idx] *= max_norm / norms[idx]
+                    factor = torch.stack((factor,) * d).T
+                self.module_._embedding[idx] *= factor
         self.optimizer_.zero_grad()
         return r
 
@@ -41,11 +59,6 @@ class _Embedding(NeuralNet):
         win2, lose2 = self.module_._get_dists(answers)
         acc = (win2 < lose2).numpy().astype("float32").mean().item()
         return acc
-
-
-class Reduce:
-    def __call__(self, input: torch.Tensor, target=None) -> torch.Tensor:
-        return torch.mean(input)
 
 
 class Embedding(_Embedding):
@@ -124,7 +137,7 @@ class Embedding(_Embedding):
         self.meta_["num_answers"] += len(answers)
         return self.answers_.nbytes
 
-    def partial_fit(self, answers):
+    def partial_fit(self, answers, sample_weight=None, time_limit=None):
         """
         Process the provided answers.
 
@@ -156,20 +169,20 @@ class Embedding(_Embedding):
             return self
 
         beg_meta = copy(self.meta_)
-        deadline = time() + (self.partial_fit_time or np.inf)
+        deadline = time() + (time_limit or np.inf)
         while True:
             idx_train = self.get_train_idx(self.meta_["num_answers"])
             train_ans = answers[idx_train].astype("int64")
-            _ = super().partial_fit(train_ans)
+            sw = None if sample_weight is None else sample_weight[idx_train]
+            _ = super().partial_fit(train_ans, sample_weight=sw)
 
             self.meta_["num_grad_comps"] += len(idx_train)
             self.meta_["model_updates"] += 1
             logger.info("%s", self.meta_)
             n_ans = len(answers)
-            if (
-                time() >= deadline
-                or self.meta_["num_grad_comps"] - beg_meta["num_grad_comps"] >= n_ans
-            ):
+            if self.meta_["num_grad_comps"] - beg_meta["num_grad_comps"] >= n_ans:
+                break
+            if time_limit and time() >= deadline:
                 break
         return self
 
@@ -200,6 +213,11 @@ class Embedding(_Embedding):
         bs = min(n_ans, self.initial_batch_size)
         idx = self.random_state_.choice(n_ans, replace=False, size=bs)
         return idx
+
+
+class GD(Embedding):
+    def get_train_idx(self, n_ans):
+        return np.arange(n_ans).astype(int)
 
 
 class Damper(Embedding):

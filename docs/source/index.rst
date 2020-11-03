@@ -27,14 +27,15 @@ the same confidence.
    installation
    getting-started
    monitoring
-   algorithms
+   offline
 
 .. toctree::
    :maxdepth: 2
    :caption: Algorithms
 
-   api
+   algorithms
    adaptive
+   api
    developers
 
 .. toctree::
