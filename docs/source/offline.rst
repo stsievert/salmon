@@ -76,16 +76,15 @@ adaptive samples.
 
 .. code-block:: python
 
-   df = pd.read_csv("responses.csv")
+   df = pd.read_csv("responses.csv")  # downloaded from dashboard
 
-   n = int(df["head"].max() + 1)
-   d = 2
+   test = df.alg_ident == "RandomSampling"
+   train = df.alg_ident == "TSTE"  # an adaptive algorithm
 
-   random = df.alg_ident == "RandomSampling"
    cols = ["head", "winner", "loser"]
+   X_test = df.loc[test, cols].to_numpy()
+   X_train = df.loc[train, cols].to_numpy()
 
-   X_test = df.loc[random, cols].to_numpy()
-   X_train = df.loc[~random, cols].to_numpy()
+   model = OfflineEmbedding(n=int(df["head"].max() + 1), d=2, weight=True)
 
-   model = OfflineEmbedding(n=n, d=d, weight=True)
-   model.fit(X_train, X_test)
+   model.fit(X_train, X_test, scores=df.loc[train, "score"])
