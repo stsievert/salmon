@@ -73,10 +73,10 @@ class OfflineEmbedding(BaseEstimator):
                 )
             n_active = len(X_train) - random.sum()
 
-            i = np.linspace(1, 100, num=n_active)
+            i = np.arange(1, n_active + 1)
             sample_weight = np.ones(len(X_train))
             sample_weight[random] = 1
-            sample_weight[~random] = 1 / i
+            sample_weight[~random] = 1 / np.sqrt(i)
         else:
             sample_weight = None
 
