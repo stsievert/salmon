@@ -72,7 +72,7 @@ class OfflineEmbedding(BaseEstimator):
 
             # Higher rate -> later sample are less important
             # Smaller rate -> later samples are more important
-            rate = 4e-3
+            rate = 0.04
             i = np.arange(0, n_active)
 
             sample_weight = np.zeros(len(X_train))

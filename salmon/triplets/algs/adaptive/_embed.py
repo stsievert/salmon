@@ -77,18 +77,16 @@ class Embedding(_Embedding):
         module__n: int = 85,
         module__d: int = 2,
         optimizer=optim.SGD,
-        optimizer__lr=0.05,
-        optimizer__momentum=0.9,
+        optimizer__lr=0.04,
+        optimizer__momentum=0.75,
         random_state=None,
         warm_start=True,
         max_epochs=1,
         initial_batch_size=256,
-        partial_fit_time=15,
         **kwargs,
     ):
         self.random_state = random_state
         self.initial_batch_size = initial_batch_size
-        self.partial_fit_time = partial_fit_time
 
         super().__init__(
             module=module,
