@@ -23,13 +23,7 @@ def _get_params(opt_):
 
 class OfflineEmbedding(BaseEstimator):
     def __init__(
-        self,
-        n=None,
-        d=None,
-        max_epochs=25,
-        opt=None,
-        verbose=10,
-        ident="",
+        self, n=None, d=None, max_epochs=25, opt=None, verbose=10, ident="",
     ):
         self.opt = opt
         self.n = n
@@ -56,7 +50,10 @@ class OfflineEmbedding(BaseEstimator):
         self.history_ = []
         self.initialized_ = True
 
-    def fit(self, X_train, X_test, scores=None):
+    def fit(self, X_train, X_test, sample_weight=None, scores=None):
+        if sample_weight is not None and scores is not None:
+            raise ValueError("Only one of sample_weight or scores can be specified")
+
         if not (hasattr(self, "initialized_") and self.initialized_):
             self.initialize(X_train)
 
@@ -73,12 +70,14 @@ class OfflineEmbedding(BaseEstimator):
                 )
             n_active = len(X_train) - random.sum()
 
-            i = np.arange(1, n_active + 1)
-            sample_weight = np.ones(len(X_train))
+            # Higher rate -> later sample are less important
+            # Smaller rate -> later samples are more important
+            rate = 4e-3
+            i = np.arange(0, n_active)
+
+            sample_weight = np.zeros(len(X_train))
+            sample_weight[~random] = 1 / np.sqrt(1 + rate * i)
             sample_weight[random] = 1
-            sample_weight[~random] = 1 / np.sqrt(i)
-        else:
-            sample_weight = None
 
         _start = time()
         _print_deadline = time() + self.verbose
