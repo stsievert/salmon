@@ -8,7 +8,7 @@ from sklearn.base import BaseEstimator
 import torch.optim as optim
 
 from salmon.triplets.algs.adaptive import GD, OGD
-from salmon.triplets.algs.adaptive import TSTE
+from salmon.triplets.algs.adaptive import TSTE, GNMDS
 
 
 def _get_params(opt_):
@@ -36,10 +36,10 @@ class OfflineEmbedding(BaseEstimator):
         if self.opt is None:
             assert self.n is not None and self.d is not None, "Specify n and d"
             self.opt = OGD(
-                module=TSTE,
+                module=GNMDS,
                 module__n=self.n,
                 module__d=self.d,
-                random_state=42,
+                random_state=42 ** 2,
                 optimizer=optim.SGD,
                 max_epochs=self.max_epochs,
             )
