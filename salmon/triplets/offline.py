@@ -72,7 +72,7 @@ class OfflineEmbedding(BaseEstimator):
 
             # Larger rate -> later sample are less important
             # Smaller rate -> later samples are more important
-            i = np.arange(0, n_active)
+            i = np.arange(0, n_active).astype("float32")
 
             # Number of queries required for random sampling
             required = 10 * self.n * self.d * np.log2(self.n)
