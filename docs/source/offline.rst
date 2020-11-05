@@ -16,7 +16,7 @@ embedding:
 
 Downloading responses
 ---------------------
-Download the responses, either by visiting `[url]:8421/responses` or clicking
+Download the responses, either by visiting `http://[url]:8421/responses` or clicking
 the link on the dashboard (as mentioned in :ref:`exp-monitoring`).
 
 

@@ -4,7 +4,7 @@ Experiment monitoring
 =====================
 
 While participants are answering queries, you can track the state of the
-experiment by visiting ``[url]:8421/dashboard``. Initially, this will be fairly
+experiment by visiting ``http://[url]:8421/dashboard``. Initially, this will be fairly
 barren because users haven't responded.
 
 After users respond, the dashboard will show the following information:

@@ -3,12 +3,17 @@
 Starting an experiment
 ======================
 
-Experiments can be initialized by vising ``[url]:8421/init_exp``. This supports
+Experiments can be initialized by vising ``http://[url]:8421/init_exp``. This supports
 the following options:
 
 1. Upload of a YAML file completely detailing the experiment.
 2. Upload of a YAML file describing experiment, and ZIP file for the targets.
 3. Upload of a database dump from Salmon.
+
+.. warning::
+
+   By default, Salmon does not support HTTPS. Make sure the URL begins with
+   ``http://``, not ``https://``.
 
 Through the documentation, the YAML file for initialization will be referred to
 as ``init.yaml``.
@@ -17,7 +22,7 @@ as ``init.yaml``.
 the specification https://learnxinyminutes.com/docs/yaml/. To see if your YAML
 is valid, go to https://yamlchecker.com/.
 
-After you launch your experiment and vist ``[url]:8421``, you will see a query
+After you launch your experiment and vist ``http://[url]:8421``, you will see a query
 page:
 
 .. _YAML specification: https://yaml.org/
@@ -33,7 +38,7 @@ page:
 .. warning::
 
    Please include the version in any bug reports or feature requests.
-   The version number is available at ``[url]:8421/docs`` and should look
+   The version number is available at ``http://[url]:8421/docs`` and should look
    something like ``v0.4.1``, typically shown right next to "Salmon."
 
 Now, let's describe three methods on how to launch this experiment:
@@ -139,7 +144,7 @@ Database dump
 -------------
 
 The dashboard offers a link to download the experiment on the dashboard (that
-is, at ``[url]:8421/dashboard``). This will download a file called
+is, at ``http://[url]:8421/dashboard``). This will download a file called
 ``exp-[date]-vX.Y.Z.rdb``. Do not delete the numbers ``X.Y.Z``!
 
 Salmon supports the upload of this file to the same version of Salmon. The
