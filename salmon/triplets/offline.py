@@ -70,13 +70,17 @@ class OfflineEmbedding(BaseEstimator):
                 )
             n_active = len(X_train) - random.sum()
 
-            # Higher rate -> later sample are less important
+            # Larger rate -> later sample are less important
             # Smaller rate -> later samples are more important
-            rate = 0.04
             i = np.arange(0, n_active)
 
+            # Number of queries required for random sampling
+            required = 10 * self.n * self.d * np.log2(self.n)
+            i /= required
+            rate = 20
+
             sample_weight = np.zeros(len(X_train))
-            sample_weight[~random] = 1 / np.sqrt(1 + rate * i)
+            sample_weight[~random] = 1 / (1 + rate * i)
             sample_weight[random] = 1
 
         _start = time()
