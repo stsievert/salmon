@@ -49,7 +49,9 @@ class _Embedding(NeuralNet):
             if idx.sum():
                 factor = max_norm / norms[idx]
                 d = self.module_._embedding.shape[1]
-                if d > 1:
+                if d == 1:
+                    factor = factor.reshape(-1, 1)
+                else:
                     factor = torch.stack((factor,) * d).T
                 self.module_._embedding[idx] *= factor
         self.optimizer_.zero_grad()
