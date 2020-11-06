@@ -83,6 +83,9 @@ class OfflineEmbedding(BaseEstimator):
             sample_weight[~random] = 1 / (1 + rate * i)
             sample_weight[random] = 1
 
+            # divide by mean so 1 on average -> same step size in optimization
+            sample_weight /= sample_weight.mean()
+
         _start = time()
         _print_deadline = time() + self.verbose
         for k in itertools.count():
