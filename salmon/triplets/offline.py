@@ -43,7 +43,7 @@ class OfflineEmbedding(BaseEstimator):
                 optimizer=optim.SGD,
                 max_epochs=self.max_epochs,
             )
-        # TODO: change defaults for Embedding and children
+            # TODO: change defaults for Embedding and children
         self.opt.push(X_train)
 
         self.opt_ = self.opt
@@ -90,9 +90,12 @@ class OfflineEmbedding(BaseEstimator):
         _print_deadline = time() + self.verbose
         for k in itertools.count():
             train_score = self.opt_.score(X_train)
+            module_ = self.opt_.module_
+            loss_train = module_.losses(*module_._get_dists(X_train))
             datum = {
                 **self.opt_.meta_,
                 "score_train": train_score,
+                "loss_train": loss_train,
                 "k": k,
                 "elapsed_time": time() - _start,
                 "train_data": len(X_train),
@@ -108,6 +111,8 @@ class OfflineEmbedding(BaseEstimator):
             if k % 5 == 0:
                 test_score = self.opt_.score(X_test)
                 self.history_[-1]["score_test"] = test_score
+                loss_test = module_.losses(*module_._get_dists(X_test))
+                self.history_[-1]["loss_test"] = test_score
             if self.opt_.meta_["num_grad_comps"] >= self.max_epochs * len(X_train):
                 break
             if time() >= _print_deadline:
