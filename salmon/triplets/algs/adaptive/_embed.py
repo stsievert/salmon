@@ -125,8 +125,8 @@ class Embedding(_Embedding):
 
     def initialize_history(self):
         super().initialize_history()
-        self.history.record("_batch_count", 0)
-        self.history.record_batch("_loss", 0)
+        self.history.new_epoch()
+        self.history.new_batch()
 
     def push(self, answers: Union[list, np.ndarray]):
         if not (hasattr(self, "initialized_") and self.initialized_):
