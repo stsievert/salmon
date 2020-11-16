@@ -23,7 +23,7 @@ def _get_params(opt_):
 
 class OfflineEmbedding(BaseEstimator):
     def __init__(
-        self, n=None, d=None, max_epochs=25, opt=None, verbose=10, ident="",
+        self, n=None, d=None, max_epochs=25, opt=None, verbose=20, ident="",
     ):
         self.opt = opt
         self.n = n
@@ -91,7 +91,7 @@ class OfflineEmbedding(BaseEstimator):
         for k in itertools.count():
             train_score = self.opt_.score(X_train)
             module_ = self.opt_.module_
-            loss_train = module_.losses(*module_._get_dists(X_train))
+            loss_train = module_.losses(*module_._get_dists(X_train)).mean().item()
             datum = {
                 **self.opt_.meta_,
                 "score_train": train_score,
@@ -108,11 +108,11 @@ class OfflineEmbedding(BaseEstimator):
                 "ident": self.ident,
             }
             self.history_.append(datum)
-            if k % 10 == 0:
+            if k % 20 == 0:
                 test_score = self.opt_.score(X_test)
                 self.history_[-1]["score_test"] = test_score
                 loss_test = module_.losses(*module_._get_dists(X_test))
-                self.history_[-1]["loss_test"] = test_score
+                self.history_[-1]["loss_test"] = loss_test.mean().item()
             if self.opt_.meta_["num_grad_comps"] >= self.max_epochs * len(X_train):
                 break
             if time() >= _print_deadline:
@@ -123,7 +123,7 @@ class OfflineEmbedding(BaseEstimator):
         test_score = self.opt_.score(X_test)
         self.history_[-1]["score_test"] = test_score
         loss_test = module_.losses(*module_._get_dists(X_test))
-        self.history_[-1]["loss_test"] = test_score
+        self.history_[-1]["loss_test"] = loss_test.mean().item()
         return self
 
     @property
