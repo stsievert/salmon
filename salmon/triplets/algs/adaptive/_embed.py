@@ -117,6 +117,8 @@ class Embedding(_Embedding):
         self.initialized_ = True
         self.random_state_ = rng
         self.answers_ = np.zeros((1000, 3), dtype="uint16")
+        self.callbacks = []
+        self.callbacks_ = []
 
     def push(self, answers: Union[list, np.ndarray]):
         if not (hasattr(self, "initialized_") and self.initialized_):
