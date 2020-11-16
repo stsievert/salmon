@@ -8,10 +8,14 @@ import torch
 import torch.optim as optim
 from numba import jit, prange
 from skorch.net import NeuralNet
+from skorch.dataset import Dataset as SkorchDataset
 from torch.nn.modules.loss import _Loss
+from torch.utils.data import TensorDataset
 
 from sklearn.utils import check_random_state
 from scipy.special import binom
+from skorch.utils import is_dataset
+
 from salmon.utils import get_logger
 
 logger = get_logger(__name__)
@@ -36,6 +40,8 @@ class _Embedding(NeuralNet):
 
     def partial_fit(self, X, y=None, sample_weight=None):
         if sample_weight is not None:
+            if is_dataset(X):
+                X = X[:][0]
             _X = {"h_w_l": X, "sample_weight": sample_weight}
         else:
             _X = X
@@ -61,6 +67,11 @@ class _Embedding(NeuralNet):
         win2, lose2 = self.module_._get_dists(answers)
         acc = (win2 < lose2).numpy().astype("float32").mean().item()
         return acc
+
+
+class NumpyDataset(SkorchDataset):
+    def transform(self, X, y):
+        return X, torch.from_numpy(np.array([0])) if y is None else y
 
 
 class Embedding(_Embedding):
@@ -106,6 +117,7 @@ class Embedding(_Embedding):
             max_epochs=max_epochs,
             optimizer__nesterov=True,
             train_split=None,
+            dataset=NumpyDataset,
         )
 
     def initialize(self):
@@ -184,7 +196,9 @@ class Embedding(_Embedding):
             idx_train = self.get_train_idx(self.meta_["num_answers"])
             train_ans = answers[idx_train].astype("int64")
             sw = None if sample_weight is None else sample_weight[idx_train]
-            _ = super().partial_fit(train_ans, sample_weight=sw)
+            _junk = torch.rand(size=(len(train_ans),))
+            train_ds = TensorDataset(torch.from_numpy(train_ans), _junk)
+            _ = super().partial_fit(train_ds, sample_weight=sw)
 
             self.meta_["num_grad_comps"] += len(idx_train)
             self.meta_["model_updates"] += 1

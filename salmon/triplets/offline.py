@@ -41,6 +41,7 @@ class OfflineEmbedding(BaseEstimator):
                 module__d=self.d,
                 random_state=42 ** 2,
                 optimizer=optim.SGD,
+                optimizer__lr=1e-3,
                 max_epochs=self.max_epochs,
             )
             # TODO: change defaults for Embedding and children
