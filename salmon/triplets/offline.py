@@ -108,7 +108,7 @@ class OfflineEmbedding(BaseEstimator):
                 "ident": self.ident,
             }
             self.history_.append(datum)
-            if k % 20 == 0:
+            if k % 10 == 0:
                 test_score = self.opt_.score(X_test)
                 self.history_[-1]["score_test"] = test_score
                 loss_test = module_.losses(*module_._get_dists(X_test))
