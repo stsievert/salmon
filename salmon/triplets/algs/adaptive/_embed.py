@@ -120,6 +120,9 @@ class Embedding(_Embedding):
         self.callbacks = []
         self.callbacks_ = []
 
+    on_batch_begin = on_batch_end = lambda *args, **kwargs: None
+    on_epoch_begin = on_epoch_end = lambda *args, **kwargs: None
+
     def push(self, answers: Union[list, np.ndarray]):
         if not (hasattr(self, "initialized_") and self.initialized_):
             self.initialize()
