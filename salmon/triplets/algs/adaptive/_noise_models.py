@@ -166,3 +166,22 @@ class GNMDS(TripletDist):
 
     def _probs(self, win2, lose2):
         return win2 / (win2 + lose2 + 1e-6)
+
+
+class Logistic(GNMDS):
+    r"""
+    .. math::
+
+       \text{loss}(x, y) = \sum_i \frac{\log(1 + \exp(-y[i]*x[i]))}{\text{x.nelement}()}
+    """
+
+    def losses(self, win2: torch.Tensor, lose2: torch.Tensor) -> torch.Tensor:
+        # low loss if agrees
+        # high loss if disagrees
+        # win2 - lose2: positive if disagrees, negative if agrees
+        # embedding accurate -> win2 < lose2 -> win2-lose2 < 0 => negative
+        # embedding bad -> win2 > lose2 -> win2-lose2 > 0 => positive
+        # exp(x): large if x negative, small if x negative.
+        _pwrs = torch.cat((torch.tensor([0]), win2 - lose2))
+        loss = torch.logsumexp(_pwrs)
+        return loss

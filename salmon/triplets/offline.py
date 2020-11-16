@@ -108,7 +108,7 @@ class OfflineEmbedding(BaseEstimator):
                 "ident": self.ident,
             }
             self.history_.append(datum)
-            if k % 5 == 0:
+            if k % 10 == 0:
                 test_score = self.opt_.score(X_test)
                 self.history_[-1]["score_test"] = test_score
                 loss_test = module_.losses(*module_._get_dists(X_test))
@@ -119,8 +119,11 @@ class OfflineEmbedding(BaseEstimator):
                 print(self.history_[-1])
                 _print_deadline = time() + self.verbose
             self.opt_.partial_fit(X_train, sample_weight=sample_weight)
+
         test_score = self.opt_.score(X_test)
         self.history_[-1]["score_test"] = test_score
+        loss_test = module_.losses(*module_._get_dists(X_test))
+        self.history_[-1]["loss_test"] = test_score
         return self
 
     @property
