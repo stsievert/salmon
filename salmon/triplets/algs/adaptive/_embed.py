@@ -123,6 +123,11 @@ class Embedding(_Embedding):
     on_batch_begin = on_batch_end = lambda *args, **kwargs: None
     on_epoch_begin = on_epoch_end = lambda *args, **kwargs: None
 
+    def initialize_history(self):
+        super().initialize_history()
+        self.history.record("_batch_count", 0)
+        self.history.record_batch("_loss", 0)
+
     def push(self, answers: Union[list, np.ndarray]):
         if not (hasattr(self, "initialized_") and self.initialized_):
             self.initialize()
