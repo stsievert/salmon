@@ -29,40 +29,6 @@ class Reduce:
 
 
 class _Embedding(NeuralNet):
-    def get_loss(self, y_pred, y_true, X, *args, **kwargs):
-        # override get_loss to use the sample_weight from X
-        if not isinstance(X, dict):
-            loss_unreduced = super().get_loss(y_pred, y_true, X, *args, **kwargs)
-            return loss_unreduced.mean()
-
-        loss_unreduced = super().get_loss(y_pred, y_true, X["h_w_l"], *args, **kwargs)
-        return (X["sample_weight"] * loss_unreduced).mean()
-
-    def partial_fit(self, X, y=None, sample_weight=None):
-        if sample_weight is not None:
-            if is_dataset(X):
-                X = X[:][0]
-            _X = {"h_w_l": X, "sample_weight": sample_weight}
-        else:
-            _X = X
-        r = super().partial_fit(_X, y=None)
-
-        # Project back onto norm ball
-        with torch.no_grad():
-            norms = torch.norm(self.module_._embedding, dim=1)
-            max_norm = 10 * self.module__d
-            idx = norms > max_norm
-            if idx.sum():
-                factor = max_norm / norms[idx]
-                d = self.module_._embedding.shape[1]
-                if d == 1:
-                    factor = factor.reshape(-1, 1)
-                else:
-                    factor = torch.stack((factor,) * d).T
-                self.module_._embedding[idx] *= factor
-        self.optimizer_.zero_grad()
-        return r
-
     def score(self, answers, y=None):
         win2, lose2 = self.module_._get_dists(answers)
         acc = (win2 < lose2).numpy().astype("float32").mean().item()
@@ -192,23 +158,48 @@ class Embedding(_Embedding):
 
         beg_meta = copy(self.meta_)
         deadline = time() + (time_limit or np.inf)
+        if sample_weight is not None:
+            sample_weight = torch.from_numpy(sample_weight)
+        n_ans = len(answers)
         while True:
             idx_train = self.get_train_idx(self.meta_["num_answers"])
             train_ans = answers[idx_train].astype("int64")
-            sw = None if sample_weight is None else sample_weight[idx_train]
-            _junk = torch.rand(size=(len(train_ans),))
-            train_ds = TensorDataset(torch.from_numpy(train_ans), _junk)
-            _ = super().partial_fit(train_ds, sample_weight=sw)
+
+            X = torch.from_numpy(train_ans)
+            losses = self.module_.forward(X)
+            if sample_weight is not None:
+                losses *= sample_weight[idx_train]
+
+            self.optimizer_.zero_grad()
+            loss = losses.mean()
+            loss.backward()
+            self.optimizer_.step()
+            with torch.no_grad():
+                self._project_onto_ball()
+            self.optimizer_.zero_grad()
 
             self.meta_["num_grad_comps"] += len(idx_train)
             self.meta_["model_updates"] += 1
             logger.info("%s", self.meta_)
-            n_ans = len(answers)
             if self.meta_["num_grad_comps"] - beg_meta["num_grad_comps"] >= n_ans:
                 break
             if time_limit and time() >= deadline:
                 break
         return self
+
+    def _project_onto_ball(self):
+        norms = torch.norm(self.module_._embedding, dim=1)
+        max_norm = 10 * self.module__d
+        idx = norms > max_norm
+        if idx.sum():
+            factor = max_norm / norms[idx]
+            d = self.module_._embedding.shape[1]
+            if d == 1:
+                factor = factor.reshape(-1, 1)
+            else:
+                factor = torch.stack((factor,) * d).T
+            self.module_._embedding[idx] *= factor
+        return True
 
     def score(self, answers, y=None) -> float:
         if not (hasattr(self, "initialized_") and self.initialized_):
