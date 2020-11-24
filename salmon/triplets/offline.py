@@ -41,7 +41,7 @@ class OfflineEmbedding(BaseEstimator):
                 module__d=self.d,
                 random_state=42 ** 2,
                 optimizer=optim.SGD,
-                optimizer__lr=1e-3,
+                optimizer__lr=1e-1,
                 max_epochs=self.max_epochs,
             )
             # TODO: change defaults for Embedding and children
@@ -123,6 +123,7 @@ class OfflineEmbedding(BaseEstimator):
 
         test_score = self.opt_.score(X_test)
         self.history_[-1]["score_test"] = test_score
+        module_ = self.opt_.module_
         loss_test = module_.losses(*module_._get_dists(X_test))
         self.history_[-1]["loss_test"] = loss_test.mean().item()
         return self

@@ -1,7 +1,6 @@
 import itertools
 from copy import copy
 from typing import List, Tuple, Union
-from time import time
 
 import numpy as np
 import torch
@@ -43,11 +42,6 @@ class NumpyDataset(SkorchDataset):
 class Embedding(_Embedding):
     """
     An triplet embedding algorithm.
-
-    Parameters
-    ----------
-
-
     """
 
     def __init__(
@@ -60,7 +54,7 @@ class Embedding(_Embedding):
         optimizer__momentum=0.75,
         random_state=None,
         warm_start=True,
-        max_epochs=1,
+        max_epochs=100,
         initial_batch_size=256,
         **kwargs,
     ):
@@ -85,6 +79,8 @@ class Embedding(_Embedding):
             train_split=None,
             dataset=NumpyDataset,
         )
+        if self.max_epochs != max_epochs:
+            raise ValueError(f"self.max_epochs={self.max_epochs} != {max_epochs}")
 
     def initialize(self):
 
@@ -100,6 +96,26 @@ class Embedding(_Embedding):
 
     on_batch_begin = on_batch_end = lambda *args, **kwargs: None
     on_epoch_begin = on_epoch_end = lambda *args, **kwargs: None
+
+    # def converged(self):
+    #     answers = self.answers_[: self.meta_["num_answers"]]
+    #     self.optimizer_.zero_grad()
+    #     losses = self.module_.forward(answers)
+    #     loss = losses.mean()
+    #     loss.backward()
+    #     G = self.module_._embedding.grad.detach().numpy().copy()
+    #     self.optimizer_.zero_grad()
+
+    #     n, d = G.shape
+
+    #     grad_norms2 = (G ** 2).sum(axis=0)  # Forbenius norm squared
+    #     assert grad_norms2.shape == (n, 1)
+
+    #     max_grad_norm2 = grad_norms2.max()
+    #     avg_grad_norm2 = grad_norms2.mean()
+
+    #     grad_error = np.sqrt(max_grad_norm2 / avg_grad_norm2)
+    #     return grad_error < self.epsilon
 
     def initialize_history(self):
         super().initialize_history()
@@ -125,7 +141,7 @@ class Embedding(_Embedding):
         self.meta_["num_answers"] += len(answers)
         return self.answers_.nbytes
 
-    def partial_fit(self, answers, sample_weight=None, time_limit=None):
+    def partial_fit(self, answers, sample_weight=None):
         """
         Process the provided answers.
 
@@ -157,16 +173,15 @@ class Embedding(_Embedding):
             return self
 
         beg_meta = copy(self.meta_)
-        deadline = time() + (time_limit or np.inf)
+        eg_deadline = copy(len(answers) + beg_meta["num_grad_comps"])
+
         if sample_weight is not None:
             sample_weight = torch.from_numpy(sample_weight)
-        n_ans = len(answers)
         while True:
             idx_train = self.get_train_idx(self.meta_["num_answers"])
-            train_ans = answers[idx_train].astype("int64")
+            train_ans = torch.from_numpy(answers[idx_train].astype("int64"))
+            losses = self.module_.forward(train_ans)
 
-            X = torch.from_numpy(train_ans)
-            losses = self.module_.forward(X)
             if sample_weight is not None:
                 losses *= sample_weight[idx_train]
 
@@ -174,16 +189,15 @@ class Embedding(_Embedding):
             loss = losses.mean()
             loss.backward()
             self.optimizer_.step()
+            self.optimizer_.zero_grad()
             with torch.no_grad():
                 self._project_onto_ball()
             self.optimizer_.zero_grad()
 
-            self.meta_["num_grad_comps"] += len(idx_train)
+            self.meta_["num_grad_comps"] += len(train_ans)
             self.meta_["model_updates"] += 1
             logger.info("%s", self.meta_)
-            if self.meta_["num_grad_comps"] - beg_meta["num_grad_comps"] >= n_ans:
-                break
-            if time_limit and time() >= deadline:
+            if self.meta_["num_grad_comps"] >= eg_deadline:
                 break
         return self
 
@@ -209,11 +223,13 @@ class Embedding(_Embedding):
         return score
 
     def fit(self, X, y=None):
+        if not self.warm_start:
+            msg = "Only warm_start=True is accepted, not warm_start={}"
+            raise ValueError(msg.format(self.warm_start))
         if not (hasattr(self, "initialized_") and self.initialized_):
             self.initialize()
         for epoch in range(self.max_epochs):
             n_ans = copy(self.meta_["num_answers"])
-            print(epoch)
             self.partial_fit(self.answers_[:n_ans])
         return self
 

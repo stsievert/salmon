@@ -171,7 +171,7 @@ class Adaptive(Runner):
         n_ans = self.opt.meta_["num_answers"]
         valid_ans = self.opt.answers_[:n_ans]
 
-        self.opt.partial_fit(valid_ans, time_limit=10)
+        self.opt.fit(valid_ans)
         self.meta["model_updates"] += 1
         return self, True
 
