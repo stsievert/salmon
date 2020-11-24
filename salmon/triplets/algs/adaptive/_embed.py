@@ -51,11 +51,11 @@ class Embedding(_Embedding):
         module__d: int = 2,
         optimizer=optim.SGD,
         optimizer__lr=0.04,
-        optimizer__momentum=0.75,
+        optimizer__momentum=0.9,
         random_state=None,
         warm_start=True,
         max_epochs=100,
-        initial_batch_size=256,
+        initial_batch_size=512,
         **kwargs,
     ):
         self.random_state = random_state
