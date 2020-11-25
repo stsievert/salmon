@@ -162,7 +162,7 @@ class Adaptive(Runner):
         self.search.push(alg_ans)
         self.search.embedding = self.opt.embedding()
         self.opt.push(alg_ans)
-        if self.meta["num_ans"] < 0.8 * self.R * self.n:
+        if self.meta["num_ans"] < 0.5 * self.R * self.n:
             return self, True
 
         # Make sure only valid answers are passed to partial_fit;
