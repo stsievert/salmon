@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Installation &mdash; Salmon v0.4.3+0.g281b3d0.dirty documentation</title>
+  <title>Installation &mdash; Salmon v0.4.3+1.g90be880.dirty documentation</title>
   
 
   
@@ -193,7 +193,7 @@ machine. After you get Salmon running, detail on how to launch experiments in
 <li><p>Select the “Oregon” region (or <code class="docutils literal notranslate"><span class="pre">us-west-2</span></code>) in the upper right.</p></li>
 <li><p>Go to Amazon EC2</p></li>
 <li><p>Launch a new instance (the big blue button or square orange button).</p></li>
-<li><p>Select AMI <code class="docutils literal notranslate"><span class="pre">ami-0117acefda9941def</span></code> titled “Salmon”. It appears in
+<li><p>Select AMI <code class="docutils literal notranslate"><span class="pre">ami-0e3134e3437ec5b85</span></code> titled “Salmon”. It appears in
 Community AMIs after searching “Salmon”.</p></li>
 <li><p>Select an appropriate instance type.</p>
 <blockquote>
@@ -208,23 +208,42 @@ Community AMIs after searching “Salmon”.</p></li>
 these rules:</p></li>
 </ol>
 <a class="reference internal image-reference" href="_images/networking-rule.png"><img alt="_images/networking-rule.png" class="align-center" src="_images/networking-rule.png" style="width: 80%;" /></a>
-<p>Then after this AMI is finished launching and initializing, go to</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">[url]:8421/init_exp</span></code> to initialize an experiment</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">[url]:8421/docs</span></code> to see the endpoint documentation. The Salmon version
-displayed should match the most recent Salmon release in the <a class="reference external" href="https://github.com/stsievert/salmon/releases">list of Salmon
-releases</a>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">[url]:8421/dashboard</span></code> to view all relevant links, including links to
-the…</p>
+<p>The AMI will take about 15 minutes to initialize. After that’s done, Salmon
+will be available at <code class="docutils literal notranslate"><span class="pre">http://[url]:8421</span></code>. For example, <code class="docutils literal notranslate"><span class="pre">[url]</span></code> might be
+the Amazon public DNS or public IP.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">ec2</span><span class="o">-</span><span class="mi">35</span><span class="o">-</span><span class="mi">164</span><span class="o">-</span><span class="mi">240</span><span class="o">-</span><span class="mf">184.</span><span class="n">us</span><span class="o">-</span><span class="n">west</span><span class="o">-</span><span class="mf">2.</span><span class="n">compute</span><span class="o">.</span><span class="n">amazonaws</span><span class="o">.</span><span class="n">com</span><span class="p">:</span><span class="mi">8421</span><span class="o">/</span><span class="n">foo</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>By default, Salmon does not support HTTPS. Be sure the URL begins with
+<code class="docutils literal notranslate"><span class="pre">http://</span></code> and not <code class="docutils literal notranslate"><span class="pre">https://</span></code>!</p>
+</div>
+<p>Until you upload data, <code class="docutils literal notranslate"><span class="pre">http://[url]:8421</span></code> will only show an error message.
+To start using Salmon, these endpoints will be available:</p>
 <ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">http://[url]:8421/init_exp</span></code> to initialize an experiment</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">http://[url]:8421/docs</span></code> to see the endpoint documentation. The Salmon
+version displayed should match the most recent Salmon release in the <a class="reference external" href="https://github.com/stsievert/salmon/releases">list of
+Salmon releases</a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">http://[url]:8421/dashboard</span></code> to view all relevant links, including links
+to the…</p>
+<ul class="simple">
 <li><p>The <strong>query page.</strong> This is the URL that shows the relevant triplets. This
 is the URL to be sent to a crowdsourcing service.</p></li>
 <li><p><strong>API documentation</strong>. This includes information on how to launch an
 experiment, and what files need to be uploaded. View the documentation for
 the POST request <code class="docutils literal notranslate"><span class="pre">/init_exp</span></code> for more detail.</p></li>
+<li><p><strong>Download the experiment.</strong> The downloaded file can be re-uploaded to a
+new machine so experiments can be restarted.</p></li>
 <li><p><strong>Responses</strong>. To get all human responses.</p></li>
 <li><p><strong>Logs</strong>. This is very useful for debugging.</p></li>
 </ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Download all files when stopping or terminating the machine – especially
+the responses and experiment file.</p>
+</div>
 </li>
 </ul>
 <div class="admonition warning">
@@ -232,11 +251,6 @@ the POST request <code class="docutils literal notranslate"><span class="pre">/i
 <p>If you have an issue with the machine running Salmon, be sure to include the
 logs when contacting the Salmon developers. They’d also appreciate it if
 you left the machine running.</p>
-</div>
-<p><code class="docutils literal notranslate"><span class="pre">[url]</span></code> is the Amazon public DNS or public IP. This means that going to
-<code class="docutils literal notranslate"><span class="pre">[url]:8421/foo</span></code> might mean going to this URL:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">ec2</span><span class="o">-</span><span class="mi">35</span><span class="o">-</span><span class="mi">164</span><span class="o">-</span><span class="mi">240</span><span class="o">-</span><span class="mf">184.</span><span class="n">us</span><span class="o">-</span><span class="n">west</span><span class="o">-</span><span class="mf">2.</span><span class="n">compute</span><span class="o">.</span><span class="n">amazonaws</span><span class="o">.</span><span class="n">com</span><span class="p">:</span><span class="mi">8421</span><span class="o">/</span><span class="n">foo</span>
-</pre></div>
 </div>
 </div>
 <div class="section" id="local-machine">

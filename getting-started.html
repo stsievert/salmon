@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Starting an experiment &mdash; Salmon v0.4.3+0.g281b3d0.dirty documentation</title>
+  <title>Starting an experiment &mdash; Salmon v0.4.3+1.g90be880.dirty documentation</title>
   
 
   
@@ -179,19 +179,24 @@
             
   <div class="section" id="starting-an-experiment">
 <span id="getting-started"></span><h1>Starting an experiment<a class="headerlink" href="#starting-an-experiment" title="Permalink to this headline">¶</a></h1>
-<p>Experiments can be initialized by vising <code class="docutils literal notranslate"><span class="pre">[url]:8421/init_exp</span></code>. This supports
+<p>Experiments can be initialized by vising <code class="docutils literal notranslate"><span class="pre">http://[url]:8421/init_exp</span></code>. This supports
 the following options:</p>
 <ol class="arabic simple">
 <li><p>Upload of a YAML file completely detailing the experiment.</p></li>
 <li><p>Upload of a YAML file describing experiment, and ZIP file for the targets.</p></li>
 <li><p>Upload of a database dump from Salmon.</p></li>
 </ol>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>By default, Salmon does not support HTTPS. Make sure the URL begins with
+<code class="docutils literal notranslate"><span class="pre">http://</span></code>, not <code class="docutils literal notranslate"><span class="pre">https://</span></code>.</p>
+</div>
 <p>Through the documentation, the YAML file for initialization will be referred to
 as <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code>.</p>
 <p>“YAML files” must obey a standard; see for a (human-readable) description of
 the specification <a class="reference external" href="https://learnxinyminutes.com/docs/yaml/">https://learnxinyminutes.com/docs/yaml/</a>. To see if your YAML
 is valid, go to <a class="reference external" href="https://yamlchecker.com/">https://yamlchecker.com/</a>.</p>
-<p>After you launch your experiment and vist <code class="docutils literal notranslate"><span class="pre">[url]:8421</span></code>, you will see a query
+<p>After you launch your experiment and vist <code class="docutils literal notranslate"><span class="pre">http://[url]:8421</span></code>, you will see a query
 page:</p>
 <a class="reference internal image-reference" href="_images/query_page.png"><img alt="_images/query_page.png" class="align-center" src="_images/query_page.png" style="width: 500px;" /></a>
 <div class="admonition note">
@@ -201,7 +206,7 @@ page:</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Please include the version in any bug reports or feature requests.
-The version number is available at <code class="docutils literal notranslate"><span class="pre">[url]:8421/docs</span></code> and should look
+The version number is available at <code class="docutils literal notranslate"><span class="pre">http://[url]:8421/docs</span></code> and should look
 something like <code class="docutils literal notranslate"><span class="pre">v0.4.1</span></code>, typically shown right next to “Salmon.”</p>
 </div>
 <p>Now, let’s describe three methods on how to launch this experiment:</p>
@@ -294,7 +299,7 @@ bolded text for “<strong>Ted Ligety</strong>.” That means we can also render
 <div class="section" id="database-dump">
 <h2>Database dump<a class="headerlink" href="#database-dump" title="Permalink to this headline">¶</a></h2>
 <p>The dashboard offers a link to download the experiment on the dashboard (that
-is, at <code class="docutils literal notranslate"><span class="pre">[url]:8421/dashboard</span></code>). This will download a file called
+is, at <code class="docutils literal notranslate"><span class="pre">http://[url]:8421/dashboard</span></code>). This will download a file called
 <code class="docutils literal notranslate"><span class="pre">exp-[date]-vX.Y.Z.rdb</span></code>. Do not delete the numbers <code class="docutils literal notranslate"><span class="pre">X.Y.Z</span></code>!</p>
 <p>Salmon supports the upload of this file to the same version of Salmon. The
 upload of this file will restore the state of your experiment.</p>

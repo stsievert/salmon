@@ -16,7 +16,7 @@ Experimentalist
 2. Select the "Oregon" region (or ``us-west-2``) in the upper right.
 3. Go to Amazon EC2
 4. Launch a new instance (the big blue button or square orange button).
-5. Select AMI ``ami-0117acefda9941def`` titled "Salmon". It appears in
+5. Select AMI ``ami-0e3134e3437ec5b85`` titled "Salmon". It appears in
    Community AMIs after searching "Salmon".
 6. Select an appropriate instance type.
 
@@ -31,22 +31,43 @@ Experimentalist
    :width: 80%
    :align: center
 
-Then after this AMI is finished launching and initializing, go to
+The AMI will take about 15 minutes to initialize. After that's done, Salmon
+will be available at ``http://[url]:8421``. For example, ``[url]`` might be
+the Amazon public DNS or public IP.
 
-- ``[url]:8421/init_exp`` to initialize an experiment
-- ``[url]:8421/docs`` to see the endpoint documentation. The Salmon version
-  displayed should match the most recent Salmon release in the `list of Salmon
-  releases`_.
-- ``[url]:8421/dashboard`` to view all relevant links, including links to
-  the...
+.. code::
+
+   http://ec2-35-164-240-184.us-west-2.compute.amazonaws.com:8421/foo
+
+.. warning::
+
+   By default, Salmon does not support HTTPS. Be sure the URL begins with
+   ``http://`` and not ``https://``!
+
+Until you upload data, ``http://[url]:8421`` will only show an error message.
+To start using Salmon, these endpoints will be available:
+
+- ``http://[url]:8421/init_exp`` to initialize an experiment
+- ``http://[url]:8421/docs`` to see the endpoint documentation. The Salmon
+  version displayed should match the most recent Salmon release in the `list of
+  Salmon releases`_.
+- ``http://[url]:8421/dashboard`` to view all relevant links, including links
+  to the...
 
   * The **query page.** This is the URL that shows the relevant triplets. This
     is the URL to be sent to a crowdsourcing service.
   * **API documentation**. This includes information on how to launch an
     experiment, and what files need to be uploaded. View the documentation for
     the POST request ``/init_exp`` for more detail.
+  * **Download the experiment.** The downloaded file can be re-uploaded to a
+    new machine so experiments can be restarted.
   * **Responses**. To get all human responses.
   * **Logs**. This is very useful for debugging.
+
+  .. warning::
+
+     Download all files when stopping or terminating the machine -- especially
+     the responses and experiment file.
 
 .. warning::
 
@@ -54,12 +75,6 @@ Then after this AMI is finished launching and initializing, go to
    logs when contacting the Salmon developers. They'd also appreciate it if
    you left the machine running.
 
-``[url]`` is the Amazon public DNS or public IP. This means that going to
-``[url]:8421/foo`` might mean going to this URL:
-
-.. code::
-
-   http://ec2-35-164-240-184.us-west-2.compute.amazonaws.com:8421/foo
 
 .. _list of Salmon releases: https://github.com/stsievert/salmon/releases
 
