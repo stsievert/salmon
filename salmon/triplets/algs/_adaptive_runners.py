@@ -91,7 +91,7 @@ class Adaptive(Runner):
         if scorer == "infogain":
             search = InfoGainScorer(
                 embedding=self.opt.embedding(),
-                probs=self.opt.module_.probs,
+                probs=self.opt.net_.module_.probs,
                 random_state=random_state,
             )
         elif scorer == "uncertainty":
