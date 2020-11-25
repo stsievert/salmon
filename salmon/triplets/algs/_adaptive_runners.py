@@ -83,7 +83,7 @@ class Adaptive(Runner):
             optimizer__momentum=optimizer__momentum,
             random_state=random_state,
             warm_start=True,
-            max_epochs=1,
+            max_epochs=200,
             **kwargs,
         )
         self.opt.initialize()
@@ -124,7 +124,7 @@ class Adaptive(Runner):
         return None, -9999
 
     def get_queries(
-        self, num=10_000, stop=None, random_state=None
+        self, num=None, stop=None, random_state=None
     ) -> Tuple[List[Query], List[float]]:
         if num:
             queries, scores = self.search.score(num=num, random_state=random_state)
@@ -134,16 +134,13 @@ class Adaptive(Runner):
         rng = None
         if random_state:
             rng = check_random_state(random_state)
-        deadline = time() + self.min_search_length()
-        for pwr in itertools.count(start=12):
-            queries, scores = self.search.score(
-                num=2 ** pwr, trim=False, random_state=rng
-            )
+        for pwr in itertools.count(start=13):
+            queries, scores = self.search.score(num=2 ** pwr, random_state=rng)
             ret_queries.append(queries)
             ret_scores.append(scores)
-            if time() >= deadline and stop.is_set():
+            if stop is not None and stop.is_set():
                 break
-        return np.concenate(ret_queries), np.concatenate(ret_scores)
+        return np.concatenate(ret_queries), np.concatenate(ret_scores)
 
     def process_answers(self, answers: List[Answer]):
         if not len(answers):
@@ -165,6 +162,8 @@ class Adaptive(Runner):
         self.search.push(alg_ans)
         self.search.embedding = self.opt.embedding()
         self.opt.push(alg_ans)
+        if self.meta["num_ans"] < 0.8 * self.R * self.n:
+            return self, True
 
         # Make sure only valid answers are passed to partial_fit;
         # self.opt.answers_ has a bunch of extra space for new answers
@@ -351,15 +350,10 @@ class RR(Adaptive):
 
         top_queries = df.loc[top_idx].sample(random_state=self.random_state_, frac=1)
         posted = top_queries[["h", "l", "r"]].values.astype("int64")
-        scores = 10 + np.linspace(0, 1, num=len(posted))
+        r_scores = 10 + np.linspace(0, 1, num=len(posted))
+        self.random_state_.shuffle(r_scores)
 
-        random = df.sample(random_state=self.random_state_, n=min(len(df), 1000))
-        random_q = random[["h", "l", "r"]].values.astype("int64")
-        random_scores = -9998 + self.random_state_.uniform(0, 1, size=len(random_q))
-
-        ret_q = np.concatenate((posted, random_q))
-        ret_score = np.concatenate((scores, random_scores))
-        return ret_q, ret_score
+        return posted, r_scores
 
 
 class STE(Adaptive):

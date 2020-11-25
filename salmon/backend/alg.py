@@ -109,6 +109,7 @@ class Runner:
 
                 def _model_done(_):
                     nonlocal time_model
+                    nonlocal done
                     done.set()
                     time_model += time() - _start
 
@@ -131,8 +132,9 @@ class Runner:
 
                 _datum_update = {
                     "n_queries_posted": posted,
-                    "update": update,
-                    "n_db_queries": rj.zcard(f"alg-{self.ident}-queries"),
+                    "n_queries_scored": len(queries),
+                    "n_queries_in_db": rj.zcard(f"alg-{self.ident}-queries"),
+                    "model_updated": update,
                     "n_model_updates": n_model_updates,
                     "time_posting_queries": time_post,
                     "time_model_update": time_model,
@@ -271,20 +273,21 @@ class Runner:
             ), f"Different lengths {scores.shape}, {queries.shape}"
             scores = scores[idx]  # high to low scores
             queries = queries[idx]
+            assert scores[0] >= scores[-1], "High to low scores"
 
-        n_chunks = len(queries) // 500
+        n_chunks = len(queries) // 1000
         split_queries = np.array_split(queries, max(n_chunks, 1))
         split_scores = np.array_split(scores, max(n_chunks, 1))
 
         n_queries = 0
+        name = self.ident
+        key = f"alg-{name}-queries"
         for _queries, _scores in zip(split_queries, split_scores):
             queries2 = {
                 self.serialize_query(q): float(s)
                 for q, s in zip(_queries, _scores)
                 if not np.isnan(s)
             }
-            name = self.ident
-            key = f"alg-{name}-queries"
             if len(queries2):
                 rj.zadd(key, queries2)
             n_queries += len(queries2)
