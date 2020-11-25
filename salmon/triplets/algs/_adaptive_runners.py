@@ -134,7 +134,7 @@ class Adaptive(Runner):
         rng = None
         if random_state:
             rng = check_random_state(random_state)
-        for pwr in itertools.count(start=13):
+        for pwr in range(12, 20 + 1):
             queries, scores = self.search.score(num=2 ** pwr, random_state=rng)
             ret_queries.append(queries)
             ret_scores.append(scores)

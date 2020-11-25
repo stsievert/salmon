@@ -198,6 +198,8 @@ class Embedding(_Embedding):
             self.meta_["model_updates"] += 1
             logger.info("%s", self.meta_)
             if self.meta_["num_grad_comps"] >= eg_deadline:
+                del loss
+                del losses
                 break
         return self
 
