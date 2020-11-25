@@ -80,6 +80,7 @@ def test_offline_embedding_adaptive():
     cols = ["head", "winner", "loser"]
     X_test = df.loc[~adaptive, cols].to_numpy()
     X_train = df.loc[adaptive, cols].to_numpy()
+    X_train = np.concatenate((X_train, ) * 10)
 
     model = OfflineEmbedding(n=n, d=d, max_epochs=4)
 
@@ -90,10 +91,13 @@ def test_offline_embedding_adaptive():
         scores = -5 + np.random.uniform(size=len(X_train))
         model.fit(X_train, X_test, scores=scores)
 
-    model.fit(X_train, X_test, scores=df.loc[adaptive, "score"])
+    scores[:100] = -9999
+    model.fit(X_train, X_test, scores=scores)
     assert isinstance(model.embedding_, np.ndarray)
     assert model.embedding_.shape == (n, d)
 
     assert isinstance(model.history_, list)
     assert all(isinstance(h, dict) for h in model.history_)
     assert len(model.history_) == 4 + 1
+    epochs = model.history_[-1]["num_grad_comps"] / len(X_train)
+    assert 3.7 <= epochs <= 4.3
