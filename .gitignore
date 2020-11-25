@@ -10,6 +10,9 @@ out/*.log
 *.DS_Store
 *.swp
 salmon/frontend/static/targets/*
+examples/*/_data/*
+_thoughts/
+examples-old/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

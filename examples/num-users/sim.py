@@ -315,7 +315,7 @@ if __name__ == "__main__":
     )
 
     config = {
-        "n_users": 100,
+        "n_users": 15,
         "max_queries": 30_000,
         "n": 30,
         "d": 2,
@@ -325,7 +325,7 @@ if __name__ == "__main__":
         "n_test": 10_000,
         "fname": "n_users={n_users}.msgpack",
         "reaction_time": 0.25,
-        "response_time": 0.75,
+        "response_time": 1.00,
         "init": True,
     }
     history, fname, user_data = asyncio.run(main(**config))

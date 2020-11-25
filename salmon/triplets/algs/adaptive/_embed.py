@@ -1,17 +1,20 @@
 import itertools
 from copy import copy
 from typing import List, Tuple, Union
-from time import time
 
 import numpy as np
 import torch
 import torch.optim as optim
 from numba import jit, prange
 from skorch.net import NeuralNet
+from skorch.dataset import Dataset as SkorchDataset
 from torch.nn.modules.loss import _Loss
+from torch.utils.data import TensorDataset
 
 from sklearn.utils import check_random_state
 from scipy.special import binom
+from skorch.utils import is_dataset
+
 from salmon.utils import get_logger
 
 logger = get_logger(__name__)
@@ -25,50 +28,20 @@ class Reduce:
 
 
 class _Embedding(NeuralNet):
-    def get_loss(self, y_pred, y_true, X, *args, **kwargs):
-        # override get_loss to use the sample_weight from X
-        if not isinstance(X, dict):
-            loss_unreduced = super().get_loss(y_pred, y_true, X, *args, **kwargs)
-            return loss_unreduced.mean()
-
-        loss_unreduced = super().get_loss(y_pred, y_true, X["h_w_l"], *args, **kwargs)
-        return (X["sample_weight"] * loss_unreduced).mean()
-
-    def partial_fit(self, X, y=None, sample_weight=None):
-        if sample_weight is not None:
-            _X = {"h_w_l": X, "sample_weight": sample_weight}
-        else:
-            _X = X
-        r = super().partial_fit(_X, y=None)
-
-        # Project back onto norm ball
-        with torch.no_grad():
-            norms = torch.norm(self.module_._embedding, dim=1)
-            max_norm = 10 * self.module__d
-            idx = norms > max_norm
-            if idx.sum():
-                factor = max_norm / norms[idx]
-                d = self.module_._embedding.shape[1]
-                if d > 1:
-                    factor = torch.stack((factor,) * d).T
-                self.module_._embedding[idx] *= factor
-        self.optimizer_.zero_grad()
-        return r
-
     def score(self, answers, y=None):
         win2, lose2 = self.module_._get_dists(answers)
         acc = (win2 < lose2).numpy().astype("float32").mean().item()
         return acc
 
 
+class NumpyDataset(SkorchDataset):
+    def transform(self, X, y):
+        return X, torch.from_numpy(np.array([0])) if y is None else y
+
+
 class Embedding(_Embedding):
     """
     An triplet embedding algorithm.
-
-    Parameters
-    ----------
-
-
     """
 
     def __init__(
@@ -77,18 +50,16 @@ class Embedding(_Embedding):
         module__n: int = 85,
         module__d: int = 2,
         optimizer=optim.SGD,
-        optimizer__lr=0.05,
+        optimizer__lr=0.04,
         optimizer__momentum=0.9,
         random_state=None,
         warm_start=True,
-        max_epochs=1,
-        initial_batch_size=256,
-        partial_fit_time=15,
+        max_epochs=100,
+        initial_batch_size=512,
         **kwargs,
     ):
         self.random_state = random_state
         self.initial_batch_size = initial_batch_size
-        self.partial_fit_time = partial_fit_time
 
         super().__init__(
             module=module,
@@ -106,7 +77,10 @@ class Embedding(_Embedding):
             max_epochs=max_epochs,
             optimizer__nesterov=True,
             train_split=None,
+            dataset=NumpyDataset,
         )
+        if self.max_epochs != max_epochs:
+            raise ValueError(f"self.max_epochs={self.max_epochs} != {max_epochs}")
 
     def initialize(self):
 
@@ -117,6 +91,36 @@ class Embedding(_Embedding):
         self.initialized_ = True
         self.random_state_ = rng
         self.answers_ = np.zeros((1000, 3), dtype="uint16")
+        self.callbacks = []
+        self.callbacks_ = []
+
+    on_batch_begin = on_batch_end = lambda *args, **kwargs: None
+    on_epoch_begin = on_epoch_end = lambda *args, **kwargs: None
+
+    # def converged(self):
+    #     answers = self.answers_[: self.meta_["num_answers"]]
+    #     self.optimizer_.zero_grad()
+    #     losses = self.module_.forward(answers)
+    #     loss = losses.mean()
+    #     loss.backward()
+    #     G = self.module_._embedding.grad.detach().numpy().copy()
+    #     self.optimizer_.zero_grad()
+
+    #     n, d = G.shape
+
+    #     grad_norms2 = (G ** 2).sum(axis=0)  # Forbenius norm squared
+    #     assert grad_norms2.shape == (n, 1)
+
+    #     max_grad_norm2 = grad_norms2.max()
+    #     avg_grad_norm2 = grad_norms2.mean()
+
+    #     grad_error = np.sqrt(max_grad_norm2 / avg_grad_norm2)
+    #     return grad_error < self.epsilon
+
+    def initialize_history(self):
+        super().initialize_history()
+        self.history.new_epoch()
+        self.history.new_batch()
 
     def push(self, answers: Union[list, np.ndarray]):
         if not (hasattr(self, "initialized_") and self.initialized_):
@@ -137,7 +141,7 @@ class Embedding(_Embedding):
         self.meta_["num_answers"] += len(answers)
         return self.answers_.nbytes
 
-    def partial_fit(self, answers, sample_weight=None, time_limit=None):
+    def partial_fit(self, answers, sample_weight=None):
         """
         Process the provided answers.
 
@@ -169,22 +173,47 @@ class Embedding(_Embedding):
             return self
 
         beg_meta = copy(self.meta_)
-        deadline = time() + (time_limit or np.inf)
+        eg_deadline = copy(len(answers) + beg_meta["num_grad_comps"])
+
+        if sample_weight is not None:
+            sample_weight = torch.from_numpy(sample_weight)
         while True:
             idx_train = self.get_train_idx(self.meta_["num_answers"])
-            train_ans = answers[idx_train].astype("int64")
-            sw = None if sample_weight is None else sample_weight[idx_train]
-            _ = super().partial_fit(train_ans, sample_weight=sw)
+            train_ans = torch.from_numpy(answers[idx_train].astype("int64"))
+            losses = self.module_.forward(train_ans)
 
-            self.meta_["num_grad_comps"] += len(idx_train)
+            if sample_weight is not None:
+                losses *= sample_weight[idx_train]
+
+            self.optimizer_.zero_grad()
+            loss = losses.mean()
+            loss.backward()
+            self.optimizer_.step()
+            self.optimizer_.zero_grad()
+            with torch.no_grad():
+                self._project_onto_ball()
+            self.optimizer_.zero_grad()
+
+            self.meta_["num_grad_comps"] += len(train_ans)
             self.meta_["model_updates"] += 1
             logger.info("%s", self.meta_)
-            n_ans = len(answers)
-            if self.meta_["num_grad_comps"] - beg_meta["num_grad_comps"] >= n_ans:
-                break
-            if time_limit and time() >= deadline:
+            if self.meta_["num_grad_comps"] >= eg_deadline:
                 break
         return self
+
+    def _project_onto_ball(self):
+        norms = torch.norm(self.module_._embedding, dim=1)
+        max_norm = 10 * self.module__d
+        idx = norms > max_norm
+        if idx.sum():
+            factor = max_norm / norms[idx]
+            d = self.module_._embedding.shape[1]
+            if d == 1:
+                factor = factor.reshape(-1, 1)
+            else:
+                factor = torch.stack((factor,) * d).T
+            self.module_._embedding[idx] *= factor
+        return True
 
     def score(self, answers, y=None) -> float:
         if not (hasattr(self, "initialized_") and self.initialized_):
@@ -194,11 +223,13 @@ class Embedding(_Embedding):
         return score
 
     def fit(self, X, y=None):
+        if not self.warm_start:
+            msg = "Only warm_start=True is accepted, not warm_start={}"
+            raise ValueError(msg.format(self.warm_start))
         if not (hasattr(self, "initialized_") and self.initialized_):
             self.initialize()
         for epoch in range(self.max_epochs):
             n_ans = copy(self.meta_["num_answers"])
-            print(epoch)
             self.partial_fit(self.answers_[:n_ans])
         return self
 
@@ -218,6 +249,14 @@ class Embedding(_Embedding):
 class GD(Embedding):
     def get_train_idx(self, n_ans):
         return np.arange(n_ans).astype(int)
+
+
+class OGD(Embedding):
+    def get_train_idx(self, n_ans):
+        bs = self.initial_batch_size + 4 * (self.meta_["model_updates"] + 1)
+        return self.random_state_.choice(
+            n_ans, size=min(bs, n_ans), replace=False
+        ).astype(int)
 
 
 class Damper(Embedding):

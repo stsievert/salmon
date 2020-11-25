@@ -537,12 +537,6 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
         plots["endpoint_timings"] = endpoint_timing
 
     endpoints = list(reversed(sorted(endpoint_timing.keys())))
-    if "/query" in endpoints:
-        i = endpoints.index("/query")
-        endpoints[0], endpoints[i] = endpoints[i], endpoints[0]
-    if "/answer" in endpoints:
-        i = endpoints.index("/answer")
-        endpoints[1], endpoints[i] = endpoints[i], endpoints[1]
 
     idents = rj.jsonget("samplers")
     models = {}

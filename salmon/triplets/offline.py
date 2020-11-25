@@ -7,8 +7,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.base import BaseEstimator
 import torch.optim as optim
 
-from salmon.triplets.algs.adaptive import GD
-from salmon.triplets.algs.adaptive import TSTE
+from salmon.triplets.algs.adaptive import GD, OGD
+from salmon.triplets.algs.adaptive import TSTE, GNMDS
 
 
 def _get_params(opt_):
@@ -23,13 +23,7 @@ def _get_params(opt_):
 
 class OfflineEmbedding(BaseEstimator):
     def __init__(
-        self,
-        n=None,
-        d=None,
-        max_epochs=25,
-        opt=None,
-        verbose=10,
-        ident="",
+        self, n=None, d=None, max_epochs=25, opt=None, verbose=20, ident="",
     ):
         self.opt = opt
         self.n = n
@@ -41,22 +35,26 @@ class OfflineEmbedding(BaseEstimator):
     def initialize(self, X_train):
         if self.opt is None:
             assert self.n is not None and self.d is not None, "Specify n and d"
-            self.opt = GD(
-                module=TSTE,
+            self.opt = OGD(
+                module=GNMDS,
                 module__n=self.n,
                 module__d=self.d,
-                random_state=42,
+                random_state=42 ** 2,
                 optimizer=optim.SGD,
+                optimizer__lr=1e-1,
                 max_epochs=self.max_epochs,
             )
-        # TODO: change defaults for Embedding and children
+            # TODO: change defaults for Embedding and children
         self.opt.push(X_train)
 
         self.opt_ = self.opt
         self.history_ = []
         self.initialized_ = True
 
-    def fit(self, X_train, X_test, scores=None):
+    def fit(self, X_train, X_test, sample_weight=None, scores=None):
+        if sample_weight is not None and scores is not None:
+            raise ValueError("Only one of sample_weight or scores can be specified")
+
         if not (hasattr(self, "initialized_") and self.initialized_):
             self.initialize(X_train)
 
@@ -73,20 +71,32 @@ class OfflineEmbedding(BaseEstimator):
                 )
             n_active = len(X_train) - random.sum()
 
-            i = np.linspace(1, 100, num=n_active)
-            sample_weight = np.ones(len(X_train))
+            # Larger rate -> later sample are less important
+            # Smaller rate -> later samples are more important
+            i = np.arange(0, n_active).astype("float32")
+
+            # Number of queries required for random sampling
+            required = 10 * self.n * self.d * np.log2(self.n)
+            i /= required
+            rate = 20
+
+            sample_weight = np.zeros(len(X_train))
+            sample_weight[~random] = 1 / (1 + rate * i)
             sample_weight[random] = 1
-            sample_weight[~random] = 1 / i
-        else:
-            sample_weight = None
+
+            # divide by mean so 1 on average -> same step size in optimization
+            sample_weight /= sample_weight.mean()
 
         _start = time()
         _print_deadline = time() + self.verbose
         for k in itertools.count():
             train_score = self.opt_.score(X_train)
+            module_ = self.opt_.module_
+            loss_train = module_.losses(*module_._get_dists(X_train)).mean().item()
             datum = {
                 **self.opt_.meta_,
                 "score_train": train_score,
+                "loss_train": loss_train,
                 "k": k,
                 "elapsed_time": time() - _start,
                 "train_data": len(X_train),
@@ -99,17 +109,23 @@ class OfflineEmbedding(BaseEstimator):
                 "ident": self.ident,
             }
             self.history_.append(datum)
-            if k % 5 == 0:
+            if k % 10 == 0:
                 test_score = self.opt_.score(X_test)
                 self.history_[-1]["score_test"] = test_score
+                loss_test = module_.losses(*module_._get_dists(X_test))
+                self.history_[-1]["loss_test"] = loss_test.mean().item()
             if self.opt_.meta_["num_grad_comps"] >= self.max_epochs * len(X_train):
                 break
             if time() >= _print_deadline:
                 print(self.history_[-1])
                 _print_deadline = time() + self.verbose
             self.opt_.partial_fit(X_train, sample_weight=sample_weight)
+
         test_score = self.opt_.score(X_test)
         self.history_[-1]["score_test"] = test_score
+        module_ = self.opt_.module_
+        loss_test = module_.losses(*module_._get_dists(X_test))
+        self.history_[-1]["loss_test"] = loss_test.mean().item()
         return self
 
     @property
