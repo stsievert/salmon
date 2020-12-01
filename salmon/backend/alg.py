@@ -189,6 +189,7 @@ class Runner:
         reset = rj.jsonget("reset")
         logger.info("reset=%s for %s", reset, self.ident)
         rj.jsonset(f"stopped-{self.ident}", Path("."), True)
+        client.restart()
         return True
 
     @property
