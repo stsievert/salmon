@@ -11,6 +11,7 @@ from skorch.dataset import Dataset as SkorchDataset
 from torch.nn.modules.loss import _Loss
 from torch.utils.data import TensorDataset
 
+from sklearn.base import BaseEstimator
 from sklearn.utils import check_random_state
 from scipy.special import binom
 from skorch.utils import is_dataset
@@ -27,19 +28,12 @@ class Reduce:
         return torch.sum(input)
 
 
-class _Embedding(NeuralNet):
-    def score(self, answers, y=None):
-        win2, lose2 = self.module_._get_dists(answers)
-        acc = (win2 < lose2).numpy().astype("float32").mean().item()
-        return acc
-
-
 class NumpyDataset(SkorchDataset):
     def transform(self, X, y):
         return X, torch.from_numpy(np.array([0])) if y is None else y
 
 
-class Embedding(_Embedding):
+class Embedding(BaseEstimator):
     """
     An triplet embedding algorithm.
     """
@@ -58,44 +52,42 @@ class Embedding(_Embedding):
         initial_batch_size=512,
         **kwargs,
     ):
+        self.module = module
+        self.module__n = module__n
+        self.module__d = module__d
+        self.optimizer = optimizer
+        self.optimizer__lr = optimizer__lr
+        self.optimizer__momentum = optimizer__momentum
         self.random_state = random_state
+        self.warm_start = warm_start
+        self.max_epochs = max_epochs
         self.initial_batch_size = initial_batch_size
+        self.kwargs = kwargs
 
-        super().__init__(
-            module=module,
-            module__n=module__n,
-            module__d=module__d,
-            module__random_state=random_state,
-            optimizer=optimizer,
-            optimizer__lr=optimizer__lr,
-            optimizer__momentum=optimizer__momentum,
-            warm_start=warm_start,
-            **kwargs,
+    def initialize(self):
+        self.meta_ = {"num_answers": 0, "model_updates": 0, "num_grad_comps": 0}
+        self.initialized_ = True
+        self.random_state_ = check_random_state(self.random_state)
+        self.answers_ = np.zeros((1000, 3), dtype="uint16")
+
+        self.net_ = NeuralNet(
+            module=self.module,
+            module__n=self.module__n,
+            module__d=self.module__d,
+            module__random_state=self.random_state,
+            optimizer=self.optimizer,
+            optimizer__lr=self.optimizer__lr,
+            optimizer__momentum=self.optimizer__momentum,
+            warm_start=self.warm_start,
+            **self.kwargs,
             criterion=Reduce,
             verbose=False,
             batch_size=-1,
-            max_epochs=max_epochs,
+            max_epochs=self.max_epochs,
             optimizer__nesterov=True,
             train_split=None,
             dataset=NumpyDataset,
-        )
-        if self.max_epochs != max_epochs:
-            raise ValueError(f"self.max_epochs={self.max_epochs} != {max_epochs}")
-
-    def initialize(self):
-
-        rng = check_random_state(self.random_state)
-        super().initialize()
-
-        self.meta_ = {"num_answers": 0, "model_updates": 0, "num_grad_comps": 0}
-        self.initialized_ = True
-        self.random_state_ = rng
-        self.answers_ = np.zeros((1000, 3), dtype="uint16")
-        self.callbacks = []
-        self.callbacks_ = []
-
-    on_batch_begin = on_batch_end = lambda *args, **kwargs: None
-    on_epoch_begin = on_epoch_end = lambda *args, **kwargs: None
+        ).initialize()
 
     # def converged(self):
     #     answers = self.answers_[: self.meta_["num_answers"]]
@@ -116,11 +108,6 @@ class Embedding(_Embedding):
 
     #     grad_error = np.sqrt(max_grad_norm2 / avg_grad_norm2)
     #     return grad_error < self.epsilon
-
-    def initialize_history(self):
-        super().initialize_history()
-        self.history.new_epoch()
-        self.history.new_batch()
 
     def push(self, answers: Union[list, np.ndarray]):
         if not (hasattr(self, "initialized_") and self.initialized_):
@@ -198,8 +185,7 @@ class Embedding(_Embedding):
             self.meta_["model_updates"] += 1
             logger.info("%s", self.meta_)
             if self.meta_["num_grad_comps"] >= eg_deadline:
-                del loss
-                del losses
+                del loss, losses
                 break
         return self
 
@@ -220,9 +206,14 @@ class Embedding(_Embedding):
     def score(self, answers, y=None) -> float:
         if not (hasattr(self, "initialized_") and self.initialized_):
             self.initialize()
-        score = super().score(answers)
+        score = self._score(answers)
         self.meta_["last_score"] = score
         return score
+
+    def _score(self, answers, y=None):
+        win2, lose2 = self.module_._get_dists(answers)
+        acc = (win2 < lose2).numpy().astype("float32").mean().item()
+        return acc
 
     def fit(self, X, y=None):
         if not self.warm_start:
@@ -236,11 +227,19 @@ class Embedding(_Embedding):
         return self
 
     def embedding(self) -> np.ndarray:
-        return self.module_.embedding.detach().numpy()
+        return self.net_.module_._embedding.detach().numpy()
 
     @property
     def embedding_(self) -> np.ndarray:
         return self.embedding()
+
+    @property
+    def module_(self) -> np.ndarray:
+        return self.net_.module_
+
+    @property
+    def optimizer_(self) -> np.ndarray:
+        return self.net_.optimizer_
 
     def get_train_idx(self, n_ans):
         bs = min(n_ans, self.initial_batch_size)
