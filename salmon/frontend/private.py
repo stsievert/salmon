@@ -150,6 +150,7 @@ def upload_form():
     )
     return HTMLResponse(content=body)
 
+
 @app.get("/config", tags=["private"])
 async def _get_config_endpoint(json: bool = True):
     exp_config = await _ensure_initialized()
@@ -157,6 +158,7 @@ async def _get_config_endpoint(json: bool = True):
     if not json:
         return PlainTextResponse(yaml.dump(exp_config))
     return JSONResponse(exp_config)
+
 
 async def _get_config(exp: bytes, targets: bytes) -> Dict[str, Any]:
     config = yaml.load(exp, Loader=yaml.SafeLoader)
@@ -262,6 +264,21 @@ async def process_form(
         - max_queries: 25
     """
     try:
+        if rj.jsonget("exp_config"):
+            detail =(
+                "Incorrect username or password",
+                "An experiment is already set! This experiment has not been "
+                "deleted, and a new experiment has not been initialized."
+                "\n\nIt is possible to clear this message; however, "
+                "care needs to be taken to ensure you want to initialize a new"
+                "experiment. To clear this error, follow these steps"
+                "\n\n1. Verify which experiment is running. Uploading a new"
+                "experiment will overwrite this experiment. Do you mean to upload?"
+                "\n2. Visit /reset. Warning: this will *delete* the experiment"
+                "\n3. Revisit /init_exp and re-upload the experiment."
+                "\n\n(visiting /foo means visiting '[url]:8421/foo'"
+            )
+            raise HTTPException(status_code=403, detail=detail)
         ret = await _process_form(request, exp, targets, rdb)
         if rdb:
             return ret
@@ -270,7 +287,7 @@ async def process_form(
     except Exception as e:
         logger.error(e)
         reset(force=True, timeout=2)
-        if isinstance(e, ExpParsingError):
+        if isinstance(e, (ExpParsingError, HTTPException)):
             raise e
         msg = exception_to_string(e)
         logger.error(msg)

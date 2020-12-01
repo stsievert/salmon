@@ -33,9 +33,7 @@ def test_basics(server, logs):
     assert r.json() == {"success": True}
     server.get("/init_exp")
     exp = Path(__file__).parent / "data" / "exp.yaml"
-    server.post(
-        "/init_exp", data={"exp": exp.read_bytes()}, auth=(username, password),
-    )
+    server.post("/init_exp", data={"exp": exp.read_bytes()}, auth=(username, password))
     exp_config = yaml.safe_load(exp.read_bytes())
     puid = "puid-foo"
     answers = []
@@ -252,9 +250,7 @@ def test_zip_upload(server):
     t = targets.read_bytes()
     assert len(t) > 0
     assert t[:4] == b"\x50\x4B\x03\x04"
-    server.post(
-        "/init_exp", data={"exp": exp.read_bytes(), "targets": t},
-    )
+    server.post("/init_exp", data={"exp": exp.read_bytes(), "targets": t})
 
 
 def test_get_config(server):
@@ -271,3 +267,25 @@ def test_get_config(server):
     assert "\n" in yaml_config
     assert yaml.safe_load(yaml_config) == rendered_config
 
+
+def test_no_init_twice(server, logs):
+    """
+    Requires `docker-compose up` in salmon directory
+    """
+    server.authorize()
+    username, password = server.auth()
+    exp = Path(__file__).parent / "data" / "exp.yaml"
+    server.post("/init_exp", data={"exp": exp.read_bytes()})
+    query = server.get("/query")
+    assert query
+
+    # Make sure errors on re-initialization
+    server.post("/init_exp", data={"exp": exp.read_bytes()}, status_code=403)
+
+    # Make sure the prescribed method works (resetting, then re-init'ing)
+    server.delete("/reset", auth=(username, password), status_code=500)
+    server.delete("/reset?force=1", auth=(username, password))
+
+    server.post("/init_exp", data={"exp": exp.read_bytes()})
+    query = server.get("/query")
+    assert query
