@@ -196,7 +196,7 @@ def test_internal_search_refactor():
     assert np.allclose(s_new, np.array(s_old))
 
 
-def _simple_triplet(n, rng, p_flip=0.2):
+def _simple_triplet(n, rng, p_flip=0.1):
     h, a, b = rng.choice(n, size=3, replace=False)
     if abs(h - a) < abs(h - b):
         ret = [h, a, b]
@@ -258,12 +258,12 @@ def test_salmon_integration():
     assert np.median(diff) <= 5e-5
 
 
-def test_salmon_posterior_refactor(n=10, d=1):
+def test_salmon_posterior_refactor(n=30, d=2):
     rng = np.random.RandomState(42)
     X = rng.randn(n, d).astype("float32")
     est = TSTE(n, random_state=42)
     search = InfoGainScorer(random_state=42, embedding=X, probs=est.probs)
-    history = [_simple_triplet(n, rng) for _ in range(1000)]
+    history = [_simple_triplet(n, rng) for _ in range(2000)]
     search.push(history)
     queries, scores = search.score()
 
@@ -271,9 +271,11 @@ def test_salmon_posterior_refactor(n=10, d=1):
     tau = utilsSTE.getSTETauDistribution(X, next_history)
 
     rel_error = LA.norm(tau - search.posterior_) / LA.norm(tau)
-    post = search.posterior_
-    err = np.abs(search.posterior_ / tau)
-    assert rel_error < 1e-3
+    assert rel_error < 10e-6
+
+    ratio = np.abs(search.posterior_ / tau)
+    assert ratio.max() - ratio.min() < 0.1e-3
+    assert pytest.approx(ratio.mean()) == 1
 
 
 def _score_next(q: [int, int, int], tau, X):

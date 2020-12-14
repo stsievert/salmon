@@ -254,7 +254,7 @@ class GD(Embedding):
 
 class OGD(Embedding):
     def get_train_idx(self, n_ans):
-        bs = self.initial_batch_size + 4 * (self.meta_["model_updates"] + 1)
+        bs = self.initial_batch_size + 1 * (self.meta_["model_updates"] + 1)
         return self.random_state_.choice(
             n_ans, size=min(bs, n_ans), replace=False
         ).astype(int)
