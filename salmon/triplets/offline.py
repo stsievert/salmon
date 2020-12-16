@@ -98,18 +98,18 @@ class OfflineEmbedding(BaseEstimator):
                 "score_train": train_score,
                 "loss_train": loss_train,
                 "k": k,
-                "elapsed_time": time() - _start,
-                "train_data": len(X_train),
-                "test_data": len(X_test),
-                "n": self.n,
-                "d": self.d,
-                "max_epochs": self.max_epochs,
-                "verbose": self.verbose,
+                #  "elapsed_time": time() - _start,
+                #  "train_data": len(X_train),
+                #  "test_data": len(X_test),
+                #  "n": self.n,
+                #  "d": self.d,
+                #  "max_epochs": self.max_epochs,
+                #  "verbose": self.verbose,
                 "weight": scores is not None,
                 "ident": self.ident,
             }
-            self.history_.append(datum)
-            if k % 10 == 0:
+            if k % 10 == 0 or k <= 100:
+                self.history_.append(datum)
                 test_score = self.opt_.score(X_test)
                 self.history_[-1]["score_test"] = test_score
                 loss_test = module_.losses(*module_._get_dists(X_test))
