@@ -128,7 +128,7 @@ class Runner:
                 # Future.result raises errors automatically
                 posted = f_post.result()
                 new_self, update = f_model.result()
-                queries, scores = f_search.result()
+                queries, scores, search_meta = f_search.result()
 
                 _datum_update = {
                     "n_queries_posted": posted,
@@ -140,6 +140,7 @@ class Runner:
                     "time_model_update": time_model,
                     "time_search": time_search,
                     "time": time(),
+                    **search_meta,
                 }
                 datum.update(_datum_update)
                 if update:

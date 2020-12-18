@@ -126,7 +126,7 @@ class Adaptive(Runner):
 
     def get_queries(
         self, num=None, stop=None, random_state=None
-    ) -> Tuple[List[Query], List[float]]:
+    ) -> Tuple[List[Query], List[float], dict]:
         if num:
             queries, scores = self.search.score(num=num, random_state=random_state)
             return queries[:num], scores[:num]
@@ -150,7 +150,7 @@ class Adaptive(Runner):
             # let's limit it to be 32MB in size
             if (n_searched >= 2e6) or (stop is not None and stop.is_set()):
                 break
-        return np.concatenate(ret_queries), np.concatenate(ret_scores)
+        return np.concatenate(ret_queries), np.concatenate(ret_scores), {}
 
     def process_answers(self, answers: List[Answer]):
         if not len(answers):
@@ -350,7 +350,7 @@ class RR(Adaptive):
         )
 
     def get_queries(self, *args, **kwargs):
-        queries, scores = super().get_queries(*args, **kwargs)
+        queries, scores, meta = super().get_queries(*args, **kwargs)
 
         df = pd.DataFrame(queries, columns=["h", "l", "r"])
         df["score"] = scores
@@ -363,7 +363,8 @@ class RR(Adaptive):
         r_scores = 10 + np.linspace(0, 1, num=len(posted))
         self.random_state_.shuffle(r_scores)
 
-        return posted, r_scores
+        meta.update({"n_queries_scored_(complete)": len(df)})
+        return posted, r_scores, meta
 
 
 class STE(Adaptive):
