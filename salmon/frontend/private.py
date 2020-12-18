@@ -265,7 +265,7 @@ async def process_form(
     """
     try:
         if rj.jsonget("exp_config"):
-            detail =(
+            detail = (
                 "Incorrect username or password",
                 "An experiment is already set! This experiment has not been "
                 "deleted, and a new experiment has not been initialized."
@@ -276,7 +276,7 @@ async def process_form(
                 "experiment will overwrite this experiment. Do you mean to upload?"
                 "\n2. Visit /reset. Warning: this will *delete* the experiment"
                 "\n3. Revisit /init_exp and re-upload the experiment."
-                "\n\n(visiting /foo means visiting '[url]:8421/foo'"
+                "\n\n(visiting /foo means visiting '[url]:8421/foo'",
             )
             raise HTTPException(status_code=403, detail=detail)
         ret = await _process_form(request, exp, targets, rdb)
@@ -590,6 +590,16 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
     except:
         alg_perfs = {"/": "Error getting algorithm performance"}
 
+    try:
+        _query_db = {
+            alg: await plotting._get_query_db(pd.DataFrame(data))
+            for alg, data in perfs.items()
+            if data
+        }
+        query_db = {k: json.dumps(json_item(v)) for k, v in _query_db.items()}
+    except:
+        query_db = {"/": "Error getting query database stats"}
+
     return templates.TemplateResponse(
         "dashboard.html",
         {
@@ -606,6 +616,7 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
             "alg_perfs": alg_perfs,
             "config": exp_config,
             "samplers": idents,
+            "query_db_perfs": query_db,
             **plots,
         },
     )

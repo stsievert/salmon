@@ -4,8 +4,16 @@ from typing import List
 import json
 
 from bokeh.plotting import figure, show
-from bokeh.models import ColumnDataSource, Grid, LinearAxis, Plot, Text, ImageURL
-from bokeh.palettes import brewer
+from bokeh.models import (
+    ColumnDataSource,
+    Grid,
+    LinearAxis,
+    Plot,
+    Text,
+    ImageURL,
+    Legend,
+)
+from bokeh.palettes import brewer, d3
 from bokeh.embed import json_item
 
 import matplotlib.dates as mdates
@@ -162,7 +170,13 @@ async def show_embedding(embedding: np.ndarray, targets: List[str], alg: str = "
     }
     source = ColumnDataSource(data=data)
 
-    plot = figure(title=alg, plot_width=600, plot_height=500, toolbar_location="right",)
+    plot = figure(
+        title=alg,
+        plot_width=600,
+        plot_height=500,
+        toolbar_location="right",
+        background_fill_color="#fafafa",
+    )
     #  glyph = Text(x="x", y="y", text="text", angle=0.3, text_color="#96deb3")
     w = h = {"units": "data", "value": 0.1}
     w = h = {"units": "screen", "value": 80}
@@ -170,8 +184,6 @@ async def show_embedding(embedding: np.ndarray, targets: List[str], alg: str = "
     plot.add_glyph(source, glyph)
 
     text = [k for k in range(len(targets)) if k not in images]
-    print(text)
-    print(alg, embedding.shape)
     data = {
         "x": embedding[text, 0],
         "y": embedding[text, 1] if len(embedding[0]) > 1 else embedding[text, 0],
@@ -264,6 +276,7 @@ async def get_endpoint_time_plots():
             title=f"{e} processing time",
             width=500,
             tools="",
+            background_fill_color="#fafafa",
         )
 
         _data = {k: df[k].values.tolist() for k in ["upper", "between"]}
@@ -295,15 +308,14 @@ async def _get_alg_perf(df):
         width=600,
         height=300,
         toolbar_location="above",
+        background_fill_color="#fafafa",
     )
     names = list(reversed(cols))
-    p.varea_stack(
-        x="timedelta",
-        stackers=names,
-        legend_label=names,
-        color=brewer["Spectral"][len(names)],
-        source=source,
-    )
+    colors = d3["Category10"][len(names)]
+    for name, color in zip(names, colors):
+        base = dict(x="timedelta", y=name, source=source, color=color,)
+        p.line(**base, legend_label=name, line_width=2)
+        p.circle(**base, size=5)
     p.legend.location = "top_left"
     return p
 
@@ -335,6 +347,45 @@ async def response_rate(df, n_sec=30):
         width=600,
         height=200,
         toolbar_location="above",
+        background_fill_color="#fafafa",
     )
     p.varea(x="time_since_start", y1="response_received", source=source)
+    return p
+
+
+async def _get_query_db(df):
+    d = df.copy()
+    d["time_since_start"] = d["time"] - d["time"].min()
+    d["datetime"] = d["time_since_start"].apply(
+        lambda x: datetime(1970, 1, 1) + timedelta(seconds=x)
+    )
+    source = ColumnDataSource(d)
+
+    Y = [c for c in d.columns if "n_queries" in c]
+    ratio = df[Y].max().max() / df[Y].min().min()
+    kwargs = {} if ratio < 50 else dict(y_axis_type="log")
+    p = figure(
+        title="Database queries",
+        x_axis_type="datetime",
+        x_axis_label="Time since start",
+        y_axis_label="Number of queries",
+        width=600,
+        height=200,
+        toolbar_location="above",
+        background_fill_color="#fafafa",
+        **kwargs,
+    )
+
+    COLORS = d3["Category10"][len(Y)]
+    lines = []
+    for y, color in zip(Y, COLORS):
+        base = dict(x="datetime", y=y, source=source)
+        line = p.line(**base, line_color=color, line_width=2)
+        p.circle(**base, size=5, color=color)
+        lines.append([line])
+
+    names = [y.replace("n_queries_", "") for y in Y]
+    items = list(zip(names, lines))
+    legend = Legend(items=items, location="top_left")  # , label_width=130)
+    p.add_layout(legend, "right")
     return p

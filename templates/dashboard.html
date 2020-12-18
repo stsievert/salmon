@@ -165,18 +165,21 @@
       </script>
     </div>
     <div class="row justify-content-center">
-      <h2>Algorithm timings</h2>
+      <h2>Algorithm performance</h2>
+    </div>
+    <div class="row justify-content-center">
+      <h3>Task timings</h3>
     </div>
     <div class="row justify-content-center">
       <ul class="nav nav-tabs" id="myTab3" role="tablist">
         {% for alg in alg_perfs %}
           <li class="nav-item">
               <a class="nav-link {% if loop.first %}active{% endif %}"
-                 id="{{endpoint}}-tab"
+                 id="{{alg}}-tab"
                  data-toggle="tab"
                  href="#{{alg}}-perf"
                  role="tab"
-                 aria-controls="{{endpoint}}"
+                 aria-controls="{{alg}}"
                  aria-selected={% if loop.first %}"true"{% else %}"false"{% endif %}
               >
               {{alg}}
@@ -202,24 +205,59 @@
     </div>
     <div class="row justify-content-center">
       <p style="width: 600px;">
-        This graph isn't exactly accurate because the tasks don't run necessarily in serial. The following tasks are run in parallel:
-      </p>
-    </div>
-    <div class="row justify-content-center">
-      <p>
-      <ul>
-          <li> Model updates</li>
-          <li> Query searching</li>
-          <li> Query posting</li>
-      </ul>
-      </p>
-    </div>
-    <div class="row justify-content-center">
-      <p style="width: 600px;">
-        However there are only 3 workers that are shared between algorithms.
+        Searching queries, posting queries and model updates are performed in
+        parallel on three workers. Each worker has one task. However, the three
+        workers are shared between all active algorithms.
       </p>
     </div>
     <br>
+    <div class="row justify-content-center">
+      <h3>Queries</h3>
+    </div>
+    <div class="row justify-content-center">
+      <ul class="nav nav-tabs" id="myTab4" role="tablist">
+        {% for alg in query_db_perfs %}
+          <li class="nav-item">
+              <a class="nav-link {% if loop.first %}active{% endif %}"
+                 id="{{alg}}-query-tab"
+                 data-toggle="tab"
+                 href="#{{alg}}-query-perf"
+                 role="tab"
+                 aria-controls="{{alg}}-query"
+                 aria-selected={% if loop.first %}"true"{% else %}"false"{% endif %}
+              >
+              {{alg}}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="row justify-content-center">
+        <div class="tab-content" id="myTabContent2">
+          {% for alg, jsonplot in query_db_perfs.items() %}
+            <div class="tab-pane fade {% if loop.first %}show active{% endif %}"
+                  id="{{ alg }}-query-perf"
+                  role="tabpanel"
+                  aria-labelledby="{{alg}}-query-perf">
+            <script>
+            plot = JSON.parse({{ jsonplot | tojson }});
+            Bokeh.embed.embed_item(plot, "{{ alg }}-query-perf");
+            </script>
+            </div>
+          {% endfor %}
+        </div>
+    </div>
+    <div class="row justify-content-center">
+      <p style="width: 600px;">
+      The number of the queries in the database is limited to
+      <tt>n*(n-1)*(n-2)/2</tt>.
+      </p>
+      <p style="width: 600px;">
+      Also, algorithm <tt>RR</tt> posts <tt>5*n</tt> of the highest scoring
+      queries to the database when <tt>n</tt> is the number of targets.
+      The label "complete_score" records this value.
+      </p>
+    </div>
     <div class="row justify-content-center">
       <h2>Embeddings</h2>
     </div>
@@ -227,7 +265,7 @@
       <ul class="nav nav-tabs" id="myTab2" role="tablist">
         {% for alg in alg_model_plots %}
           <li class="nav-item">
-              <a class="nav-link {% if loop.first %}active{% endif %}" id="{{endpoint}}-tab" data-toggle="tab" href="#{{alg}}" role="tab" aria-controls="{{endpoint}}" aria-selected={% if loop.first %}"true"{% else %}"false"{% endif %}>
+              <a class="nav-link {% if loop.first %}active{% endif %}" id="{{alg}}-embedding-tab" data-toggle="tab" href="#{{alg}}" role="tab" aria-controls="{{alg}}-embedding" aria-selected={% if loop.first %}"true"{% else %}"false"{% endif %}>
               {{alg}}
             </a>
           </li>

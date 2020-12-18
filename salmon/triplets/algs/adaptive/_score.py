@@ -106,7 +106,7 @@ class QueryScorer:
             for k, (head, w, l) in enumerate(history):
                 probs = self.probs(D[w], D[l])
                 probs[np.isnan(probs)] = 0
-                # probs[probs <= 0] = 1e-20
+                probs[probs <= 0] = 1e-80
                 a = np.log(probs)
                 self._tau_[head] += a
 

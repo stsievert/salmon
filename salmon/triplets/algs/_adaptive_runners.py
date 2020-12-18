@@ -66,7 +66,8 @@ class Adaptive(Runner):
         self.sampling = sampling
         if sampling not in ["adaptive", "random"]:
             raise ValueError(
-                "Must pass sampling='adaptive' or sampling='random', not sampling={sampling}"
+                "Must pass sampling='adaptive' or sampling='random', not "
+                "sampling={sampling}"
             )
 
         Opt = getattr(adaptive, optimizer)
@@ -83,7 +84,7 @@ class Adaptive(Runner):
             optimizer__momentum=optimizer__momentum,
             random_state=random_state,
             warm_start=True,
-            max_epochs=200,
+            max_epochs=1200,
             **kwargs,
         )
         self.opt.initialize()
@@ -134,11 +135,20 @@ class Adaptive(Runner):
         rng = None
         if random_state:
             rng = check_random_state(random_state)
-        for pwr in range(12, 20 + 1):
+        n_searched = 0
+        for pwr in range(12, 40 + 1):
+            # I think there's a memory leak in search.score -- Dask workers
+            # kept on dying on get_queries. min(pwr, 16) to fix that (and
+            # verified too).
+            pwr = min(pwr, 16)
             queries, scores = self.search.score(num=2 ** pwr, random_state=rng)
+            n_searched += len(queries)
             ret_queries.append(queries)
             ret_scores.append(scores)
-            if stop is not None and stop.is_set():
+
+            # returned object is about (n_searched/1e6) * 16 MB in size
+            # let's limit it to be 32MB in size
+            if (n_searched >= 2e6) or (stop is not None and stop.is_set()):
                 break
         return np.concatenate(ret_queries), np.concatenate(ret_scores)
 
@@ -217,8 +227,8 @@ class Adaptive(Runner):
         right_closer = rdiff < ldiff
         return right_closer.astype("uint8")
 
-    def score(self, X, y):
-        y_hat = self.predict(X)
+    def score(self, X, y, embedding=None):
+        y_hat = self.predict(X, embedding=embedding)
         return (y_hat == y).mean()
 
 
