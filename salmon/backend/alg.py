@@ -1,4 +1,5 @@
 import itertools
+import random
 from pprint import pprint
 from time import time
 from typing import List, TypeVar, Tuple, Dict, Any, Optional
@@ -61,8 +62,10 @@ class Runner:
         answers: List = []
         logger.info(f"Staring {self.ident}")
 
-        def submit(fn: str, *args, **kwargs):
-            return client.submit(getattr(type(self), fn), *args, **kwargs)
+        def submit(fn: str, *args, allow_other_workers=True, **kwargs):
+            if "workers" in kwargs:
+                kwargs.update({"allow_other_workers": allow_other_workers})
+            return client.submit(getattr(type(self), fn), *args, **kwargs,)
 
         update = False
         queries = np.array([])
@@ -91,14 +94,27 @@ class Runner:
                 done = distributed.Event(name="pa_finished")
                 done.clear()
 
+                workers = list(client.has_what())
+                random.shuffle(workers)
                 f_post = submit(
-                    "post_queries", self_future, queries_f, scores_f, done=done
+                    "post_queries",
+                    self_future,
+                    queries_f,
+                    scores_f,
+                    done=done,
+                    workers=workers[0],
                 )
-                f_model = submit("process_answers", self_future, answers)
+                f_model = submit(
+                    "process_answers", self_future, answers, workers=workers[1],
+                )
 
                 if hasattr(self, "get_queries"):
                     f_search = submit(
-                        "get_queries", self_future, random_state=k, stop=done
+                        "get_queries",
+                        self_future,
+                        random_state=k,
+                        stop=done,
+                        workers=workers[2],
                     )
                 else:
                     f_search = client.submit(lambda x: ([], []), 0)
@@ -165,7 +181,6 @@ class Runner:
                 self.reset(client, rj)
                 break
             logger.info(datum)
-            print(datum)
         return True
 
     def save(self) -> bool:
