@@ -168,6 +168,12 @@ class GNMDS(TripletDist):
         return win2 / (win2 + lose2 + 1e-6)
 
 
+class SOE(GNMDS):
+    def losses(self, win2, lose2):
+        zeros = torch.zeros(len(win2))
+        return torch.max(zeros, torch.sqrt(win2) - torch.sqrt(lose2) + 1)
+
+
 class Logistic(GNMDS):
     r"""
     .. math::

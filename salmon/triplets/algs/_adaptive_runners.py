@@ -534,3 +534,57 @@ class CKL(Adaptive):
             sampling=sampling,
             **kwargs,
         )
+
+
+class SOE(Adaptive):
+    """
+    The crowd kernel embedding.
+
+    Parameters
+    ----------
+    d : int
+        Embedding dimension.
+    mu : float
+        The mu or :math:`\\mu` used in the CKL embedding. This is typically small; the default is :math:`10^{-4}`.
+    optimizer : str
+        The optimizer underlying the embedding. This method specifies how to
+        change the batch size. Choices are
+        ``["Embedding", "PadaDampG", "GeoDamp"]``.
+    optimizer__lr : float
+        Which learning rate to use with the optimizer. The learning rate must
+        be positive.
+    optimizer__momentum : float
+        The momentum to use with the optimizer.
+    random_state : int, None, np.random.RandomState
+        The seed used to generate psuedo-random numbers.
+    sampling : str
+        "adaptive" by default. Use ``sampling="random"`` to perform random
+        sampling with the same optimization method and noise model.
+    """
+
+    def __init__(
+        self,
+        n: int,
+        d: int = 2,
+        ident: str = "",
+        optimizer: str = "Embedding",
+        optimizer__lr=0.075,
+        optimizer__momentum=0.9,
+        random_state=None,
+        mu=1,
+        sampling="adaptive",
+        **kwargs,
+    ):
+        super().__init__(
+            n=n,
+            d=d,
+            ident=ident,
+            optimizer=optimizer,
+            optimizer__lr=optimizer__lr,
+            optimizer__momentum=optimizer__momentum,
+            random_state=random_state,
+            module__mu=mu,
+            module="SOE",
+            sampling=sampling,
+            **kwargs,
+        )

@@ -2,6 +2,7 @@ import itertools
 import pandas as pd
 import numpy as np
 from time import time
+from copy import deepcopy
 
 from sklearn.model_selection import train_test_split
 from sklearn.base import BaseEstimator
@@ -9,6 +10,7 @@ import torch.optim as optim
 
 from salmon.triplets.algs.adaptive import GD, OGD
 from salmon.triplets.algs.adaptive import TSTE, GNMDS
+import salmon.triplets.algs.adaptive as adaptive
 
 
 def _get_params(opt_):
@@ -23,7 +25,14 @@ def _get_params(opt_):
 
 class OfflineEmbedding(BaseEstimator):
     def __init__(
-        self, n=None, d=None, max_epochs=25, opt=None, verbose=20, ident="",
+        self,
+        n=None,
+        d=None,
+        max_epochs=25,
+        opt=None,
+        verbose=20,
+        ident="",
+        noise_model="SOE",
     ):
         self.opt = opt
         self.n = n
@@ -31,12 +40,14 @@ class OfflineEmbedding(BaseEstimator):
         self.max_epochs = max_epochs
         self.verbose = verbose
         self.ident = ident
+        self.noise_model = noise_model
 
     def initialize(self, X_train):
         if self.opt is None:
             assert self.n is not None and self.d is not None, "Specify n and d"
+            noise_model = getattr(adaptive, self.noise_model)
             self.opt = OGD(
-                module=GNMDS,
+                module=noise_model,
                 module__n=self.n,
                 module__d=self.d,
                 random_state=42 ** 2,
@@ -95,7 +106,6 @@ class OfflineEmbedding(BaseEstimator):
             module_ = self.opt_.module_
             loss_train = module_.losses(*module_._get_dists(X_train)).mean().item()
             datum = {
-                **self.opt_.meta_,
                 "score_train": train_score,
                 "loss_train": loss_train,
                 "k": k,
@@ -108,6 +118,7 @@ class OfflineEmbedding(BaseEstimator):
                 #  "verbose": self.verbose,
                 "weight": scores is not None,
                 "ident": self.ident,
+                **deepcopy(self.opt_.meta_),
             }
             if k % 10 == 0 or k <= 100:
                 self.history_.append(datum)
