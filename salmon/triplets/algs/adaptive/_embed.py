@@ -254,10 +254,8 @@ class GD(Embedding):
 
 class OGD(Embedding):
     def get_train_idx(self, n_ans):
-        bs = self.initial_batch_size + 1 * (self.meta_["model_updates"] + 1)
-        return self.random_state_.choice(
-            n_ans, size=min(bs, n_ans), replace=False
-        ).astype(int)
+        bs = self.initial_batch_size + self.meta_["model_updates"]
+        return np.arange(min(n_ans, bs)).astype(int)
 
 
 class Damper(Embedding):

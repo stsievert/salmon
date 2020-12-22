@@ -32,7 +32,7 @@ class OfflineEmbedding(BaseEstimator):
         opt=None,
         verbose=20,
         ident="",
-        noise_model="SOE",
+        noise_model="GNMDS",
     ):
         self.opt = opt
         self.n = n
