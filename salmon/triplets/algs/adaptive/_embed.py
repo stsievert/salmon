@@ -268,10 +268,12 @@ class OGD(Embedding):
         if n_ans <= limit:
             return rng.choice(n_ans, size=n_idx, replace=False)
         active_idx = limit + rng.choice(
-            n_ans - limit, replace=False, size=min(0, n_idx - limit)
+            n_ans - limit, replace=False, size=max(0, n_idx - limit)
         )
         rand_idx = np.arange(limit)
-        return np.hstack((rand_idx, active_idx)).astype(int)
+
+        ret = np.hstack((rand_idx, active_idx)).astype(int)
+        return ret[:bs]
 
 
 class Damper(Embedding):
