@@ -261,15 +261,17 @@ class OGD(Embedding):
         bs = self.initial_batch_size + self.meta_["model_updates"]
         rng = self.random_state_
         if self.shuffle:
-            return rng.choice(n_ans, size=min(n_ans, bs), replace=False)
+            return rng.choice(n_ans, size=min(n_ans, bs), replace=True)
+
         ## Assume answers are ordered by time stamp
         limit = 10 * self.module__n
         n_idx = min(bs, n_ans)
+        n_active_idx = max(0, n_idx - limit)
+
         if n_ans <= limit:
-            return rng.choice(n_ans, size=n_idx, replace=False)
-        active_idx = limit + rng.choice(
-            n_ans - limit, replace=False, size=max(0, n_idx - limit)
-        )
+            return rng.choice(n_ans, size=n_idx, replace=True)
+
+        active_idx = limit + rng.choice(n_ans - limit, replace=True, size=n_active_idx)
         rand_idx = np.arange(limit)
 
         ret = np.hstack((rand_idx, active_idx)).astype(int)

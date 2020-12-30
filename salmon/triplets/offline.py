@@ -54,7 +54,7 @@ class OfflineEmbedding(BaseEstimator):
                 module__d=self.d,
                 random_state=42 ** 2,
                 optimizer=optim.SGD,
-                optimizer__lr=0.1,
+                optimizer__lr=0.05,
                 optimizer__momentum=0.9,
                 max_epochs=self.max_epochs,
                 shuffle=self.shuffle,
