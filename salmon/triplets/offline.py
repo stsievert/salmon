@@ -33,6 +33,7 @@ class OfflineEmbedding(BaseEstimator):
         verbose=20,
         ident="",
         noise_model="GNMDS",
+        shuffle=False,
     ):
         self.opt = opt
         self.n = n
@@ -41,6 +42,7 @@ class OfflineEmbedding(BaseEstimator):
         self.verbose = verbose
         self.ident = ident
         self.noise_model = noise_model
+        self.shuffle = shuffle
 
     def initialize(self, X_train):
         if self.opt is None:
@@ -55,6 +57,7 @@ class OfflineEmbedding(BaseEstimator):
                 optimizer__lr=0.1,
                 optimizer__momentum=0.9,
                 max_epochs=self.max_epochs,
+                shuffle=self.shuffle,
             )
             # TODO: change defaults for Embedding and children
         self.opt.push(X_train)

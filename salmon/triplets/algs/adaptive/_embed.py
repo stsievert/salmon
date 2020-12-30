@@ -253,9 +253,25 @@ class GD(Embedding):
 
 
 class OGD(Embedding):
+    def __init__(self, shuffle=False, **kwargs):
+        self.shuffle = shuffle
+        super().__init__(**kwargs)
+
     def get_train_idx(self, n_ans):
         bs = self.initial_batch_size + self.meta_["model_updates"]
-        return np.arange(min(n_ans, bs)).astype(int)
+        rng = self.random_state_
+        if self.shuffle:
+            return rng.choice(n_ans, size=min(n_ans, bs), replace=False)
+        ## Assume answers are ordered by time stamp
+        limit = 10 * self.module__n
+        n_idx = min(bs, n_ans)
+        if n_ans <= limit:
+            return rng.choice(n_ans, size=n_idx, replace=False)
+        active_idx = limit + rng.choice(
+            n_ans - limit, replace=False, size=min(0, n_idx - limit)
+        )
+        rand_idx = np.arange(limit)
+        return np.hstack((rand_idx, active_idx)).astype(int)
 
 
 class Damper(Embedding):
