@@ -64,9 +64,10 @@ class OfflineEmbedding(BaseEstimator):
                 random_state=42 ** 2,
                 optimizer=optim.SGD,
                 optimizer__lr=0.02,
-                optimizer__momentum=0.75,
+                optimizer__momentum=0.9,
                 max_epochs=self.max_epochs,
                 shuffle=self.shuffle,
+                **self.kwargs,
             )
             # TODO: change defaults for Embedding and children
         self.opt.push(X_train)
