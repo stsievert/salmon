@@ -135,7 +135,7 @@ class OfflineEmbedding(BaseEstimator):
                 **deepcopy(self.opt_.meta_),
             }
             datum["_epochs"] = datum["num_grad_comps"] / _n_ans
-            if k % 1 == 0 or k <= 100:
+            if k % 20 == 0 or k <= 100:
                 with torch.no_grad():
                     test_score = self.opt_.score(X_test)
                     loss_test = module_.losses(*module_._get_dists(X_test))
