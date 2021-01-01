@@ -7,6 +7,7 @@ from copy import deepcopy
 from sklearn.model_selection import train_test_split
 from sklearn.base import BaseEstimator
 import torch.optim as optim
+import torch
 
 from salmon.triplets.algs.adaptive import GD, OGD
 from salmon.triplets.algs.adaptive import TSTE, GNMDS
@@ -22,6 +23,12 @@ def _get_params(opt_):
         and k not in ["optimizer", "module", "criterion", "dataset"]
     }
 
+def _print_fmt(v):
+    if isinstance(v, (str, int)):
+        return v
+    if isinstance(v, (float, np.floating)):
+        return f"{v:0.3f}"
+    return v
 
 class OfflineEmbedding(BaseEstimator):
     def __init__(
@@ -34,6 +41,7 @@ class OfflineEmbedding(BaseEstimator):
         ident="",
         noise_model="GNMDS",
         shuffle=False,
+        **kwargs,
     ):
         self.opt = opt
         self.n = n
@@ -43,6 +51,7 @@ class OfflineEmbedding(BaseEstimator):
         self.ident = ident
         self.noise_model = noise_model
         self.shuffle = shuffle
+        self.kwargs = kwargs
 
     def initialize(self, X_train):
         if self.opt is None:
@@ -54,8 +63,8 @@ class OfflineEmbedding(BaseEstimator):
                 module__d=self.d,
                 random_state=42 ** 2,
                 optimizer=optim.SGD,
-                optimizer__lr=0.05,
-                optimizer__momentum=0.9,
+                optimizer__lr=0.02,
+                optimizer__momentum=0.75,
                 max_epochs=self.max_epochs,
                 shuffle=self.shuffle,
             )
@@ -104,6 +113,7 @@ class OfflineEmbedding(BaseEstimator):
 
         _start = time()
         _print_deadline = time() + self.verbose
+        _n_ans = len(X_train)
         for k in itertools.count():
             train_score = self.opt_.score(X_train)
             module_ = self.opt_.module_
@@ -112,9 +122,9 @@ class OfflineEmbedding(BaseEstimator):
                 "score_train": train_score,
                 "loss_train": loss_train,
                 "k": k,
-                #  "elapsed_time": time() - _start,
-                #  "train_data": len(X_train),
-                #  "test_data": len(X_test),
+                "elapsed_time": time() - _start,
+                "train_data": len(X_train),
+                "test_data": len(X_test),
                 #  "n": self.n,
                 #  "d": self.d,
                 #  "max_epochs": self.max_epochs,
@@ -123,16 +133,20 @@ class OfflineEmbedding(BaseEstimator):
                 "ident": self.ident,
                 **deepcopy(self.opt_.meta_),
             }
-            if k % 10 == 0 or k <= 100:
+            datum["_epochs"] = datum["num_grad_comps"] / _n_ans
+            if k % 1 == 0 or k <= 100:
+                with torch.no_grad():
+                    test_score = self.opt_.score(X_test)
+                    loss_test = module_.losses(*module_._get_dists(X_test))
+
+                datum["score_test"] = test_score
+                datum["loss_test"] = loss_test.mean().item()
                 self.history_.append(datum)
-                test_score = self.opt_.score(X_test)
-                self.history_[-1]["score_test"] = test_score
-                loss_test = module_.losses(*module_._get_dists(X_test))
-                self.history_[-1]["loss_test"] = loss_test.mean().item()
             if self.opt_.meta_["num_grad_comps"] >= self.max_epochs * len(X_train):
                 break
             if time() >= _print_deadline:
-                print(self.history_[-1])
+                show = {k: _print_fmt(v) for k, v in self.history_[-1].items()}
+                print(show)
                 _print_deadline = time() + self.verbose
             self.opt_.partial_fit(X_train, sample_weight=sample_weight)
 

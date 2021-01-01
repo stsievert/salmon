@@ -1,5 +1,5 @@
 import itertools
-from copy import copy
+from copy import deepcopy
 from typing import List, Tuple, Union
 
 import numpy as np
@@ -116,7 +116,7 @@ class Embedding(BaseEstimator):
             answers = (
                 np.array(answers) if len(answers) else np.empty((0, 3), dtype="uint16")
             )
-        num_ans = copy(self.meta_["num_answers"])
+        num_ans = deepcopy(self.meta_["num_answers"])
 
         if num_ans + len(answers) >= len(self.answers_):
             n = len(answers) + len(self.answers_)
@@ -159,9 +159,8 @@ class Embedding(BaseEstimator):
         if self.meta_["num_answers"] <= self.module__n:
             return self
 
-        beg_meta = copy(self.meta_)
-        eg_deadline = copy(len(answers) + beg_meta["num_grad_comps"])
-
+        beg_meta = deepcopy(self.meta_)
+        eg_deadline = deepcopy(len(answers) + beg_meta["num_grad_comps"])
         if sample_weight is not None:
             sample_weight = torch.from_numpy(sample_weight)
         while True:
@@ -222,7 +221,7 @@ class Embedding(BaseEstimator):
         if not (hasattr(self, "initialized_") and self.initialized_):
             self.initialize()
         for epoch in range(self.max_epochs):
-            n_ans = copy(self.meta_["num_answers"])
+            n_ans = deepcopy(self.meta_["num_answers"])
             self.partial_fit(self.answers_[:n_ans])
         return self
 
