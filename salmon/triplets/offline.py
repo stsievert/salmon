@@ -61,12 +61,13 @@ class OfflineEmbedding(BaseEstimator):
                 module=noise_model,
                 module__n=self.n,
                 module__d=self.d,
-                random_state=42 ** 2,
+                random_state=42 ** 3,
                 optimizer=optim.SGD,
                 optimizer__lr=0.02,
-                optimizer__momentum=0.9,
+                optimizer__momentum=0.2,
                 max_epochs=self.max_epochs,
                 shuffle=self.shuffle,
+                optimizer__weight_decay=1e-8,
                 **self.kwargs,
             )
             # TODO: change defaults for Embedding and children
@@ -142,7 +143,9 @@ class OfflineEmbedding(BaseEstimator):
 
                 datum["score_test"] = test_score
                 datum["loss_test"] = loss_test.mean().item()
+
                 self.history_.append(datum)
+
             if self.opt_.meta_["num_grad_comps"] >= self.max_epochs * len(X_train):
                 break
             if time() >= _print_deadline:
