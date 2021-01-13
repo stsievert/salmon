@@ -269,9 +269,11 @@ class OGD(Embedding):
 
         if n_ans <= limit:
             return rng.choice(n_ans, size=n_idx, replace=True)
+        if bs <= limit:
+            return rng.choice(min(n_ans, limit), size=n_idx, replace=True)
 
-        active_idx = limit + rng.choice(n_ans - limit, replace=True, size=n_active_idx)
         rand_idx = np.arange(limit)
+        active_idx = np.arange(limit, limit + n_active_idx)
 
         ret = np.hstack((rand_idx, active_idx)).astype(int)
         return ret[:bs]
