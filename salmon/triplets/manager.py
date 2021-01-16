@@ -48,7 +48,7 @@ def get_responses(answers: List[Dict[str, Any]], targets, start_time=0):
             1970, 1, 1
         )
         idxs = {
-            key + "_object": targets[datum[key]]
+            key + "_html": targets[datum[key]]
             for key in ["left", "right", "head", "winner", "loser"]
         }
         names = {

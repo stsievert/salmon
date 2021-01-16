@@ -1,5 +1,5 @@
 # filename: exp.yaml
-targets: 100
+targets: [a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p]
 d: 2
 samplers:
   TSTE:
@@ -14,4 +14,4 @@ samplers:
   CKL: {}
   GNMDS:
     scorer: uncertainity
-  STE: {}
+  RR: {}

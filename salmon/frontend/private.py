@@ -13,10 +13,11 @@ from datetime import datetime, timedelta
 from io import StringIO
 from textwrap import dedent
 from time import sleep, time
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, List
 
 import pandas as pd
 import requests as httpx
+import numpy as np
 import yaml
 from bokeh.embed import json_item
 from fastapi import Depends, File, HTTPException
@@ -265,7 +266,7 @@ async def process_form(
     """
     try:
         if rj.jsonget("exp_config"):
-            detail =(
+            detail = (
                 "Incorrect username or password",
                 "An experiment is already set! This experiment has not been "
                 "deleted, and a new experiment has not been initialized."
@@ -276,7 +277,7 @@ async def process_form(
                 "experiment will overwrite this experiment. Do you mean to upload?"
                 "\n2. Visit /reset. Warning: this will *delete* the experiment"
                 "\n3. Revisit /init_exp and re-upload the experiment."
-                "\n\n(visiting /foo means visiting '[url]:8421/foo'"
+                "\n\n(visiting /foo means visiting '[url]:8421/foo'",
             )
             raise HTTPException(status_code=403, detail=detail)
         ret = await _process_form(request, exp, targets, rdb)
@@ -462,6 +463,66 @@ async def get_responses(
 
     return PlainTextResponse(
         out, headers={"Content-Disposition": 'attachment; filename="responses.csv"'}
+    )
+
+
+def _fmt_embedding(
+    embedding: List[List[float]], targets: List[str], **kwargs
+) -> pd.DataFrame:
+    df = pd.DataFrame({"target_html": targets})
+    df["target_id"] = np.arange(len(df)).astype(int)
+    for k, v in kwargs.items():
+        df[k] = v
+
+    embedding = np.asarray(embedding)
+    if embedding.ndim == 1:
+        embedding = embedding.reshape(1, -1)
+    for k, col in enumerate(range(embedding.shape[1])):
+        df[k] = embedding[:, col]
+
+    return df
+
+
+@app.get("/embeddings", tags=["private"])
+async def get_embeddings(
+    authorized: bool = Depends(_authorize),
+    alg: Optional[str] = None,
+):
+    """
+    Get the embeddings for algorithms.
+
+    Parameters
+    ----------
+
+    * alg : str, optional. The algorithm to get the embedding for.
+
+    Returns
+    -------
+    CSV with columns for the target HTML, target ID, the embedding, and the
+    algorithm generating the embedding.
+    """
+    exp_config = await _ensure_initialized()
+    exp_config = deepcopy(exp_config)
+    targets = exp_config.pop("targets")
+    alg_idents = list(exp_config.pop("samplers").keys())
+    embeddings = {alg: await get_model(alg) for alg in alg_idents}
+    dfs = {
+        alg: _fmt_embedding(model["embedding"], targets, alg=alg)
+        for alg, model in embeddings.items()
+    }
+
+    if alg is not None:
+        df = dfs[alg]
+    else:
+        df = pd.concat(dfs)
+
+    with StringIO() as f:
+        df.to_csv(f, index=False)
+        out = f.getvalue()
+
+    fname = "embeddings.csv" if alg is None else f"embedding-{alg}.csv"
+    return PlainTextResponse(
+        out, headers={"Content-Disposition": f'attachment; filename="{fname}"'}
     )
 
 
