@@ -52,7 +52,7 @@ def get_responses(answers: List[Dict[str, Any]], targets, start_time=0):
             for key in ["left", "right", "head", "winner", "loser"]
         }
         names = {
-            key + "_filename": _get_filename(idxs[f"{key}_object"])
+            key + "_filename": _get_filename(idxs[f"{key}_html"])
             for key in ["left", "right", "head", "winner", "loser"]
         }
         meta = {

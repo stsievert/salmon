@@ -432,7 +432,7 @@ async def get_responses(
 
     * `left`, `right`, `head`: Indices describing the objects in the
       head/left/right positions.
-    * `head_object`, `right_object`, `head_object`: the HTML
+    * `head_html`, `right_html`, `left_html`: the HTML
       representation of the target in the head/left/right position.
     * `datetime_received`: the time the response was received.
     * `response_time`: the time spent between the providing the query and
@@ -536,7 +536,7 @@ async def _get_responses():
     `json_file : str`. This file will have keys
 
     * `head`, `left`, `right`, `winner` as integers describing the arms
-      (and `_object`/`_src` as their HTML string/HTML `src` tag)
+      (and `_html`/`_src` as their HTML string/HTML `src` tag)
     * `puid` as the participant unique ID
     * `time_received_since_start`, an integer describing the time in
       seconds since launch start
