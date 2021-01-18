@@ -252,12 +252,13 @@ class GD(Embedding):
 
 
 class OGD(Embedding):
-    def __init__(self, shuffle=False, **kwargs):
+    def __init__(self, shuffle=False, dwell=1, **kwargs):
         self.shuffle = shuffle
+        self.dwell = dwell
         super().__init__(**kwargs)
 
     def get_train_idx(self, n_ans):
-        bs = self.initial_batch_size + int(self.meta_["model_updates"] / 5)
+        bs = self.initial_batch_size + int(self.meta_["model_updates"] / self.dwell)
         n_idx = min(bs, n_ans)
         rng = self.random_state_
 
