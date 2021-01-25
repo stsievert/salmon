@@ -125,7 +125,7 @@ def logs():
     return Logs()
 
 
-def strange_fruit(head, left, right, random_state=None):
+def alien_egg(head, left, right, random_state=None):
     """
     Parameters
     ---------- head, left, right : int, int, int

@@ -4,7 +4,7 @@ from sklearn.utils import check_random_state
 
 from salmon.triplets.algs.adaptive import InfoGainScorer
 from salmon.triplets.algs import TSTE
-from .utils import strange_fruit
+from .utils import alien_egg
 
 
 def dataset(n, num_ans=1000, random_state=42):
@@ -13,7 +13,7 @@ def dataset(n, num_ans=1000, random_state=42):
     repeats = (X[:, 0] == X[:, 1]) | (X[:, 1] == X[:, 2]) | (X[:, 0] == X[:, 2])
     X = X[~repeats]
     assert len(X) >= num_ans * 0.9
-    y = [strange_fruit(*x, random_state=rng) for x in X]
+    y = [alien_egg(*x, random_state=rng) for x in X]
     return X, y
 
 
