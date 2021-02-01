@@ -72,7 +72,7 @@ def test_active_basics(server, logs):
         r = server.get("/responses")
         df = pd.DataFrame(r.json())
         assert (df["score"] <= 1).all()
-        assert set(df.alg_ident.unique()) == {"TSTE", "STE", "CKL", "tste2", "GNMDS"}
+        assert set(df.alg_ident.unique()) == {"TSTE", "RR", "CKL", "tste2", "GNMDS"}
 
 
 def test_round_robin(server, logs):

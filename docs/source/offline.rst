@@ -25,7 +25,7 @@ Install Salmon
 
 .. code-block:: shell
 
-   $ git clone https://
+   $ git clone https://github.com/stsievert/salmon
    $ cd salmon
    $ conda env create -f salmon.yml
    $ conda activate salmon
@@ -56,3 +56,22 @@ This code will generate an embedding:
 Some customization can be done with ``model.history_``; it may not be necessary
 to train for 1,000,000 epochs. ``model.history_`` will include validation and
 training scores, which might help limit the number of epochs.
+
+Embedding visualization
+-----------------------
+
+The HTML for each target alongside the embedding coordinates is available from
+the dashboard by downloading the "embeddings" file (or visiting
+``[url]:8421/embeddings``. This will give a CSV with the HTML for each target,
+the embedding coordinates and the name of the embedding that generated the
+algorithm.
+
+To visualize the embedding, I would use standard plotting tools to visualize
+the embedding, which might be `Matplotlib`_, the `Pandas visualization API`_,
+`Bokeh`_ or `Altair`_. Salmon uses Bokeh for it's visualization.
+
+
+.. _Pandas visualization API: https://pandas.pydata.org/pandas-docs/stable/user_guide/visualization.html
+.. _Bokeh: https://bokeh.org/
+.. _Matplotlib: https://matplotlib.org/
+.. _Altair: https://altair-viz.github.io/
