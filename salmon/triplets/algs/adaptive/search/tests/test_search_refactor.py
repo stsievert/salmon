@@ -173,7 +173,6 @@ def test_agrees_with_embedding(seed=None):
         assert LA.norm(X[head] - X[winner]) < LA.norm(X[head] - X[loser])
 
 
-# @pytest.mark.xfail(reason="unknown bug (but negative scores provide adaptive gains)")
 def test_internal_search_refactor():
     """ Test to make sure Salmon search v1 and v2 produce the same results """
     n, d = 85, 2
@@ -189,7 +188,7 @@ def test_internal_search_refactor():
         for o2 in set(range(n)) - {h, o1}
     ]
     Q = Q[:30_000]
-    s_old = [search._score_v1(tuple(q), tau, D) for q in Q]
+    s_old = [search._score_v1((h, o2, o1), tau, D) for h, o1, o2 in Q]
 
     Q = np.array(Q).astype(int)
     s_new = search.score(Q[:, 0], Q[:, 1], Q[:, 2], tau, D)
@@ -230,32 +229,25 @@ def test_salmon_integration():
     err = np.abs(search.posterior_ / tau)
     assert rel_error < 0.01
 
-    # Making sure approximately correct (not exactly correct)
-    zero = (tau <= 1e-20) | (post <= 1e-20)
-    err = tau[~zero] / post[~zero]
-    eps = 2e-3
+    # Making sure posterior approximately correct
+    eps = 3e-3
     assert np.allclose(np.median(err), 1)
-    assert 1 - eps <= np.percentile(err, 5) <= err.max() <= 1 + eps
-    assert np.median(tau[zero]) <= 1e-8
-    assert post[zero].max() <= 1e-6
-    assert np.median(post[zero]) <= 1e-8
+    assert 1 - eps <= np.percentile(err, 1) <= np.percentile(err, 99) <= 1 + eps
 
+    # Make sure scores are all negative (because only negative entropy
+    # part of information gain)
     next_scores = np.array([_score_next(q, tau, X) for q in next_history])
     _, salmon_scores = search.score(queries=history)
-
     assert (salmon_scores <= 0).all()
 
-    assert -1.4 < next_scores.min() < next_scores.max() < -0.15
-    assert np.allclose(next_scores.max(), salmon_scores.max())
-    assert np.allclose(next_scores.min(), salmon_scores.min())
-
+    # Make sure scores are close to each other
     rel_err = LA.norm(next_scores - salmon_scores) / LA.norm(next_scores)
-    assert rel_err <= 1e-4
+    assert rel_err <= 1e-5
 
     diff = np.abs(next_scores - salmon_scores)
-    assert 0 <= diff.min() <= diff.max() <= 1e-3
-    assert diff.mean() <= 5e-5
-    assert np.median(diff) <= 5e-5
+    assert 0 <= diff.min() <= diff.max() <= 2e-5
+    assert diff.mean() <= 1e-5
+    assert np.median(diff) <= 1e-5
 
 
 def test_salmon_posterior_refactor(n=30, d=2):
