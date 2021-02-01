@@ -10,7 +10,7 @@ import torch.optim as optim
 import torch
 
 from salmon.triplets.algs.adaptive import GD, OGD
-from salmon.triplets.algs.adaptive import TSTE, GNMDS
+from salmon.triplets.algs.adaptive import CKL
 import salmon.triplets.algs.adaptive as adaptive
 
 
@@ -35,11 +35,11 @@ class OfflineEmbedding(BaseEstimator):
         self,
         n=None,
         d=None,
-        max_epochs=25,
+        max_epochs=1_000_000,
         opt=None,
         verbose=20,
         ident="",
-        noise_model="GNMDS",
+        noise_model="CKL",
         shuffle=False,
         **kwargs,
     ):
@@ -57,7 +57,7 @@ class OfflineEmbedding(BaseEstimator):
         if self.opt is None:
             assert self.n is not None and self.d is not None, "Specify n and d"
             noise_model = getattr(adaptive, self.noise_model)
-            self.opt = OGD(
+            kwargs = dict(
                 module=noise_model,
                 module__n=self.n,
                 module__d=self.d,
@@ -68,8 +68,9 @@ class OfflineEmbedding(BaseEstimator):
                 max_epochs=self.max_epochs,
                 shuffle=self.shuffle,
                 optimizer__weight_decay=1e-8,
-                **self.kwargs,
             )
+            kwargs.update(self.kwargs)
+            self.opt = OGD(**kwargs)
             # TODO: change defaults for Embedding and children
         self.opt.push(X_train)
 
@@ -77,41 +78,9 @@ class OfflineEmbedding(BaseEstimator):
         self.history_ = []
         self.initialized_ = True
 
-    def fit(self, X_train, X_test, sample_weight=None, scores=None):
-        if sample_weight is not None and scores is not None:
-            raise ValueError("Only one of sample_weight or scores can be specified")
-
+    def fit(self, X_train, X_test):
         if not (hasattr(self, "initialized_") and self.initialized_):
             self.initialize(X_train)
-
-        astart = self.n * 10
-        if scores is not None and len(X_train) > astart:
-            if len(scores) != len(X_train):
-                msg = "length mismatch; len(scores)={}, len(X_train)={}"
-                raise ValueError(msg.format(len(scores), len(X_train)))
-            random = scores < -9990
-            if random.sum() == 0:
-                raise ValueError(
-                    "Some random samples are needed to create embedding; "
-                    f"got {len(random)} samples but 0 random samples"
-                )
-            n_active = len(X_train) - random.sum()
-
-            # Larger rate -> later sample are less important
-            # Smaller rate -> later samples are more important
-            i = np.arange(0, n_active).astype("float32")
-
-            # Number of queries required for random sampling
-            required = 10 * self.n * self.d * np.log2(self.n)
-            i /= required
-            rate = 20
-
-            sample_weight = np.zeros(len(X_train))
-            sample_weight[~random] = 1 / (1 + rate * i)
-            sample_weight[random] = 1
-
-            # divide by mean so 1 on average -> same step size in optimization
-            sample_weight /= sample_weight.mean()
 
         _start = time()
         _print_deadline = time() + self.verbose
@@ -127,11 +96,10 @@ class OfflineEmbedding(BaseEstimator):
                 "elapsed_time": time() - _start,
                 "train_data": len(X_train),
                 "test_data": len(X_test),
-                #  "n": self.n,
-                #  "d": self.d,
-                #  "max_epochs": self.max_epochs,
-                #  "verbose": self.verbose,
-                "weight": scores is not None,
+                "n": self.n,
+                "d": self.d,
+                "max_epochs": self.max_epochs,
+                "verbose": self.verbose,
                 "ident": self.ident,
                 **deepcopy(self.opt_.meta_),
             }
@@ -152,7 +120,7 @@ class OfflineEmbedding(BaseEstimator):
                 show = {k: _print_fmt(v) for k, v in self.history_[-1].items()}
                 print(show)
                 _print_deadline = time() + self.verbose
-            self.opt_.partial_fit(X_train, sample_weight=sample_weight)
+            self.opt_.partial_fit(X_train)
 
         test_score = self.opt_.score(X_test)
         self.history_[-1]["score_test"] = test_score
