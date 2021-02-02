@@ -1,4 +1,3 @@
-./_images/adaptive.png
 ./_images/alg-timing.png
 ./_images/basic.png
 ./_images/client-side.png
@@ -9,6 +8,7 @@
 ./_images/query_page.png
 ./_images/search-efficacy.png
 ./_images/server-side.png
+./_images/synth-eg-acc.png
 ./_sources/adaptive.rst.txt
 ./_sources/algorithms.rst.txt
 ./_sources/api.rst.txt

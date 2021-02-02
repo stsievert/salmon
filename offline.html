@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Generating embeddings offline &mdash; Salmon v0.4.5+3.g88bb858.dirty documentation</title>
+  <title>Generating embeddings offline &mdash; Salmon v0.4.5+4.gf9eae7e.dirty documentation</title>
   
 
   
@@ -97,11 +97,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Generating embeddings offline</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#downloading-responses">Downloading responses</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#install-salmon">Install Salmon</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#generate-embeddings">Generate embeddings</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#random-embeddings">Random embeddings</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#adaptive-embeddings">Adaptive embeddings</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="#generate-embeddings">Generate embeddings</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#embedding-visualization">Embedding visualization</a></li>
 </ul>
 </li>
@@ -216,10 +212,6 @@ $ conda activate salmon
 </div>
 <div class="section" id="generate-embeddings">
 <h2>Generate embeddings<a class="headerlink" href="#generate-embeddings" title="Permalink to this headline">¶</a></h2>
-<p>First, let’s cover random sampling. Adaptive algorithms require some special
-attention.</p>
-<div class="section" id="random-embeddings">
-<h3>Random embeddings<a class="headerlink" href="#random-embeddings" title="Permalink to this headline">¶</a></h3>
 <p>This code will generate an embedding:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">salmon.triplets.offline</span> <span class="kn">import</span> <span class="n">OfflineEmbedding</span>
 
@@ -229,7 +221,7 @@ attention.</p>
 <span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># number of targets</span>
 <span class="n">d</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># embed into 2 dimensions</span>
 
-<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
 <span class="n">model</span> <span class="o">=</span> <span class="n">OfflineEmbedding</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="n">d</span><span class="p">)</span>
 <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">)</span>
 
@@ -238,33 +230,8 @@ attention.</p>
 </pre></div>
 </div>
 <p>Some customization can be done with <code class="docutils literal notranslate"><span class="pre">model.history_</span></code>; it may not be necessary
-to train for 200 epochs, for example. <code class="docutils literal notranslate"><span class="pre">model.history_</span></code> will include
-validation and training scores, which might help limit the number of epochs.</p>
-</div>
-<div class="section" id="adaptive-embeddings">
-<h3>Adaptive embeddings<a class="headerlink" href="#adaptive-embeddings" title="Permalink to this headline">¶</a></h3>
-<p>Adaptive embeddings are mostly the same, but require the following:</p>
-<ol class="arabic simple">
-<li><p>Re-weighting the adaptively selected samples.</p></li>
-<li><p>Splitting train/test properly.</p></li>
-</ol>
-<p>Re-weighting the samples is required because we don’t want to overfit the
-adaptive samples.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;responses.csv&quot;</span><span class="p">)</span>  <span class="c1"># downloaded from dashboard</span>
-
-<span class="n">test</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">alg_ident</span> <span class="o">==</span> <span class="s2">&quot;RandomSampling&quot;</span>
-<span class="n">train</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">alg_ident</span> <span class="o">==</span> <span class="s2">&quot;TSTE&quot;</span>  <span class="c1"># an adaptive algorithm</span>
-
-<span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;head&quot;</span><span class="p">,</span> <span class="s2">&quot;winner&quot;</span><span class="p">,</span> <span class="s2">&quot;loser&quot;</span><span class="p">]</span>
-<span class="n">X_test</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">test</span><span class="p">,</span> <span class="n">cols</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
-<span class="n">X_train</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">train</span><span class="p">,</span> <span class="n">cols</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
-
-<span class="n">model</span> <span class="o">=</span> <span class="n">OfflineEmbedding</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;head&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">d</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">scores</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">train</span><span class="p">,</span> <span class="s2">&quot;score&quot;</span><span class="p">])</span>
-</pre></div>
-</div>
-</div>
+to train for 1,000,000 epochs. <code class="docutils literal notranslate"><span class="pre">model.history_</span></code> will include validation and
+training scores, which might help limit the number of epochs.</p>
 </div>
 <div class="section" id="embedding-visualization">
 <h2>Embedding visualization<a class="headerlink" href="#embedding-visualization" title="Permalink to this headline">¶</a></h2>

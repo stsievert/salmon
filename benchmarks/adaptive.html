@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Adaptive algorithms &mdash; Salmon v0.4.5+3.g88bb858.dirty documentation</title>
+  <title>Adaptive algorithms &mdash; Salmon v0.4.5+4.gf9eae7e.dirty documentation</title>
   
 
   
@@ -106,7 +106,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="server.html">Concurrent Users</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Adaptive algorithms</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#illustrative-result">Illustrative result</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#synthetic-simulation">Synthetic simulation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#search-efficacy">Search efficacy</a></li>
 </ul>
 </li>
@@ -185,39 +185,33 @@
 about a random question like random sampling. This can mean that higher
 accuracies are reached sooner, or that less human responses are required to
 reach a particular accuracy.</p>
-<div class="section" id="illustrative-result">
-<h2>Illustrative result<a class="headerlink" href="#illustrative-result" title="Permalink to this headline">¶</a></h2>
-<p>Let’s run a quick benchmark with Salmon to see how well adaptive performs in
-the crowdsourcing context. This benchmark will accurately simulate a
-crowdsourcing context:</p>
-<ul>
-<li><p>Answers will be received by Salmon at a rate of 4 responses/second.</p></li>
-<li><p>The answers will come from the Zappos shoe dataset, an exhaustively sampled
-triplets dataset with 4 human responses to every possible question.</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>This dataset has <span class="math notranslate nohighlight">\(n = 85\)</span> shoes, and I mirror Heim et. al and embed
-into <span class="math notranslate nohighlight">\(d = 2\)</span> dimensions <a class="footnote-reference brackets" href="#id3" id="id1">1</a>.</p></li>
-</ul>
-</div></blockquote>
-</li>
-<li><p>The random and adaptive algorithms will be the same in every except in how
-how select queries.</p></li>
-</ul>
-<p>With that setup, how much of a difference does query selection matter? Here’s
-a result that illustrates the benefit of adaptive algorithms:</p>
-<a class="reference internal image-reference" href="../_images/adaptive.png"><img alt="../_images/adaptive.png" class="align-center" src="../_images/adaptive.png" style="width: 400px;" /></a>
+<div class="section" id="synthetic-simulation">
+<h2>Synthetic simulation<a class="headerlink" href="#synthetic-simulation" title="Permalink to this headline">¶</a></h2>
+<p>Let’s compare adaptive sampling and random sampling. Specifically, let’s use
+Salmon like an experimentalist would:</p>
+<ol class="arabic simple">
+<li><p>Launch Salmon with the “alien eggs” dataset (with <span class="math notranslate nohighlight">\(n=50\)</span> objects and
+using <span class="math notranslate nohighlight">\(d=2\)</span> dimensions).</p></li>
+<li><p>Simulate human users (6 users with mean response time of 1s).</p></li>
+<li><p>Download the human responses from Salmon</p></li>
+<li><p>Generate the embedding offline.</p></li>
+</ol>
+<p>Let’s run this process for adaptive and random sampling. When we do that, this
+is the graph that’s produced:</p>
+<a class="reference internal image-reference" href="../_images/synth-eg-acc.png"><img alt="../_images/synth-eg-acc.png" class="align-center" src="../_images/synth-eg-acc.png" style="width: 600px;" /></a>
+<p>These are synthetic results, though they use a human noise model. These
+experiments provide evidence that Salmon works well with adaptive sampling.</p>
 <p>This measure provide evidence to support the hypothesis that Salmon has better
 performance than NEXT for adaptive triplet embeddings. For reference, in NEXT’s
-introduction paper, the authors provided “no evidence for gains from adaptive
-sampling” for the triplet embedding problem <a class="footnote-reference brackets" href="#id4" id="id2">2</a>.</p>
+introduction paper, the authors found “no evidence for gains from adaptive
+sampling” for the triplet embedding problem <a class="footnote-reference brackets" href="#id3" id="id1">2</a>.</p>
 <dl class="footnote brackets">
-<dt class="label" id="id3"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dt class="label" id="id2"><span class="brackets">1</span></dt>
 <dd><p>“Active Perceptual Similarity Modeling with Auxiliary Information” by E.
 Heim, M. Berger, and L. Seversky, and M. Hauskrecht. 2015.
 <a class="reference external" href="https://arxiv.org/pdf/1511.02254.pdf">https://arxiv.org/pdf/1511.02254.pdf</a></p>
 </dd>
-<dt class="label" id="id4"><span class="brackets"><a class="fn-backref" href="#id2">2</a></span></dt>
+<dt class="label" id="id3"><span class="brackets"><a class="fn-backref" href="#id1">2</a></span></dt>
 <dd><p>“NEXT: A System for Real-World Development, Evaluation, and Application
 of Active Learning” by K. Jamieson, L. Jain, C. Fernandez, N. Glattard
 and R. Nowak. 2017.
