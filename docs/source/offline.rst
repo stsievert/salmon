@@ -34,12 +34,6 @@ Install Salmon
 Generate embeddings
 -------------------
 
-First, let's cover random sampling. Adaptive algorithms require some special
-attention.
-
-Random embeddings
-"""""""""""""""""
-
 This code will generate an embedding:
 
 .. code-block:: python
@@ -52,7 +46,7 @@ This code will generate an embedding:
    n = int(X.max() + 1)  # number of targets
    d = 2  # embed into 2 dimensions
 
-   X_train, X_test = train_test_split(X, random_state=0, test_size=0.2)
+   X_train, X_test = train_test_split(X, random_state=42, test_size=0.2)
    model = OfflineEmbedding(n=n, d=d)
    model.fit(X_train, X_test)
 
@@ -60,34 +54,8 @@ This code will generate an embedding:
    model.history_  # to view information on how well train/test performed
 
 Some customization can be done with ``model.history_``; it may not be necessary
-to train for 200 epochs, for example. ``model.history_`` will include
-validation and training scores, which might help limit the number of epochs.
-
-Adaptive embeddings
-"""""""""""""""""""
-
-Adaptive embeddings are mostly the same, but require the following:
-
-1. Re-weighting the adaptively selected samples.
-2. Splitting train/test properly.
-
-Re-weighting the samples is required because we don't want to overfit the
-adaptive samples.
-
-.. code-block:: python
-
-   df = pd.read_csv("responses.csv")  # downloaded from dashboard
-
-   test = df.alg_ident == "RandomSampling"
-   train = df.alg_ident == "TSTE"  # an adaptive algorithm
-
-   cols = ["head", "winner", "loser"]
-   X_test = df.loc[test, cols].to_numpy()
-   X_train = df.loc[train, cols].to_numpy()
-
-   model = OfflineEmbedding(n=int(df["head"].max() + 1), d=2, weight=True)
-
-   model.fit(X_train, X_test, scores=df.loc[train, "score"])
+to train for 1,000,000 epochs. ``model.history_`` will include validation and
+training scores, which might help limit the number of epochs.
 
 Embedding visualization
 -----------------------
@@ -107,4 +75,3 @@ the embedding, which might be `Matplotlib`_, the `Pandas visualization API`_,
 .. _Bokeh: https://bokeh.org/
 .. _Matplotlib: https://matplotlib.org/
 .. _Altair: https://altair-viz.github.io/
-

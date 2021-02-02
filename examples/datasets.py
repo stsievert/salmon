@@ -5,7 +5,7 @@ import pandas as pd
 from sklearn.utils import check_random_state
 
 
-def strange_fruit(head, left, right, random_state=None):
+def alien_egg(head, left, right, random_state=None):
     """
     Parameters
     ----------

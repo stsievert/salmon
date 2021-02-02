@@ -83,16 +83,7 @@ def test_offline_embedding_adaptive():
     X_train = np.concatenate((X_train, ) * 10)
 
     model = OfflineEmbedding(n=n, d=d, max_epochs=4)
-
-    with pytest.raises(ValueError, match="length mismatch"):
-        model.fit(X_train, X_test, scores=[1, 2, 3])
-
-    with pytest.raises(ValueError, match="Some random samples"):
-        scores = -5 + np.random.uniform(size=len(X_train))
-        model.fit(X_train, X_test, scores=scores)
-
-    scores[:100] = -9999
-    model.fit(X_train, X_test, scores=scores)
+    model.fit(X_train, X_test)
     assert isinstance(model.embedding_, np.ndarray)
     assert model.embedding_.shape == (n, d)
 

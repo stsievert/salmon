@@ -6,31 +6,31 @@ about a random question like random sampling. This can mean that higher
 accuracies are reached sooner, or that less human responses are required to
 reach a particular accuracy.
 
-Illustrative result
--------------------
+Synthetic simulation
+--------------------
 
-Let's run a quick benchmark with Salmon to see how well adaptive performs in
-the crowdsourcing context. This benchmark will accurately simulate a
-crowdsourcing context:
+Let's compare adaptive sampling and random sampling. Specifically, let's use
+Salmon like an experimentalist would:
 
-* Answers will be received by Salmon at a rate of 4 responses/second.
-* The answers will come from the Zappos shoe dataset, an exhaustively sampled
-  triplets dataset with 4 human responses to every possible question.
-    * This dataset has :math:`n = 85` shoes, and I mirror Heim et. al and embed
-      into :math:`d = 2` dimensions [1]_.
-* The random and adaptive algorithms will be the same in every except in how
-  how select queries.
+1. Launch Salmon with the "alien eggs" dataset (with :math:`n=50` objects and
+   using :math:`d=2` dimensions).
+2. Simulate human users (6 users with mean response time of 1s).
+3. Download the human responses from Salmon
+4. Generate the embedding offline.
 
-With that setup, how much of a difference does query selection matter? Here's
-a result that illustrates the benefit of adaptive algorithms:
+Let's run this process for adaptive and random sampling. When we do that, this
+is the graph that's produced:
 
-.. image:: imgs/adaptive.png
-   :width: 400px
+.. image:: imgs/synth-eg-acc.png
+   :width: 600px
    :align: center
+
+These are synthetic results, though they use a human noise model. These
+experiments provide evidence that Salmon works well with adaptive sampling.
 
 This measure provide evidence to support the hypothesis that Salmon has better
 performance than NEXT for adaptive triplet embeddings. For reference, in NEXT's
-introduction paper, the authors provided "no evidence for gains from adaptive
+introduction paper, the authors found "no evidence for gains from adaptive
 sampling" for the triplet embedding problem [2]_.
 
 .. [1] "Active Perceptual Similarity Modeling with Auxiliary Information" by E.

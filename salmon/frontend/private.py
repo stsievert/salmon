@@ -651,6 +651,16 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
     except:
         alg_perfs = {"/": "Error getting algorithm performance"}
 
+    try:
+        _query_db = {
+            alg: await plotting._get_query_db(pd.DataFrame(data))
+            for alg, data in perfs.items()
+            if data
+        }
+        query_db = {k: json.dumps(json_item(v)) for k, v in _query_db.items()}
+    except:
+        query_db = {"/": "Error getting query database stats"}
+
     return templates.TemplateResponse(
         "dashboard.html",
         {
@@ -667,6 +677,7 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
             "alg_perfs": alg_perfs,
             "config": exp_config,
             "samplers": idents,
+            "query_db_perfs": query_db,
             **plots,
         },
     )

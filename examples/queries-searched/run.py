@@ -25,7 +25,7 @@ from offline import OfflineSearch
 
 DIR = Path(__file__).absolute().parent
 sys.path.append(str(DIR.parent))
-from datasets import strange_fruit
+from datasets import alien_egg
 
 
 def _test_dataset(n, n_test, seed=42):
@@ -34,7 +34,7 @@ def _test_dataset(n, n_test, seed=42):
     repeats = (X[:, 0] == X[:, 1]) | (X[:, 0] == X[:, 2]) | (X[:, 1] == X[:, 2])
     X = X[~repeats]
     # assert len(X) >= 9500
-    y = np.array([strange_fruit(h, l, r, random_state=38) for (h, l, r) in X])
+    y = np.array([alien_egg(h, l, r, random_state=38) for (h, l, r) in X])
     return X, y
 
 
@@ -50,7 +50,7 @@ class Test(BaseEstimator):
         n_test: int = 10_000,
         n_partial_fit: int = 100,
         random_state=42,
-        dataset: str = "strange_fruit",
+        dataset: str = "alien_egg",
         write: bool = False,
         queries_per_search: int = 1,
         verbose: Union[int, bool, float] = True,
@@ -132,7 +132,7 @@ class Test(BaseEstimator):
         ):
             raise ValueError("Incorrect parameters for self.dataset=zappos")
 
-        if self.dataset == "strange_fruit":
+        if self.dataset == "alien_egg":
             X_test, y_test = _test_dataset(self.n, self.n_test, seed=self.random_state)
         elif self.dataset == "zappos":
             X_test, y_test = self._get_zappos_test_set(), None
@@ -177,7 +177,7 @@ class Test(BaseEstimator):
         return test_ans
 
     def score(self, X, y=None):
-        if self.dataset == "strange_fruit":
+        if self.dataset == "alien_egg":
             return self._score_fruit(X, y)
         elif self.dataset == "zappos":
             return self._score_zappos(X)
@@ -256,7 +256,7 @@ if __name__ == "__main__":
     #  searches: List[int] = sum(_searches, [])
 
     searches = [s for s in searches if s >= queries_per_search]
-    datasets = ["zappos", "strange_fruit"]
+    datasets = ["zappos", "alien_egg"]
     D = [1, 2]
     noises = ["TSTE", "STE", "CKL"]
     factors = [1, -1]

@@ -264,7 +264,7 @@ def score(H: Array, W: Array, L: Array, tau: Array, D: Array, probs=STE_probs) -
     head, w, l = H, W, L
     q = len(head)
 
-    probs = probs(D[w], D[l])  # (q, n)
+    probs = probs(D[l], D[w])  # (q, n)
     # probs = 1 - probs
     probs[np.isnan(probs)] = 0
     assert probs.min() >= 0

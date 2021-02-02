@@ -66,7 +66,8 @@ class Adaptive(Runner):
         self.sampling = sampling
         if sampling not in ["adaptive", "random"]:
             raise ValueError(
-                "Must pass sampling='adaptive' or sampling='random', not sampling={sampling}"
+                "Must pass sampling='adaptive' or sampling='random', not "
+                "sampling={sampling}"
             )
 
         Opt = getattr(adaptive, optimizer)
@@ -83,7 +84,7 @@ class Adaptive(Runner):
             optimizer__momentum=optimizer__momentum,
             random_state=random_state,
             warm_start=True,
-            max_epochs=200,
+            max_epochs=1200,
             **kwargs,
         )
         self.opt.initialize()
@@ -125,7 +126,7 @@ class Adaptive(Runner):
 
     def get_queries(
         self, num=None, stop=None, random_state=None
-    ) -> Tuple[List[Query], List[float]]:
+    ) -> Tuple[List[Query], List[float], dict]:
         if num:
             queries, scores = self.search.score(num=num, random_state=random_state)
             return queries[:num], scores[:num]
@@ -134,13 +135,22 @@ class Adaptive(Runner):
         rng = None
         if random_state:
             rng = check_random_state(random_state)
-        for pwr in range(12, 20 + 1):
+        n_searched = 0
+        for pwr in range(12, 40 + 1):
+            # I think there's a memory leak in search.score -- Dask workers
+            # kept on dying on get_queries. min(pwr, 16) to fix that (and
+            # verified too).
+            pwr = min(pwr, 16)
             queries, scores = self.search.score(num=2 ** pwr, random_state=rng)
+            n_searched += len(queries)
             ret_queries.append(queries)
             ret_scores.append(scores)
-            if stop is not None and stop.is_set():
+
+            # returned object is about (n_searched/1e6) * 16 MB in size
+            # let's limit it to be 32MB in size
+            if (n_searched >= 2e6) or (stop is not None and stop.is_set()):
                 break
-        return np.concatenate(ret_queries), np.concatenate(ret_scores)
+        return np.concatenate(ret_queries), np.concatenate(ret_scores), {}
 
     def process_answers(self, answers: List[Answer]):
         if not len(answers):
@@ -217,8 +227,8 @@ class Adaptive(Runner):
         right_closer = rdiff < ldiff
         return right_closer.astype("uint8")
 
-    def score(self, X, y):
-        y_hat = self.predict(X)
+    def score(self, X, y, embedding=None):
+        y_hat = self.predict(X, embedding=embedding)
         return (y_hat == y).mean()
 
 
@@ -340,7 +350,7 @@ class RR(Adaptive):
         )
 
     def get_queries(self, *args, **kwargs):
-        queries, scores = super().get_queries(*args, **kwargs)
+        queries, scores, meta = super().get_queries(*args, **kwargs)
 
         df = pd.DataFrame(queries, columns=["h", "l", "r"])
         df["score"] = scores
@@ -353,7 +363,8 @@ class RR(Adaptive):
         r_scores = 10 + np.linspace(0, 1, num=len(posted))
         self.random_state_.shuffle(r_scores)
 
-        return posted, r_scores
+        meta.update({"n_queries_scored_(complete)": len(df)})
+        return posted, r_scores, meta
 
 
 class STE(Adaptive):
@@ -520,6 +531,60 @@ class CKL(Adaptive):
             random_state=random_state,
             module__mu=mu,
             module="CKL",
+            sampling=sampling,
+            **kwargs,
+        )
+
+
+class SOE(Adaptive):
+    """
+    The crowd kernel embedding.
+
+    Parameters
+    ----------
+    d : int
+        Embedding dimension.
+    mu : float
+        The mu or :math:`\\mu` used in the CKL embedding. This is typically small; the default is :math:`10^{-4}`.
+    optimizer : str
+        The optimizer underlying the embedding. This method specifies how to
+        change the batch size. Choices are
+        ``["Embedding", "PadaDampG", "GeoDamp"]``.
+    optimizer__lr : float
+        Which learning rate to use with the optimizer. The learning rate must
+        be positive.
+    optimizer__momentum : float
+        The momentum to use with the optimizer.
+    random_state : int, None, np.random.RandomState
+        The seed used to generate psuedo-random numbers.
+    sampling : str
+        "adaptive" by default. Use ``sampling="random"`` to perform random
+        sampling with the same optimization method and noise model.
+    """
+
+    def __init__(
+        self,
+        n: int,
+        d: int = 2,
+        ident: str = "",
+        optimizer: str = "Embedding",
+        optimizer__lr=0.075,
+        optimizer__momentum=0.9,
+        random_state=None,
+        mu=1,
+        sampling="adaptive",
+        **kwargs,
+    ):
+        super().__init__(
+            n=n,
+            d=d,
+            ident=ident,
+            optimizer=optimizer,
+            optimizer__lr=optimizer__lr,
+            optimizer__momentum=optimizer__momentum,
+            random_state=random_state,
+            module__mu=mu,
+            module="SOE",
             sampling=sampling,
             **kwargs,
         )

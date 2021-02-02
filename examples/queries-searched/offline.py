@@ -14,7 +14,7 @@ import dask.array as da
 DIR = Path(__file__).absolute().parent
 sys.path.append(str(DIR.parent))
 
-from datasets import strange_fruit
+from datasets import alien_egg
 
 
 class NoData(Exception):
@@ -30,7 +30,7 @@ class OfflineSearch:
         answers_per_search=4,
         queries_per_search=1,
         random_state=42,
-        dataset="strange_fruit",
+        dataset="alien_egg",
         noise=False,
         score_factor=1,
     ):
@@ -51,8 +51,8 @@ class OfflineSearch:
     def _answer(self, query: Dict[str, Any]) -> Dict[str, Any]:
         assert "winner" not in query
         dataset = self.dataset
-        if dataset == "strange_fruit":
-            ans = strange_fruit(
+        if dataset == "alien_egg":
+            ans = alien_egg(
                 query["head"],
                 query["left"],
                 query["right"],

@@ -177,9 +177,7 @@ async def process_answer(ans: manager.Answer):
         try:
             rj.bgsave()
         except ResponseError as e:
-            if "Background save already in progress" in str(e):
-                pass
-            else:
+            if "Background save already in progress" not in str(e):
                 raise e
 
     return {"success": True}
