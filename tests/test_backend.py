@@ -61,5 +61,5 @@ def test_run_errors_logged(server, logs):
                 winner = random.choice([q["left"], q["right"]])
                 ans = {"winner": winner, "puid": "", **q}
                 ans["left"] = 12
-                sleep(0.1)
+                sleep(1)
                 server.post("/answer", data=ans)
