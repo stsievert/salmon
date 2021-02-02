@@ -51,44 +51,19 @@ def test_score_accurate():
 
 
 def test_offline_embedding():
-    p = Path(__file__).absolute().parent / "data" / "responses.csv.zip"
-    df = pd.read_csv(str(p))
-    X = df[["head", "winner", "loser"]].to_numpy()
+    n, d = 85, 2
+    max_epochs = 8
 
-    n = int(X.max() + 1)
-    d = 2  # embed into 2 dimensions
+    X = np.random.choice(n, size=(10_000, 3))
 
     X_train, X_test = train_test_split(X, random_state=0, test_size=0.2)
-    model = OfflineEmbedding(n=n, d=d, max_epochs=3)
+    model = OfflineEmbedding(n=n, d=d, max_epochs=max_epochs)
     model.fit(X_train, X_test)
     assert isinstance(model.embedding_, np.ndarray)
     assert model.embedding_.shape == (n, d)
 
     assert isinstance(model.history_, list)
     assert all(isinstance(h, dict) for h in model.history_)
-    assert len(model.history_) == 3 + 1
-
-
-def test_offline_embedding_adaptive():
-    p = Path(__file__).absolute().parent / "data" / "responses.csv.zip"
-    df = pd.read_csv(str(p))
-
-    n = int(df["head"].max() + 1)
-    d = 2
-
-    adaptive = df.alg_ident == "TSTE"
-    cols = ["head", "winner", "loser"]
-    X_test = df.loc[~adaptive, cols].to_numpy()
-    X_train = df.loc[adaptive, cols].to_numpy()
-    X_train = np.concatenate((X_train, ) * 10)
-
-    model = OfflineEmbedding(n=n, d=d, max_epochs=4)
-    model.fit(X_train, X_test)
-    assert isinstance(model.embedding_, np.ndarray)
-    assert model.embedding_.shape == (n, d)
-
-    assert isinstance(model.history_, list)
-    assert all(isinstance(h, dict) for h in model.history_)
-    assert len(model.history_) == 4 + 1
     epochs = model.history_[-1]["num_grad_comps"] / len(X_train)
-    assert 3.7 <= epochs <= 4.3
+    assert max_epochs - 0.3 <= epochs <= max_epochs + 0.3
+    assert len(model.history_) == max_epochs
