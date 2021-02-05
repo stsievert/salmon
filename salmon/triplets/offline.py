@@ -95,6 +95,10 @@ class OfflineEmbedding(BaseEstimator):
             self._partial_fit(X_train, X_test)
             if self.opt_.meta_["num_grad_comps"] >= self.max_epochs * len(X_train):
                 break
+
+        test_score, loss_test = self._score(X_test)
+        self.history_[-1]["score_test"] = test_score
+        self.history_[-1]["loss_test"] = loss_test
         return self
 
     def _score(self, X):
@@ -109,6 +113,8 @@ class OfflineEmbedding(BaseEstimator):
         _print_deadline = time() + self.verbose
         _n_ans = len(X_train)
         k = deepcopy(self._meta["pf_calls"])
+
+        self.opt_.partial_fit(X_train)
         self._meta["pf_calls"] += 1
 
         train_score = self.opt_.score(X_train)
@@ -127,22 +133,19 @@ class OfflineEmbedding(BaseEstimator):
             "verbose": self.verbose,
             "ident": self.ident,
         }
-        datum.update(self.opt_.meta_)
+        datum.update(deepcopy(self.opt_.meta_))
         datum["_epochs"] = datum["num_grad_comps"] / len(X_train)
-        if (self.verbose and k % self.verbose == 0) or abs(self.max_epochs - k) <= 10:
+
+        self.history_.append(datum)
+
+        if (self.verbose and time() >= _print_deadline) or abs(self.max_epochs - k) <= 10:
             test_score, loss_test = self._score(X_test)
             datum["score_test"] = test_score
             datum["loss_test"] = loss_test
             keys = ["ident", "score_test", "elapsed_time", "train_data", "max_epochs"]
-            show = {k: datum[k] for k in keys}
-        self.history_.append(datum)
-
-        if time() >= _print_deadline:
-            show = {k: _print_fmt(v) for k, v in self.history_[-1].items()}
+            show = {k: _print_fmt(datum[k]) for k in keys}
             print(show)
             _print_deadline = time() + self.verbose
-        self.opt_.partial_fit(X_train)
-        datum.update(deepcopy(self.opt_.meta_))
 
         return self
 
