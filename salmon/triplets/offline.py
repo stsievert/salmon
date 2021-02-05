@@ -127,10 +127,14 @@ class OfflineEmbedding(BaseEstimator):
             "verbose": self.verbose,
             "ident": self.ident,
         }
-        if k % 20 == 0 or k <= 100:
+        datum.update(self.opt_.meta)
+        datum["_epochs"] = datum["num_grad_comps"] / len(X_train)
+        if self.verbose and k % self.verbose == 0:
             test_score, loss_test = self._score(X_test)
             datum["score_test"] = test_score
             datum["loss_test"] = loss_test
+            keys = ["ident", "score_test", "elapsed_time", "train_data", "max_epochs"]
+            show = {k: datum[k] for k in keys}
 
         self.history_.append(datum)
 
@@ -139,14 +143,8 @@ class OfflineEmbedding(BaseEstimator):
             print(show)
             _print_deadline = time() + self.verbose
         self.opt_.partial_fit(X_train)
+        datum.update(deepcopy(self.opt_.meta_))
 
-        test_score = self.opt_.score(X_test)
-        self.history_[-1]["score_test"] = test_score
-        module_ = self.opt_.module_
-        loss_test = module_.losses(*module_._get_dists(X_test))
-        self.history_[-1]["loss_test"] = loss_test.mean().item()
-        self.history_[-1].update(deepcopy(self.opt_.meta_))
-        self.history_[-1]["_epochs"] = self.history_[-1]["num_grad_comps"] / _n_ans
         return self
 
     @property
