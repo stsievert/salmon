@@ -127,15 +127,14 @@ class OfflineEmbedding(BaseEstimator):
             "verbose": self.verbose,
             "ident": self.ident,
         }
-        datum.update(self.opt_.meta)
+        datum.update(self.opt_.meta_)
         datum["_epochs"] = datum["num_grad_comps"] / len(X_train)
-        if self.verbose and k % self.verbose == 0:
+        if (self.verbose and k % self.verbose == 0) or abs(self.max_epochs - k) <= 10:
             test_score, loss_test = self._score(X_test)
             datum["score_test"] = test_score
             datum["loss_test"] = loss_test
             keys = ["ident", "score_test", "elapsed_time", "train_data", "max_epochs"]
             show = {k: datum[k] for k in keys}
-
         self.history_.append(datum)
 
         if time() >= _print_deadline:
@@ -151,5 +150,6 @@ class OfflineEmbedding(BaseEstimator):
     def embedding_(self):
         return self.opt_.embedding_
 
-    def score(self):
-        return self.history_[-1]["score_test"]
+    def score(self, X_test):
+        test_score, loss_test = self._score(X_test)
+        return test_score
