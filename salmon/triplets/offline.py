@@ -120,11 +120,16 @@ class OfflineEmbedding(BaseEstimator):
         train_score = self.opt_.score(X_train)
         module_ = self.opt_.module_
         loss_train = module_.losses(*module_._get_dists(X_train)).mean().item()
+
+        prev_time = 0
+        if len(self.history_):
+            prev_time = self.history_[-1]["elapsed_time"]
+
         datum = {
             "score_train": train_score,
             "loss_train": loss_train,
             "k": k,
-            "elapsed_time": time() - _start,
+            "elapsed_time": time() - _start + prev_time,
             "train_data": len(X_train),
             "test_data": len(X_test),
             "n": self.n,
@@ -138,7 +143,7 @@ class OfflineEmbedding(BaseEstimator):
 
         self.history_.append(datum)
 
-        if (self.verbose and time() >= _print_deadline) or abs(self.max_epochs - k) <= 10:
+        if (self.verbose and k % self.verbose == 0) or abs(self.max_epochs - k) <= 10:
             test_score, loss_test = self._score(X_test)
             datum["score_test"] = test_score
             datum["loss_test"] = loss_test
