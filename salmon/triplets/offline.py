@@ -110,7 +110,6 @@ class OfflineEmbedding(BaseEstimator):
 
     def _partial_fit(self, X_train, X_test):
         _start = time()
-        _print_deadline = time() + self.verbose
         _n_ans = len(X_train)
         k = deepcopy(self._meta["pf_calls"])
 
@@ -141,16 +140,19 @@ class OfflineEmbedding(BaseEstimator):
         datum.update(deepcopy(self.opt_.meta_))
         datum["_epochs"] = datum["num_grad_comps"] / len(X_train)
 
-        self.history_.append(datum)
 
-        if (self.verbose and k % self.verbose == 0) or abs(self.max_epochs - k) <= 10:
+        if (
+            (self.verbose and k % self.verbose == 0)
+            or abs(self.max_epochs - k) <= 10
+            or k <= 100
+        ):
             test_score, loss_test = self._score(X_test)
             datum["score_test"] = test_score
             datum["loss_test"] = loss_test
-            keys = ["ident", "score_test", "elapsed_time", "train_data", "max_epochs"]
+            keys = ["ident", "score_test", "elapsed_time", "train_data", "max_epochs", "_epochs"]
             show = {k: _print_fmt(datum[k]) for k in keys}
+            self.history_.append(datum)
             print(show)
-            _print_deadline = time() + self.verbose
 
         return self
 
