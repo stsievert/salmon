@@ -91,8 +91,10 @@ class OfflineEmbedding(BaseEstimator):
     def fit(self, X_train, X_test):
         self.initialize(X_train)
         self._meta["pf_calls"] = 0
-        for _ in itertools.count():
+        for k in itertools.count():
             self._partial_fit(X_train, X_test)
+            if self.verbose and k == 0:
+                print(self.opt_)
             if self.opt_.meta_["num_grad_comps"] >= self.max_epochs * len(X_train):
                 break
 
