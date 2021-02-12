@@ -37,7 +37,7 @@ class OfflineEmbedding(BaseEstimator):
         self,
         n=None,
         d=None,
-        max_epochs=1_000_000,
+        max_epochs=100_000,
         opt=None,
         verbose=20,
         ident="",
@@ -64,12 +64,12 @@ class OfflineEmbedding(BaseEstimator):
                 module__n=self.n,
                 module__d=self.d,
                 random_state=42 ** 3,
-                optimizer=optim.SGD,
-                optimizer__lr=0.01,
+                optimizer=optim.Adadelta,
+                optimizer__lr=0.00005,
                 optimizer__momentum=0.5,
+                optimizer__weight_decay=0e-8,
                 max_epochs=self.max_epochs,
                 shuffle=self.shuffle,
-                optimizer__weight_decay=1e-8,
             )
             kwargs.update(self.kwargs)
             self.opt = OGD(**kwargs)
@@ -140,18 +140,21 @@ class OfflineEmbedding(BaseEstimator):
         datum.update(deepcopy(self.opt_.meta_))
         datum["_epochs"] = datum["num_grad_comps"] / len(X_train)
 
-
-        if (
-            (self.verbose and k % self.verbose == 0)
-            or abs(self.max_epochs - k) <= 10
-            or k <= 100
-        ):
+        if k % 100 == 0 or abs(self.max_epochs - k) <= 10 or k <= 100:
             test_score, loss_test = self._score(X_test)
             datum["score_test"] = test_score
             datum["loss_test"] = loss_test
-            keys = ["ident", "score_test", "elapsed_time", "train_data", "max_epochs", "_epochs"]
+            keys = [
+                "ident",
+                "score_test",
+                "elapsed_time",
+                "train_data",
+                "max_epochs",
+                "_epochs",
+            ]
             show = {k: _print_fmt(datum[k]) for k in keys}
             self.history_.append(datum)
+        if self.verbose and k % self.verbose == 0:
             print(show)
 
         return self
