@@ -63,11 +63,8 @@ class OfflineEmbedding(BaseEstimator):
                 module=noise_model,
                 module__n=self.n,
                 module__d=self.d,
-                random_state=42 ** 3,
+                random_state=42 ** 4,
                 optimizer=optim.Adadelta,
-                optimizer__lr=0.00005,
-                optimizer__momentum=0.5,
-                optimizer__weight_decay=0e-8,
                 max_epochs=self.max_epochs,
                 shuffle=self.shuffle,
             )
@@ -85,18 +82,32 @@ class OfflineEmbedding(BaseEstimator):
         if not (hasattr(self, "initialized_") and self.initialized_):
             self.initialize(X_train)
 
-        self._partial_fit(X_train, X_test)
+        self._partial_fit(X_train)
         return self
 
     def fit(self, X_train, X_test):
         self.initialize(X_train)
         self._meta["pf_calls"] = 0
+        _start = time()
         for k in itertools.count():
-            self._partial_fit(X_train, X_test)
+            self._partial_fit(X_train)
             if self.verbose and k == 0:
-                print(self.opt_)
+                print(self.opt_.optimizer, self.opt_.get_params())
             if self.opt_.meta_["num_grad_comps"] >= self.max_epochs * len(X_train):
                 break
+
+            if k % 20 == 0 or abs(self.max_epochs - k) <= 10 or k <= 100:
+                datum = deepcopy(self._meta)
+                datum.update(self.opt_.meta_)
+                test_score, loss_test = self._score(X_test)
+                datum["score_test"] = test_score
+                datum["loss_test"] = loss_test
+                keys = ["ident", "score_test", "train_data", "max_epochs", "_epochs"]
+                datum["_elapsed_time"] = time() - _start
+                show = {k: _print_fmt(datum[k]) for k in keys}
+                self.history_.append(datum)
+            if self.verbose and k % self.verbose == 0:
+                print(show)
 
         test_score, loss_test = self._score(X_test)
         self.history_[-1]["score_test"] = test_score
@@ -110,13 +121,14 @@ class OfflineEmbedding(BaseEstimator):
             loss = module_.losses(*module_._get_dists(X))
         return score, loss.mean().item()
 
-    def _partial_fit(self, X_train, X_test):
+    def _partial_fit(self, X_train):
         _start = time()
         _n_ans = len(X_train)
         k = deepcopy(self._meta["pf_calls"])
 
         self.opt_.partial_fit(X_train)
         self._meta["pf_calls"] += 1
+        self._meta.update(deepcopy(self.opt_.meta_))
 
         train_score = self.opt_.score(X_train)
         module_ = self.opt_.module_
@@ -132,32 +144,14 @@ class OfflineEmbedding(BaseEstimator):
             "k": k,
             "elapsed_time": time() - _start + prev_time,
             "train_data": len(X_train),
-            "test_data": len(X_test),
             "n": self.n,
             "d": self.d,
             "max_epochs": self.max_epochs,
             "verbose": self.verbose,
             "ident": self.ident,
         }
-        datum.update(deepcopy(self.opt_.meta_))
-        datum["_epochs"] = datum["num_grad_comps"] / len(X_train)
-
-        if k % 100 == 0 or abs(self.max_epochs - k) <= 10 or k <= 100:
-            test_score, loss_test = self._score(X_test)
-            datum["score_test"] = test_score
-            datum["loss_test"] = loss_test
-            keys = [
-                "ident",
-                "score_test",
-                "elapsed_time",
-                "train_data",
-                "max_epochs",
-                "_epochs",
-            ]
-            show = {k: _print_fmt(datum[k]) for k in keys}
-            self.history_.append(datum)
-        if self.verbose and k % self.verbose == 0:
-            print(show)
+        datum["_epochs"] = self._meta["num_grad_comps"] / len(X_train)
+        self._meta.update(datum)
 
         return self
 
@@ -167,4 +161,5 @@ class OfflineEmbedding(BaseEstimator):
 
     def score(self, X_test):
         test_score, loss_test = self._score(X_test)
+
         return test_score
