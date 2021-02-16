@@ -161,9 +161,6 @@ class Embedding(BaseEstimator):
         if not isinstance(answers, np.ndarray):
             answers = np.array(answers, dtype="uint16")
 
-        if self.meta_["num_answers"] <= self.module__n:
-            return self
-
         beg_meta = deepcopy(self.meta_)
         eg_deadline = deepcopy(len(answers) + beg_meta["num_grad_comps"])
         if sample_weight is not None:

@@ -84,7 +84,7 @@ class Adaptive(Runner):
             optimizer__momentum=optimizer__momentum,
             random_state=random_state,
             warm_start=True,
-            max_epochs=1200,
+            max_epochs=500,
             **kwargs,
         )
         self.opt.initialize()
