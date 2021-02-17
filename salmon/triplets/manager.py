@@ -63,6 +63,7 @@ def get_responses(answers: List[Dict[str, Any]], targets, start_time=0):
         out[-1].update({**idxs, **names, **meta})
     return out
 
+
 def random_query(n: int) -> Dict[str, int]:
     rng = np.random.RandomState()
     while True:

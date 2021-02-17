@@ -86,13 +86,10 @@ class Adaptive(Runner):
 
         if scorer == "infogain":
             search = InfoGainScorer(
-                embedding=self.opt.embedding(),
-                probs=self.opt.net_.module_.probs,
+                embedding=self.opt.embedding(), probs=self.opt.net_.module_.probs,
             )
         elif scorer == "uncertainty":
-            search = UncertaintyScorer(
-                embedding=self.opt.embedding(),
-            )
+            search = UncertaintyScorer(embedding=self.opt.embedding(),)
         else:
             raise ValueError(f"scorer={scorer} not in ['uncertainty', 'infogain']")
 
@@ -116,9 +113,7 @@ class Adaptive(Runner):
             return {"head": int(head), "left": int(left), "right": int(right)}, -9999
         return None, -9999
 
-    def get_queries(
-        self, num=None, stop=None
-    ) -> Tuple[List[Query], List[float], dict]:
+    def get_queries(self, num=None, stop=None) -> Tuple[List[Query], List[float], dict]:
         if num:
             queries, scores = self.search.score(num=num)
             return queries[:num], scores[:num]
@@ -310,6 +305,7 @@ class RR(Adaptive):
         self,
         n: int,
         d: int = 2,
+        R: int = 1,
         ident: str = "",
         optimizer: str = "Embedding",
         optimizer__lr=0.075,
@@ -322,6 +318,7 @@ class RR(Adaptive):
         super().__init__(
             n=n,
             d=d,
+            R=R,
             ident=ident,
             optimizer=optimizer,
             optimizer__lr=optimizer__lr,

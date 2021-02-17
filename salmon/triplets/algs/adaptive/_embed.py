@@ -280,11 +280,9 @@ class Damper(Embedding):
     """
     Damp the learning rate.
     """
+
     def __init__(
-        self,
-        initial_batch_size=64,
-        max_batch_size=None,
-        **kwargs,
+        self, initial_batch_size=64, max_batch_size=None, **kwargs,
     ):
         self.initial_batch_size = initial_batch_size
         self.max_batch_size = max_batch_size
@@ -320,7 +318,6 @@ class Damper(Embedding):
 
     def damping(self):
         raise NotImplementedError
-
 
 
 class CntsLRDamper(Damper):

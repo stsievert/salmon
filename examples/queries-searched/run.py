@@ -246,7 +246,7 @@ class Test(BaseEstimator):
 if __name__ == "__main__":
     import salmon
 
-    assert salmon.__version__ == 'v0.4.1+8.geafdca2.dirty'
+    assert salmon.__version__ == "v0.4.1+8.geafdca2.dirty"
 
     queries_per_search = 10
     #  _searches = [[1 * 10 ** i, 2 * 10 ** i, 5 * 10 ** i] for i in range(0, 5 + 1)]

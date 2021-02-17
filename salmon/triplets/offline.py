@@ -15,6 +15,7 @@ from salmon.triplets.algs.adaptive import GD, OGD
 from salmon.triplets.algs.adaptive import CKL
 import salmon.triplets.algs.adaptive as adaptive
 
+
 def _get_params(opt_):
     return {
         k: v
