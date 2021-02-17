@@ -11,9 +11,8 @@ from ...backend.alg import Runner
 logger = logging.getLogger(__name__)
 
 
-def _get_query(n, random_state=None) -> Tuple[int, int, int]:
-    random_state = check_random_state(random_state)
-    a, b, c = random_state.choice(n, size=3, replace=False)
+def _get_query(n) -> Tuple[int, int, int]:
+    a, b, c = np.random.choice(n, size=3, replace=False)
     return int(a), int(b), int(c)
 
 
@@ -25,8 +24,6 @@ class RandomSampling(Runner):
     ----------
     n : int
         Number of objects
-    random_state: Optional[int]
-        Seed for random generateor
     ident : str
         Identifier of the algorithm
 
@@ -35,11 +32,10 @@ class RandomSampling(Runner):
     def __init__(self, n, d=2, random_state=None, ident=""):
         self.n = n
         self.d = d
-        self.random_state = check_random_state(random_state)
         super().__init__(ident=ident)
 
     def get_query(self) -> Tuple[Query, Optional[float]]:
-        h, a, b = _get_query(self.n, random_state=self.random_state)
+        h, a, b = _get_query(self.n)
         query = {"head": int(h), "left": int(a), "right": int(b)}
         return query, -9999
 
