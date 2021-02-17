@@ -126,7 +126,8 @@ async def get_query() -> Dict[str, Union[int, str, float]]:
     idents = rj.jsonget("samplers")
     probs = rj.jsonget("sampling_probs")
 
-    ident = np.random.choice(idents, p=probs)
+    idx = np.random.choice(len(idents), p=probs)
+    ident = idents[idx]
 
     r = httpx.get(f"http://localhost:8400/query-{ident}")
     if r.status_code == 200:

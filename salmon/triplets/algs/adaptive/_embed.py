@@ -70,23 +70,28 @@ class Embedding(BaseEstimator):
         self.random_state_ = check_random_state(self.random_state)
         self.answers_ = np.zeros((1000, 3), dtype="uint16")
 
+        opt_kwargs = {}
+        if self.optimizer == optim.SGD:
+            opt_kwargs = dict(
+                optimizer__lr=self.optimizer__lr,
+                optimizer__momentum=self.optimizer__momentum,
+                optimizer__nesterov=True,
+            )
         self.net_ = NeuralNet(
             module=self.module,
             module__n=self.module__n,
             module__d=self.module__d,
             module__random_state=self.random_state,
             optimizer=self.optimizer,
-            optimizer__lr=self.optimizer__lr,
-            optimizer__momentum=self.optimizer__momentum,
             warm_start=self.warm_start,
             **self.kwargs,
             criterion=Reduce,
             verbose=False,
             batch_size=-1,
             max_epochs=self.max_epochs,
-            optimizer__nesterov=True,
             train_split=None,
             dataset=NumpyDataset,
+            **opt_kwargs,
         ).initialize()
 
     # def converged(self):
@@ -155,9 +160,6 @@ class Embedding(BaseEstimator):
             self.initialize()
         if not isinstance(answers, np.ndarray):
             answers = np.array(answers, dtype="uint16")
-
-        if self.meta_["num_answers"] <= self.module__n:
-            return self
 
         beg_meta = deepcopy(self.meta_)
         eg_deadline = deepcopy(len(answers) + beg_meta["num_grad_comps"])
@@ -252,7 +254,7 @@ class GD(Embedding):
 
 
 class OGD(Embedding):
-    def __init__(self, shuffle=False, dwell=1, **kwargs):
+    def __init__(self, shuffle=True, dwell=1, **kwargs):
         self.shuffle = shuffle
         self.dwell = dwell
         super().__init__(**kwargs)
@@ -280,31 +282,18 @@ class OGD(Embedding):
 
 
 class Damper(Embedding):
+    """
+    Damp the learning rate.
+    """
     def __init__(
         self,
-        module,
-        module__n=85,
-        module__d=2,
-        optimizer=None,
-        optimizer__lr=None,
-        optimizer__momentum=0.9,
-        random_state=None,
         initial_batch_size=64,
         max_batch_size=None,
         **kwargs,
     ):
         self.initial_batch_size = initial_batch_size
         self.max_batch_size = max_batch_size
-        super().__init__(
-            module=module,
-            module__n=module__n,
-            module__d=module__d,
-            optimizer=optimizer,
-            optimizer__lr=optimizer__lr,
-            optimizer__momentum=optimizer__momentum,
-            random_state=random_state,
-            **kwargs,
-        )
+        super().__init__(**kwargs)
 
     def get_train_idx(self, len_ans):
         bs = self.batch_size_
@@ -338,37 +327,8 @@ class Damper(Embedding):
         raise NotImplementedError
 
 
-class LRDamper(Damper):
-    def __init__(
-        self,
-        module,
-        module__n=85,
-        module__d=2,
-        optimizer=None,
-        optimizer__lr=None,
-        optimizer__momentum=0.9,
-        random_state=None,
-        initial_batch_size=128,
-        max_batch_size=None,
-        **kwargs,
-    ):
-        super().__init__(
-            module=module,
-            module__n=module__n,
-            module__d=module__d,
-            optimizer=optimizer,
-            optimizer__lr=optimizer__lr,
-            optimizer__momentum=optimizer__momentum,
-            random_state=random_state,
-            initial_batch_size=initial_batch_size,
-            **kwargs,
-        )
 
-        self.initial_batch_size = initial_batch_size
-        self.max_batch_size = max_batch_size
-
-
-class CntsLRDamper(LRDamper):
+class CntsLRDamper(Damper):
     """
     Decays the learning rate like 1 / (1 + mu) like Thm. 4.7 of [1]_.
 

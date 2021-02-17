@@ -2,7 +2,9 @@ import itertools
 import pandas as pd
 import numpy as np
 from time import time
-from copy import deepcopy
+from copy import deepcopy, copy
+from typing import Dict, Union
+from number import Number
 
 from sklearn.model_selection import train_test_split
 from sklearn.base import BaseEstimator
@@ -13,7 +15,6 @@ from salmon.triplets.algs.adaptive import GD, OGD
 from salmon.triplets.algs.adaptive import CKL
 import salmon.triplets.algs.adaptive as adaptive
 
-
 def _get_params(opt_):
     return {
         k: v
@@ -23,6 +24,7 @@ def _get_params(opt_):
         and k not in ["optimizer", "module", "criterion", "dataset"]
     }
 
+
 def _print_fmt(v):
     if isinstance(v, (str, int)):
         return v
@@ -30,12 +32,13 @@ def _print_fmt(v):
         return f"{v:0.3f}"
     return v
 
+
 class OfflineEmbedding(BaseEstimator):
     def __init__(
         self,
         n=None,
         d=None,
-        max_epochs=1_000_000,
+        max_epochs=100_000,
         opt=None,
         verbose=20,
         ident="",
@@ -61,77 +64,104 @@ class OfflineEmbedding(BaseEstimator):
                 module=noise_model,
                 module__n=self.n,
                 module__d=self.d,
-                random_state=42 ** 3,
-                optimizer=optim.SGD,
-                optimizer__lr=0.02,
-                optimizer__momentum=0.2,
+                random_state=42 ** 4,
+                optimizer=optim.Adadelta,
                 max_epochs=self.max_epochs,
                 shuffle=self.shuffle,
-                optimizer__weight_decay=1e-8,
             )
             kwargs.update(self.kwargs)
             self.opt = OGD(**kwargs)
             # TODO: change defaults for Embedding and children
         self.opt.push(X_train)
+        self._meta: Dict[str, Number] = {"pf_calls": 0}
 
         self.opt_ = self.opt
         self.history_ = []
         self.initialized_ = True
 
-    def fit(self, X_train, X_test):
+    def partial_fit(self, X_train):
         if not (hasattr(self, "initialized_") and self.initialized_):
             self.initialize(X_train)
 
+        self._partial_fit(X_train)
+        return self
+
+    def fit(self, X_train, X_test):
+        self.initialize(X_train)
+        self._meta["pf_calls"] = 0
         _start = time()
-        _print_deadline = time() + self.verbose
-        _n_ans = len(X_train)
         for k in itertools.count():
-            train_score = self.opt_.score(X_train)
-            module_ = self.opt_.module_
-            loss_train = module_.losses(*module_._get_dists(X_train)).mean().item()
-            datum = {
-                "score_train": train_score,
-                "loss_train": loss_train,
-                "k": k,
-                "elapsed_time": time() - _start,
-                "train_data": len(X_train),
-                "test_data": len(X_test),
-                "n": self.n,
-                "d": self.d,
-                "max_epochs": self.max_epochs,
-                "verbose": self.verbose,
-                "ident": self.ident,
-                **deepcopy(self.opt_.meta_),
-            }
-            datum["_epochs"] = datum["num_grad_comps"] / _n_ans
-            if k % 20 == 0 or k <= 100:
-                with torch.no_grad():
-                    test_score = self.opt_.score(X_test)
-                    loss_test = module_.losses(*module_._get_dists(X_test))
-
-                datum["score_test"] = test_score
-                datum["loss_test"] = loss_test.mean().item()
-
-                self.history_.append(datum)
-
+            self._partial_fit(X_train)
+            if self.verbose and k == 0:
+                print(self.opt_.optimizer, self.opt_.get_params())
             if self.opt_.meta_["num_grad_comps"] >= self.max_epochs * len(X_train):
                 break
-            if time() >= _print_deadline:
-                show = {k: _print_fmt(v) for k, v in self.history_[-1].items()}
-                print(show)
-                _print_deadline = time() + self.verbose
-            self.opt_.partial_fit(X_train)
 
-        test_score = self.opt_.score(X_test)
+            if k % 20 == 0 or abs(self.max_epochs - k) <= 10 or k <= 100:
+                datum = deepcopy(self._meta)
+                datum.update(self.opt_.meta_)
+                test_score, loss_test = self._score(X_test)
+                datum["score_test"] = test_score
+                datum["loss_test"] = loss_test
+                keys = ["ident", "score_test", "train_data", "max_epochs", "_epochs"]
+                datum["_elapsed_time"] = time() - _start
+                show = {k: _print_fmt(datum[k]) for k in keys}
+                self.history_.append(datum)
+            if self.verbose and k % self.verbose == 0:
+                print(show)
+
+        test_score, loss_test = self._score(X_test)
         self.history_[-1]["score_test"] = test_score
+        self.history_[-1]["loss_test"] = loss_test
+        return self
+
+    def _score(self, X):
         module_ = self.opt_.module_
-        loss_test = module_.losses(*module_._get_dists(X_test))
-        self.history_[-1]["loss_test"] = loss_test.mean().item()
+        with torch.no_grad():
+            score = self.opt_.score(X)
+            loss = module_.losses(*module_._get_dists(X))
+        return score, float(loss.mean().item())
+
+    def _partial_fit(self, X_train):
+        _start = time()
+        _n_ans = len(X_train)
+        k = deepcopy(self._meta["pf_calls"])
+
+        self.opt_.partial_fit(X_train)
+        self._meta["pf_calls"] += 1
+        self._meta.update(deepcopy(self.opt_.meta_))
+
+        train_score = self.opt_.score(X_train)
+        module_ = self.opt_.module_
+        loss_train = module_.losses(*module_._get_dists(X_train)).mean().item()
+
+        prev_time = 0
+        if len(self.history_):
+            prev_time = self.history_[-1]["elapsed_time"]
+
+        datum = {
+            "score_train": train_score,
+            "loss_train": loss_train,
+            "k": k,
+            "elapsed_time": time() - _start + prev_time,
+            "train_data": len(X_train),
+            "n": self.n,
+            "d": self.d,
+            "max_epochs": self.max_epochs,
+            "verbose": self.verbose,
+            "ident": self.ident,
+        }
+        datum["_epochs"] = self._meta["num_grad_comps"] / len(X_train)
+        self._meta.update(datum)
+
         return self
 
     @property
     def embedding_(self):
         return self.opt_.embedding_
 
-    def score(self):
-        return self.history_[-1]["score_test"]
+    def score(self, X):
+        acc, loss = self._score(X)
+        self._meta["score__acc"] = acc
+        self._meta["score__loss"] = loss
+        return acc

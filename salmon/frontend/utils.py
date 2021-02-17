@@ -3,7 +3,7 @@ import os
 from io import BytesIO
 from pathlib import Path
 from textwrap import dedent
-from typing import Any
+from typing import Any, Union
 from zipfile import ZipFile
 
 import pandas as pd
@@ -18,6 +18,7 @@ class ServerException(HTTPException):
     def __init__(self, msg):
         logger.error(msg)
         raise HTTPException(status_code=500, detail=msg)
+
 
 
 def _extract_zipfile(raw_zipfile, directory="targets"):
@@ -38,7 +39,13 @@ def _extract_zipfile(raw_zipfile, directory="targets"):
                     continue
                 info.filename = os.path.basename(info.filename)
                 myzip.extract(info, path=str(imgs))
-    return list(sorted(list(imgs.glob("**/*"))))
+    fnames = list(imgs.glob("**/*"))
+
+    def _numeric_fname(f: Path) -> Union[float, str]:
+        str_or_digit = str(f.name).split(".")[0]
+        return float(str_or_digit) if str_or_digit.isdigit else f.name
+
+    return list(sorted(fnames, key=_numeric_fname))
 
 
 def _format_target(file: Path):
