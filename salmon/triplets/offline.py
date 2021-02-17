@@ -3,6 +3,8 @@ import pandas as pd
 import numpy as np
 from time import time
 from copy import deepcopy, copy
+from typing import Dict, Union
+from number import Number
 
 from sklearn.model_selection import train_test_split
 from sklearn.base import BaseEstimator
@@ -12,7 +14,6 @@ import torch
 from salmon.triplets.algs.adaptive import GD, OGD
 from salmon.triplets.algs.adaptive import CKL
 import salmon.triplets.algs.adaptive as adaptive
-
 
 def _get_params(opt_):
     return {
@@ -72,13 +73,13 @@ class OfflineEmbedding(BaseEstimator):
             self.opt = OGD(**kwargs)
             # TODO: change defaults for Embedding and children
         self.opt.push(X_train)
-        self._meta = {"pf_calls": 0}
+        self._meta: Dict[str, Number] = {"pf_calls": 0}
 
         self.opt_ = self.opt
         self.history_ = []
         self.initialized_ = True
 
-    def partial_fit(self, X_train, X_test):
+    def partial_fit(self, X_train):
         if not (hasattr(self, "initialized_") and self.initialized_):
             self.initialize(X_train)
 
@@ -119,7 +120,7 @@ class OfflineEmbedding(BaseEstimator):
         with torch.no_grad():
             score = self.opt_.score(X)
             loss = module_.losses(*module_._get_dists(X))
-        return score, loss.mean().item()
+        return score, float(loss.mean().item())
 
     def _partial_fit(self, X_train):
         _start = time()
@@ -159,7 +160,8 @@ class OfflineEmbedding(BaseEstimator):
     def embedding_(self):
         return self.opt_.embedding_
 
-    def score(self, X_test):
-        test_score, loss_test = self._score(X_test)
-
-        return test_score
+    def score(self, X):
+        acc, loss = self._score(X)
+        self._meta["score__acc"] = acc
+        self._meta["score__loss"] = loss
+        return acc
