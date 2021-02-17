@@ -3,7 +3,6 @@ from time import sleep
 from typing import List, Tuple, Optional
 
 import numpy as np
-from sklearn.utils import check_random_state
 
 from .utils import Answer, Query
 from ...backend.alg import Runner
@@ -29,7 +28,7 @@ class RandomSampling(Runner):
 
     """
 
-    def __init__(self, n, d=2, random_state=None, ident=""):
+    def __init__(self, n, d=2, ident=""):
         self.n = n
         self.d = d
         super().__init__(ident=ident)

@@ -112,7 +112,6 @@ class Runner:
                     f_search = submit(
                         "get_queries",
                         self_future,
-                        random_state=k,
                         stop=done,
                         workers=workers[2],
                     )

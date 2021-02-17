@@ -12,7 +12,6 @@ from torch.nn.modules.loss import _Loss
 from torch.utils.data import TensorDataset
 
 from sklearn.base import BaseEstimator
-from sklearn.utils import check_random_state
 from scipy.special import binom
 from skorch.utils import is_dataset
 
@@ -46,7 +45,6 @@ class Embedding(BaseEstimator):
         optimizer=optim.SGD,
         optimizer__lr=0.04,
         optimizer__momentum=0.9,
-        random_state=None,
         warm_start=True,
         max_epochs=100,
         initial_batch_size=512,
@@ -58,7 +56,6 @@ class Embedding(BaseEstimator):
         self.optimizer = optimizer
         self.optimizer__lr = optimizer__lr
         self.optimizer__momentum = optimizer__momentum
-        self.random_state = random_state
         self.warm_start = warm_start
         self.max_epochs = max_epochs
         self.initial_batch_size = initial_batch_size
@@ -67,7 +64,6 @@ class Embedding(BaseEstimator):
     def initialize(self):
         self.meta_ = {"num_answers": 0, "model_updates": 0, "num_grad_comps": 0}
         self.initialized_ = True
-        self.random_state_ = check_random_state(self.random_state)
         self.answers_ = np.zeros((1000, 3), dtype="uint16")
 
         opt_kwargs = {}
@@ -81,7 +77,6 @@ class Embedding(BaseEstimator):
             module=self.module,
             module__n=self.module__n,
             module__d=self.module__d,
-            module__random_state=self.random_state,
             optimizer=self.optimizer,
             warm_start=self.warm_start,
             **self.kwargs,
@@ -244,7 +239,7 @@ class Embedding(BaseEstimator):
 
     def get_train_idx(self, n_ans):
         bs = min(n_ans, self.initial_batch_size)
-        idx = self.random_state_.choice(n_ans, replace=False, size=bs)
+        idx = np.random.choice(n_ans, replace=False, size=bs)
         return idx
 
 
@@ -262,7 +257,7 @@ class OGD(Embedding):
     def get_train_idx(self, n_ans):
         bs = self.initial_batch_size + int(self.meta_["model_updates"] / self.dwell)
         n_idx = min(bs, n_ans)
-        rng = self.random_state_
+        rng = np.random.RandomState()
 
         if self.shuffle:
             return rng.choice(n_ans, size=n_idx, replace=True)
@@ -297,7 +292,7 @@ class Damper(Embedding):
 
     def get_train_idx(self, len_ans):
         bs = self.batch_size_
-        idx_train = self.random_state_.choice(len_ans, size=bs)
+        idx_train = np.random.choice(len_ans, size=bs)
         return idx_train
 
     def initialize(self):
@@ -359,7 +354,6 @@ class PadaDampG(Damper):
         optimizer=None,
         optimizer__lr=None,
         optimizer__momentum=0.9,
-        random_state=None,
         initial_batch_size=64,
         max_batch_size=None,
         growth_factor=1.01,
@@ -373,7 +367,6 @@ class PadaDampG(Damper):
             optimizer=optimizer,
             optimizer__lr=optimizer__lr,
             optimizer__momentum=optimizer__momentum,
-            random_state=random_state,
             initial_batch_size=initial_batch_size,
             max_batch_size=max_batch_size,
             **kwargs,
@@ -400,7 +393,6 @@ class GeoDamp(Damper):
         optimizer=None,
         optimizer__lr=None,
         optimizer__momentum=0.9,
-        random_state=None,
         initial_batch_size=64,
         max_batch_size=None,
         dwell=10,
@@ -414,7 +406,6 @@ class GeoDamp(Damper):
             optimizer=optimizer,
             optimizer__lr=optimizer__lr,
             optimizer__momentum=optimizer__momentum,
-            random_state=random_state,
             initial_batch_size=initial_batch_size,
             max_batch_size=max_batch_size,
             **kwargs,

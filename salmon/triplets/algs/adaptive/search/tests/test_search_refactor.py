@@ -45,7 +45,7 @@ def test_score_refactor(seed=None):
     for i in range(n):
         tau[i] /= tau[i].sum()
 
-    queries = [search.random_query(n, random_state=rng) for _ in range(100)]
+    queries = [search.random_query(n) for _ in range(100)]
     # old_score has been refactored to take in [h, w, l]
     old_scores = [_score_next([w, l, h], tau, X) for h, w, l in queries]
 
@@ -214,8 +214,8 @@ def test_salmon_integration():
     n, d = 10, 2
     rng = np.random.RandomState(42)
     X = rng.randn(n, d).astype("float32")
-    est = TSTE(n, random_state=42)
-    search = InfoGainScorer(random_state=42, embedding=X, probs=est.probs)
+    est = TSTE(n)
+    search = InfoGainScorer(embedding=X, probs=est.probs)
     history = [_simple_triplet(n, rng) for _ in range(1000)]
     search.push(history)
     queries, scores = search.score()
@@ -253,8 +253,8 @@ def test_salmon_integration():
 def test_salmon_posterior_refactor(n=30, d=2):
     rng = np.random.RandomState(42)
     X = rng.randn(n, d).astype("float32")
-    est = TSTE(n, random_state=42)
-    search = InfoGainScorer(random_state=42, embedding=X, probs=est.probs)
+    est = TSTE(n)
+    search = InfoGainScorer(embedding=X, probs=est.probs)
     history = [_simple_triplet(n, rng) for _ in range(2000)]
     search.push(history)
     queries, scores = search.score()

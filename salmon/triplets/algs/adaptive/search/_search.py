@@ -5,7 +5,6 @@ from time import time
 
 import numpy as np
 import numpy.linalg as LA
-from sklearn.utils import check_random_state
 import torch
 
 try:
@@ -16,12 +15,12 @@ except:
 Array = Union[np.ndarray, torch.Tensor]
 
 
-def random_query(n, random_state=None):
-    random_state = check_random_state(random_state)
+def random_query(n):
+    rng = np.random.RandomState()
     while True:
-        a = random_state.choice(n)
-        b = random_state.choice(n)
-        c = random_state.choice(n)
+        a = rng.choice(n)
+        b = rng.choice(n)
+        c = rng.choice(n)
         if a != b and b != c and c != a:
             break
     return [a, b, c]

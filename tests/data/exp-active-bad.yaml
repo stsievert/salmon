@@ -9,4 +9,3 @@ max_queries: 20
 samplers:
   foobar:
     class: FooBar
-    random_state: 42

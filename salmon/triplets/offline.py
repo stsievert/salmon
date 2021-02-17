@@ -4,7 +4,7 @@ import numpy as np
 from time import time
 from copy import deepcopy, copy
 from typing import Dict, Union
-from number import Number
+from numbers import Number
 
 from sklearn.model_selection import train_test_split
 from sklearn.base import BaseEstimator
@@ -64,7 +64,6 @@ class OfflineEmbedding(BaseEstimator):
                 module=noise_model,
                 module__n=self.n,
                 module__d=self.d,
-                random_state=42 ** 4,
                 optimizer=optim.Adadelta,
                 max_epochs=self.max_epochs,
                 shuffle=self.shuffle,

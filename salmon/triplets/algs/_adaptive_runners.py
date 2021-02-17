@@ -9,7 +9,6 @@ import torch.optim
 import numpy as np
 import numpy.linalg as LA
 import pandas as pd
-from sklearn.utils import check_random_state
 
 import salmon.triplets.algs.adaptive as adaptive
 from salmon.triplets.algs.adaptive import InfoGainScorer, UncertaintyScorer
@@ -34,8 +33,6 @@ PARAMS = """
         be positive.
     optimizer__momentum : float
         The momentum to use with the optimizer.
-    random_state : int, None, np.random.RandomState
-        The seed used to generate psuedo-random numbers.
     sampling : str
         "adaptive" by default. Use ``sampling="random"`` to perform random
         sampling with the same optimization method and noise model.
@@ -52,7 +49,6 @@ class Adaptive(Runner):
         optimizer: str = "Embedding",
         optimizer__lr=0.050,
         optimizer__momentum=0.9,
-        random_state=None,
         R: float = 10,
         sampling: str = "adaptive",
         scorer: str = "infogain",
@@ -82,7 +78,6 @@ class Adaptive(Runner):
             optimizer=torch.optim.SGD,
             optimizer__lr=optimizer__lr,
             optimizer__momentum=optimizer__momentum,
-            random_state=random_state,
             warm_start=True,
             max_epochs=500,
             **kwargs,
@@ -93,16 +88,14 @@ class Adaptive(Runner):
             search = InfoGainScorer(
                 embedding=self.opt.embedding(),
                 probs=self.opt.net_.module_.probs,
-                random_state=random_state,
             )
         elif scorer == "uncertainty":
             search = UncertaintyScorer(
-                embedding=self.opt.embedding(), random_state=random_state,
+                embedding=self.opt.embedding(),
             )
         else:
             raise ValueError(f"scorer={scorer} not in ['uncertainty', 'infogain']")
 
-        self.random_state_ = check_random_state(random_state)
         self.search = search
         self.search.push([])
         self.meta = {"num_ans": 0, "model_updates": 0, "process_answers_calls": 0}
@@ -111,7 +104,6 @@ class Adaptive(Runner):
             "d": d,
             "R": R,
             "sampling": sampling,
-            "random_state": random_state,
             "optimizer": optimizer,
             "optimizer__lr": optimizer__lr,
             "optimizer__momentum": optimizer__momentum,
@@ -120,28 +112,25 @@ class Adaptive(Runner):
 
     def get_query(self) -> Tuple[Optional[Dict[str, int]], Optional[float]]:
         if (self.meta["num_ans"] <= self.R * self.n) or self.sampling == "random":
-            head, left, right = _random_query(self.n, random_state=self.random_state_)
+            head, left, right = _random_query(self.n)
             return {"head": int(head), "left": int(left), "right": int(right)}, -9999
         return None, -9999
 
     def get_queries(
-        self, num=None, stop=None, random_state=None
+        self, num=None, stop=None
     ) -> Tuple[List[Query], List[float], dict]:
         if num:
-            queries, scores = self.search.score(num=num, random_state=random_state)
+            queries, scores = self.search.score(num=num)
             return queries[:num], scores[:num]
         ret_queries = []
         ret_scores = []
-        rng = None
-        if random_state:
-            rng = check_random_state(random_state)
         n_searched = 0
         for pwr in range(12, 40 + 1):
             # I think there's a memory leak in search.score -- Dask workers
             # kept on dying on get_queries. min(pwr, 16) to fix that (and
             # verified too).
             pwr = min(pwr, 16)
-            queries, scores = self.search.score(num=2 ** pwr, random_state=rng)
+            queries, scores = self.search.score(num=2 ** pwr)
             n_searched += len(queries)
             ret_queries.append(queries)
             ret_scores.append(scores)
@@ -252,8 +241,6 @@ class TSTE(Adaptive):
         be positive.
     optimizer__momentum : float
         The momentum to use with the optimizer.
-    random_state : int, None, np.random.RandomState
-        The seed used to generate psuedo-random numbers.
     sampling : str
         "adaptive" by default. Use ``sampling="random"`` to perform random
         sampling with the same optimization method and noise model.
@@ -298,7 +285,6 @@ class TSTE(Adaptive):
         optimizer: str = "Embedding",
         optimizer__lr=0.075,
         optimizer__momentum=0.9,
-        random_state=None,
         sampling="adaptive",
         scorer="infogain",
         alpha=1,
@@ -311,7 +297,6 @@ class TSTE(Adaptive):
             optimizer=optimizer,
             optimizer__lr=optimizer__lr,
             optimizer__momentum=optimizer__momentum,
-            random_state=random_state,
             module__alpha=alpha,
             module="TSTE",
             sampling=sampling,
@@ -329,7 +314,6 @@ class RR(Adaptive):
         optimizer: str = "Embedding",
         optimizer__lr=0.075,
         optimizer__momentum=0.9,
-        random_state=None,
         sampling="adaptive",
         scorer="infogain",
         module="TSTE",
@@ -342,7 +326,6 @@ class RR(Adaptive):
             optimizer=optimizer,
             optimizer__lr=optimizer__lr,
             optimizer__momentum=optimizer__momentum,
-            random_state=random_state,
             module=module,
             sampling=sampling,
             scorer=scorer,
@@ -358,10 +341,10 @@ class RR(Adaptive):
         top_scores_by_head = df.groupby(by="h")["score"].nlargest(n=5)
         top_idx = top_scores_by_head.index.droplevel(0)
 
-        top_queries = df.loc[top_idx].sample(random_state=self.random_state_, frac=1)
+        top_queries = df.loc[top_idx].sample(frac=1)
         posted = top_queries[["h", "l", "r"]].values.astype("int64")
         r_scores = 10 + np.linspace(0, 1, num=len(posted))
-        self.random_state_.shuffle(r_scores)
+        np.random.shuffle(r_scores)
 
         meta.update({"n_queries_scored_(complete)": len(df)})
         return posted, r_scores, meta
@@ -384,8 +367,6 @@ class STE(Adaptive):
         be positive.
     optimizer__momentum : float
         The momentum to use with the optimizer.
-    random_state : int, None, np.random.RandomState
-        The seed used to generate psuedo-random numbers.
     sampling : str
         "adaptive" by default. Use ``sampling="random"`` to perform random
         sampling with the same optimization method and noise model.
@@ -405,7 +386,6 @@ class STE(Adaptive):
         optimizer: str = "Embedding",
         optimizer__lr=0.075,
         optimizer__momentum=0.9,
-        random_state=None,
         sampling="adaptive",
         scorer="infogain",
         **kwargs,
@@ -417,7 +397,6 @@ class STE(Adaptive):
             optimizer=optimizer,
             optimizer__lr=optimizer__lr,
             optimizer__momentum=optimizer__momentum,
-            random_state=random_state,
             module="STE",
             sampling=sampling,
             scorer=scorer,
@@ -442,8 +421,6 @@ class GNMDS(Adaptive):
         be positive.
     optimizer__momentum : float
         The momentum to use with the optimizer.
-    random_state : int, None, np.random.RandomState
-        The seed used to generate psuedo-random numbers.
     sampling : str
         "adaptive" by default. Use ``sampling="random"`` to perform random
         sampling with the same optimization method and noise model.
@@ -463,7 +440,6 @@ class GNMDS(Adaptive):
         optimizer: str = "Embedding",
         optimizer__lr=0.075,
         optimizer__momentum=0.9,
-        random_state=None,
         sampling="adaptive",
         scorer="uncertainty",
         **kwargs,
@@ -475,7 +451,6 @@ class GNMDS(Adaptive):
             optimizer=optimizer,
             optimizer__lr=optimizer__lr,
             optimizer__momentum=optimizer__momentum,
-            random_state=random_state,
             module="GNMDS",
             sampling=sampling,
             **kwargs,
@@ -501,8 +476,6 @@ class CKL(Adaptive):
         be positive.
     optimizer__momentum : float
         The momentum to use with the optimizer.
-    random_state : int, None, np.random.RandomState
-        The seed used to generate psuedo-random numbers.
     sampling : str
         "adaptive" by default. Use ``sampling="random"`` to perform random
         sampling with the same optimization method and noise model.
@@ -516,7 +489,6 @@ class CKL(Adaptive):
         optimizer: str = "Embedding",
         optimizer__lr=0.075,
         optimizer__momentum=0.9,
-        random_state=None,
         mu=1,
         sampling="adaptive",
         **kwargs,
@@ -528,7 +500,6 @@ class CKL(Adaptive):
             optimizer=optimizer,
             optimizer__lr=optimizer__lr,
             optimizer__momentum=optimizer__momentum,
-            random_state=random_state,
             module__mu=mu,
             module="CKL",
             sampling=sampling,
@@ -555,8 +526,6 @@ class SOE(Adaptive):
         be positive.
     optimizer__momentum : float
         The momentum to use with the optimizer.
-    random_state : int, None, np.random.RandomState
-        The seed used to generate psuedo-random numbers.
     sampling : str
         "adaptive" by default. Use ``sampling="random"`` to perform random
         sampling with the same optimization method and noise model.
@@ -570,7 +539,6 @@ class SOE(Adaptive):
         optimizer: str = "Embedding",
         optimizer__lr=0.075,
         optimizer__momentum=0.9,
-        random_state=None,
         mu=1,
         sampling="adaptive",
         **kwargs,
@@ -582,7 +550,6 @@ class SOE(Adaptive):
             optimizer=optimizer,
             optimizer__lr=optimizer__lr,
             optimizer__momentum=optimizer__momentum,
-            random_state=random_state,
             module__mu=mu,
             module="SOE",
             sampling=sampling,
