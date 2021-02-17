@@ -124,6 +124,8 @@ class Adaptive(Runner):
             # I think there's a memory leak in search.score -- Dask workers
             # kept on dying on get_queries. min(pwr, 16) to fix that (and
             # verified too).
+            #
+            # pwr in range(12, 41) => about 1.7 million queries searched
             pwr = min(pwr, 16)
             queries, scores = self.search.score(num=2 ** pwr)
             n_searched += len(queries)
@@ -134,7 +136,14 @@ class Adaptive(Runner):
             # let's limit it to be 32MB in size
             if (n_searched >= 2e6) or (stop is not None and stop.is_set()):
                 break
-        return np.concatenate(ret_queries), np.concatenate(ret_scores), {}
+        queries = np.concatenate(ret_queries).astype(int)
+        scores = np.concatenate(ret_scores)
+
+        ## Rest of this function takes about 450ms
+        df = pd.DataFrame(queries)
+        hashes = pd.util.hash_pandas_object(df, index=False)
+        _, idx = np.unique(hashes.to_numpy(), return_index=True)
+        return queries[idx], scores[idx], {}
 
     def process_answers(self, answers: List[Answer]):
         if not len(answers):
