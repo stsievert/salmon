@@ -28,15 +28,7 @@ the same confidence.
    getting-started
    monitoring
    offline
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Algorithms
-
    algorithms
-   adaptive
-   api
-   developers
 
 .. toctree::
    :maxdepth: 2
@@ -44,6 +36,14 @@ the same confidence.
 
    benchmarks/server
    benchmarks/adaptive
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Algorithm Developers
+
+   adaptive
+   developers
+   api
 
 
 Indices and tables

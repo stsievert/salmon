@@ -10,7 +10,7 @@ the following options:
 2. Upload of a YAML file describing experiment, and ZIP file for the targets.
 3. Upload of a database dump from Salmon.
 
-.. warning::
+.. note::
 
    By default, Salmon does not support HTTPS. Make sure the URL begins with
    ``http://``, not ``https://``.
@@ -35,7 +35,7 @@ page:
 
    This image is almost certainly out of date.
 
-.. warning::
+.. note::
 
    Please include the version in any bug reports or feature requests.
    The version number is available at ``http://[url]:8421/docs`` and should look

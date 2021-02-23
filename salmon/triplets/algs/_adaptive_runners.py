@@ -310,6 +310,49 @@ class TSTE(Adaptive):
 
 
 class RR(Adaptive):
+    """
+    A randomized round robin algorithm.
+
+    Parameters
+    ----------
+    d : int
+        Embedding dimension.
+    R: int = 1
+        Adaptive sampling starts are ``R * n`` response have been received.
+    optimizer : str
+        The optimizer underlying the embedding. This method specifies how to
+        change the batch size. Choices are
+        ``["Embedding", "PadaDampG", "GeoDamp"]``.
+    optimizer__lr : float
+        Which learning rate to use with the optimizer. The learning rate must
+        be positive.
+    optimizer__momentum : float
+        The momentum to use with the optimizer.
+    scorer : str, (default ``"infogain"``)
+        The scoring method to use.
+    module : str, optional (default ``"TSTE"``).
+        The noise model to use.
+    kwargs : dict
+        Arguments to pass to :ref:`~Adaptive`.
+
+
+    Notes
+    -----
+    This algorithm is proposed in [1]_. They propose this algorithm because
+    "scoring every triplet is prohibitvely expensive." It's also useful because it adds some randomness to the queries. This presents itself in a couple use cases:
+
+    * When models don't update instantly (common). In that case, the user will
+      query the database for multiple queries, and queries with the same head
+      object may be returned.
+    * When the noise model does not precisely model the human responses. In
+      this case, the most informative query will
+
+    References
+    ----------
+    .. [1] Heim, Eric, et al. "Active perceptual similarity modeling withi
+           auxiliary information." arXiv preprint arXiv:1511.02254 (2015). https://arxiv.org/abs/1511.02254
+
+    """
     def __init__(
         self,
         n: int,

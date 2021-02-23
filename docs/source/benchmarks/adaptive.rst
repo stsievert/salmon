@@ -1,3 +1,5 @@
+.. _experiments:
+
 Adaptive algorithms
 ===================
 
@@ -34,6 +36,28 @@ software to deploy triplet queries to crowdsourced audiences: in NEXT's
 introduction paper, [2]_ the authors found "no evidence for gains from adaptive
 sampling" for (nearly) the same problem. [#same]_
 
+
+Simulation with human responses
+-------------------------------
+
+The Zappos shoe dataset has :math:`n=85` shoes, and asks every possible triplet
+4 times to crowdsourcing users. Let's run a simulation with Salmon on that that
+dataset. We'll embed into :math:`d = 3` dimensions, and have a response rate of
+about 2.5 response/sec (5 users with an average response time of 2.5 seconds).
+
+Let's again compare adaptive sampling and random sampling:
+
+.. image:: imgs/zappos.png
+   :width: 600px
+   :align: center
+
+The likelihood of a true response conveys "margin by which the models adhere to
+all responses." [1]_ The performance above mirrors the performance by Heim et
+al. in their Figure 3. [1]_
+
+
+.. rubric:: References
+
 .. [1] "Active Perceptual Similarity Modeling with Auxiliary Information" by E.
        Heim, M. Berger, and L. Seversky, and M. Hauskrecht. 2015.
        https://arxiv.org/pdf/1511.02254.pdf
@@ -44,47 +68,13 @@ sampling" for (nearly) the same problem. [#same]_
        http://papers.nips.cc/paper/5868-next-a-system-for-real-world-development-evaluation-and-application-of-active-learning.pdf
 
 
-Search efficacy
----------------
-
-Adaptive algorithms are more adaptive if they search more queries. Random sampling
-can be thought of as an adaptive algorithm that only searches over one possible
-query. An algorithm that searches over 50,000 queries is more adaptive than a
-algorithm that can only search 50 queries.
-
-How much do these searches matter? Let's run another experiment with this setup:
-
-* Dataset: strange fruit dataset. The response model will be determined from human
-  responses. There will be :math:`n=200` objects and that will be embedded into :math:`d=2`
-  dimensions.
-* Let's measure **search efficacy.** To aid this, let's say model updates run instantly.
-  That means we'll run offline using essentially this code:
-
-.. code-block:: python
-
-   responses_per_search = 10
-   n_search = 10
-   alg = TSTE(n=n, d=d, ...)
-
-   for k in itertools.count():
-       queries, scores = alg.score_queries(num=n_search * responses_per_search)
-       queries = _get_top_N_queries(queries, scores, N=responses_per_search)
-       answers = [_get_answer(query) for query in queries]
-
-       alg.partial_fit(answers)  # performs 1 pass over all answers received thus far
-
-With that, we see this performance:
-
-.. image:: imgs/search-efficacy.png
-   :width: 600px
-   :align: center
-
-If you only have the budget for 4,000 queries the most complete search will reach about 82% accuracy. The least complete search will only reach about 60% accuracy.
-
-If you want to reach 80% accuracy, the most complete searches will require about 3,800 queries. The least complete searches will require 5,100 queries.
 
 .. rubric:: Footnotes
 
 .. [#same] Both experiment use :math:`n=30` objects and embed into :math:`d=2`
            dimensions. The human noise model used in the Salmon experiments is
-           generated from the responses collected during NEXT's experiment.
+           generated from the responses collected during NEXT's experiment. The
+           are the same experiment, up to different responses (NEXT
+           actually runs crowdsourcing experiments; Salmon's noise model is
+           generated from those responses).
+

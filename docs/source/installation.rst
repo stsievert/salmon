@@ -8,10 +8,6 @@ machine. After you get Salmon running, detail on how to launch experiments in
 Experimentalist
 ---------------
 
-.. warning::
-
-   This process is only ready for testing. It is **not** ready for deployment.
-
 1. Sign into Amazon AWS (http://aws.amazon.com/)
 2. Select the "Oregon" region (or ``us-west-2``) in the upper right.
 3. Go to Amazon EC2
@@ -69,7 +65,7 @@ To start using Salmon, these endpoints will be available:
      Download all files when stopping or terminating the machine -- especially
      the responses and experiment file.
 
-.. warning::
+.. note::
 
    If you have an issue with the machine running Salmon, be sure to include the
    logs when contacting the Salmon developers. They'd also appreciate it if
