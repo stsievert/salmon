@@ -8,6 +8,10 @@ about a random question like random sampling. This can mean that higher
 accuracies are reached sooner, or that less human responses are required to
 reach a particular accuracy.
 
+.. note::
+
+   Complete details on these experiments are available at https://github.com/stsievert/salmon-experiments
+
 Synthetic simulation
 --------------------
 
