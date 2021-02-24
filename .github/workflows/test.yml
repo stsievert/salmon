@@ -28,6 +28,8 @@ jobs:
           pwd
           echo "Running `echo $USER`..."
           echo $USER
+          echo "Running mkdir..."
+          mkdir ./salmon/dask-worker-space
           echo "Running `ls`..."
           ls
     - name: Prepare for docker build...
