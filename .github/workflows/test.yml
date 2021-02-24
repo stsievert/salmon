@@ -29,14 +29,19 @@ jobs:
       run: pip install -e .
     - name: Debug info
       run: |
+          echo "Running `pwd`..."
           pwd
-          ls
+          echo "Running `echo $USER`..."
           echo $USER
-    - name: Build Salmon server w/ Docker
+          echo "Running `ls`..."
+          ls
+    - name: Prepare for docker build...
       run: |
           chmod +x launch.sh
           # chown -R -H -L $USER:$USER .
           sudo chown -R -H -L $USER:$USER .
+    - name: Build Salmon server w/ Docker
+      run: |
           export SALMON_NO_AUTH=1
           docker-compose up &
           until curl 127.0.0.1:8421 > /dev/null 2>&1; do :; done  # wait for container to start
