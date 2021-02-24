@@ -1,5 +1,11 @@
 name: Build and upload docs
 
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
 jobs:
   deploy:
 
