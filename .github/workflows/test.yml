@@ -27,10 +27,14 @@ jobs:
         conda env update --file salmon.yml --name base
     - name: Install Salmon
       run: pip install -e .
+    - name: Debug info
+      run: |
+          pwd
+          ls
+          echo $USER
     - name: Build Salmon server w/ Docker
       run: |
           chmod +x launch.sh
-          pwd
           # chown -R -H -L $USER:$USER .
           sudo chown -R -H -L $USER:$USER .
           export SALMON_NO_AUTH=1
