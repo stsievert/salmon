@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>salmon.backend.alg.Runner &mdash; Salmon v0.4.5+4.gf9eae7e.dirty documentation</title>
+  <title>salmon.backend.alg.Runner &mdash; Salmon 0+untagged.1.g72dee5a documentation</title>
   
 
   
@@ -33,7 +33,6 @@
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -188,7 +187,7 @@
 <h1><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.backend.alg</span></code>.Runner<a class="headerlink" href="#salmon-backend-alg-runner" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt id="salmon.backend.alg.Runner">
-<em class="property">class </em><code class="sig-prename descclassname">salmon.backend.alg.</code><code class="sig-name descname">Runner</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ident</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.backend.alg.Runner" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">salmon.backend.alg.</span></code><code class="sig-name descname"><span class="pre">Runner</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ident</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.backend.alg.Runner" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run a sampling algorithm. Provides hooks to connect with the database and
 the Dask cluster.</p>
 <dl class="field-list simple">
@@ -255,13 +254,13 @@ in the database.</p>
 </table>
 <dl class="py method">
 <dt id="salmon.backend.alg.Runner.clear">
-<em class="property">property </em><code class="sig-name descname">clear</code><a class="headerlink" href="#salmon.backend.alg.Runner.clear" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">clear</span></code><a class="headerlink" href="#salmon.backend.alg.Runner.clear" title="Permalink to this definition">¶</a></dt>
 <dd><p>Should the queries be cleared from the database?</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="salmon.backend.alg.Runner.get_model">
-<code class="sig-name descname">get_model</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Dict<span class="p">[</span>str<span class="p">, </span>Any<span class="p">]</span><a class="headerlink" href="#salmon.backend.alg.Runner.get_model" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">get_model</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#salmon.backend.alg.Runner.get_model" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the model underlying the algorithm.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -276,7 +275,7 @@ dashboard or with an HTTP get request.</p>
 
 <dl class="py method">
 <dt id="salmon.backend.alg.Runner.process_answers">
-<code class="sig-name descname">process_answers</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">answers</span><span class="p">:</span> <span class="n">List<span class="p">[</span>Answer<span class="p">]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.backend.alg.Runner.process_answers" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">process_answers</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">answers</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Answer</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.backend.alg.Runner.process_answers" title="Permalink to this definition">¶</a></dt>
 <dd><p>Process answers.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -298,14 +297,14 @@ dashboard or with an HTTP get request.</p>
 
 <dl class="py method">
 <dt id="salmon.backend.alg.Runner.reset">
-<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">client</span></em>, <em class="sig-param"><span class="n">rj</span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.backend.alg.Runner.reset" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">reset</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.backend.alg.Runner.reset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stop the algorithm. The algorithm will be deleted shortly after
 this function is called.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="salmon.backend.alg.Runner.run">
-<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">client</span><span class="p">:</span> <span class="n">distributed.client.Client</span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.backend.alg.Runner.run" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">run</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">distributed.client.Client</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.backend.alg.Runner.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run the algorithm.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
