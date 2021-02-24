@@ -7,11 +7,13 @@ on:
     branches: [ master ]
 
 jobs:
-  deploy:
+
+  build:
 
     runs-on: ubuntu-latest
 
     steps:
+    - uses: actions/checkout@v2
     - name: Setup Python 3.7
       uses: actions/setup-python@v2
       with:
