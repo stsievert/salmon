@@ -31,7 +31,7 @@ jobs:
       run: |
           chmod +x launch.sh
           pwd
-          chown -R -H -L $USER:$USER .
+          # chown -R -H -L $USER:$USER .
           sudo chown -R -H -L $USER:$USER .
           export SALMON_NO_AUTH=1
           docker-compose up &
