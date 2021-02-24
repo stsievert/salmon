@@ -37,6 +37,7 @@ jobs:
           chmod +x launch.sh
           # chown -R -H -L $USER:$USER .
           sudo chown -R -H -L $USER:$USER .
+          sudo chown -R -H -L $USER:$USER salmon docs tests
     - name: Install dependencies
       run: |
         conda env update --file salmon.yml --name base
