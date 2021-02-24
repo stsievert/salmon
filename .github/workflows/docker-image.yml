@@ -1,0 +1,21 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - run: pip install -r requirements.txt
+    - run: pip install -e .
+    - name: Build the Docker image
+      run: chmod +x launch.sh; docker-compose up
+    - run: pytest
