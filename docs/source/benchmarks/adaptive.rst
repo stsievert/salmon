@@ -10,7 +10,8 @@ reach a particular accuracy.
 
 .. note::
 
-   Complete details on these experiments are available at https://github.com/stsievert/salmon-experiments
+   This page shows results of experiments run with Salmon.
+   For complete details, see https://github.com/stsievert/salmon-experiments
 
 Synthetic simulation
 --------------------
