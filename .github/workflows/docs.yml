@@ -13,15 +13,20 @@ jobs:
 
     steps:
 
+    steps:
     - name: Setup Python 3.7
       uses: actions/setup-python@v2
       with:
         python-version: 3.7
-    - run: ls
+    - name: Add conda to system path
+      run: |
+        # $CONDA is an environment variable pointing to the root of the miniconda directory
+        echo $CONDA/bin >> $GITHUB_PATH
     - name: Install dependencies
       run: |
-        pip install -r requirements.txt
-        pip install -e .
+        conda env update --file salmon.yml --name base
+    - name: Install Salmon
+      run: pip install -e .
     - name: Build docs
       run: |
         cd docs
