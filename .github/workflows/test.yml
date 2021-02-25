@@ -43,7 +43,6 @@ jobs:
     - name: Install dependencies
       run: |
         conda env update --file salmon.yml --name base
-    - run: which pytest
     - name: Install Salmon
       run: pip install -e .
     - uses: docker/setup-buildx-action@v1
