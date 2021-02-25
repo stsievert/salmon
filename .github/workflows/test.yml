@@ -51,7 +51,7 @@ jobs:
     - name: Build Salmon server w/ Docker
       run: |
           export SALMON_NO_AUTH=1
-          docker-compose up &
+          sudo docker-compose up &
           until curl 127.0.0.1:8421 > /dev/null 2>&1; do :; done  # wait for container to start
           docker ps
     - name: Run tests
