@@ -29,6 +29,7 @@ jobs:
           echo $USER
           echo "\nRunning chown..."
           sudo chown -R -H -L $USER:$USER  /home/runner/work/salmon/
+          chown -R -H -L $USER:$USER /home/runner/work/salmon/
           echo "\nRunning chmod..."
           sudo chmod -R +rw /home/runner/work/salmon/
           echo "\nRunning `ls`..."
