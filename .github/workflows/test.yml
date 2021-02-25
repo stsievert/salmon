@@ -43,10 +43,10 @@ jobs:
         conda env update --file salmon.yml --name base
     - name: Install Salmon
       run: pip install -e .
-    - name: Build Salmon server w/ Docker
-      uses: docker/setup-buildx-action@v1
+    - uses: docker/setup-buildx-action@v1
       with:
         driver: docker
+    - name: Build Salmon server w/ Docker
       run: |
           export SALMON_NO_AUTH=1
           docker-compose up &
