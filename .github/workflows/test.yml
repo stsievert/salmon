@@ -32,6 +32,8 @@ jobs:
           mkdir ./salmon/dask-worker-space
           echo "Running `ls`..."
           ls
+          echo "Running chown..."
+          sudo chown -R $USER:$USER /home/github/actions-runner/_work/salmon
     - name: Prepare for docker build...
       run: |
           chmod +x launch.sh
