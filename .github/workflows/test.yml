@@ -30,7 +30,7 @@ jobs:
           echo "Running chown..."
           sudo chown -R -H -L $USER:$USER  /home/runner/work/salmon/
           echo "Running chmod..."
-          sudo chmod +rw /home/runner/work/salmon/
+          sudo chmod -R +rw /home/runner/work/salmon/
           echo "\nRunning `ls`..."
           ls
     - name: Prepare for docker build...
