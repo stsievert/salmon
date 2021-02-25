@@ -32,6 +32,8 @@ RUN ls /salmon
 RUN pip install -e /salmon
 
 RUN chmod +x /salmon/launch.sh
+RUN chown -R docker /salmon
+RUN chmod +rw /salmon
 # ENTRYPOINT bash launch.sh
 WORKDIR /salmon
 CMD ["bash", "launch.sh"]
