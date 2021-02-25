@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ master ]
 
+defaults:
+  runs-on: self-hosted
+  container-user-id: 1000
+
 jobs:
 
   build:
@@ -29,11 +33,11 @@ jobs:
           echo "Running `echo $USER`..."
           echo $USER
           echo "Running mkdir..."
-          mkdir ./salmon/dask-worker-space
+          mkdir /home/runner/work/salmon/salmon/dask-worker-space
           echo "Running `ls`..."
           ls
           echo "Running chown..."
-          sudo chown -R $USER:$USER  /home/runner/work/salmon/salmon
+          sudo chown -R H -L $USER:$USER  /home/runner/work/salmon/salmon
     - name: Prepare for docker build...
       run: |
           chmod +x launch.sh
