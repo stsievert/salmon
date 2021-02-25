@@ -33,7 +33,7 @@ jobs:
           echo "Running `ls`..."
           ls
           echo "Running chown..."
-          sudo chown -R $USER:$USER /home/github/actions-runner/_work/salmon
+          sudo chown -R $USER:$USER  /home/runner/work/salmon/salmon
     - name: Prepare for docker build...
       run: |
           chmod +x launch.sh
