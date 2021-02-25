@@ -56,4 +56,4 @@ jobs:
           until curl 127.0.0.1:8421 > /dev/null 2>&1; do :; done  # wait for container to start
           sudo docker ps
     - name: Run tests
-      run: sudo pytest
+      run: sudo /usr/share/miniconda/bin/pytest
