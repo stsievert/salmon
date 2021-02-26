@@ -45,16 +45,16 @@ jobs:
         conda env update --file salmon.yml --name base
     - name: Install Salmon
       run: pip install -e .
-    - name: Run tests in salmon/salmon/
-      run: sudo /usr/share/miniconda/bin/pytest salmon/
-    # - uses: docker/setup-buildx-action@v1
-      # with:
-        # driver: docker
-    # - name: Build Salmon server w/ Docker
-      # run: |
-          # export SALMON_NO_AUTH=1
-          # sudo docker-compose up &
-          # until curl 127.0.0.1:8421 > /dev/null 2>&1; do :; done  # wait for container to start
-          # sudo docker ps
-    # - name: Run tests in salmon/tests/
-      # run: sudo /usr/share/miniconda/bin/pytest tests/
+    # - name: Run tests in salmon/salmon/
+      # run: sudo /usr/share/miniconda/bin/pytest salmon/
+    - uses: docker/setup-buildx-action@v1
+      with:
+        driver: docker
+    - name: Build Salmon server w/ Docker
+      run: |
+          export SALMON_NO_AUTH=1
+          sudo docker-compose up &
+          until curl 127.0.0.1:8421 > /dev/null 2>&1; do :; done  # wait for container to start
+          sudo docker ps
+    - name: Run tests in salmon/tests/
+      run: sudo /usr/share/miniconda/bin/pytest tests/
