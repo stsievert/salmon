@@ -47,8 +47,8 @@ jobs:
         conda env update --file salmon.yml --name base
     - name: Install Salmon
       run: pip install -e .
-    # - name: Run tests in salmon/salmon/
-      # run: sudo /usr/share/miniconda/bin/pytest salmon/
+    - name: Run tests in salmon/salmon/
+      run: sudo /usr/share/miniconda/bin/pytest salmon/
     - uses: docker/setup-buildx-action@v1
       with:
         driver: docker
