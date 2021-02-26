@@ -11,6 +11,8 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    env:
+      SALMON_NO_AUTH: 1
     steps:
     - uses: actions/checkout@v2
     - name: Setup Python 3.7
@@ -52,7 +54,6 @@ jobs:
         driver: docker
     - name: Build Salmon server w/ Docker
       run: |
-          export SALMON_NO_AUTH=1
           sudo docker-compose up &
           until curl 127.0.0.1:8421 > /dev/null 2>&1; do :; done  # wait for container to start
           sudo docker ps
