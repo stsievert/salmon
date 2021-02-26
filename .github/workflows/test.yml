@@ -50,9 +50,9 @@ jobs:
     - uses: docker/setup-buildx-action@v1
       with:
         driver: docker
+    - name: Build Salmon server w/ Docker
       env:
         SALMON_NO_AUTH: 1
-    - name: Build Salmon server w/ Docker
       run: |
           sudo docker-compose up &
           until curl 127.0.0.1:8421 > /dev/null 2>&1; do :; done  # wait for container to start
