@@ -4,7 +4,7 @@ import numpy as np
 from time import time
 from copy import deepcopy, copy
 from typing import Dict, Union
-from number import Number
+from numbers import Number
 
 from sklearn.model_selection import train_test_split
 from sklearn.base import BaseEstimator
