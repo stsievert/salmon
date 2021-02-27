@@ -54,10 +54,12 @@ jobs:
       env:
         SALMON_NO_AUTH: 1
       run: |
+          echo "SALMON_NO_AUTH="
           echo $SALMON_NO_AUTH
           export SALMON_NO_AUTH=1
+          echo "SALMON_NO_AUTH="
           echo $SALMON_NO_AUTH
-          sudo docker-compose up &
+          sudo --preserve-env=SALMON_NO_AUTH docker-compose up &
           until curl 127.0.0.1:8421 > /dev/null 2>&1; do :; done  # wait for container to start
           sudo docker ps
     - name: Run tests in salmon/tests/
