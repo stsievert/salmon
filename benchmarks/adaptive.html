@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Adaptive algorithms &mdash; Salmon 0+untagged.1.g7e15065 documentation</title>
+  <title>Adaptive algorithms &mdash; Salmon 0+untagged.1.g4db75d8 documentation</title>
   
 
   
@@ -40,6 +40,7 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Adaptive algorithms" href="../adaptive.html" />
     <link rel="prev" title="Concurrent Users" href="server.html" /> 
 </head>
 
@@ -94,22 +95,22 @@
 <li class="toctree-l1"><a class="reference internal" href="../getting-started.html">Starting an experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../monitoring.html">Experiment monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../offline.html">Generating embeddings offline</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Algorithms</span></p>
-<ul>
 <li class="toctree-l1"><a class="reference internal" href="../algorithms.html">Algorithm configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../adaptive.html">Adaptive algorithms</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api.html">Algorithm API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../developers.html">Developing algorithms</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Benchmarks</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="server.html">Concurrent Users</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Adaptive algorithms</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#synthetic-simulation">Synthetic simulation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#search-efficacy">Search efficacy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#simulation-with-human-responses">Simulation with human responses</a></li>
 </ul>
 </li>
+</ul>
+<p class="caption"><span class="caption-text">Algorithm Developers</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../adaptive.html">Adaptive algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers.html">Developing algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Algorithm API</a></li>
 </ul>
 
             
@@ -180,19 +181,24 @@
            <div itemprop="articleBody">
             
   <div class="section" id="adaptive-algorithms">
-<h1>Adaptive algorithms<a class="headerlink" href="#adaptive-algorithms" title="Permalink to this headline">¶</a></h1>
+<span id="experiments"></span><h1>Adaptive algorithms<a class="headerlink" href="#adaptive-algorithms" title="Permalink to this headline">¶</a></h1>
 <p>Adaptive algorithms decide which questions to ask about, instead of asking
 about a random question like random sampling. This can mean that higher
 accuracies are reached sooner, or that less human responses are required to
 reach a particular accuracy.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This page shows results of experiments run with Salmon.
+For complete details, see <a class="reference external" href="https://github.com/stsievert/salmon-experiments">https://github.com/stsievert/salmon-experiments</a></p>
+</div>
 <div class="section" id="synthetic-simulation">
 <h2>Synthetic simulation<a class="headerlink" href="#synthetic-simulation" title="Permalink to this headline">¶</a></h2>
 <p>Let’s compare adaptive sampling and random sampling. Specifically, let’s use
 Salmon like an experimentalist would:</p>
 <ol class="arabic simple">
-<li><p>Launch Salmon with the “alien eggs” dataset (with <span class="math notranslate nohighlight">\(n=50\)</span> objects and
-using <span class="math notranslate nohighlight">\(d=2\)</span> dimensions).</p></li>
-<li><p>Simulate human users (6 users with mean response time of 1s).</p></li>
+<li><p>Launch Salmon with the “alien eggs” dataset, with <span class="math notranslate nohighlight">\(n=30\)</span> objects
+embedded into <span class="math notranslate nohighlight">\(d=2\)</span> dimensions.</p></li>
+<li><p>Simulate human users (10 users with mean response time of 1s).</p></li>
 <li><p>Download the human responses from Salmon</p></li>
 <li><p>Generate the embedding offline.</p></li>
 </ol>
@@ -201,54 +207,48 @@ is the graph that’s produced:</p>
 <a class="reference internal image-reference" href="../_images/synth-eg-acc.png"><img alt="../_images/synth-eg-acc.png" class="align-center" src="../_images/synth-eg-acc.png" style="width: 600px;" /></a>
 <p>These are synthetic results, though they use a human noise model. These
 experiments provide evidence that Salmon works well with adaptive sampling.</p>
-<p>This measure provide evidence to support the hypothesis that Salmon has better
-performance than NEXT for adaptive triplet embeddings. For reference, in NEXT’s
-introduction paper, the authors found “no evidence for gains from adaptive
-sampling” for the triplet embedding problem <a class="footnote-reference brackets" href="#id3" id="id1">2</a>.</p>
+<p>This measure provides evidence that Salmon’s active sampling approach
+outperforms random sampling. If true, this is an improvement over existing
+software to deploy triplet queries to crowdsourced audiences: in NEXT’s
+introduction paper, <a class="footnote-reference brackets" href="#id6" id="id1">2</a> the authors found “no evidence for gains from adaptive
+sampling” for (nearly) the same problem. <a class="footnote-reference brackets" href="#same" id="id2">3</a></p>
+</div>
+<div class="section" id="simulation-with-human-responses">
+<h2>Simulation with human responses<a class="headerlink" href="#simulation-with-human-responses" title="Permalink to this headline">¶</a></h2>
+<p>The Zappos shoe dataset has <span class="math notranslate nohighlight">\(n=85\)</span> shoes, and asks every possible triplet
+4 times to crowdsourcing users. Let’s run a simulation with Salmon on that that
+dataset. We’ll embed into <span class="math notranslate nohighlight">\(d = 3\)</span> dimensions, and have a response rate of
+about 2.5 response/sec (5 users with an average response time of 2.5 seconds).</p>
+<p>Let’s again compare adaptive sampling and random sampling:</p>
+<a class="reference internal image-reference" href="../_images/zappos.png"><img alt="../_images/zappos.png" class="align-center" src="../_images/zappos.png" style="width: 600px;" /></a>
+<p>The likelihood of a true response conveys “margin by which the models adhere to
+all responses.” <a class="footnote-reference brackets" href="#id5" id="id3">1</a> The performance above mirrors the performance by Heim et
+al. in their Figure 3. <a class="footnote-reference brackets" href="#id5" id="id4">1</a></p>
+<p class="rubric">References</p>
 <dl class="footnote brackets">
-<dt class="label" id="id2"><span class="brackets">1</span></dt>
+<dt class="label" id="id5"><span class="brackets">1</span><span class="fn-backref">(<a href="#id3">1</a>,<a href="#id4">2</a>)</span></dt>
 <dd><p>“Active Perceptual Similarity Modeling with Auxiliary Information” by E.
 Heim, M. Berger, and L. Seversky, and M. Hauskrecht. 2015.
 <a class="reference external" href="https://arxiv.org/pdf/1511.02254.pdf">https://arxiv.org/pdf/1511.02254.pdf</a></p>
 </dd>
-<dt class="label" id="id3"><span class="brackets"><a class="fn-backref" href="#id1">2</a></span></dt>
+<dt class="label" id="id6"><span class="brackets"><a class="fn-backref" href="#id1">2</a></span></dt>
 <dd><p>“NEXT: A System for Real-World Development, Evaluation, and Application
 of Active Learning” by K. Jamieson, L. Jain, C. Fernandez, N. Glattard
 and R. Nowak. 2017.
 <a class="reference external" href="http://papers.nips.cc/paper/5868-next-a-system-for-real-world-development-evaluation-and-application-of-active-learning.pdf">http://papers.nips.cc/paper/5868-next-a-system-for-real-world-development-evaluation-and-application-of-active-learning.pdf</a></p>
 </dd>
 </dl>
-</div>
-<div class="section" id="search-efficacy">
-<h2>Search efficacy<a class="headerlink" href="#search-efficacy" title="Permalink to this headline">¶</a></h2>
-<p>Adaptive algorithms are more adaptive if they search more queries. Random sampling
-can be thought of as an adaptive algorithm that only searches over one possible
-query. An algorithm that searches over 50,000 queries is more adaptive than a
-algorithm that can only search 50 queries.</p>
-<p>How much do these searches matter? Let’s run another experiment with this setup:</p>
-<ul class="simple">
-<li><p>Dataset: strange fruit dataset. The response model will be determined from human
-responses. There will be <span class="math notranslate nohighlight">\(n=200\)</span> objects and that will be embedded into <span class="math notranslate nohighlight">\(d=2\)</span>
-dimensions.</p></li>
-<li><p>Let’s measure <strong>search efficacy.</strong> To aid this, let’s say model updates run instantly.
-That means we’ll run offline using essentially this code:</p></li>
-</ul>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">responses_per_search</span> <span class="o">=</span> <span class="mi">10</span>
-<span class="n">n_search</span> <span class="o">=</span> <span class="mi">10</span>
-<span class="n">alg</span> <span class="o">=</span> <span class="n">TSTE</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="n">d</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
-
-<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">count</span><span class="p">():</span>
-    <span class="n">queries</span><span class="p">,</span> <span class="n">scores</span> <span class="o">=</span> <span class="n">alg</span><span class="o">.</span><span class="n">score_queries</span><span class="p">(</span><span class="n">num</span><span class="o">=</span><span class="n">n_search</span> <span class="o">*</span> <span class="n">responses_per_search</span><span class="p">)</span>
-    <span class="n">queries</span> <span class="o">=</span> <span class="n">_get_top_N_queries</span><span class="p">(</span><span class="n">queries</span><span class="p">,</span> <span class="n">scores</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="n">responses_per_search</span><span class="p">)</span>
-    <span class="n">answers</span> <span class="o">=</span> <span class="p">[</span><span class="n">_get_answer</span><span class="p">(</span><span class="n">query</span><span class="p">)</span> <span class="k">for</span> <span class="n">query</span> <span class="ow">in</span> <span class="n">queries</span><span class="p">]</span>
-
-    <span class="n">alg</span><span class="o">.</span><span class="n">partial_fit</span><span class="p">(</span><span class="n">answers</span><span class="p">)</span>  <span class="c1"># performs 1 pass over all answers received thus far</span>
-</pre></div>
-</div>
-<p>With that, we see this performance:</p>
-<a class="reference internal image-reference" href="../_images/search-efficacy.png"><img alt="../_images/search-efficacy.png" class="align-center" src="../_images/search-efficacy.png" style="width: 600px;" /></a>
-<p>If you only have the budget for 4,000 queries the most complete search will reach about 82% accuracy. The least complete search will only reach about 60% accuracy.</p>
-<p>If you want to reach 80% accuracy, the most complete searches will require about 3,800 queries. The least complete searches will require 5,100 queries.</p>
+<p class="rubric">Footnotes</p>
+<dl class="footnote brackets">
+<dt class="label" id="same"><span class="brackets"><a class="fn-backref" href="#id2">3</a></span></dt>
+<dd><p>Both experiment use <span class="math notranslate nohighlight">\(n=30\)</span> objects and embed into <span class="math notranslate nohighlight">\(d=2\)</span>
+dimensions. The human noise model used in the Salmon experiments is
+generated from the responses collected during NEXT’s experiment. The
+are the same experiment, up to different responses (NEXT
+actually runs crowdsourcing experiments; Salmon’s noise model is
+generated from those responses).</p>
+</dd>
+</dl>
 </div>
 </div>
 
@@ -258,6 +258,7 @@ That means we’ll run offline using essentially this code:</p></li>
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="../adaptive.html" class="btn btn-neutral float-right" title="Adaptive algorithms" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
         <a href="server.html" class="btn btn-neutral float-left" title="Concurrent Users" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 

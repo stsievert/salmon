@@ -5,7 +5,7 @@ Algorithm API
 
 .. warning::
 
-   These APIs are experimental and may change at any time.
+   These APIs are unstable.
 
 All triplet embedding algorithms must conform to this API:
 
@@ -44,10 +44,23 @@ Active Algorithms
    :toctree: generated/
    :template: only-init.rst
 
+   salmon.triplets.algs.RR
    salmon.triplets.algs.TSTE
    salmon.triplets.algs.STE
    salmon.triplets.algs.CKL
    salmon.triplets.algs.GNMDS
+
+These adaptive algorithms are all the same except for the underlying noise
+model, with the exception of :class:`~salmon.triplets.algs.RR`.
+:class:`~salmon.triplets.algs.RR` introduces some randomness by fixing the head
+and adding the top ``5 * n`` triplets to the database. This is useful because
+the information gain measure used by all of these algorithms (by default) is a
+rule-of-thumb.
+
+.. note::
+
+   Use of :class:`~salmon.triplets.algs.RR` is recommended as it performs well
+   in :ref:`the experiments we have run <experiments>`.
 
 Interface
 ---------

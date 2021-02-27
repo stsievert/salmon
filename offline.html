@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Generating embeddings offline &mdash; Salmon 0+untagged.1.g7e15065 documentation</title>
+  <title>Generating embeddings offline &mdash; Salmon 0+untagged.1.g4db75d8 documentation</title>
   
 
   
@@ -100,18 +100,18 @@
 <li class="toctree-l2"><a class="reference internal" href="#embedding-visualization">Embedding visualization</a></li>
 </ul>
 </li>
-</ul>
-<p class="caption"><span class="caption-text">Algorithms</span></p>
-<ul>
 <li class="toctree-l1"><a class="reference internal" href="algorithms.html">Algorithm configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="adaptive.html">Adaptive algorithms</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api.html">Algorithm API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="developers.html">Developing algorithms</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Benchmarks</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="benchmarks/server.html">Concurrent Users</a></li>
 <li class="toctree-l1"><a class="reference internal" href="benchmarks/adaptive.html">Adaptive algorithms</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Algorithm Developers</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="adaptive.html">Adaptive algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developers.html">Developing algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Algorithm API</a></li>
 </ul>
 
             
@@ -221,7 +221,7 @@ $ conda activate salmon
 <span class="n">d</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># embed into 2 dimensions</span>
 
 <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">OfflineEmbedding</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="n">d</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">OfflineEmbedding</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="n">d</span><span class="p">,</span> <span class="n">max_epochs</span><span class="o">=</span><span class="mi">1_000_000</span><span class="p">)</span>
 <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">)</span>
 
 <span class="n">model</span><span class="o">.</span><span class="n">embedding_</span>  <span class="c1"># embedding</span>
@@ -239,9 +239,11 @@ the dashboard by downloading the “embeddings” file (or visiting
 <code class="docutils literal notranslate"><span class="pre">[url]:8421/embeddings</span></code>. This will give a CSV with the HTML for each target,
 the embedding coordinates and the name of the embedding that generated the
 algorithm.</p>
-<p>To visualize the embedding, I would use standard plotting tools to visualize
+<p>To visualize the embedding, standard plotting tools can be used to visualize
 the embedding, which might be <a class="reference external" href="https://matplotlib.org/">Matplotlib</a>, the <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/user_guide/visualization.html">Pandas visualization API</a>,
-<a class="reference external" href="https://bokeh.org/">Bokeh</a> or <a class="reference external" href="https://altair-viz.github.io/">Altair</a>. Salmon uses Bokeh for it’s visualization.</p>
+<a class="reference external" href="https://bokeh.org/">Bokeh</a> or <a class="reference external" href="https://altair-viz.github.io/">Altair</a>. The Pandas visualization API is likely the easiest to
+use, but won’t support showing HTML (images/video/etc). To do that, Salmon uses
+Bokeh for it’s visualization.</p>
 </div>
 </div>
 

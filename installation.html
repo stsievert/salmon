@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Installation &mdash; Salmon 0+untagged.1.g7e15065 documentation</title>
+  <title>Installation &mdash; Salmon 0+untagged.1.g4db75d8 documentation</title>
   
 
   
@@ -99,18 +99,18 @@
 <li class="toctree-l1"><a class="reference internal" href="getting-started.html">Starting an experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="monitoring.html">Experiment monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="offline.html">Generating embeddings offline</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Algorithms</span></p>
-<ul>
 <li class="toctree-l1"><a class="reference internal" href="algorithms.html">Algorithm configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="adaptive.html">Adaptive algorithms</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api.html">Algorithm API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="developers.html">Developing algorithms</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Benchmarks</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="benchmarks/server.html">Concurrent Users</a></li>
 <li class="toctree-l1"><a class="reference internal" href="benchmarks/adaptive.html">Adaptive algorithms</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Algorithm Developers</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="adaptive.html">Adaptive algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developers.html">Developing algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Algorithm API</a></li>
 </ul>
 
             
@@ -187,10 +187,6 @@ machine. After you get Salmon running, detail on how to launch experiments in
 <a class="reference internal" href="getting-started.html#getting-started"><span class="std std-ref">Starting an experiment</span></a>.</p>
 <div class="section" id="experimentalist">
 <h2>Experimentalist<a class="headerlink" href="#experimentalist" title="Permalink to this headline">¶</a></h2>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>This process is only ready for testing. It is <strong>not</strong> ready for deployment.</p>
-</div>
 <ol class="arabic">
 <li><p>Sign into Amazon AWS (<a class="reference external" href="http://aws.amazon.com/">http://aws.amazon.com/</a>)</p></li>
 <li><p>Select the “Oregon” region (or <code class="docutils literal notranslate"><span class="pre">us-west-2</span></code>) in the upper right.</p></li>
@@ -249,8 +245,8 @@ the responses and experiment file.</p>
 </div>
 </li>
 </ul>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>If you have an issue with the machine running Salmon, be sure to include the
 logs when contacting the Salmon developers. They’d also appreciate it if
 you left the machine running.</p>
