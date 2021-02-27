@@ -1,4 +1,4 @@
-name: Test Salmon server
+name: Tests
 
 on:
   push:
