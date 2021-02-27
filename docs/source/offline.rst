@@ -47,7 +47,7 @@ This code will generate an embedding:
    d = 2  # embed into 2 dimensions
 
    X_train, X_test = train_test_split(X, random_state=42, test_size=0.2)
-   model = OfflineEmbedding(n=n, d=d)
+   model = OfflineEmbedding(n=n, d=d, max_epochs=1_000_000)
    model.fit(X_train, X_test)
 
    model.embedding_  # embedding
@@ -66,9 +66,11 @@ the dashboard by downloading the "embeddings" file (or visiting
 the embedding coordinates and the name of the embedding that generated the
 algorithm.
 
-To visualize the embedding, I would use standard plotting tools to visualize
+To visualize the embedding, standard plotting tools can be used to visualize
 the embedding, which might be `Matplotlib`_, the `Pandas visualization API`_,
-`Bokeh`_ or `Altair`_. Salmon uses Bokeh for it's visualization.
+`Bokeh`_ or `Altair`_. The Pandas visualization API is likely the easiest to
+use, but won't support showing HTML (images/video/etc). To do that, Salmon uses
+Bokeh for it's visualization.
 
 
 .. _Pandas visualization API: https://pandas.pydata.org/pandas-docs/stable/user_guide/visualization.html
