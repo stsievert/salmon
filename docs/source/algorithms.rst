@@ -5,8 +5,7 @@ Algorithm configuration
 
 .. warning::
 
-   These adaptive algorithms are (currently) experimental and may change at any
-   time.
+   The API for these algorithms is (currently) unstable.
 
 There are many queries to ask about in triplet embedding tasks. Most of these
 queries aren't useful; chances are most queries will have obvious answers and

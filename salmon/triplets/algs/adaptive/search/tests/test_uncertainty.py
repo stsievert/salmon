@@ -8,10 +8,11 @@ def test_uncertainty_sampling(random_state=42):
     rng = np.random.RandomState(random_state)
     X = rng.uniform(size=(n, d))
 
-    search = UncertaintyScorer(embedding=X, random_state=random_state,)
+    search = UncertaintyScorer(embedding=X)
     queries, scores = search.score(num=100)
     distances = [
-        abs(LA.norm(X[h] - X[l]) - LA.norm(X[h] - X[r])) for h, l, r in queries
+        abs(LA.norm(X[h] - X[l]) ** 2 - LA.norm(X[h] - X[r]) ** 2)
+        for h, l, r in queries
     ]
     idx_best_score = np.argmax(scores)
-    assert distances[idx_best_score] == min(distances)
+    assert np.allclose(distances[idx_best_score], min(distances))

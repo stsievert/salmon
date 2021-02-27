@@ -1,7 +1,6 @@
 from typing import Union
 
 import numpy as np
-from sklearn.utils import check_random_state
 import torch
 import torch.nn as nn
 
@@ -16,7 +15,6 @@ class TripletDist(nn.Module):
     ----------
     n : int
     d : int
-    random_state : None, int, np.random.RandomState
 
     Attributes
     ----------
@@ -25,12 +23,11 @@ class TripletDist(nn.Module):
 
     """
 
-    def __init__(self, n: int = None, d: int = 2, random_state=None):
+    def __init__(self, n: int = None, d: int = 2):
         super().__init__()
-        self.random_state = random_state
         self.n = n
         self.d = d
-        rng = check_random_state(self.random_state)
+        rng = np.random.RandomState()
         embedding = 1e-4 * rng.randn(n, d).astype("float32")
         self._embedding = torch.nn.Parameter(
             torch.from_numpy(embedding), requires_grad=True
@@ -130,8 +127,8 @@ class TSTE(TripletDist):
     For details
     """
 
-    def __init__(self, n=None, d=2, alpha=1, random_state=None):
-        super().__init__(n=n, d=d, random_state=random_state)
+    def __init__(self, n=None, d=2, alpha=1):
+        super().__init__(n=n, d=d)
         self.alpha = alpha
 
     def _probs(self, win2, lose2):
@@ -146,8 +143,8 @@ class CKL(TripletDist):
     The crowd kernel embedding.
     """
 
-    def __init__(self, n=None, d=2, mu=1e-4, random_state=None):
-        super().__init__(n=n, d=d, random_state=random_state)
+    def __init__(self, n=None, d=2, mu=1e-4):
+        super().__init__(n=n, d=d)
         self.mu = mu
 
     def _probs(self, win2, lose2):

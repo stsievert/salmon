@@ -3,13 +3,11 @@ import gram_utils
 from gram_utils import dist2
 from time import time
 import search
-from sklearn.utils import check_random_state
 import numpy.linalg as LA
 
 
-def random_query(n, random_state=None):
-    random_state = check_random_state(random_state)
-    return random_state.choice(n, size=3, replace=False)
+def random_query(n):
+    return np.random.choice(n, size=3, replace=False)
 
 
 def update(G, head, winner, loser):
@@ -80,12 +78,11 @@ def update(G, head, winner, loser):
 
 
 class NoSearch:
-    def __init__(self, n, d=2, random_state=None, **kwargs):
-        self.random_state = check_random_state(random_state)
+    def __init__(self, n, d=2, **kwargs):
         self.n = n
         self.d = d
 
-        self.X = self.random_state.randn(n, d) / 1000
+        self.X = np.random.randn(n, d) / 1000
         self.G = self.X @ self.X.T
         # self.G = np.eye(n)
         # self.X = gram_utils.decompose(self.G, d=self.d)
@@ -98,8 +95,7 @@ class NoSearch:
         """
         Returns [head, predicted_winner, predicted_loser]
         """
-        q = random_query(self.n, random_state=None)
-        return q
+        return random_query(self.n)
 
     def process_answer(self, head, winner, loser):
         self.num_answers = len(self.answers)
@@ -110,7 +106,7 @@ class NoSearch:
 
         beta = self.n
         if num_ans > 2 * beta:
-            for i in self.random_state.choice(num_ans, size=min(20, beta - 1),):
+            for i in np.random.choice(num_ans, size=min(20, beta - 1),):
                 self.G = update(self.G, *self.answers[i])
         self._times = {"update_time": time() - start}
         if len(self.answers) % self.n == 0:
@@ -122,7 +118,7 @@ class RandomSearch(NoSearch):
     def __init__(self, n, t_max=0.05, R=10, **kwargs):
         super().__init__(n, **kwargs)
         self.t_max = t_max
-        self.tau = self.random_state.rand(n, n)
+        self.tau = np.random.rand(n, n)
         self.n = n
         self.R = R
         self._summary = {"t_max": t_max, "name": type(self).__name__}
@@ -134,7 +130,7 @@ class RandomSearch(NoSearch):
             or np.abs(self.t_max) < 0
             or np.allclose(self.t_max, 0)
         ):
-            q = random_query(self.n, random_state=self.random_state)
+            q = random_query(self.n)
             self._saved = {"query": q, "score": -np.inf, "searched": 0}
             return q
 
@@ -147,9 +143,7 @@ class RandomSearch(NoSearch):
         best_q = random_query(n)
         while time() - start < self.t_max:
             searched += 10
-            queries = [
-                random_query(n, random_state=self.random_state) for _ in range(10)
-            ]
+            queries = [random_query(n) for _ in range(10)]
             scores = [search.score(q, tau, D) for q in queries]
 
             best_idx = np.argmax(scores)

@@ -110,11 +110,7 @@ class Runner:
 
                 if hasattr(self, "get_queries"):
                     f_search = submit(
-                        "get_queries",
-                        self_future,
-                        random_state=k,
-                        stop=done,
-                        workers=workers[2],
+                        "get_queries", self_future, stop=done, workers=workers[2],
                     )
                 else:
                     f_search = client.submit(lambda x: ([], []), 0)

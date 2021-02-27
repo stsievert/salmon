@@ -15,6 +15,7 @@ from salmon.triplets.algs.adaptive import GD, OGD
 from salmon.triplets.algs.adaptive import CKL
 import salmon.triplets.algs.adaptive as adaptive
 
+
 def _get_params(opt_):
     return {
         k: v
@@ -64,7 +65,6 @@ class OfflineEmbedding(BaseEstimator):
                 module=noise_model,
                 module__n=self.n,
                 module__d=self.d,
-                random_state=42 ** 4,
                 optimizer=optim.Adadelta,
                 max_epochs=self.max_epochs,
                 shuffle=self.shuffle,

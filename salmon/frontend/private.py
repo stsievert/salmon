@@ -485,8 +485,7 @@ def _fmt_embedding(
 
 @app.get("/embeddings", tags=["private"])
 async def get_embeddings(
-    authorized: bool = Depends(_authorize),
-    alg: Optional[str] = None,
+    authorized: bool = Depends(_authorize), alg: Optional[str] = None,
 ):
     """
     Get the embeddings for algorithms.

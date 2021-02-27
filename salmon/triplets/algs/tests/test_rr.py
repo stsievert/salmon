@@ -5,11 +5,11 @@ from salmon.triplets.algs import RoundRobin
 
 
 def test_rr():
-    alg = RoundRobin(n=10, random_state=42)
+    alg = RoundRobin(n=10)
+    alg.foo = "bar"
     ir = cloudpickle.dumps(alg)
     alg2 = cloudpickle.loads(ir)
     assert type(alg2) == RoundRobin
     assert alg2.n == 10
-    assert np.allclose(
-        alg2.random_state.randint(10, size=10), alg.random_state.randint(10, size=10)
-    )
+    assert alg.foo == alg2.foo
+    assert alg.meta_ == alg2.meta_

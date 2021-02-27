@@ -1,7 +1,6 @@
 import logging
 from typing import List, Tuple
-
-from sklearn.utils import check_random_state
+import numpy as np
 
 from .utils import Answer, Query
 from ...backend.alg import Runner
@@ -10,11 +9,10 @@ from ...backend.alg import Runner
 logger = logging.getLogger(__name__)
 
 
-def _get_query(n, head, random_state=None) -> Tuple[int, int, int]:
-    random_state = check_random_state(random_state)
+def _get_query(n, head) -> Tuple[int, int, int]:
     a = head
     while True:
-        b, c = random_state.choice(n, size=2)
+        b, c = np.random.choice(n, size=2)
         if a != b and b != c and c != a:
             break
     return a, b, c
@@ -34,24 +32,21 @@ class RoundRobin(Runner):
     ----------
     n : int
         Number of objects
-    random_state: Optional[int]
-        Seed for random generateor
     ident : str
         Identifier of the algorithm
 
     """
 
-    def __init__(self, n, d=2, random_state=None, ident=""):
+    def __init__(self, n, d=2, ident=""):
         self.n = n
         self.d = d
         self.answers = []
-        self.random_state = check_random_state(random_state)
         self.counter = 0
         super().__init__(ident=ident)
 
     def get_query(self) -> Query:
         head = self.counter % self.n
-        a, b = self.random_state.choice(self.n, size=2, replace=False)
+        a, b = np.random.choice(self.n, size=2, replace=False)
         self.counter += 1
         score = max(abs(head - a), abs(head - b))
         return {"head": int(head), "left": int(a), "right": int(b)}, float(score)

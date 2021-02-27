@@ -20,7 +20,6 @@ class ServerException(HTTPException):
         raise HTTPException(status_code=500, detail=msg)
 
 
-
 def _extract_zipfile(raw_zipfile, directory="targets"):
     p = Path(__file__).absolute().parent  # directory to this file
     imgs = p / "static" / directory

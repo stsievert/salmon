@@ -33,16 +33,14 @@ def test_same_salmon_next(n=40, d=2, num_ans=4000):
     X, y = dataset(n, num_ans=num_ans, random_state=42)
     ans = answer(X, y)
 
-    est = TSTE(n=n, d=d, random_state=42)
+    est = TSTE(n=n, d=d)
     new_embedding = (np.arange(n * d) // d).reshape(n, d).astype("float32")
 
     for s1, s2 in [(30, 10)]:
         new_embedding[s1] = s2
         new_embedding[s2] = s1
 
-    search = InfoGainScorer(
-        random_state=42, embedding=new_embedding, probs=est.opt.module_.probs
-    )
+    search = InfoGainScorer(embedding=new_embedding, probs=est.opt.module_.probs)
     search.push(ans)
 
     _, (useful, useless) = search.score(queries=[(29, 30, 10), (29, 11, 28)])

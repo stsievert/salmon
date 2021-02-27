@@ -1,9 +1,9 @@
 from datetime import datetime, timedelta
 from typing import Any, Dict, List
 import random
+import numpy as np
 
 from pydantic import BaseModel
-from sklearn.utils import check_random_state
 
 
 class Answer(BaseModel):
@@ -63,8 +63,9 @@ def get_responses(answers: List[Dict[str, Any]], targets, start_time=0):
         out[-1].update({**idxs, **names, **meta})
     return out
 
-def random_query(n: int, random_state=None) -> Dict[str, int]:
-    rng = check_random_state(random_state)
+
+def random_query(n: int) -> Dict[str, int]:
+    rng = np.random.RandomState()
     while True:
         a, b, c = rng.choice(n, size=3)
         if a != b and b != c and c != a:

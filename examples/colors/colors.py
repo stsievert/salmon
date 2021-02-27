@@ -59,15 +59,19 @@ colors = [
     {"r": 0.9829, "g": 0.65643, "b": 0.078187},
 ]
 
+
 def _fmt_color(c):
     c = hex(int(255 * c))[2:]
     if len(c) == 1:
         c = f"0{c}"
     assert len(c) == 2
     return c
+
+
 def _convert(r, g, b):
     r, g, b = map(_fmt_color, [r, g, b])
     return f"#{r}{g}{b}"
+
 
 def _fmt(hc):
     target = (
@@ -79,11 +83,13 @@ def _fmt(hc):
     )
     return target
 
+
 htmlcolors = [_convert(c["r"], c["g"], c["b"]) for c in colors]
 targets = [_fmt(hc) for hc in htmlcolors]
 with open("colors.csv", "w") as f:
     f.write("\n".join(targets))
 import os
+
 os.system("zip colors.csv.zip colors.csv")
 os.system("rm colors.csv")
 
