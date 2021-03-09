@@ -7,5 +7,4 @@ sampling:
 samplers:
   TSTE:
     random_state: 42
-  RandomSampling:
-    random_state: 42
+  RandomSampling: {}
