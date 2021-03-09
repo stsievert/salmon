@@ -255,7 +255,9 @@ class OGD(Embedding):
         super().__init__(**kwargs)
 
     def get_train_idx(self, n_ans):
-        bs = self.initial_batch_size + int(self.meta_["model_updates"] / self.dwell)
+        bs = self.initial_batch_size
+        if self.dwell > 0 and self.meta_["model_updates"] % self.dwell == 0:
+            bs += int(self.meta_["model_updates"] / (5 * self.dwell))
         n_idx = min(bs, n_ans)
         rng = np.random.RandomState()
 

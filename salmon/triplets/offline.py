@@ -44,7 +44,7 @@ class OfflineEmbedding(BaseEstimator):
         verbose=20,
         ident="",
         noise_model="CKL",
-        shuffle=False,
+        shuffle=True,
         **kwargs,
     ):
         self.opt = opt
