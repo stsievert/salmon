@@ -67,3 +67,15 @@ def test_offline_embedding():
     epochs = model.history_[-1]["num_grad_comps"] / len(X_train)
     assert max_epochs - 0.3 <= epochs <= max_epochs + 0.3
     assert len(model.history_) in [max_epochs - 1, max_epochs]
+
+def test_offline_embedding_random_state():
+    n, d = 85, 2
+    max_epochs = 20
+    random_state = 20
+
+    X = np.random.choice(n, size=(10_000, 3))
+    X_train, X_test = train_test_split(X, random_state=0, test_size=0.2)
+
+    m1 = OfflineEmbedding(n=n, d=d, max_epochs=max_epochs, random_state=random_state).initialize(X_train)
+    m2 = OfflineEmbedding(n=n, d=d, max_epochs=max_epochs, random_state=random_state).initialize(X_train)
+    assert np.allclose(m1.embedding_, m2.embedding_)

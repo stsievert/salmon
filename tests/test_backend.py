@@ -12,6 +12,7 @@ import yaml
 from joblib import Parallel, delayed
 
 from .utils import server, logs, LogError
+from salmon.triplets.algs import TSTE
 
 
 def test_backend_basics(server, logs):
@@ -63,3 +64,11 @@ def test_run_errors_logged(server, logs):
                 ans["left"] = 12
                 sleep(1)
                 server.post("/answer", data=ans)
+
+
+def test_backend_random_state():
+    n, d = 85, 2
+    random_state = 42
+    alg1 = TSTE(n=n, d=d, ident="alg1", random_state=random_state)
+    alg2 = TSTE(n=n, d=d, ident="alg2", random_state=random_state)
+    assert np.allclose(alg1.opt.embedding_, alg2.opt.embedding_)
