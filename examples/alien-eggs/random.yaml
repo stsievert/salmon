@@ -3,5 +3,4 @@ debrief: Thanks! Please enter this participant ID in the assignment.
 max_queries: 100  # took about 2.05 minutes for 100 queries
 d: 2
 samplers:
-  RandomSampling:
-    random_state: 42
+  RandomSampling: {}

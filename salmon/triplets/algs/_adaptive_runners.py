@@ -52,6 +52,7 @@ class Adaptive(Runner):
         R: float = 10,
         sampling: str = "adaptive",
         scorer: str = "infogain",
+        random_state: Optional[int] = None,
         **kwargs,
     ):
         super().__init__(ident=ident)
@@ -75,6 +76,7 @@ class Adaptive(Runner):
             module=Module,
             module__n=n,
             module__d=d,
+            module__random_state=random_state,
             optimizer=torch.optim.SGD,
             optimizer__lr=optimizer__lr,
             optimizer__momentum=optimizer__momentum,
@@ -292,6 +294,7 @@ class TSTE(Adaptive):
         sampling="adaptive",
         scorer="infogain",
         alpha=1,
+        random_state=None,
         **kwargs,
     ):
         super().__init__(
@@ -305,6 +308,7 @@ class TSTE(Adaptive):
             module="TSTE",
             sampling=sampling,
             scorer=scorer,
+            random_state=random_state,
             **kwargs,
         )
 
@@ -365,6 +369,7 @@ class RR(Adaptive):
         sampling="adaptive",
         scorer="infogain",
         module="TSTE",
+        random_state=None,
         **kwargs,
     ):
         super().__init__(
@@ -378,6 +383,7 @@ class RR(Adaptive):
             module=module,
             sampling=sampling,
             scorer=scorer,
+            random_state=random_state,
             **kwargs,
         )
 
@@ -437,6 +443,7 @@ class STE(Adaptive):
         optimizer__momentum=0.9,
         sampling="adaptive",
         scorer="infogain",
+        random_state=None,
         **kwargs,
     ):
         super().__init__(
@@ -449,6 +456,7 @@ class STE(Adaptive):
             module="STE",
             sampling=sampling,
             scorer=scorer,
+            random_state=random_state,
             **kwargs,
         )
 
@@ -491,6 +499,7 @@ class GNMDS(Adaptive):
         optimizer__momentum=0.9,
         sampling="adaptive",
         scorer="uncertainty",
+        random_state=None,
         **kwargs,
     ):
         super().__init__(
@@ -502,6 +511,7 @@ class GNMDS(Adaptive):
             optimizer__momentum=optimizer__momentum,
             module="GNMDS",
             sampling=sampling,
+            random_state=random_state,
             **kwargs,
         )
 
@@ -540,6 +550,7 @@ class CKL(Adaptive):
         optimizer__momentum=0.9,
         mu=1,
         sampling="adaptive",
+        random_state=None,
         **kwargs,
     ):
         super().__init__(
@@ -552,6 +563,7 @@ class CKL(Adaptive):
             module__mu=mu,
             module="CKL",
             sampling=sampling,
+            random_state=random_state,
             **kwargs,
         )
 
@@ -590,6 +602,7 @@ class SOE(Adaptive):
         optimizer__momentum=0.9,
         mu=1,
         sampling="adaptive",
+        random_state=None,
         **kwargs,
     ):
         super().__init__(
@@ -602,5 +615,6 @@ class SOE(Adaptive):
             module__mu=mu,
             module="SOE",
             sampling=sampling,
+            random_state=random_state,
             **kwargs,
         )

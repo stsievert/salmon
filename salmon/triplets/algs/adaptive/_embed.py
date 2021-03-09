@@ -48,6 +48,7 @@ class Embedding(BaseEstimator):
         warm_start=True,
         max_epochs=100,
         initial_batch_size=512,
+        random_state=None,
         **kwargs,
     ):
         self.module = module
@@ -88,6 +89,7 @@ class Embedding(BaseEstimator):
             dataset=NumpyDataset,
             **opt_kwargs,
         ).initialize()
+        return self
 
     # def converged(self):
     #     answers = self.answers_[: self.meta_["num_answers"]]

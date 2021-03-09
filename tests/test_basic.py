@@ -239,9 +239,6 @@ def test_logs(server, logs):
         assert {str(i) for i in range(10)}.issubset(puids)
 
 
-@pytest.mark.xfail(
-    reason="Works in browser with imgs.zip; having difficulty with this test"
-)
 def test_zip_upload(server):
     server.authorize()
     exp = Path(__file__).parent / "data" / "upload_w_zip.yaml"
@@ -250,7 +247,7 @@ def test_zip_upload(server):
     t = targets.read_bytes()
     assert len(t) > 0
     assert t[:4] == b"\x50\x4B\x03\x04"
-    server.post("/init_exp", data={"exp": exp.read_bytes(), "targets": t})
+    server.post("/init_exp", data={"exp": exp.read_bytes()}, files={"targets": t})
 
 
 def test_get_config(server):
