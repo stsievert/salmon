@@ -42,7 +42,7 @@ def _extract_zipfile(raw_zipfile, directory="targets"):
 
     def _numeric_fname(f: Path) -> Union[float, str]:
         str_or_digit = str(f.name).split(".")[0]
-        return float(str_or_digit) if str_or_digit.isdigit else f.name
+        return float(str_or_digit) if str_or_digit.isdigit() else f.name
 
     return list(sorted(fnames, key=_numeric_fname))
 

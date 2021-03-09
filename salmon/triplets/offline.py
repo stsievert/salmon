@@ -45,6 +45,7 @@ class OfflineEmbedding(BaseEstimator):
         ident="",
         noise_model="CKL",
         shuffle=True,
+        random_state=None,
         **kwargs,
     ):
         self.opt = opt
@@ -55,6 +56,7 @@ class OfflineEmbedding(BaseEstimator):
         self.ident = ident
         self.noise_model = noise_model
         self.shuffle = shuffle
+        self.random_state = random_state
         self.kwargs = kwargs
 
     def initialize(self, X_train):
@@ -65,6 +67,7 @@ class OfflineEmbedding(BaseEstimator):
                 module=noise_model,
                 module__n=self.n,
                 module__d=self.d,
+                module__random_state=self.random_state,
                 optimizer=optim.Adadelta,
                 max_epochs=self.max_epochs,
                 shuffle=self.shuffle,
@@ -78,6 +81,7 @@ class OfflineEmbedding(BaseEstimator):
         self.opt_ = self.opt
         self.history_ = []
         self.initialized_ = True
+        return self
 
     def partial_fit(self, X_train):
         if not (hasattr(self, "initialized_") and self.initialized_):
