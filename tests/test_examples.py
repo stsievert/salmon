@@ -1,5 +1,6 @@
 from pathlib import Path
 from zipfile import ZipFile
+from time import sleep
 
 import pytest
 from .utils import server
@@ -24,8 +25,12 @@ def _test_upload(exp: Path, target_zip: Path, server):
 
 @pytest.mark.parametrize("eg_dir", SUBDIRS)
 def test_directory_examples(eg_dir: str, server):
+    server.authorize()
     _eg_dir = EG_DIR / eg_dir
     for exp in _eg_dir.glob("*.yaml"):
         for target_zip in _eg_dir.glob("*.zip"):
             success = _test_upload(exp, target_zip, server)
             assert success
+            r = server.get("/reset?force=1")
+            assert r.json() == {"success": True}
+            sleep(4)
