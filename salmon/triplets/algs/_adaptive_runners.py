@@ -368,7 +368,7 @@ class RR(Adaptive):
         optimizer__momentum=0.9,
         sampling="adaptive",
         scorer="infogain",
-        module="CKL",
+        module="TSTE",
         random_state=None,
         **kwargs,
     ):
