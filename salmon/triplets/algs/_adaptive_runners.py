@@ -404,6 +404,12 @@ class RR(Adaptive):
         meta.update({"n_queries_scored_(complete)": len(df)})
         return posted, r_scores, meta
 
+    def process_answers(self, answers: List[Answer]):
+        _, update = super().process_answers(answers)
+        # In practice, returning update=True clears queries from the
+        # database.
+        return self, True
+
 
 class STE(Adaptive):
     """
