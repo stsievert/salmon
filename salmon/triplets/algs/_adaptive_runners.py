@@ -77,11 +77,9 @@ class Adaptive(Runner):
             module__n=n,
             module__d=d,
             module__random_state=random_state,
-            optimizer=torch.optim.SGD,
-            optimizer__lr=optimizer__lr,
-            optimizer__momentum=optimizer__momentum,
+            optimizer=torch.optim.Adadelta,
             warm_start=True,
-            max_epochs=500,
+            max_epochs=300,
             **kwargs,
         )
         self.opt.initialize()
@@ -393,7 +391,7 @@ class RR(Adaptive):
         df = pd.DataFrame(queries, columns=["h", "l", "r"])
         df["score"] = scores
 
-        top_scores_by_head = df.groupby(by="h")["score"].nlargest(n=5)
+        top_scores_by_head = df.groupby(by="h")["score"].nlargest(n=3)
         top_idx = top_scores_by_head.index.droplevel(0)
 
         top_queries = df.loc[top_idx].sample(frac=1)
