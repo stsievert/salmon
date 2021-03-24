@@ -79,7 +79,7 @@ class Adaptive(Runner):
             module__random_state=random_state,
             optimizer=torch.optim.Adadelta,
             warm_start=True,
-            max_epochs=300,
+            max_epochs=120,
             **kwargs,
         )
         self.opt.initialize()
@@ -171,8 +171,20 @@ class Adaptive(Runner):
         # Make sure only valid answers are passed to partial_fit;
         # self.opt.answers_ has a bunch of extra space for new answers
         n_ans = self.opt.meta_["num_answers"]
-        valid_ans = self.opt.answers_[:n_ans]
+        difficulty = np.log(self.params["n"]) * self.params["d"] * self.params["n"]
+        if n_ans / difficulty <= 1:
+            max_epochs = 200
+        elif n_ans / difficulty <= 3:
+            max_epochs = 120
+        else:
+            max_epochs = 50
 
+        # max_epochs above for completely random initializations
+        # Use max_epochs // 2 because online and will already be
+        # partially fit
+        self.opt.set_params(max_epochs=max_epochs // 2)
+
+        valid_ans = self.opt.answers_[:n_ans]
         self.opt.fit(valid_ans)
         self.meta["model_updates"] += 1
         return self, True
@@ -355,6 +367,7 @@ class RR(Adaptive):
            auxiliary information." arXiv preprint arXiv:1511.02254 (2015). https://arxiv.org/abs/1511.02254
 
     """
+
     def __init__(
         self,
         n: int,
