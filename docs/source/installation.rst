@@ -76,13 +76,19 @@ To start using Salmon, these endpoints will be available:
 
 Local machine
 -------------
-On your local machine as a developer? Run this following code in a terminal:
+
+On your local machine as a developer? To launch, first download the code.  It's
+possible to download `a ZIP file of Salmon's source`_, or if Git is installed,
+to run this command:
+
+.. _a ZIP file of Salmon's source: https://github.com/stsievert/salmon/archive/refs/heads/master.zip
 
 .. code:: shell
 
    $ git clone https://github.com/stsievert/salmon.git
 
-First, `install Docker`_ and `install Git`_. After that, run the following code:
+Then, to launch a local version of Salmon you'll need `Docker Compose`_.
+After that dependency is intalled, run the following code:
 
 .. _install Docker: https://www.docker.com/products/docker-desktop
 .. _install Git: https://git-scm.com/downloads
@@ -94,14 +100,20 @@ First, `install Docker`_ and `install Git`_. After that, run the following code:
    $ docker-compose up
    $ # visit http://localhost:8421/init_exp or http://localhost:8421/docs
 
-Developer
----------
-Follow the instructions for local machine launch.
+.. _Docker Compose: https://docs.docker.com/compose/install/
 
-If you make changes to this code, follow these instructions:
+If you make changes to this code, run these commands:
 
 .. code:: shell
 
 	$ docker-compose stop
 	$ docker-compose build
 	$ docker-compose up
+
+If you run the command ``export SALMON_DEBUG=1``, the Salmon server will watch
+for changes in the source and re-launch as necessary. This won't be perfect,
+but it will reduce the number of times required to run ``docker-compose {stop,
+build, up}``.
+
+If you run the command ``export SALMON_NO_AUTH=1``, the Salmon server will
+not require a username/password.
