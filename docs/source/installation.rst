@@ -5,12 +5,17 @@ This pages details how to get Salmon running, either on EC2 or locally on your
 machine. After you get Salmon running, detail on how to launch experiments in
 :ref:`getting-started`.
 
+.. note::
+
+   See the `Troubleshooting`_ section if you're having difficulties with either
+   of the processes below.
+
 Experimentalist
 ---------------
 
 1. Sign into Amazon AWS (http://aws.amazon.com/)
 2. Select the "Oregon" region (or ``us-west-2``) in the upper right.
-3. Go to Amazon EC2
+3. Go to Amazon EC2.
 4. Launch a new instance (the big blue button or square orange button).
 5. Select AMI ``ami-0e3134e3437ec5b85`` titled "Salmon". It appears in
    Community AMIs after searching "Salmon".
@@ -77,7 +82,7 @@ To start using Salmon, these endpoints will be available:
 Local machine
 -------------
 
-On your local machine as a developer? To launch, first download the code.  It's
+This process is meant for developers. To launch, first download the code.  It's
 possible to download `a ZIP file of Salmon's source`_, or if Git is installed,
 to run this command:
 
@@ -117,3 +122,31 @@ build, up}``.
 
 If you run the command ``export SALMON_NO_AUTH=1``, the Salmon server will
 not require a username/password.
+
+Troubleshooting
+---------------
+
+I can't access Salmon's URL
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Try using ``http://`` instead of ``https://``.  By default, EC2 does not
+support HTTPS, and some browsers use HTTPS automatically.
+
+I can't find Salmon's AMI
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Are you in EC2's Oregon region, ``us-west-2``? That can be changed in the upper
+right of the Amazon EC2 interface.
+
+The Salmon AMI has been created in the ``us-west-2`` region, and EC2 AMIs are
+only available in the regions they're created in.
+
+The Docker machines aren't launching
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Are you using the command ``docker-compose up`` to launch Salmon? The command
+``docker build .`` doesn't work.
+
+Salmon requires a Redis docker machine and certain directories/ports being
+available. Technically, it's possible to build all the Docker machines
+yourself (but it's not feasible).
