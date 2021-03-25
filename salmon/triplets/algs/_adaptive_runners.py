@@ -404,22 +404,23 @@ class RR(Adaptive):
         df = pd.DataFrame(queries, columns=["h", "l", "r"])
         df["score"] = scores
 
-        top_scores_by_head = df.groupby(by="h")["score"].nlargest(n=3)
+        top_scores_by_head = df.groupby(by="h")["score"].nlargest(n=1)
         top_idx = top_scores_by_head.index.droplevel(0)
 
         top_queries = df.loc[top_idx].sample(frac=1)
         posted = top_queries[["h", "l", "r"]].values.astype("int64")
         r_scores = 10 + np.linspace(0, 1, num=len(posted))
+        r_scores += 1e-3 * np.random.uniform(size=len(posted))
         np.random.shuffle(r_scores)
 
         meta.update({"n_queries_scored_(complete)": len(df)})
         return posted, r_scores, meta
 
-    def process_answers(self, answers: List[Answer]):
-        _, update = super().process_answers(answers)
-        # In practice, returning update=True clears queries from the
-        # database.
-        return self, True
+    #  def process_answers(self, answers: List[Answer]):
+        #  _, update = super().process_answers(answers)
+        #  # In practice, returning update=True clears queries from the
+        #  # database.
+        #  return self, True
 
 
 class STE(Adaptive):

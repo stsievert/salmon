@@ -90,7 +90,9 @@ class Runner:
                     queries_f = scores_f = []
                 if update:
                     datum["cleared_queries"] = True
+                    __start = time()
                     self.clear_queries(rj)
+                    datum["time_clearing"] = time() - __start
                 done = distributed.Event(name="pa_finished")
                 done.clear()
 
