@@ -401,7 +401,7 @@ class RR(Adaptive):
         df = pd.DataFrame(queries, columns=["h", "l", "r"])
         df["score"] = scores
 
-        top_scores_by_head = df.groupby(by="h")["score"].nlargest(n=2)
+        top_scores_by_head = df.groupby(by="h")["score"].nlargest(n=3)
         top_idx = top_scores_by_head.index.droplevel(0)
 
         top_queries = df.loc[top_idx].sample(frac=1)
