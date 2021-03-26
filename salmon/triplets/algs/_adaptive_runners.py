@@ -36,7 +36,10 @@ PARAMS = """
     sampling : str
         "adaptive" by default. Use ``sampling="random"`` to perform random
         sampling with the same optimization method and noise model.
+    eps : float (optional, default=0.1)
+        Scores within this value are considered the same.
     """
+EPS = 0.05
 
 
 class Adaptive(Runner):
@@ -53,6 +56,7 @@ class Adaptive(Runner):
         sampling: str = "adaptive",
         scorer: str = "infogain",
         random_state: Optional[int] = None,
+        eps: float = EPS,
         **kwargs,
     ):
         super().__init__(ident=ident)
@@ -61,6 +65,7 @@ class Adaptive(Runner):
         self.d = d
         self.R = R
         self.sampling = sampling
+        self.eps = eps
         if sampling not in ["adaptive", "random"]:
             raise ValueError(
                 "Must pass sampling='adaptive' or sampling='random', not "
@@ -79,7 +84,7 @@ class Adaptive(Runner):
             module__random_state=random_state,
             optimizer=torch.optim.Adadelta,
             warm_start=True,
-            max_epochs=120,
+            max_epochs=200,
             **kwargs,
         )
         self.opt.initialize()
@@ -138,6 +143,7 @@ class Adaptive(Runner):
                 break
         queries = np.concatenate(ret_queries).astype(int)
         scores = np.concatenate(ret_scores)
+        scores += np.random.uniform(low=0, high=self.eps, size=len(scores))
 
         ## Rest of this function takes about 450ms
         df = pd.DataFrame(queries)
@@ -171,19 +177,6 @@ class Adaptive(Runner):
         # Make sure only valid answers are passed to partial_fit;
         # self.opt.answers_ has a bunch of extra space for new answers
         n_ans = self.opt.meta_["num_answers"]
-        difficulty = np.log(self.params["n"]) * self.params["d"] * self.params["n"]
-        if n_ans / difficulty <= 1:
-            max_epochs = 200
-        elif n_ans / difficulty <= 3:
-            max_epochs = 120
-        else:
-            max_epochs = 50
-
-        # max_epochs above for completely random initializations
-        # Use max_epochs // 2 because online and will already be
-        # partially fit
-        self.opt.set_params(max_epochs=max_epochs // 2)
-
         valid_ans = self.opt.answers_[:n_ans]
         self.opt.fit(valid_ans)
         self.meta["model_updates"] += 1
@@ -305,6 +298,7 @@ class TSTE(Adaptive):
         scorer="infogain",
         alpha=1,
         random_state=None,
+        eps=EPS,
         **kwargs,
     ):
         super().__init__(
@@ -319,6 +313,7 @@ class TSTE(Adaptive):
             sampling=sampling,
             scorer=scorer,
             random_state=random_state,
+            eps=eps,
             **kwargs,
         )
 
@@ -381,6 +376,7 @@ class RR(Adaptive):
         scorer="infogain",
         module="TSTE",
         random_state=None,
+        eps=0,
         **kwargs,
     ):
         super().__init__(
@@ -395,6 +391,7 @@ class RR(Adaptive):
             sampling=sampling,
             scorer=scorer,
             random_state=random_state,
+            eps=eps,
             **kwargs,
         )
 
@@ -404,7 +401,7 @@ class RR(Adaptive):
         df = pd.DataFrame(queries, columns=["h", "l", "r"])
         df["score"] = scores
 
-        top_scores_by_head = df.groupby(by="h")["score"].nlargest(n=1)
+        top_scores_by_head = df.groupby(by="h")["score"].nlargest(n=2)
         top_idx = top_scores_by_head.index.droplevel(0)
 
         top_queries = df.loc[top_idx].sample(frac=1)
@@ -417,10 +414,10 @@ class RR(Adaptive):
         return posted, r_scores, meta
 
     #  def process_answers(self, answers: List[Answer]):
-        #  _, update = super().process_answers(answers)
-        #  # In practice, returning update=True clears queries from the
-        #  # database.
-        #  return self, True
+    #  _, update = super().process_answers(answers)
+    #  # In practice, returning update=True clears queries from the
+    #  # database.
+    #  return self, True
 
 
 class STE(Adaptive):
@@ -462,6 +459,7 @@ class STE(Adaptive):
         sampling="adaptive",
         scorer="infogain",
         random_state=None,
+        eps=EPS,
         **kwargs,
     ):
         super().__init__(
@@ -475,6 +473,7 @@ class STE(Adaptive):
             sampling=sampling,
             scorer=scorer,
             random_state=random_state,
+            eps=eps,
             **kwargs,
         )
 
@@ -518,6 +517,7 @@ class GNMDS(Adaptive):
         sampling="adaptive",
         scorer="uncertainty",
         random_state=None,
+        eps=EPS,
         **kwargs,
     ):
         super().__init__(
@@ -530,6 +530,7 @@ class GNMDS(Adaptive):
             module="GNMDS",
             sampling=sampling,
             random_state=random_state,
+            eps=eps,
             **kwargs,
         )
 
@@ -569,6 +570,7 @@ class CKL(Adaptive):
         mu=1,
         sampling="adaptive",
         random_state=None,
+        eps=EPS,
         **kwargs,
     ):
         super().__init__(
@@ -582,6 +584,7 @@ class CKL(Adaptive):
             module="CKL",
             sampling=sampling,
             random_state=random_state,
+            eps=eps,
             **kwargs,
         )
 
@@ -621,6 +624,7 @@ class SOE(Adaptive):
         mu=1,
         sampling="adaptive",
         random_state=None,
+        eps=EPS,
         **kwargs,
     ):
         super().__init__(
@@ -634,5 +638,6 @@ class SOE(Adaptive):
             module="SOE",
             sampling=sampling,
             random_state=random_state,
+            eps=eps,
             **kwargs,
         )
