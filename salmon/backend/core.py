@@ -95,11 +95,13 @@ async def init(ident: str, background_tasks: BackgroundTasks) -> bool:
 
     try:
         if f"state-{ident}" in rj.keys():
+            logger.warning(f"Initializing alg from key 'state-{ident}'")
             # See https://github.com/andymccurdy/redis-py/issues/1006
             rj2 = Client(host="redis", port=6379, decode_responses=False)
             state = rj2.get(f"state-{ident}")
             alg = cloudpickle.loads(state)
         else:
+            logger.warning(f"Initializing alg from config")
             params = config["samplers"][ident]
             _class = params.pop("class", ident)
             Alg = getattr(algs, _class)
@@ -115,6 +117,7 @@ async def init(ident: str, background_tasks: BackgroundTasks) -> bool:
     logger.info(f"alg={ident} initialized; now, does it have get_quer")
     if hasattr(alg, "get_query"):
         logger.info(f"Init'ing /query-{ident}")
+        logger.warning(f"alg_id={id(alg)}")
 
         @app.get(f"/query-{ident}")
         def _get_query():

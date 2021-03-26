@@ -39,7 +39,7 @@ PARAMS = """
     eps : float (optional, default=0.1)
         Scores within this value are considered the same.
     """
-EPS = 0.05
+EPS = 0.1
 
 
 class Adaptive(Runner):
@@ -177,6 +177,21 @@ class Adaptive(Runner):
         # Make sure only valid answers are passed to partial_fit;
         # self.opt.answers_ has a bunch of extra space for new answers
         n_ans = self.opt.meta_["num_answers"]
+
+        difficulty = np.log(self.params["n"]) * self.params["d"] * self.params["n"]
+        if n_ans / difficulty <= 1:
+            max_epochs = 200
+        elif n_ans / difficulty <= 3:
+            max_epochs = 120
+        else:
+            max_epochs = 50
+
+        # max_epochs above for completely random initializations
+        # Use max_epochs // 2 because online and will already be
+        # partially fit
+        self.opt.set_params(max_epochs=max_epochs)
+
+
         valid_ans = self.opt.answers_[:n_ans]
         self.opt.fit(valid_ans)
         self.meta["model_updates"] += 1
@@ -621,7 +636,6 @@ class SOE(Adaptive):
         optimizer: str = "Embedding",
         optimizer__lr=0.075,
         optimizer__momentum=0.9,
-        mu=1,
         sampling="adaptive",
         random_state=None,
         eps=EPS,
@@ -634,7 +648,6 @@ class SOE(Adaptive):
             optimizer=optimizer,
             optimizer__lr=optimizer__lr,
             optimizer__momentum=optimizer__momentum,
-            module__mu=mu,
             module="SOE",
             sampling=sampling,
             random_state=random_state,

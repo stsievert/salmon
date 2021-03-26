@@ -287,7 +287,7 @@ async def process_form(
         return ret
     except Exception as e:
         logger.error(e)
-        reset(force=True, timeout=2)
+        reset(force=True, timeout=30)
         if isinstance(e, (ExpParsingError, HTTPException)):
             raise e
         msg = exception_to_string(e)
@@ -356,7 +356,10 @@ async def _process_form(
 @app.delete("/reset", tags=["private"])
 @app.get("/reset", tags=["private"])
 def reset(
-    force: int = 0, authorized=Depends(_authorize), tags=["private"], timeout: int = 2,
+    force: int = 0,
+    authorized=Depends(_authorize),
+    tags=["private"],
+    timeout: float = 60,
 ):
     """
     Delete all data from the database. This requires authentication.
@@ -385,38 +388,69 @@ def reset(
 
         save_dir = ROOT_DIR / "out"
         files = [f.name for f in save_dir.glob("*")]
-        logger.info(files)
-        logger.info("dump.rdb" in files)
+        logger.warning(f"dump_rdb in files? {'dump.rdb' in files}")
+        logger.warning(f"files={files}")
         if "dump.rdb" in files:
             logger.error(f"Moving dump.rdb to dump-{now}.rdb")
             shutil.move(str(save_dir / "dump.rdb"), str(save_dir / f"dump-{now}.rdb"))
+            files = [f.name for f in save_dir.glob("*")]
+            logger.warning(f"dump_rdb in files? {'dump.rdb' in files}")
+            logger.warning(f"files={files}")
+        files = [f.name for f in save_dir.glob("*")]
+        assert "dump.rdb" not in files
 
         # Stop background jobs (ie adaptive algs)
         rj.jsonset("reset", root, True)
+        rj2 = Client(host="redis", port=6379, decode_responses=False)
         if "samplers" in rj.keys():
             samplers = rj.jsonget("samplers")
             stopped = {name: False for name in samplers}
+            __deadline = time() + timeout
             for k in itertools.count():
                 rj.jsonset("reset", root, True)
                 for name in stopped:
                     if f"stopped-{name}" in rj.keys():
-                        stopped[name] = rj.jsonget(f"stopped-{name}")
+                        stopped[name] = rj.jsonget(f"stopped-{name}", root)
                 if all(stopped.values()):
-                    logger.info(f"stopped={stopped}")
+                    logger.warning(f"stopped={stopped}")
                     break
                 sleep(1)
-                logger.info(f"Waited {k + 1} seconds for {name} to stop...")
-                if timeout and k > timeout:
-                    logger.info(f"Hit timeout={timeout} for {name}. Brekaing")
+                logger.warning(
+                    f"Waited {k + 1} seconds algorithms... stopped? {stopped}"
+                    f" (rj.keys() == {rj.keys()}"
+                )
+                if timeout and time() >= __deadline:
+                    logger.warning(f"Hit timeout={timeout} w/ stopped={stopped}. Breaking!")
                     break
 
-        rj.flushdb()
-        logger.info("After reset, rj.keys=%s", rj.keys())
+            logger.warning("    starting with clearing queries...")
+            for ident in samplers:
+                rj2.delete(f"alg-{ident}-queries")
+
+        logger.warning("Trying to completely flush database...")
+
+
+        rj.flushall(asynchronous=True)
+        rj2.flushall(asynchronous=True)
+        rj.flushdb(asynchronous=True)
+        rj2.flushdb(asynchronous=True)
+        for _rj in [rj, rj2]:
+            _rj.memory_purge()
+            sleep(1)
+            for k in _rj.keys():
+                _rj.delete(k)
+            _rj.flushall(asynchronous=True)
+            _rj.flushdb(asynchronous=True)
+            sleep(1)
+            _rj.flushdb(asynchronous=False)
+            sleep(1)
+            _rj.flushall(asynchronous=False)
+
+        logger.warning("After reset, rj.keys=%s", rj.keys())
         rj.jsonset("responses", root, {})
         rj.jsonset("start_time", root, -1)
         rj.jsonset("start_datetime", root, "-1")
         rj.jsonset("exp_config", root, {})
-
         return {"success": True}
 
     return {"success": False}
@@ -549,7 +583,7 @@ async def _get_responses():
 
 
 async def _format_responses(responses, targets, start):
-    logger.info("getting %s responses", len(responses))
+    logger.info("getting %s responses", len(responses or []))
     out = manager.get_responses(responses, targets, start_time=start)
     return out
 
@@ -667,7 +701,7 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
             "request": request,
             "targets": targets,
             "exp_config": exp_config,
-            "num_responses": len(responses),
+            "num_responses": len(responses or []),
             "num_participants": df.puid.nunique(),
             "filenames": [_get_filename(html) for html in targets],
             "endpoints": endpoints,
