@@ -236,7 +236,7 @@ class Runner:
             pass
         logger.warning(f"Closiing Dask client for {self.ident}")
         try:
-            client.sync(client.close(timeout=5))
+            client.sync(client.close())
         except:
             pass
 
