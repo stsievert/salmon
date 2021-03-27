@@ -368,7 +368,8 @@ def reset(
     """
     return _reset(force=force, timeout=timeout)
 
-def _reset(force: int=0, timeout: float=5):
+
+def _reset(force: int = 0, timeout: float = 5):
     logger.warning("Resetting, force=%s, authorized=%s", force, authorized)
     if not force:
         logger.warning("Resetting, force=False. Erroring")
@@ -424,7 +425,9 @@ def _reset(force: int=0, timeout: float=5):
                     f" (rj.keys() == {rj.keys()}"
                 )
                 if timeout and time() >= __deadline:
-                    logger.warning(f"Hit timeout={timeout} w/ stopped={stopped}. Breaking!")
+                    logger.warning(
+                        f"Hit timeout={timeout} w/ stopped={stopped}. Breaking!"
+                    )
                     break
 
             logger.warning("    starting with clearing queries...")
@@ -432,7 +435,6 @@ def _reset(force: int=0, timeout: float=5):
                 rj2.delete(f"alg-{ident}-queries")
 
         logger.warning("Trying to completely flush database...")
-
 
         rj.flushall(asynchronous=True)
         rj2.flushall(asynchronous=True)
