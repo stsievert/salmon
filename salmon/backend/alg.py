@@ -334,7 +334,8 @@ class Runner:
             low = scores[-1]
             assert low <= high, f"high={high} to low={low} scores"
 
-        n_chunks = len(queries) // 2000
+        chunk_size = 2000
+        n_chunks = len(queries) // chunk_size
         split_queries = np.array_split(queries, max(n_chunks, 1))
         split_scores = np.array_split(scores, max(n_chunks, 1))
 
