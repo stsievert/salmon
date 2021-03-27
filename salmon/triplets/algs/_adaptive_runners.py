@@ -419,6 +419,12 @@ class RR(Adaptive):
         meta.update({"n_queries_scored_(complete)": len(df)})
         return posted, r_scores, meta
 
+    def process_answers(self, *args, **kwargs):
+        new_self, updated = super().process_answers(*args, **kwargs)
+        # Always return True to clear queries from the database (limits
+        # randomness)
+        return new_self, True
+
 
 class STE(Adaptive):
     """
