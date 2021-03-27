@@ -36,10 +36,7 @@ PARAMS = """
     sampling : str
         "adaptive" by default. Use ``sampling="random"`` to perform random
         sampling with the same optimization method and noise model.
-    eps : float (optional, default=0.1)
-        Scores within this value are considered the same.
     """
-EPS = 0.1
 
 
 class Adaptive(Runner):
@@ -56,7 +53,6 @@ class Adaptive(Runner):
         sampling: str = "adaptive",
         scorer: str = "infogain",
         random_state: Optional[int] = None,
-        eps: float = EPS,
         **kwargs,
     ):
         super().__init__(ident=ident)
@@ -65,7 +61,6 @@ class Adaptive(Runner):
         self.d = d
         self.R = R
         self.sampling = sampling
-        self.eps = eps
         if sampling not in ["adaptive", "random"]:
             raise ValueError(
                 "Must pass sampling='adaptive' or sampling='random', not "
@@ -143,7 +138,6 @@ class Adaptive(Runner):
                 break
         queries = np.concatenate(ret_queries).astype(int)
         scores = np.concatenate(ret_scores)
-        scores += np.random.uniform(low=0, high=self.eps, size=len(scores))
 
         ## Rest of this function takes about 450ms
         df = pd.DataFrame(queries)
@@ -312,7 +306,6 @@ class TSTE(Adaptive):
         scorer="infogain",
         alpha=1,
         random_state=None,
-        eps=EPS,
         **kwargs,
     ):
         super().__init__(
@@ -327,7 +320,6 @@ class TSTE(Adaptive):
             sampling=sampling,
             scorer=scorer,
             random_state=random_state,
-            eps=eps,
             **kwargs,
         )
 
@@ -390,7 +382,6 @@ class RR(Adaptive):
         scorer="infogain",
         module="TSTE",
         random_state=None,
-        eps=0,
         **kwargs,
     ):
         super().__init__(
@@ -405,7 +396,6 @@ class RR(Adaptive):
             sampling=sampling,
             scorer=scorer,
             random_state=random_state,
-            eps=eps,
             **kwargs,
         )
 
@@ -469,7 +459,6 @@ class STE(Adaptive):
         sampling="adaptive",
         scorer="infogain",
         random_state=None,
-        eps=EPS,
         **kwargs,
     ):
         super().__init__(
@@ -483,7 +472,6 @@ class STE(Adaptive):
             sampling=sampling,
             scorer=scorer,
             random_state=random_state,
-            eps=eps,
             **kwargs,
         )
 
@@ -527,7 +515,6 @@ class GNMDS(Adaptive):
         sampling="adaptive",
         scorer="uncertainty",
         random_state=None,
-        eps=EPS,
         **kwargs,
     ):
         super().__init__(
@@ -540,7 +527,6 @@ class GNMDS(Adaptive):
             module="GNMDS",
             sampling=sampling,
             random_state=random_state,
-            eps=eps,
             **kwargs,
         )
 
@@ -580,7 +566,6 @@ class CKL(Adaptive):
         mu=1,
         sampling="adaptive",
         random_state=None,
-        eps=EPS,
         **kwargs,
     ):
         super().__init__(
@@ -594,7 +579,6 @@ class CKL(Adaptive):
             module="CKL",
             sampling=sampling,
             random_state=random_state,
-            eps=eps,
             **kwargs,
         )
 
@@ -633,7 +617,6 @@ class SOE(Adaptive):
         optimizer__momentum=0.9,
         sampling="adaptive",
         random_state=None,
-        eps=EPS,
         **kwargs,
     ):
         super().__init__(
@@ -646,6 +629,5 @@ class SOE(Adaptive):
             module="SOE",
             sampling=sampling,
             random_state=random_state,
-            eps=eps,
             **kwargs,
         )
