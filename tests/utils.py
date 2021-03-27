@@ -77,14 +77,14 @@ def _clear_logs(log=None):
 @pytest.fixture()
 def server():
     server = Server("http://127.0.0.1:8421")
-    server.get("/reset?force=1", auth=server.auth())
-    sleep(4)
+    server.get("/reset?force=1", auth=server.auth(), timeout=10)
+    sleep(1)
     _clear_logs()
     yield server
     username, password = server.auth()
-    r = server.get("/reset?force=1", auth=(username, password))
+    r = server.get("/reset?force=1", auth=(username, password), timeout=10)
     assert r.json() == {"success": True}
-    sleep(4)
+    sleep(1)
     dump = Path(__file__).absolute().parent.parent / "out" / "dump.rdb"
     if dump.exists():
         dump.unlink()
