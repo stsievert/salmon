@@ -191,7 +191,6 @@ class Adaptive(Runner):
         # partially fit
         self.opt.set_params(max_epochs=max_epochs)
 
-
         valid_ans = self.opt.answers_[:n_ans]
         self.opt.fit(valid_ans)
         self.meta["model_updates"] += 1
@@ -413,26 +412,27 @@ class RR(Adaptive):
     def get_queries(self, *args, **kwargs):
         queries, scores, meta = super().get_queries(*args, **kwargs)
 
+        # (dataframe useful for manipulation below)
         df = pd.DataFrame(queries, columns=["h", "l", "r"])
         df["score"] = scores
 
+        # Find the top scores per head
         top_scores_by_head = df.groupby(by="h")["score"].nlargest(n=3)
         top_idx = top_scores_by_head.index.droplevel(0)
 
-        top_queries = df.loc[top_idx].sample(frac=1)
-        posted = top_queries[["h", "l", "r"]].values.astype("int64")
-        r_scores = 10 + np.linspace(0, 1, num=len(posted))
-        r_scores += 1e-3 * np.random.uniform(size=len(posted))
-        np.random.shuffle(r_scores)
+        top_queries = df.loc[top_idx]
+        top_scores = top_queries["score"].to_numpy()
+        posted = top_queries[["h", "l", "r"]].to_numpy().astype("int64")
+
+        # Add a little noise to the scores
+        top_scores_per_head = top_queries.groupby(by="h")["score"].nlargest(n=1)
+        diffs = np.diff(top_scores_per_head.sort_values())
+        noise = np.median(diffs)
+        top_scores += np.random.uniform(-noise / 2, noise / 2, size=len(top_scores))
+        top_scores += 10
 
         meta.update({"n_queries_scored_(complete)": len(df)})
-        return posted, r_scores, meta
-
-    #  def process_answers(self, answers: List[Answer]):
-    #  _, update = super().process_answers(answers)
-    #  # In practice, returning update=True clears queries from the
-    #  # database.
-    #  return self, True
+        return posted, top_scores, meta
 
 
 class STE(Adaptive):
