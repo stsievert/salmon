@@ -174,9 +174,6 @@ class Runner:
             datum["time_loop"] = time() - loop_start
             rj.jsonarrappend(f"alg-perf-{self.ident}", root, datum)
             logger.info(datum)
-            logger.warning(f"{'reset' in rj.keys()}")
-            meta = getattr(self, "meta", {})
-            logger.warning(f"meta={meta}")
             if "reset" in rj.keys() and rj.jsonget("reset", root):
                 logger.warning(f"Resetting {self.ident}")
                 self.reset(client, rj)

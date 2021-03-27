@@ -422,17 +422,12 @@ class RR(Adaptive):
 
         top_queries = df.loc[top_idx]
         top_scores = top_queries["score"].to_numpy()
-        posted = top_queries[["h", "l", "r"]].to_numpy().astype("int64")
 
-        # Add a little noise to the scores
-        top_scores_per_head = top_queries.groupby(by="h")["score"].nlargest(n=1)
-        diffs = np.diff(top_scores_per_head.sort_values())
-        noise = np.median(diffs)
-        top_scores += np.random.uniform(-noise / 2, noise / 2, size=len(top_scores))
-        top_scores += 10
+        posted = top_queries[["h", "l", "r"]].to_numpy().astype("int64")
+        r_scores = np.random.uniform(low=10, high=11, size=len(posted))
 
         meta.update({"n_queries_scored_(complete)": len(df)})
-        return posted, top_scores, meta
+        return posted, r_scores, meta
 
 
 class STE(Adaptive):
