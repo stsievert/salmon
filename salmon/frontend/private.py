@@ -280,6 +280,7 @@ async def process_form(
                 "\n\n(visiting /foo means visiting '[url]:8421/foo'",
             )
             raise HTTPException(status_code=403, detail=detail)
+        _reset(force=1, timeout=5)
         ret = await _process_form(request, exp, targets, rdb)
         if rdb:
             return ret
@@ -287,7 +288,7 @@ async def process_form(
         return ret
     except Exception as e:
         logger.error(e)
-        reset(force=True, timeout=30)
+        reset(force=True, timeout=5)
         if isinstance(e, (ExpParsingError, HTTPException)):
             raise e
         msg = exception_to_string(e)
@@ -359,12 +360,15 @@ def reset(
     force: int = 0,
     authorized=Depends(_authorize),
     tags=["private"],
-    timeout: float = 60,
+    timeout: float = 10,
 ):
     """
     Delete all data from the database. This requires authentication.
 
     """
+    return _reset(force=force, timeout=timeout)
+
+def _reset(force: int=0, timeout: float=5):
     logger.warning("Resetting, force=%s, authorized=%s", force, authorized)
     if not force:
         logger.warning("Resetting, force=False. Erroring")
