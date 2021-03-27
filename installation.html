@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Installation &mdash; Salmon 0+untagged.1.g48af56f documentation</title>
+  <title>Installation &mdash; Salmon 0+untagged.1.g95039ca documentation</title>
   
 
   
@@ -93,7 +93,12 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#experimentalist">Experimentalist</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#local-machine">Local machine</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#developer">Developer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#troubleshooting">Troubleshooting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#i-can-t-access-salmon-s-url">I can’t access Salmon’s URL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#i-can-t-find-salmon-s-ami">I can’t find Salmon’s AMI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-docker-machines-aren-t-launching">The Docker machines aren’t launching</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="getting-started.html">Starting an experiment</a></li>
@@ -185,12 +190,17 @@
 <p>This pages details how to get Salmon running, either on EC2 or locally on your
 machine. After you get Salmon running, detail on how to launch experiments in
 <a class="reference internal" href="getting-started.html#getting-started"><span class="std std-ref">Starting an experiment</span></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>See the <a class="reference internal" href="#troubleshooting">Troubleshooting</a> section if you’re having difficulties with either
+of the processes below.</p>
+</div>
 <div class="section" id="experimentalist">
 <h2>Experimentalist<a class="headerlink" href="#experimentalist" title="Permalink to this headline">¶</a></h2>
 <ol class="arabic">
 <li><p>Sign into Amazon AWS (<a class="reference external" href="http://aws.amazon.com/">http://aws.amazon.com/</a>)</p></li>
 <li><p>Select the “Oregon” region (or <code class="docutils literal notranslate"><span class="pre">us-west-2</span></code>) in the upper right.</p></li>
-<li><p>Go to Amazon EC2</p></li>
+<li><p>Go to Amazon EC2.</p></li>
 <li><p>Launch a new instance (the big blue button or square orange button).</p></li>
 <li><p>Select AMI <code class="docutils literal notranslate"><span class="pre">ami-0e3134e3437ec5b85</span></code> titled “Salmon”. It appears in
 Community AMIs after searching “Salmon”.</p></li>
@@ -254,26 +264,54 @@ you left the machine running.</p>
 </div>
 <div class="section" id="local-machine">
 <h2>Local machine<a class="headerlink" href="#local-machine" title="Permalink to this headline">¶</a></h2>
-<p>On your local machine as a developer? Run this following code in a terminal:</p>
+<p>This process is meant for developers. To launch, first download the code.  It’s
+possible to download <a class="reference external" href="https://github.com/stsievert/salmon/archive/refs/heads/master.zip">a ZIP file of Salmon’s source</a>, or if Git is installed,
+to run this command:</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/stsievert/salmon.git
 </pre></div>
 </div>
-<p>First, <a class="reference external" href="https://www.docker.com/products/docker-desktop">install Docker</a> and <a class="reference external" href="https://git-scm.com/downloads">install Git</a>. After that, run the following code:</p>
+<p>Then, to launch a local version of Salmon you’ll need <a class="reference external" href="https://docs.docker.com/compose/install/">Docker Compose</a>.
+After that dependency is intalled, run the following code:</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> salmon
 $ docker-compose build
 $ docker-compose up
 $ <span class="c1"># visit http://localhost:8421/init_exp or http://localhost:8421/docs</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="developer">
-<h2>Developer<a class="headerlink" href="#developer" title="Permalink to this headline">¶</a></h2>
-<p>Follow the instructions for local machine launch.</p>
-<p>If you make changes to this code, follow these instructions:</p>
+<p>If you make changes to this code, run these commands:</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ docker-compose stop
 $ docker-compose build
 $ docker-compose up
 </pre></div>
+</div>
+<p>If you run the command <code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">SALMON_DEBUG=1</span></code>, the Salmon server will watch
+for changes in the source and re-launch as necessary. This won’t be perfect,
+but it will reduce the number of times required to run <code class="docutils literal notranslate"><span class="pre">docker-compose</span> <span class="pre">{stop,</span>
+<span class="pre">build,</span> <span class="pre">up}</span></code>.</p>
+<p>If you run the command <code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">SALMON_NO_AUTH=1</span></code>, the Salmon server will
+not require a username/password.</p>
+</div>
+<div class="section" id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="i-can-t-access-salmon-s-url">
+<h3>I can’t access Salmon’s URL<a class="headerlink" href="#i-can-t-access-salmon-s-url" title="Permalink to this headline">¶</a></h3>
+<p>Try using <code class="docutils literal notranslate"><span class="pre">http://</span></code> instead of <code class="docutils literal notranslate"><span class="pre">https://</span></code>.  By default, EC2 does not
+support HTTPS, and some browsers use HTTPS automatically.</p>
+</div>
+<div class="section" id="i-can-t-find-salmon-s-ami">
+<h3>I can’t find Salmon’s AMI<a class="headerlink" href="#i-can-t-find-salmon-s-ami" title="Permalink to this headline">¶</a></h3>
+<p>Are you in EC2’s Oregon region, <code class="docutils literal notranslate"><span class="pre">us-west-2</span></code>? That can be changed in the upper
+right of the Amazon EC2 interface.</p>
+<p>The Salmon AMI has been created in the <code class="docutils literal notranslate"><span class="pre">us-west-2</span></code> region, and EC2 AMIs are
+only available in the regions they’re created in.</p>
+</div>
+<div class="section" id="the-docker-machines-aren-t-launching">
+<h3>The Docker machines aren’t launching<a class="headerlink" href="#the-docker-machines-aren-t-launching" title="Permalink to this headline">¶</a></h3>
+<p>Are you using the command <code class="docutils literal notranslate"><span class="pre">docker-compose</span> <span class="pre">up</span></code> to launch Salmon? The command
+<code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">build</span> <span class="pre">.</span></code> doesn’t work.</p>
+<p>Salmon requires a Redis docker machine and certain directories/ports being
+available. Technically, it’s possible to build all the Docker machines
+yourself (but it’s not feasible).</p>
 </div>
 </div>
 </div>
