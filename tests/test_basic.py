@@ -290,6 +290,6 @@ def test_no_init_twice(server, logs):
 def test_auth_repeated_entries(server):
     server._authorized = False
     server.post("/init_exp", status_code=401)
-    name, pword = "foobar", "baz"
+    name, pword = "dfjklasdfsdf32", "baz"
     server.post(f"/create_user/{name}/{pword}")
     server.post(f"/create_user/{name}/{pword}", status_code=403)
