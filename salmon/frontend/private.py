@@ -380,7 +380,6 @@ async def process_form(
                 "\n\n(visiting /foo means visiting '[url]:8421/foo'",
             )
             raise HTTPException(status_code=403, detail=detail)
-        _reset(timeout=2)
         ret = await _process_form(request, exp, targets, rdb)
         if rdb:
             return ret
