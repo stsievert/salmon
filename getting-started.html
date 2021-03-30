@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Starting an experiment &mdash; Salmon 0+untagged.1.g95039ca documentation</title>
+  <title>Starting an experiment &mdash; Salmon 0+untagged.1.g98c1ae0 documentation</title>
   
 
   
@@ -182,18 +182,25 @@
             
   <div class="section" id="starting-an-experiment">
 <span id="getting-started"></span><h1>Starting an experiment<a class="headerlink" href="#starting-an-experiment" title="Permalink to this headline">¶</a></h1>
-<p>Experiments can be initialized by vising <code class="docutils literal notranslate"><span class="pre">http://[url]:8421/init_exp</span></code>. This supports
-the following options:</p>
-<ol class="arabic simple">
-<li><p>Upload of a YAML file completely detailing the experiment.</p></li>
-<li><p>Upload of a YAML file describing experiment, and ZIP file for the targets.</p></li>
-<li><p>Upload of a database dump from Salmon.</p></li>
-</ol>
+<p>Experiments can be initialized by vising <code class="docutils literal notranslate"><span class="pre">http://[url]:8421/init</span></code>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>By default, Salmon does not support HTTPS. Make sure the URL begins with
 <code class="docutils literal notranslate"><span class="pre">http://</span></code>, not <code class="docutils literal notranslate"><span class="pre">https://</span></code>.</p>
 </div>
+<p>Initialization requires two actions:</p>
+<ol class="arabic simple">
+<li><p>Creating a username/password</p></li>
+<li><p>Launching an experiment.</p></li>
+</ol>
+<p>First, type a username/password and hit “create user.” After a user has been
+successfully created, hit the back button and launch an experiment. You have
+three options:</p>
+<ol class="arabic simple">
+<li><p>Upload of a YAML file completely detailing the experiment.</p></li>
+<li><p>Upload of a YAML file describing experiment, and ZIP file for the targets.</p></li>
+<li><p>Upload of a database dump from Salmon.</p></li>
+</ol>
 <p>Through the documentation, the YAML file for initialization will be referred to
 as <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code>.</p>
 <p>“YAML files” must obey a standard; see for a (human-readable) description of

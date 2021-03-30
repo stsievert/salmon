@@ -3,17 +3,25 @@
 Starting an experiment
 ======================
 
-Experiments can be initialized by vising ``http://[url]:8421/init_exp``. This supports
-the following options:
-
-1. Upload of a YAML file completely detailing the experiment.
-2. Upload of a YAML file describing experiment, and ZIP file for the targets.
-3. Upload of a database dump from Salmon.
+Experiments can be initialized by vising ``http://[url]:8421/init``.
 
 .. note::
 
    By default, Salmon does not support HTTPS. Make sure the URL begins with
    ``http://``, not ``https://``.
+
+Initialization requires two actions:
+
+1. Creating a username/password
+2. Launching an experiment.
+
+First, type a username/password and hit "create user." After a user has been
+successfully created, hit the back button and launch an experiment. You have
+three options:
+
+1. Upload of a YAML file completely detailing the experiment.
+2. Upload of a YAML file describing experiment, and ZIP file for the targets.
+3. Upload of a database dump from Salmon.
 
 Through the documentation, the YAML file for initialization will be referred to
 as ``init.yaml``.
