@@ -23,6 +23,7 @@ def test_basics(server, logs):
     """
     Requires `docker-compose up` in salmon directory
     """
+    server._authorized = False  # mock not unauthorized
     server.delete("/reset", status_code=401)
     server.authorize()
     r = server.delete("/reset?force=1")
@@ -284,3 +285,11 @@ def test_no_init_twice(server, logs):
     server.post("/init_exp", data={"exp": exp.read_bytes()})
     query = server.get("/query")
     assert query
+
+
+def test_auth_repeated_entries(server):
+    server._authorized = False
+    server.post("/init_exp", status_code=401)
+    name, pword = "foobar", "baz"
+    server.post(f"/create_user/{name}/{pword}")
+    server.post(f"/create_user/{name}/{pword}", status_code=403)

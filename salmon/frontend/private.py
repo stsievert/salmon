@@ -126,8 +126,11 @@ def create_user(
 
 
 def _authorize(creds: HTTPBasicCredentials = Depends(security)) -> bool:
-    with open(CREDS_FILE, "r") as f:
-        passwords = json.load(f)
+    if CREDS_FILE.exists():
+        with open(CREDS_FILE, "r") as f:
+            passwords = json.load(f)
+    else:
+        passwords = {}
 
     if "foo" not in passwords:
         _write_user_pass("foo", EXPECTED_PWORD, salt=False)
