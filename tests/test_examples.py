@@ -6,7 +6,9 @@ import pytest
 from .utils import server
 
 EG_DIR = Path(__file__).parent.parent / "examples"
-SUBDIRS = [f.name for f in EG_DIR.iterdir() if f.is_dir() and f.name[0] not in ["_", "."]]
+SUBDIRS = [
+    f.name for f in EG_DIR.iterdir() if f.is_dir() and f.name[0] not in ["_", "."]
+]
 
 
 def _test_upload(exp: Path, target_zip: Path, server):
@@ -18,7 +20,7 @@ def _test_upload(exp: Path, target_zip: Path, server):
     assert len(t) > 0
     assert t[:4] == b"\x50\x4B\x03\x04"
     r = server.post(
-        "/init_exp", data={"exp": exp.read_bytes()}, files={"targets": t},
+        "/init_exp", data={"exp": exp.read_bytes()}, files={"targets": t}, timeout=60,
     )
     return r.status_code == 200
 
@@ -31,6 +33,8 @@ def test_directory_examples(eg_dir: str, server):
         for target_zip in _eg_dir.glob("*.zip"):
             success = _test_upload(exp, target_zip, server)
             assert success
+            query = server.get("/")
+            sleep(2)
             r = server.get("/reset?force=1")
             assert r.json() == {"success": True}
             sleep(4)

@@ -20,17 +20,13 @@ class Server:
         self.async_client = async_client
         self._authorized = False
 
-    def auth(self) -> Tuple[str, str]:
-        logger.info("Getting auth")
-        p = Path(__file__).parent.parent / "creds.yaml"
-        if p.exists():
-            creds = yaml.safe_load(p.read_text())
-            return (creds["username"], creds["password"])
-        return ("username", "password")
+    @property
+    def creds(self) -> Tuple[str, str]:
+        return ("foobar", "pass123")
 
     def get(self, endpoint, status_code=200, **kwargs):
-        if self._authorized:
-            kwargs.update({"auth": (self._username, self._password)})
+        if "auth" not in kwargs and self._authorized:
+            kwargs.update(auth=self.creds)
         logger.info(f"Getting {endpoint}")
         r = requests.get(self.url + endpoint, **kwargs)
         logger.info("done")
@@ -38,10 +34,10 @@ class Server:
         return r
 
     def post(self, endpoint, data=None, status_code=200, error=False, **kwargs):
+        if "auth" not in kwargs and self._authorized:
+            kwargs.update(auth=self.creds)
         if isinstance(data, dict) and "exp" not in data and "rdb" not in data:
             data = json.dumps(data)
-        if self._authorized:
-            kwargs.update({"auth": (self._username, self._password)})
         logger.info(f"Getting {endpoint}")
         r = requests.post(self.url + endpoint, data=data, **kwargs)
         logger.info("done")
@@ -50,8 +46,8 @@ class Server:
         return r
 
     def delete(self, endpoint, status_code=200, **kwargs):
-        if self._authorized:
-            kwargs.update({"auth": (self._username, self._password)})
+        if "auth" not in kwargs and self._authorized:
+            kwargs.update(auth=self.creds)
         logger.info(f"Getting {endpoint}...")
         r = requests.delete(self.url + endpoint, **kwargs)
         logger.info("done")
@@ -59,7 +55,9 @@ class Server:
         return r
 
     def authorize(self):
-        self._username, self._password = self.auth()
+        username, password = self.creds
+        r = self.post(f"/create_user/{username}/{password}", error=True)
+        assert r.status_code in {200, 403}
         self._authorized = True
 
 
@@ -77,12 +75,12 @@ def _clear_logs(log=None):
 @pytest.fixture()
 def server():
     server = Server("http://127.0.0.1:8421")
-    server.get("/reset?force=1", auth=server.auth())
+    server.authorize()
+    server.get("/reset?force=1", auth=server.creds)
     sleep(4)
     _clear_logs()
     yield server
-    username, password = server.auth()
-    r = server.get("/reset?force=1", auth=(username, password))
+    r = server.get("/reset?force=1", auth=server.creds)
     assert r.json() == {"success": True}
     sleep(4)
     dump = Path(__file__).absolute().parent.parent / "out" / "dump.rdb"

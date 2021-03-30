@@ -43,7 +43,7 @@ def test_backend_basics(server, logs):
 
 def test_init_errors_propogate(server):
     server.authorize()
-    server.get("/init_exp")
+    server.get("/init")
     exp = Path(__file__).parent / "data" / "exp-active-bad.yaml"
     r = server.post("/init_exp", data={"exp": exp.read_bytes()}, error=True)
     assert r.status_code == 500
@@ -52,7 +52,7 @@ def test_init_errors_propogate(server):
 
 def test_run_errors_logged(server, logs):
     server.authorize()
-    server.get("/init_exp")
+    server.get("/init")
     config = {"targets": list(range(10)), "d": 1, "samplers": {"Test": {}}}
     r = server.post("/init_exp", data={"exp": yaml.safe_dump(config)})
     with pytest.raises(LogError, match="Test error"):
