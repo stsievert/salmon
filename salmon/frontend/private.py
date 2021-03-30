@@ -67,20 +67,26 @@ def _salt(password: str) -> str:
     return m.digest().hex()
 
 
-def _write_user_pass(user: str, password: str, salt=True) -> bool:
+def _write_user_pass(user: str, password: str) -> bool:
     if not CREDS_FILE.exists():
         passwords = {}
     else:
         with open(CREDS_FILE, "r") as f:
             passwords = json.load(f)
 
+    logger.warning(f"passwords={passwords}")
     if user in passwords:
         raise HTTPException(
+            status_code=403, detail=f"user={user} already in password file.",
+        )
+    new_user = user not in passwords
+    if new_user and len(passwords) > 0:
+        raise HTTPException(
             status_code=403,
-            detail=f"user={user} already in password file. Try a different username",
+            detail="A maximum number of users have already been registered",
         )
 
-    passwords[user] = _salt(password) if salt else password
+    passwords[user] = _salt(password)
     with open(CREDS_FILE, "w") as f:
         json.dump(passwords, f)
 
@@ -117,6 +123,9 @@ def create_user(
           the responses collected by Salmon and viewing the dashboard.
         </p>
         <p>
+          <b>Salmon will only accept this username/password.</b>
+        </p>
+        <p>
           <b>Next,</b> visit <a href='/init'>/init</a> to initialize a new
           experiment with this username={username} and password={password}.
         </p>
@@ -132,12 +141,9 @@ def _authorize(creds: HTTPBasicCredentials = Depends(security)) -> bool:
     else:
         passwords = {}
 
-    if "foo" not in passwords:
-        _write_user_pass("foo", EXPECTED_PWORD, salt=False)
-
-    if (
-        creds.username in passwords
-        and _salt(creds.password) == passwords[creds.username]
+    name = creds.username
+    if (name in passwords and _salt(creds.password) == passwords[name]) or (
+        name == "foo" and creds.password == EXPECTED_PWORD
     ):
         logger.info("Authorized: true")
         return True
