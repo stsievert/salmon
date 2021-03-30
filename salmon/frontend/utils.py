@@ -15,9 +15,9 @@ logger = get_logger(__name__)
 
 
 class ServerException(HTTPException):
-    def __init__(self, msg):
+    def __init__(self, msg, status_code=500):
         logger.error(msg)
-        raise HTTPException(status_code=500, detail=msg)
+        raise HTTPException(status_code=status_code, detail=msg)
 
 
 def _extract_zipfile(raw_zipfile, directory="targets"):

@@ -20,7 +20,7 @@ import requests as httpx
 import numpy as np
 import yaml
 from bokeh.embed import json_item
-from fastapi import Depends, File, HTTPException
+from fastapi import Depends, File, HTTPException, Form
 from fastapi.responses import (
     HTMLResponse,
     JSONResponse,
@@ -31,7 +31,7 @@ from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from rejson import Client, Path
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.requests import Request
-from starlette.status import HTTP_401_UNAUTHORIZED
+from starlette.status import HTTP_401_UNAUTHORIZED, HTTP_409_CONFLICT
 from redis import ResponseError
 
 
@@ -55,6 +55,7 @@ logger = get_logger(__name__)
 DIR = pathlib.Path(__file__).absolute().parent
 ROOT_DIR = DIR.parent.parent
 
+CREDS_FILE = ROOT_DIR / "creds.json"
 EXPECTED_PWORD = "331a5156c7f0a529ed1de8d9aba35da95655c341df0ca0bbb2b69b3be319ecf0"
 
 
@@ -66,26 +67,87 @@ def _salt(password: str) -> str:
     return m.digest().hex()
 
 
-def _authorize(credentials: HTTPBasicCredentials = Depends(security)) -> bool:
-    SALMON_NO_AUTH = os.environ.get("SALMON_NO_AUTH", False)
-    logger.warning(f"Seeing if authorized access with SALMON_NO_AUTH={SALMON_NO_AUTH}")
-    print(f"SALMON_NO_AUTH={SALMON_NO_AUTH}")
-    if SALMON_NO_AUTH:
-        return True
+def _write_user_pass(user: str, password: str, salt=True) -> bool:
+    if not CREDS_FILE.exists():
+        passwords = {}
+    else:
+        with open(CREDS_FILE, "r") as f:
+            passwords = json.load(f)
 
-    logger.info("SALMON_NO_AUTH is False")
-    if credentials.username != "foo" or _salt(credentials.password) != EXPECTED_PWORD:
-        logger.info("Not authorized")
+    if user in passwords:
         raise HTTPException(
-            status_code=HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Basic"},
+            status_code=403,
+            detail=f"user={user} already in password file. Try a different username",
         )
-    logger.info("Authorized: true")
+
+    passwords[user] = _salt(password) if salt else password
+    with open(CREDS_FILE, "w") as f:
+        json.dump(passwords, f)
+
     return True
 
 
-@app.get("/init_exp", tags=["private"])
+@app.post("/create_user/{username}/{password}", tags=["private"])
+def _create_user_v0(username: str, password: str):
+    _write_user_pass(username, password)
+
+
+@app.post("/create_user", tags=["private"])
+def create_user(
+    username: str = Form(...), password: str = Form(...), password2: str = Form(...)
+) -> bool:
+    logger.warning(f"In create_user with username={username}, password={password}")
+    if password != password2:
+        raise HTTPException(
+            status_code=HTTP_409_CONFLICT,
+            detail=f"password={password} does not match the confirmation password={password2}",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+    _write_user_pass(username, password)
+    msg = dedent(
+        f"""
+        <p>
+          Success! User=<code>{username}</code> successfully created with
+          password=<code>{password}</code>.
+        </p>
+        <p>
+          <b>Do NOT lose this information.</b> Salmon will be <b>unusable</b>
+          without this, and this is the last time this information will be
+          displayed. Tasks that require this information include downloading
+          the responses collected by Salmon and viewing the dashboard.
+        </p>
+        <p>
+          <b>Next,</b> visit <a href='/init'>/init</a> to initialize a new
+          experiment with this username={username} and password={password}.
+        </p>
+        """
+    )
+    return HTMLResponse(msg)
+
+
+def _authorize(creds: HTTPBasicCredentials = Depends(security)) -> bool:
+    with open(CREDS_FILE, "r") as f:
+        passwords = json.load(f)
+
+    if "foo" not in passwords:
+        _write_user_pass("foo", EXPECTED_PWORD, salt=False)
+
+    if (
+        creds.username in passwords
+        and _salt(creds.password) == passwords[creds.username]
+    ):
+        logger.info("Authorized: true")
+        return True
+
+    logger.info("Not authorized!")
+    raise HTTPException(
+        status_code=HTTP_401_UNAUTHORIZED,
+        detail="Incorrect username or password",
+        headers={"WWW-Authenticate": "Basic"},
+    )
+
+
+@app.get("/init", tags=["private"])
 def upload_form():
     """
     Upload a YAML file that specifies an experiment. See
@@ -118,6 +180,35 @@ def upload_form():
             </a>
           </li>
         </div>
+        <div style="text-align: center; padding: 10px;">
+        <p>Two steps are required:<p>
+        <ol>
+        <li>Creating a username/password.</li>
+        <li>Creating a new experiment.</li>
+        </ol>
+        </div>
+        <h2 style="text-align: center;">Step 1: create new username/password.</h2>
+        <div style="text-align: center; padding: 10px;">
+        <p>This username/password distinguishes you from any other internet
+        user.</p>
+        <form action="/create_user" enctype="multipart/form-data" method="post">
+        <ul>
+          <li>Username: <input name="username" placeholder="username"
+                         type="text" /></li>
+          <li>Password: <input name="password" placeholder="password"
+                         type="text" /></li>
+          <li>Confirm password: <input name="password2" placeholder="password"
+                                 type="text" /></li>
+        </ul>
+        <input type="submit" value="Create user">
+        </form>
+        <p>
+          <b>Do not lose this username/password!</b>
+          After you've created a username/password <i>and written it down
+          </i>, then you can create a new experiment. It'll ask for the
+          username/password you just created.</p>
+        </div>
+        <h2 style="text-align: center;">Step 2: create new experiment.</h2>
         <h3 style="text-align: center;">Option 1: initialize new experiment.</h3>
         <div style="text-align: center; padding: 10px;">
         <form action="/init_exp" enctype="multipart/form-data" method="post">
@@ -125,7 +216,7 @@ def upload_form():
           <li>Experiment parameters (YAML file): <input name="exp" type="file"></li>
           <li>Images/movies (ZIP file, optional): <input name="targets" type="file"></li>
         </ul>
-        <input type="submit">
+        <input type="submit" value="Create experiment">
         </form>
         {warning}
         </div>
@@ -142,7 +233,7 @@ def upload_form():
         <ul>
           <li>Database file : <input name="rdb" type="file"></li>
         </ul>
-        <input type="submit">
+        <input type="submit" value="Create experiment">
         </form>
         </div>
         </div>
@@ -276,7 +367,7 @@ async def process_form(
                 "\n\n1. Verify which experiment is running. Uploading a new"
                 "experiment will overwrite this experiment. Do you mean to upload?"
                 "\n2. Visit /reset. Warning: this will *delete* the experiment"
-                "\n3. Revisit /init_exp and re-upload the experiment."
+                "\n3. Revisit /init and re-upload the experiment."
                 "\n\n(visiting /foo means visiting '[url]:8421/foo'",
             )
             raise HTTPException(status_code=403, detail=detail)
@@ -371,7 +462,7 @@ def reset(
             "If you do really want to reset, go to '[url]/reset?force=1' "
             "instead of '[url]/reset'"
         )
-        raise ServerException(msg)
+        raise ServerException(msg, status_code=403)
 
     if authorized:
         logger.error("Authorized reset, force=True. Removing data from database")

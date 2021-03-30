@@ -23,17 +23,16 @@ def test_basics(server, logs):
     """
     Requires `docker-compose up` in salmon directory
     """
-    username, password = server.auth()
-    print(username, password)
     server.delete("/reset", status_code=401)
-    r = server.delete("/reset?force=1", auth=(username, password))
+    server.authorize()
+    r = server.delete("/reset?force=1")
     assert r.json() == {"success": True}
-    server.get("/reset", status_code=401)
-    r = server.get("/reset?force=1", auth=(username, password))
+    server.get("/reset", status_code=401, auth=("foo", "bar"))
+    r = server.get("/reset?force=1")
     assert r.json() == {"success": True}
-    server.get("/init_exp")
+    server.get("/init")
     exp = Path(__file__).parent / "data" / "exp.yaml"
-    server.post("/init_exp", data={"exp": exp.read_bytes()}, auth=(username, password))
+    server.post("/init_exp", data={"exp": exp.read_bytes()})
     exp_config = yaml.safe_load(exp.read_bytes())
     puid = "puid-foo"
     answers = []
@@ -48,7 +47,7 @@ def test_basics(server, logs):
             ans["response_time"] = time() - _start
             server.post("/answer", data=ans)
 
-    r = server.get("/responses", auth=(username, password))
+    r = server.get("/responses")
     for server_ans, actual_ans in zip(r.json(), answers):
         assert set(actual_ans).issubset(server_ans)
         assert all(
@@ -99,19 +98,19 @@ def test_basics(server, logs):
     # Make sure ordered by time
     assert df.time_received_since_start.diff().min() > 0
 
-    r = server.get("/responses", auth=(username, password))
+    r = server.get("/responses")
     assert r.status_code == 200
     assert "exception" not in r.text
     df = pd.DataFrame(r.json())
     assert len(df) == 70
 
-    r = server.get("/dashboard", auth=(username, password))
+    r = server.get("/dashboard")
     assert r.status_code == 200
 
 
 def test_bad_file_upload(server):
     server.authorize()
-    server.get("/init_exp")
+    server.get("/init")
     exp = Path(__file__).parent / "data" / "bad_exp.yaml"
     r = server.post("/init_exp", data={"exp": exp.read_bytes()}, error=True)
     assert r.status_code == 500
@@ -190,9 +189,9 @@ def test_saves_state(server):
 
 
 def test_download_restore(server):
+    server.authorize()
     dump = Path(__file__).absolute().parent.parent / "out" / "dump.rdb"
     assert not dump.exists()
-    server.authorize()
     exp = Path(__file__).parent / "data" / "exp.yaml"
     server.post("/init_exp", data={"exp": exp.read_bytes()})
     data = []
@@ -213,9 +212,9 @@ def test_download_restore(server):
 
 
 def test_logs(server, logs):
+    server.authorize()
     dump = Path(__file__).absolute().parent.parent / "salmon" / "out" / "dump.rdb"
     assert not dump.exists()
-    server.authorize()
     exp = Path(__file__).parent / "data" / "exp.yaml"
     server.get("/reset?force=1")
     server.post("/init_exp", data={"exp": exp.read_bytes()})
@@ -270,7 +269,6 @@ def test_no_init_twice(server, logs):
     Requires `docker-compose up` in salmon directory
     """
     server.authorize()
-    username, password = server.auth()
     exp = Path(__file__).parent / "data" / "exp.yaml"
     server.post("/init_exp", data={"exp": exp.read_bytes()})
     query = server.get("/query")
@@ -280,8 +278,8 @@ def test_no_init_twice(server, logs):
     server.post("/init_exp", data={"exp": exp.read_bytes()}, status_code=403)
 
     # Make sure the prescribed method works (resetting, then re-init'ing)
-    server.delete("/reset", auth=(username, password), status_code=500)
-    server.delete("/reset?force=1", auth=(username, password))
+    server.delete("/reset", status_code=403)
+    server.delete("/reset?force=1")
 
     server.post("/init_exp", data={"exp": exp.read_bytes()})
     query = server.get("/query")

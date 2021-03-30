@@ -18,6 +18,7 @@ watch: FORCE
 	docker-compose logs -f
 
 clean: FORCE
+	rm -f passwords.json
 	rm -f out/dump*.rdb
 	rm -f out/salmon*.log
 	rm -f out/redis.csv
