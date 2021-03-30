@@ -13,6 +13,7 @@ salmon/frontend/static/targets/*
 examples/*/_data/*
 _thoughts/
 examples-old/
+creds.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
