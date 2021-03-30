@@ -43,7 +43,7 @@ the Amazon public DNS or public IP.
 Until you upload data, ``http://[url]:8421`` will only show an error message.
 To start using Salmon, these endpoints will be available:
 
-- ``http://[url]:8421/init_exp`` to initialize an experiment
+- ``http://[url]:8421/init`` to create a user and initialize a new experiment.
 - ``http://[url]:8421/docs`` to see the endpoint documentation. The Salmon
   version displayed should match the most recent Salmon release in the `list of
   Salmon releases`_.
@@ -92,7 +92,7 @@ First, `install Docker`_ and `install Git`_. After that, run the following code:
    $ cd salmon
    $ docker-compose build
    $ docker-compose up
-   $ # visit http://localhost:8421/init_exp or http://localhost:8421/docs
+   $ # visit http://localhost:8421/init or http://localhost:8421/docs
 
 Developer
 ---------
