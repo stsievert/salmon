@@ -1,13 +1,28 @@
 .. _alg-api:
 
-Algorithm API
-=============
+.. _api:
 
-.. warning::
+API
+===
 
-   These APIs are unstable.
+Offline embeddings
+------------------
 
-All triplet embedding algorithms must conform to this API:
+This class can be used to create embeddings from a set of downloaded responses
+from Salmon:
+
+.. autosummary::
+   :toctree: generated/
+   :template: class.rst
+
+   salmon.triplets.offline.OfflineEmbedding
+
+Samplers
+--------
+
+These classes are used to collect responses with Salmon. They can be configured
+using ``init.yaml`` as mentioned in :ref:`alg-config`. They all conform to the
+following API:
 
 .. autosummary::
    :toctree: generated/
@@ -24,7 +39,7 @@ Every class below inherits from :class:`~salmon.backend.alg.Runner`.
 
 
 Passive Algorithms
-------------------
+^^^^^^^^^^^^^^^^^^
 
 .. currentmodule:: salmon
 
@@ -36,7 +51,7 @@ Passive Algorithms
    salmon.triplets.algs.RoundRobin
 
 Active Algorithms
------------------
+^^^^^^^^^^^^^^^^^
 
 There are two base classes for every adaptive algorithm:
 

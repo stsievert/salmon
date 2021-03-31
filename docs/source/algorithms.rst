@@ -1,5 +1,7 @@
 .. _adaptive-config:
 
+.. _alg-config:
+
 Algorithm configuration
 =======================
 
