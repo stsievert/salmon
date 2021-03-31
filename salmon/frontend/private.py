@@ -173,6 +173,48 @@ def upload_form():
             </div>
             """
         )
+
+    password = dedent(
+        """
+        <h2 style="text-align: center;">Step 1: create new username/password.</h2>
+        <div style="text-align: center; padding: 10px;">
+        <p>This username/password distinguishes you from any other internet
+        user.</p>
+        <form action="/create_user" enctype="multipart/form-data" method="post">
+        <ul>
+          <li>Username: <input name="username" placeholder="username"
+                         type="text" /></li>
+          <li>Password: <input name="password" placeholder="password"
+                         type="text" /></li>
+          <li>Confirm password: <input name="password2" placeholder="password"
+                                 type="text" /></li>
+        </ul>
+        <input type="submit" value="Create user">
+        </form>
+        <p>
+          <b>Do not lose this username/password!</b>
+          After you've created a username/password <i>and written it down
+          </i>, then you can create a new experiment. It'll ask for the
+          username/password you just created.</p>
+        </div>
+        """
+    )
+    if CREDS_FILE.exists():
+        with open(CREDS_FILE, "r") as f:
+            passwords = json.load(f)
+        logger.warning(f"passwords={passwords}")
+        if len(passwords):
+            user = list(passwords.keys())[0]
+            letters = list(user)
+            letters[1:-1] = "*"
+            user = "".join(letters)
+            password = (
+                "<div style='text-align: center; padding: 10px;'>"
+                f"<p>A user with name <code>{user}</code> has been created "
+                "(only first and last letters shown). "
+                "Do you know the password?</p>"
+                "</div>"
+            )
     body = dedent(
         f"""<body>
         <div style="display: table; margin: 0 auto; max-width: 600px;">
@@ -196,27 +238,7 @@ def upload_form():
         <li>Creating a new experiment.</li>
         </ol>
         </div>
-        <h2 style="text-align: center;">Step 1: create new username/password.</h2>
-        <div style="text-align: center; padding: 10px;">
-        <p>This username/password distinguishes you from any other internet
-        user.</p>
-        <form action="/create_user" enctype="multipart/form-data" method="post">
-        <ul>
-          <li>Username: <input name="username" placeholder="username"
-                         type="text" /></li>
-          <li>Password: <input name="password" placeholder="password"
-                         type="text" /></li>
-          <li>Confirm password: <input name="password2" placeholder="password"
-                                 type="text" /></li>
-        </ul>
-        <input type="submit" value="Create user">
-        </form>
-        <p>
-          <b>Do not lose this username/password!</b>
-          After you've created a username/password <i>and written it down
-          </i>, then you can create a new experiment. It'll ask for the
-          username/password you just created.</p>
-        </div>
+        {password}
         <h2 style="text-align: center;">Step 2: create new experiment.</h2>
         <h3 style="text-align: center;">Option 1: initialize new experiment.</h3>
         <div style="text-align: center; padding: 10px;">
