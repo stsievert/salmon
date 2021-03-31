@@ -143,7 +143,7 @@ def _authorize(creds: HTTPBasicCredentials = Depends(security)) -> bool:
 
     name = creds.username
     if (name in passwords and _salt(creds.password) == passwords[name]) or (
-        name == "foo" and creds.password == EXPECTED_PWORD
+        name == "foo" and _salt(creds.password) == EXPECTED_PWORD
     ):
         logger.info("Authorized: true")
         return True
@@ -462,8 +462,11 @@ def reset(
     timeout: float = 10,
 ):
     """
-    Delete all data from the database. This requires authentication.
+    Delete all data from the database and a restart of the machine if *any*
+    queries were answered.
 
+    Restart the machine via `docker-compose stop; docker-compose up` or
+    "Actions > Instance state > Reboot" on Amazon EC2.
     """
     if not authorized:
         return {"success": False}
@@ -480,7 +483,14 @@ def reset(
         raise ServerException(msg, status_code=403)
 
     logger.error("Authorized reset, force=True. Removing data from database")
-    return _reset(timeout=timeout)
+    meta = _reset(timeout=timeout)
+    assert meta["success"]
+    return HTMLResponse(
+        "The Salmon databasse has (largely) been cleared. "
+        "To completely clear the database, the server needs to be restarted "
+        "(likely via 'Actions > Instance state > Reboot' on Amazon EC2 "
+        "or `docker-compose down; docker-compose up`."
+    )
 
 
 def _reset(timeout: float = 5):
