@@ -21,22 +21,19 @@ logger = get_logger(__name__)
 Query = TypeVar("Query")
 Answer = TypeVar("Answer")
 
-PARAMS = """
+PARAMS = dedent(
+    """
     d : int
         Embedding dimension.
     optimizer : str
         The optimizer underlying the embedding. This method specifies how to
         change the batch size. Choices are
         ``["Embedding", "PadaDampG", "GeoDamp"]``.
-    optimizer__lr : float
-        Which learning rate to use with the optimizer. The learning rate must
-        be positive.
-    optimizer__momentum : float
-        The momentum to use with the optimizer.
     sampling : str
         "adaptive" by default. Use ``sampling="random"`` to perform random
         sampling with the same optimization method and noise model.
     """
+)
 
 
 class Adaptive(Runner):
@@ -47,8 +44,6 @@ class Adaptive(Runner):
         ident: str = "",
         module: str = "TSTE",
         optimizer: str = "Embedding",
-        optimizer__lr=0.050,
-        optimizer__momentum=0.9,
         R: float = 10,
         sampling: str = "adaptive",
         scorer: str = "infogain",
@@ -102,8 +97,6 @@ class Adaptive(Runner):
             "R": R,
             "sampling": sampling,
             "optimizer": optimizer,
-            "optimizer__lr": optimizer__lr,
-            "optimizer__momentum": optimizer__momentum,
             **kwargs,
         }
 
@@ -253,11 +246,6 @@ class TSTE(Adaptive):
         The optimizer underlying the embedding. This method specifies how to
         change the batch size. Choices are
         ``["Embedding", "PadaDampG", "GeoDamp"]``.
-    optimizer__lr : float
-        Which learning rate to use with the optimizer. The learning rate must
-        be positive.
-    optimizer__momentum : float
-        The momentum to use with the optimizer.
     sampling : str
         "adaptive" by default. Use ``sampling="random"`` to perform random
         sampling with the same optimization method and noise model.
@@ -300,8 +288,6 @@ class TSTE(Adaptive):
         d: int = 2,
         ident: str = "",
         optimizer: str = "Embedding",
-        optimizer__lr=0.075,
-        optimizer__momentum=0.9,
         sampling="adaptive",
         scorer="infogain",
         alpha=1,
@@ -313,8 +299,6 @@ class TSTE(Adaptive):
             d=d,
             ident=ident,
             optimizer=optimizer,
-            optimizer__lr=optimizer__lr,
-            optimizer__momentum=optimizer__momentum,
             module__alpha=alpha,
             module="TSTE",
             sampling=sampling,
@@ -338,11 +322,6 @@ class RR(Adaptive):
         The optimizer underlying the embedding. This method specifies how to
         change the batch size. Choices are
         ``["Embedding", "PadaDampG", "GeoDamp"]``.
-    optimizer__lr : float
-        Which learning rate to use with the optimizer. The learning rate must
-        be positive.
-    optimizer__momentum : float
-        The momentum to use with the optimizer.
     scorer : str, (default ``"infogain"``)
         The scoring method to use.
     module : str, optional (default ``"TSTE"``).
@@ -376,8 +355,6 @@ class RR(Adaptive):
         R: int = 1,
         ident: str = "",
         optimizer: str = "Embedding",
-        optimizer__lr=0.075,
-        optimizer__momentum=0.9,
         sampling="adaptive",
         scorer="infogain",
         module="TSTE",
@@ -390,8 +367,6 @@ class RR(Adaptive):
             R=R,
             ident=ident,
             optimizer=optimizer,
-            optimizer__lr=optimizer__lr,
-            optimizer__momentum=optimizer__momentum,
             module=module,
             sampling=sampling,
             scorer=scorer,
@@ -438,11 +413,6 @@ class STE(Adaptive):
         The optimizer underlying the embedding. This method specifies how to
         change the batch size. Choices are
         ``["Embedding", "PadaDampG", "GeoDamp"]``.
-    optimizer__lr : float
-        Which learning rate to use with the optimizer. The learning rate must
-        be positive.
-    optimizer__momentum : float
-        The momentum to use with the optimizer.
     sampling : str
         "adaptive" by default. Use ``sampling="random"`` to perform random
         sampling with the same optimization method and noise model.
@@ -460,8 +430,6 @@ class STE(Adaptive):
         d: int = 2,
         ident: str = "",
         optimizer: str = "Embedding",
-        optimizer__lr=0.075,
-        optimizer__momentum=0.9,
         sampling="adaptive",
         scorer="infogain",
         random_state=None,
@@ -472,8 +440,6 @@ class STE(Adaptive):
             d=d,
             ident=ident,
             optimizer=optimizer,
-            optimizer__lr=optimizer__lr,
-            optimizer__momentum=optimizer__momentum,
             module="STE",
             sampling=sampling,
             scorer=scorer,
@@ -494,11 +460,6 @@ class GNMDS(Adaptive):
         The optimizer underlying the embedding. This method specifies how to
         change the batch size. Choices are
         ``["Embedding", "PadaDampG", "GeoDamp"]``.
-    optimizer__lr : float
-        Which learning rate to use with the optimizer. The learning rate must
-        be positive.
-    optimizer__momentum : float
-        The momentum to use with the optimizer.
     sampling : str
         "adaptive" by default. Use ``sampling="random"`` to perform random
         sampling with the same optimization method and noise model.
@@ -516,8 +477,6 @@ class GNMDS(Adaptive):
         d: int = 2,
         ident: str = "",
         optimizer: str = "Embedding",
-        optimizer__lr=0.075,
-        optimizer__momentum=0.9,
         sampling="adaptive",
         scorer="uncertainty",
         random_state=None,
@@ -528,8 +487,6 @@ class GNMDS(Adaptive):
             d=d,
             ident=ident,
             optimizer=optimizer,
-            optimizer__lr=optimizer__lr,
-            optimizer__momentum=optimizer__momentum,
             module="GNMDS",
             sampling=sampling,
             random_state=random_state,
@@ -551,11 +508,6 @@ class CKL(Adaptive):
         The optimizer underlying the embedding. This method specifies how to
         change the batch size. Choices are
         ``["Embedding", "PadaDampG", "GeoDamp"]``.
-    optimizer__lr : float
-        Which learning rate to use with the optimizer. The learning rate must
-        be positive.
-    optimizer__momentum : float
-        The momentum to use with the optimizer.
     sampling : str
         "adaptive" by default. Use ``sampling="random"`` to perform random
         sampling with the same optimization method and noise model.
@@ -567,8 +519,6 @@ class CKL(Adaptive):
         d: int = 2,
         ident: str = "",
         optimizer: str = "Embedding",
-        optimizer__lr=0.075,
-        optimizer__momentum=0.9,
         mu=1,
         sampling="adaptive",
         random_state=None,
@@ -579,8 +529,6 @@ class CKL(Adaptive):
             d=d,
             ident=ident,
             optimizer=optimizer,
-            optimizer__lr=optimizer__lr,
-            optimizer__momentum=optimizer__momentum,
             module__mu=mu,
             module="CKL",
             sampling=sampling,
@@ -603,11 +551,6 @@ class SOE(Adaptive):
         The optimizer underlying the embedding. This method specifies how to
         change the batch size. Choices are
         ``["Embedding", "PadaDampG", "GeoDamp"]``.
-    optimizer__lr : float
-        Which learning rate to use with the optimizer. The learning rate must
-        be positive.
-    optimizer__momentum : float
-        The momentum to use with the optimizer.
     sampling : str
         "adaptive" by default. Use ``sampling="random"`` to perform random
         sampling with the same optimization method and noise model.
@@ -619,8 +562,6 @@ class SOE(Adaptive):
         d: int = 2,
         ident: str = "",
         optimizer: str = "Embedding",
-        optimizer__lr=0.075,
-        optimizer__momentum=0.9,
         sampling="adaptive",
         random_state=None,
         **kwargs,
@@ -630,8 +571,6 @@ class SOE(Adaptive):
             d=d,
             ident=ident,
             optimizer=optimizer,
-            optimizer__lr=optimizer__lr,
-            optimizer__momentum=optimizer__momentum,
             module="SOE",
             sampling=sampling,
             random_state=random_state,
