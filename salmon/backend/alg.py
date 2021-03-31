@@ -1,7 +1,7 @@
 import itertools
 import random
 from pprint import pprint
-from time import time
+from time import time, sleep
 from typing import List, TypeVar, Tuple, Dict, Any, Optional
 
 import cloudpickle
@@ -90,7 +90,9 @@ class Runner:
                     queries_f = scores_f = []
                 if update:
                     datum["cleared_queries"] = True
+                    __start = time()
                     self.clear_queries(rj)
+                    datum["time_clearing"] = time() - __start
                 done = distributed.Event(name="pa_finished")
                 done.clear()
 
@@ -164,19 +166,18 @@ class Runner:
             except Exception as e:
                 logger.exception(e)
 
-            _s = time()
-            if time() >= save_deadline:
-                minute = 60
-                save_deadline = time() + 2 * minute
+            if time() > save_deadline + 1e-3:
+                save_deadline = time() + 60
+                _s = time()
                 self.save()
-            datum["time_save"] = time() - _s
+                datum["time_save"] = time() - _s
             datum["time_loop"] = time() - loop_start
             rj.jsonarrappend(f"alg-perf-{self.ident}", root, datum)
             logger.info(datum)
-            if "reset" in rj.keys() and rj.jsonget("reset"):
+            if "reset" in rj.keys() and rj.jsonget("reset", root):
+                logger.warning(f"Resetting {self.ident}")
                 self.reset(client, rj)
                 break
-            logger.info(datum)
         return True
 
     def save(self) -> bool:
@@ -198,10 +199,50 @@ class Runner:
         Stop the algorithm. The algorithm will be deleted shortly after
         this function is called.
         """
-        reset = rj.jsonget("reset")
-        logger.info("reset=%s for %s", reset, self.ident)
+        reset = rj.jsonget("reset", root)
+        logger.warning("reset=%s for %s", reset, self.ident)
+        if not reset:
+            return False
+
+        logger.warning(f"Deleting various keys for {self.ident}")
+        rj2 = RedisClient(host="redis", port=6379, decode_responses=False)
+        rj2.delete(f"state-{self.ident}")
+        rj2.delete(f"model-{self.ident}")
+        rj.jsondel(f"alg-perf-{self.ident}", root)
+        rj.delete(f"alg-perf-{self.ident}")
+
+        # Clear answers
+        logger.warning(f"Clearing answers for {self.ident}")
+        self.get_answers(rj, clear=True)
+
+        # Clear queries (twice)
+        logger.warning(f"Clearing queries for {self.ident}")
+        key = f"alg-{self.ident}-queries"
+        for k in range(4, 18):
+            limit = 2 ** k
+            rj.zremrangebyscore(key, -limit, limit)
+            sleep(0.1)
+            n_queries = rj.zcard(key)
+            logger.warning(f"n_queries={n_queries}")
+            if n_queries == 0:
+                break
+        logger.warning(f"Clearing queries again for {self.ident}")
+        self.clear_queries(rj)
+
+        logger.warning(f"Restarting Dask client for {self.ident}")
+        try:
+            client.sync(client.restart())
+        except:
+            pass
+        logger.warning(f"Closiing Dask client for {self.ident}")
+        try:
+            client.sync(client.close())
+        except:
+            pass
+
+        logger.warning(f"Setting stopped-{self.ident}")
         rj.jsonset(f"stopped-{self.ident}", Path("."), True)
-        client.restart()
+        logger.warning(f"All done stopping {self.ident}")
         return True
 
     @property
@@ -262,8 +303,7 @@ class Runner:
         raise NotImplementedError
 
     def clear_queries(self, rj: RedisClient) -> bool:
-        name = self.ident
-        rj.delete(f"alg-{name}-queries")
+        rj.delete(f"alg-{self.ident}-queries")
         return True
 
     def post_queries(
@@ -284,11 +324,18 @@ class Runner:
             assert (
                 len(scores) == queries.shape[0]
             ), f"Different lengths {scores.shape}, {queries.shape}"
+
             scores = scores[idx]  # high to low scores
             queries = queries[idx]
-            assert scores[0] >= scores[-1], "High to low scores"
+            valid = ~np.isnan(scores)
+            scores = scores[valid]
+            queries = queries[valid]
+            high = scores[0]
+            low = scores[-1]
+            assert low <= high, f"high={high} to low={low} scores"
 
-        n_chunks = len(queries) // 1000
+        chunk_size = 2000
+        n_chunks = len(queries) // chunk_size
         split_queries = np.array_split(queries, max(n_chunks, 1))
         split_scores = np.array_split(scores, max(n_chunks, 1))
 

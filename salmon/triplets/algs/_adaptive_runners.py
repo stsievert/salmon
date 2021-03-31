@@ -21,36 +21,45 @@ logger = get_logger(__name__)
 Query = TypeVar("Query")
 Answer = TypeVar("Answer")
 
-PARAMS = """
-    d : int
+
+class Adaptive(Runner):
+    """
+    The runner that runs adaptive algorithms.
+
+    Parameters
+    ----------
+    n : int
+        The number of items to embed.
+    d : int (optional, default: ``2``)
         Embedding dimension.
-    optimizer : str
+    ident : str (optional, default: ``""``).
+        The identity of this runner. Must be unique among all adaptive algorithms.
+    optimizer : str (optional, default: ``Embedding``).
         The optimizer underlying the embedding. This method specifies how to
         change the batch size. Choices are
         ``["Embedding", "PadaDampG", "GeoDamp"]``.
-    optimizer__lr : float
-        Which learning rate to use with the optimizer. The learning rate must
-        be positive.
-    optimizer__momentum : float
-        The momentum to use with the optimizer.
-    sampling : str
-        "adaptive" by default. Use ``sampling="random"`` to perform random
-        sampling with the same optimization method and noise model.
+    R : int (optional, default: ``1``)
+        Adaptive sampling after ``R * n`` responses have been received.
+    scorer : str (optional, default: ``"infogain"``)
+        How queries should be scored. Scoring with ``scorer='infogain'``
+        tries to link query score and "embedding improvement," and
+        ``scorer='uncertainty'`` looks at the query that's closest to the
+        decision boundary (or 50% probability).
+    random_state : int, None, optional (default: ``None``)
+        The random state to be used for initialization.
+    kwargs : dict, optional
+        Keyword arguments to pass to :class:`~salmon.triplets.algs.adaptive.Embedding`.
     """
 
-
-class Adaptive(Runner):
     def __init__(
         self,
+        *,
         n: int,
         d: int = 2,
         ident: str = "",
         module: str = "TSTE",
         optimizer: str = "Embedding",
-        optimizer__lr=0.050,
-        optimizer__momentum=0.9,
         R: float = 10,
-        sampling: str = "adaptive",
         scorer: str = "infogain",
         random_state: Optional[int] = None,
         **kwargs,
@@ -60,12 +69,6 @@ class Adaptive(Runner):
         self.n = n
         self.d = d
         self.R = R
-        self.sampling = sampling
-        if sampling not in ["adaptive", "random"]:
-            raise ValueError(
-                "Must pass sampling='adaptive' or sampling='random', not "
-                "sampling={sampling}"
-            )
 
         Opt = getattr(adaptive, optimizer)
         Module = getattr(adaptive, module)
@@ -77,11 +80,9 @@ class Adaptive(Runner):
             module__n=n,
             module__d=d,
             module__random_state=random_state,
-            optimizer=torch.optim.SGD,
-            optimizer__lr=optimizer__lr,
-            optimizer__momentum=optimizer__momentum,
+            optimizer=torch.optim.Adadelta,
             warm_start=True,
-            max_epochs=500,
+            max_epochs=200,
             **kwargs,
         )
         self.opt.initialize()
@@ -102,15 +103,12 @@ class Adaptive(Runner):
             "n": n,
             "d": d,
             "R": R,
-            "sampling": sampling,
             "optimizer": optimizer,
-            "optimizer__lr": optimizer__lr,
-            "optimizer__momentum": optimizer__momentum,
             **kwargs,
         }
 
     def get_query(self) -> Tuple[Optional[Dict[str, int]], Optional[float]]:
-        if (self.meta["num_ans"] <= self.R * self.n) or self.sampling == "random":
+        if self.meta["num_ans"] <= self.R * self.n:
             head, left, right = _random_query(self.n)
             return {"head": int(head), "left": int(left), "right": int(right)}, -9999
         return None, -9999
@@ -173,8 +171,21 @@ class Adaptive(Runner):
         # Make sure only valid answers are passed to partial_fit;
         # self.opt.answers_ has a bunch of extra space for new answers
         n_ans = self.opt.meta_["num_answers"]
-        valid_ans = self.opt.answers_[:n_ans]
 
+        difficulty = np.log(self.params["n"]) * self.params["d"] * self.params["n"]
+        if n_ans / difficulty <= 1:
+            max_epochs = 200
+        elif n_ans / difficulty <= 3:
+            max_epochs = 120
+        else:
+            max_epochs = 50
+
+        # max_epochs above for completely random initializations
+        # Use max_epochs // 2 because online and will already be
+        # partially fit
+        self.opt.set_params(max_epochs=max_epochs)
+
+        valid_ans = self.opt.answers_[:n_ans]
         self.opt.fit(valid_ans)
         self.meta["model_updates"] += 1
         return self, True
@@ -233,26 +244,11 @@ class TSTE(Adaptive):
 
     Parameters
     ----------
-    d : int
-        Embedding dimension.
     alpha : float, default=1
         The parameter that controls how heavily the tails of the probability
         distribution are.
-    optimizer : str
-        The optimizer underlying the embedding. This method specifies how to
-        change the batch size. Choices are
-        ``["Embedding", "PadaDampG", "GeoDamp"]``.
-    optimizer__lr : float
-        Which learning rate to use with the optimizer. The learning rate must
-        be positive.
-    optimizer__momentum : float
-        The momentum to use with the optimizer.
-    sampling : str
-        "adaptive" by default. Use ``sampling="random"`` to perform random
-        sampling with the same optimization method and noise model.
     kwargs : dict
-        Arguments to pass to the optimization method.
-
+        Keyword arguments to pass to :class:`~salmon.triplets.algs.Adaptive`.
 
     Notes
     -----
@@ -283,34 +279,8 @@ class TSTE(Adaptive):
            van der Maaten, Weinberger.
     """
 
-    def __init__(
-        self,
-        n: int,
-        d: int = 2,
-        ident: str = "",
-        optimizer: str = "Embedding",
-        optimizer__lr=0.075,
-        optimizer__momentum=0.9,
-        sampling="adaptive",
-        scorer="infogain",
-        alpha=1,
-        random_state=None,
-        **kwargs,
-    ):
-        super().__init__(
-            n=n,
-            d=d,
-            ident=ident,
-            optimizer=optimizer,
-            optimizer__lr=optimizer__lr,
-            optimizer__momentum=optimizer__momentum,
-            module__alpha=alpha,
-            module="TSTE",
-            sampling=sampling,
-            scorer=scorer,
-            random_state=random_state,
-            **kwargs,
-        )
+    def __init__(self, alpha=1, **kwargs):
+        super().__init__(module="TSTE", module__alpha=alpha, **kwargs)
 
 
 class RR(Adaptive):
@@ -319,26 +289,12 @@ class RR(Adaptive):
 
     Parameters
     ----------
-    d : int
-        Embedding dimension.
     R: int = 1
         Adaptive sampling starts are ``R * n`` response have been received.
-    optimizer : str
-        The optimizer underlying the embedding. This method specifies how to
-        change the batch size. Choices are
-        ``["Embedding", "PadaDampG", "GeoDamp"]``.
-    optimizer__lr : float
-        Which learning rate to use with the optimizer. The learning rate must
-        be positive.
-    optimizer__momentum : float
-        The momentum to use with the optimizer.
-    scorer : str, (default ``"infogain"``)
-        The scoring method to use.
     module : str, optional (default ``"TSTE"``).
         The noise model to use.
     kwargs : dict
-        Arguments to pass to :ref:`~Adaptive`.
-
+        Keyword arguments to pass to :class:`~salmon.triplets.algs.Adaptive`.
 
     Notes
     -----
@@ -357,52 +313,35 @@ class RR(Adaptive):
            auxiliary information." arXiv preprint arXiv:1511.02254 (2015). https://arxiv.org/abs/1511.02254
 
     """
-    def __init__(
-        self,
-        n: int,
-        d: int = 2,
-        R: int = 1,
-        ident: str = "",
-        optimizer: str = "Embedding",
-        optimizer__lr=0.075,
-        optimizer__momentum=0.9,
-        sampling="adaptive",
-        scorer="infogain",
-        module="TSTE",
-        random_state=None,
-        **kwargs,
-    ):
-        super().__init__(
-            n=n,
-            d=d,
-            R=R,
-            ident=ident,
-            optimizer=optimizer,
-            optimizer__lr=optimizer__lr,
-            optimizer__momentum=optimizer__momentum,
-            module=module,
-            sampling=sampling,
-            scorer=scorer,
-            random_state=random_state,
-            **kwargs,
-        )
+
+    def __init__(self, R: int = 1, module="TSTE", **kwargs):
+        super().__init__(R=R, module=module, **kwargs)
 
     def get_queries(self, *args, **kwargs):
         queries, scores, meta = super().get_queries(*args, **kwargs)
 
+        # (dataframe useful for manipulation below)
         df = pd.DataFrame(queries, columns=["h", "l", "r"])
         df["score"] = scores
 
-        top_scores_by_head = df.groupby(by="h")["score"].nlargest(n=5)
+        # Find the top scores per head
+        top_scores_by_head = df.groupby(by="h")["score"].nlargest(n=3)
         top_idx = top_scores_by_head.index.droplevel(0)
 
-        top_queries = df.loc[top_idx].sample(frac=1)
-        posted = top_queries[["h", "l", "r"]].values.astype("int64")
-        r_scores = 10 + np.linspace(0, 1, num=len(posted))
-        np.random.shuffle(r_scores)
+        top_queries = df.loc[top_idx]
+        top_scores = top_queries["score"].to_numpy()
+
+        posted = top_queries[["h", "l", "r"]].to_numpy().astype("int64")
+        r_scores = np.random.uniform(low=10, high=11, size=len(posted))
 
         meta.update({"n_queries_scored_(complete)": len(df)})
         return posted, r_scores, meta
+
+    def process_answers(self, *args, **kwargs):
+        new_self, updated = super().process_answers(*args, **kwargs)
+        # Always return True to clear queries from the database (limits
+        # randomness)
+        return new_self, True
 
 
 class STE(Adaptive):
@@ -411,20 +350,8 @@ class STE(Adaptive):
 
     Parameters
     ----------
-    d : int
-        Embedding dimension.
-    optimizer : str
-        The optimizer underlying the embedding. This method specifies how to
-        change the batch size. Choices are
-        ``["Embedding", "PadaDampG", "GeoDamp"]``.
-    optimizer__lr : float
-        Which learning rate to use with the optimizer. The learning rate must
-        be positive.
-    optimizer__momentum : float
-        The momentum to use with the optimizer.
-    sampling : str
-        "adaptive" by default. Use ``sampling="random"`` to perform random
-        sampling with the same optimization method and noise model.
+    kwargs : dict
+        Keyword arguments to pass to :class:`~salmon.triplets.algs.Adaptive`.
 
     References
     ----------
@@ -433,32 +360,8 @@ class STE(Adaptive):
            van der Maaten, Weinberger.
     """
 
-    def __init__(
-        self,
-        n: int,
-        d: int = 2,
-        ident: str = "",
-        optimizer: str = "Embedding",
-        optimizer__lr=0.075,
-        optimizer__momentum=0.9,
-        sampling="adaptive",
-        scorer="infogain",
-        random_state=None,
-        **kwargs,
-    ):
-        super().__init__(
-            n=n,
-            d=d,
-            ident=ident,
-            optimizer=optimizer,
-            optimizer__lr=optimizer__lr,
-            optimizer__momentum=optimizer__momentum,
-            module="STE",
-            sampling=sampling,
-            scorer=scorer,
-            random_state=random_state,
-            **kwargs,
-        )
+    def __init__(self, **kwargs):
+        super().__init__(module="STE", **kwargs)
 
 
 class GNMDS(Adaptive):
@@ -467,20 +370,8 @@ class GNMDS(Adaptive):
 
     Parameters
     ----------
-    d : int
-        Embedding dimension.
-    optimizer : str
-        The optimizer underlying the embedding. This method specifies how to
-        change the batch size. Choices are
-        ``["Embedding", "PadaDampG", "GeoDamp"]``.
-    optimizer__lr : float
-        Which learning rate to use with the optimizer. The learning rate must
-        be positive.
-    optimizer__momentum : float
-        The momentum to use with the optimizer.
-    sampling : str
-        "adaptive" by default. Use ``sampling="random"`` to perform random
-        sampling with the same optimization method and noise model.
+    kwargs : dict
+        Keyword arguments to pass to :class:`~salmon.triplets.algs.Adaptive`.
 
     References
     ----------
@@ -489,132 +380,53 @@ class GNMDS(Adaptive):
            http://proceedings.mlr.press/v2/agarwal07a/agarwal07a.pdf
     """
 
-    def __init__(
-        self,
-        n: int,
-        d: int = 2,
-        ident: str = "",
-        optimizer: str = "Embedding",
-        optimizer__lr=0.075,
-        optimizer__momentum=0.9,
-        sampling="adaptive",
-        scorer="uncertainty",
-        random_state=None,
-        **kwargs,
-    ):
-        super().__init__(
-            n=n,
-            d=d,
-            ident=ident,
-            optimizer=optimizer,
-            optimizer__lr=optimizer__lr,
-            optimizer__momentum=optimizer__momentum,
-            module="GNMDS",
-            sampling=sampling,
-            random_state=random_state,
-            **kwargs,
-        )
+    def __init__(self, **kwargs):
+        super().__init__(module="GNMDS", **kwargs)
 
 
 class CKL(Adaptive):
     """
-    The crowd kernel embedding.
+    The crowd kernel embedding. Proposed in [1]_.
 
     Parameters
     ----------
-    d : int
-        Embedding dimension.
     mu : float
         The mu or :math:`\\mu` used in the CKL embedding. This is typically small; the default is :math:`10^{-4}`.
-    optimizer : str
-        The optimizer underlying the embedding. This method specifies how to
-        change the batch size. Choices are
-        ``["Embedding", "PadaDampG", "GeoDamp"]``.
-    optimizer__lr : float
-        Which learning rate to use with the optimizer. The learning rate must
-        be positive.
-    optimizer__momentum : float
-        The momentum to use with the optimizer.
-    sampling : str
-        "adaptive" by default. Use ``sampling="random"`` to perform random
-        sampling with the same optimization method and noise model.
+    kwargs : dict
+        Keyword arguments to pass to :class:`~salmon.triplets.algs.Adaptive`.
+
+    References
+    ----------
+    .. [1] Tamuz, O., Liu, C., Belongie, S., Shamir, O., & Kalai, A. T. (2011).
+           Adaptively learning the crowd kernel. https://arxiv.org/abs/1105.1033
     """
 
-    def __init__(
-        self,
-        n: int,
-        d: int = 2,
-        ident: str = "",
-        optimizer: str = "Embedding",
-        optimizer__lr=0.075,
-        optimizer__momentum=0.9,
-        mu=1,
-        sampling="adaptive",
-        random_state=None,
-        **kwargs,
-    ):
-        super().__init__(
-            n=n,
-            d=d,
-            ident=ident,
-            optimizer=optimizer,
-            optimizer__lr=optimizer__lr,
-            optimizer__momentum=optimizer__momentum,
-            module__mu=mu,
-            module="CKL",
-            sampling=sampling,
-            random_state=random_state,
-            **kwargs,
-        )
+    def __init__(self, mu=1, **kwargs):
+        super().__init__(module__mu=mu, module="CKL", **kwargs)
 
 
 class SOE(Adaptive):
     """
-    The crowd kernel embedding.
+    The soft ordinal embedding detailed by Terada et al. [1]_ This is evaluated
+    as "SOE" by Vankadara et al., [2]_ in which they use the hinge loss on the
+    distances (not squared distances).
 
     Parameters
     ----------
-    d : int
-        Embedding dimension.
-    mu : float
-        The mu or :math:`\\mu` used in the CKL embedding. This is typically small; the default is :math:`10^{-4}`.
-    optimizer : str
-        The optimizer underlying the embedding. This method specifies how to
-        change the batch size. Choices are
-        ``["Embedding", "PadaDampG", "GeoDamp"]``.
-    optimizer__lr : float
-        Which learning rate to use with the optimizer. The learning rate must
-        be positive.
-    optimizer__momentum : float
-        The momentum to use with the optimizer.
-    sampling : str
-        "adaptive" by default. Use ``sampling="random"`` to perform random
-        sampling with the same optimization method and noise model.
+    kwargs : dict
+        Keyword arguments to pass to :class:`~salmon.triplets.algs.Adaptive`.
+
+    References
+    ----------
+    .. [1] Terada, Y. & Luxburg, U.. (2014). Local Ordinal Embedding.
+           Proceedings of the 31st International Conference on Machine
+           Learning, in PMLR 32(2):847-855.
+           http://proceedings.mlr.press/v32/terada14.html
+
+    .. [2] Vankadara, L. C., Haghiri, S., Lohaus, M., Wahab, F. U., &
+           von Luxburg, U. (2019). Insights into Ordinal Embedding Algorithms:
+           A Systematic Evaluation. https://arxiv.org/abs/1912.01666
     """
 
-    def __init__(
-        self,
-        n: int,
-        d: int = 2,
-        ident: str = "",
-        optimizer: str = "Embedding",
-        optimizer__lr=0.075,
-        optimizer__momentum=0.9,
-        mu=1,
-        sampling="adaptive",
-        random_state=None,
-        **kwargs,
-    ):
-        super().__init__(
-            n=n,
-            d=d,
-            ident=ident,
-            optimizer=optimizer,
-            optimizer__lr=optimizer__lr,
-            optimizer__momentum=optimizer__momentum,
-            module__mu=mu,
-            module="SOE",
-            sampling=sampling,
-            random_state=random_state,
-            **kwargs,
-        )
+    def __init__(self, **kwargs):
+        super().__init__(module="SOE", **kwargs)

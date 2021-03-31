@@ -24,9 +24,9 @@ def test_basics(server, logs):
     Requires `docker-compose up` in salmon directory
     """
     server._authorized = False  # mock not unauthorized
-    server.delete("/reset", status_code=401)
+    server.delete("/reset", status_code=401, timeout=60)
     server.authorize()
-    r = server.delete("/reset?force=1")
+    r = server.delete("/reset?force=1", timeout=60)
     assert r.json() == {"success": True}
     server.get("/reset", status_code=401, auth=("foo", "bar"))
     r = server.get("/reset?force=1")
@@ -271,18 +271,20 @@ def test_no_init_twice(server, logs):
     """
     server.authorize()
     exp = Path(__file__).parent / "data" / "exp.yaml"
-    server.post("/init_exp", data={"exp": exp.read_bytes()})
+    server.post("/init_exp", data={"exp": exp.read_bytes()}, timeout=60)
     query = server.get("/query")
     assert query
 
     # Make sure errors on re-initialization
-    server.post("/init_exp", data={"exp": exp.read_bytes()}, status_code=403)
+    server.post(
+        "/init_exp", data={"exp": exp.read_bytes()}, status_code=403, timeout=60
+    )
 
     # Make sure the prescribed method works (resetting, then re-init'ing)
-    server.delete("/reset", status_code=403)
-    server.delete("/reset?force=1")
+    server.delete("/reset", status_code=403, timeout=60)
+    server.delete("/reset?force=1", timeout=60)
 
-    server.post("/init_exp", data={"exp": exp.read_bytes()})
+    server.post("/init_exp", data={"exp": exp.read_bytes()}, timeout=60)
     query = server.get("/query")
     assert query
 

@@ -37,6 +37,7 @@ the same confidence.
    monitoring
    offline
    algorithms
+   api
 
 .. toctree::
    :maxdepth: 2
@@ -51,7 +52,6 @@ the same confidence.
 
    adaptive
    developers
-   api
 
 
 Indices and tables

@@ -1,5 +1,7 @@
 .. _adaptive-config:
 
+.. _alg-config:
+
 Algorithm configuration
 =======================
 
@@ -31,7 +33,8 @@ By default, ``samplers`` defaults to ``RandomSampling: {}``. We have to customiz
 
    targets: ["obj1", "obj2", "foo", "bar", "foobar!"]
    samplers:
-     RR: {"module": "TSTE"}
+     RR:
+       module: TSTE
 
 This will use :class:`~salmon.triplets.algs.TSTE`. If we want to customize to
 include different keyword arguments, we need to look close at the arguments for
@@ -44,7 +47,8 @@ configuration:
    samplers:
      RandomSampling: {}
      RR:
-       alpha: 1.1
+       module: TSTE
+       module__alpha: 1.1
 
 ``alpha`` is a keyword argument to
 :class:`~salmon.triplets.algs.TSTE`.
@@ -57,10 +61,8 @@ If we want to use two alternate configs for TSTE:
      RandomSampling: {}
      tste1:
        class: TSTE
-       optimizer__lr: 0.1
      tste2:
        class: RR
-       optimizer__lr: 0.1
    sampling:
      probs: {"RandomSampling": 20, "tste1": 40, "tste2": 40}
 
@@ -71,4 +73,3 @@ This would test out different optimization methods underlying the embedding.
        :class:`~salmon.triplets.algs.CKL` and
        :class:`~salmon.triplets.algs.TSTE` have identical input parameters,
        except ``CKL``'s input ``mu`` and ``TSTE``'s ``alpha``.
-

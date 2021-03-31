@@ -54,8 +54,11 @@ This code will generate an embedding:
    model.history_  # to view information on how well train/test performed
 
 Some customization can be done with ``model.history_``; it may not be necessary
-to train for 1,000,000 epochs. ``model.history_`` will include validation and
+to train for 400,000 epochs. ``model.history_`` will include validation and
 training scores, which might help limit the number of epochs.
+
+Documentation for :class:`~salmon.triplets.offline.OfflineEmbedding` is
+available on :ref:`api`.
 
 Embedding visualization
 -----------------------

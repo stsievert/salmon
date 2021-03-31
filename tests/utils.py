@@ -27,6 +27,9 @@ class Server:
     def get(self, endpoint, status_code=200, **kwargs):
         if "auth" not in kwargs and self._authorized:
             kwargs.update(auth=self.creds)
+        if "reset" in endpoint and "timeout" not in kwargs:
+            kwargs.update(timeout=80)
+
         logger.info(f"Getting {endpoint}")
         r = requests.get(self.url + endpoint, **kwargs)
         logger.info("done")
@@ -36,6 +39,8 @@ class Server:
     def post(self, endpoint, data=None, status_code=200, error=False, **kwargs):
         if "auth" not in kwargs and self._authorized:
             kwargs.update(auth=self.creds)
+        if "init_exp" in endpoint and "timeout" not in kwargs:
+            kwargs.update(timeout=80)
         if isinstance(data, dict) and "exp" not in data and "rdb" not in data:
             data = json.dumps(data)
         logger.info(f"Getting {endpoint}")
@@ -77,12 +82,10 @@ def server():
     server = Server("http://127.0.0.1:8421")
     server.authorize()
     server.get("/reset?force=1", auth=server.creds)
-    sleep(4)
     _clear_logs()
     yield server
     r = server.get("/reset?force=1", auth=server.creds)
     assert r.json() == {"success": True}
-    sleep(4)
     dump = Path(__file__).absolute().parent.parent / "out" / "dump.rdb"
     if dump.exists():
         dump.unlink()

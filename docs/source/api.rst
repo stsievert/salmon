@@ -1,13 +1,28 @@
 .. _alg-api:
 
-Algorithm API
-=============
+.. _api:
 
-.. warning::
+API
+===
 
-   These APIs are unstable.
+Offline embeddings
+------------------
 
-All triplet embedding algorithms must conform to this API:
+This class can be used to create embeddings from a set of downloaded responses
+from Salmon:
+
+.. autosummary::
+   :toctree: generated/
+   :template: class.rst
+
+   salmon.triplets.offline.OfflineEmbedding
+
+Samplers
+--------
+
+These classes are used to collect responses with Salmon. They can be configured
+using ``init.yaml`` as mentioned in :ref:`alg-config`. They all conform to the
+following API:
 
 .. autosummary::
    :toctree: generated/
@@ -24,7 +39,7 @@ Every class below inherits from :class:`~salmon.backend.alg.Runner`.
 
 
 Passive Algorithms
-------------------
+^^^^^^^^^^^^^^^^^^
 
 .. currentmodule:: salmon
 
@@ -36,9 +51,24 @@ Passive Algorithms
    salmon.triplets.algs.RoundRobin
 
 Active Algorithms
------------------
+^^^^^^^^^^^^^^^^^
 
-.. currentmodule:: salmon
+There are two base classes for every adaptive algorithm:
+
+.. autosummary::
+   :toctree: generated/
+   :template: only-init.rst
+
+   salmon.triplets.algs.Adaptive
+   salmon.triplets.algs.adaptive.Embedding
+
+The class :class:`~salmon.triplets.algs.Adaptive` runs the adaptive algorithm
+and depends on :class:`~salmon.triplets.algs.adaptive.Embedding` for
+optimization. To customize the optimization, all extra keyword arguments are
+passed to the optimizer.
+
+Then, all of these classes inherit from
+:class:`~salmon.triplets.algs.Adaptive`:
 
 .. autosummary::
    :toctree: generated/
@@ -46,14 +76,20 @@ Active Algorithms
 
    salmon.triplets.algs.RR
    salmon.triplets.algs.TSTE
+   salmon.triplets.algs.SOE
    salmon.triplets.algs.STE
    salmon.triplets.algs.CKL
    salmon.triplets.algs.GNMDS
 
+We have tested out the top three algorithms---RR, TSTE and SOE---in our
+experiments. We use :class:`~salmon.triplets.algs.RR` for our adaptive sampling
+(which defaults to the noise model in :class:`~salmon.triplets.algs.TSTE`) and
+use :class:`~salmon.triplets.algs.SOE` for the offline embeddings.
+
 These adaptive algorithms are all the same except for the underlying noise
 model, with the exception of :class:`~salmon.triplets.algs.RR`.
 :class:`~salmon.triplets.algs.RR` introduces some randomness by fixing the head
-and adding the top ``5 * n`` triplets to the database. This is useful because
+and adding the top ``1 * n`` triplets to the database. This is useful because
 the information gain measure used by all of these algorithms (by default) is a
 rule-of-thumb.
 

@@ -3,17 +3,17 @@
 Starting an experiment
 ======================
 
-Experiments can be initialized by vising ``http://[url]:8421/init``.
-
 .. note::
 
    By default, Salmon does not support HTTPS. Make sure the URL begins with
    ``http://``, not ``https://``.
 
-Initialization requires two actions:
+Initialization an experiment requires the following:
 
-1. Creating a username/password
-2. Launching an experiment.
+1. Visiting ``http://[url]:8421/init`` with the ``[url]`` from
+   :ref:`installation`,
+2. Creating a username/password
+3. Launching an experiment.
 
 First, type a username/password and hit "create user." After a user has been
 successfully created, hit the back button and launch an experiment. You have
@@ -68,7 +68,7 @@ Here's an example ``init.yaml`` YAML file for initialization:
    max_queries: 25
    samplers:
      RandomSampling: {}
-     RoundRobin: {}
+     RR: {}
 
 The top-level elements like ``max_queries`` and ``targets`` are called "keys"
 in YAML jargon. Here's documentation for each key:
