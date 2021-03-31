@@ -13,5 +13,5 @@ samplers:
     optimizer__lr: 0.1
   CKL: {}
   GNMDS:
-    scorer: uncertainity
+    scorer: uncertainty
   RR: {}

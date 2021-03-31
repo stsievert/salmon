@@ -42,9 +42,7 @@ class Embedding(BaseEstimator):
         module,
         module__n: int = 85,
         module__d: int = 2,
-        optimizer=optim.SGD,
-        optimizer__lr=0.04,
-        optimizer__momentum=0.9,
+        optimizer=optim.Adadelta,
         warm_start=True,
         max_epochs=100,
         initial_batch_size=512,
@@ -55,8 +53,6 @@ class Embedding(BaseEstimator):
         self.module__n = module__n
         self.module__d = module__d
         self.optimizer = optimizer
-        self.optimizer__lr = optimizer__lr
-        self.optimizer__momentum = optimizer__momentum
         self.warm_start = warm_start
         self.max_epochs = max_epochs
         self.initial_batch_size = initial_batch_size
@@ -68,12 +64,6 @@ class Embedding(BaseEstimator):
         self.answers_ = np.zeros((1000, 3), dtype="uint16")
 
         opt_kwargs = {}
-        if self.optimizer == optim.SGD:
-            opt_kwargs = dict(
-                optimizer__lr=self.optimizer__lr,
-                optimizer__momentum=self.optimizer__momentum,
-                optimizer__nesterov=True,
-            )
         self.net_ = NeuralNet(
             module=self.module,
             module__n=self.module__n,
@@ -314,9 +304,10 @@ class Damper(Embedding):
         self.meta_["batch_size"] = bs
         if self.max_batch_size and bs > self.max_batch_size:
             lr_decay = self.max_batch_size / bs
-            new_lr = self.optimizer__lr * lr_decay
-            self._set_lr(new_lr)
-            self.meta_["lr_"] = new_lr
+            if hasattr(self, "optimizer__lr"):
+                new_lr = self.optimizer__lr * lr_decay
+                self._set_lr(new_lr)
+                self.meta_["lr_"] = new_lr
             self.meta_["batch_size"] = self.max_batch_size
         return self.meta_["batch_size"]
 
@@ -353,8 +344,6 @@ class PadaDampG(Damper):
         module__n=85,
         module__d=2,
         optimizer=None,
-        optimizer__lr=None,
-        optimizer__momentum=0.9,
         initial_batch_size=64,
         max_batch_size=None,
         growth_factor=1.01,
@@ -366,8 +355,6 @@ class PadaDampG(Damper):
             module__n=module__n,
             module__d=module__d,
             optimizer=optimizer,
-            optimizer__lr=optimizer__lr,
-            optimizer__momentum=optimizer__momentum,
             initial_batch_size=initial_batch_size,
             max_batch_size=max_batch_size,
             **kwargs,
@@ -392,8 +379,6 @@ class GeoDamp(Damper):
         module__n=85,
         module__d=2,
         optimizer=None,
-        optimizer__lr=None,
-        optimizer__momentum=0.9,
         initial_batch_size=64,
         max_batch_size=None,
         dwell=10,
@@ -405,8 +390,6 @@ class GeoDamp(Damper):
             module__n=module__n,
             module__d=module__d,
             optimizer=optimizer,
-            optimizer__lr=optimizer__lr,
-            optimizer__momentum=optimizer__momentum,
             initial_batch_size=initial_batch_size,
             max_batch_size=max_batch_size,
             **kwargs,
