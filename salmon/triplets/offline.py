@@ -39,12 +39,11 @@ class OfflineEmbedding(BaseEstimator):
         self,
         n=None,
         d=None,
-        max_epochs=100_000,
+        max_epochs=400_000,
         opt=None,
-        verbose=20,
+        verbose=1000,
         ident="",
-        noise_model="CKL",
-        shuffle=True,
+        noise_model="SOE",
         random_state=None,
         **kwargs,
     ):
@@ -55,7 +54,6 @@ class OfflineEmbedding(BaseEstimator):
         self.verbose = verbose
         self.ident = ident
         self.noise_model = noise_model
-        self.shuffle = shuffle
         self.random_state = random_state
         self.kwargs = kwargs
 
@@ -70,7 +68,6 @@ class OfflineEmbedding(BaseEstimator):
                 module__random_state=self.random_state,
                 optimizer=optim.Adadelta,
                 max_epochs=self.max_epochs,
-                shuffle=self.shuffle,
             )
             kwargs.update(self.kwargs)
             self.opt = OGD(**kwargs)
