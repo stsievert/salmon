@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Starting an experiment &mdash; Salmon 0+untagged.1.g98c1ae0 documentation</title>
+  <title>Starting an experiment &mdash; Salmon 0+untagged.1.g0b9509b documentation</title>
   
 
   
@@ -100,6 +100,7 @@
 <li class="toctree-l1"><a class="reference internal" href="monitoring.html">Experiment monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="offline.html">Generating embeddings offline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="algorithms.html">Algorithm configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Benchmarks</span></p>
 <ul>
@@ -110,7 +111,6 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="adaptive.html">Adaptive algorithms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="developers.html">Developing algorithms</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api.html">Algorithm API</a></li>
 </ul>
 
             
@@ -182,14 +182,15 @@
             
   <div class="section" id="starting-an-experiment">
 <span id="getting-started"></span><h1>Starting an experiment<a class="headerlink" href="#starting-an-experiment" title="Permalink to this headline">¶</a></h1>
-<p>Experiments can be initialized by vising <code class="docutils literal notranslate"><span class="pre">http://[url]:8421/init</span></code>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>By default, Salmon does not support HTTPS. Make sure the URL begins with
 <code class="docutils literal notranslate"><span class="pre">http://</span></code>, not <code class="docutils literal notranslate"><span class="pre">https://</span></code>.</p>
 </div>
-<p>Initialization requires two actions:</p>
+<p>Initialization an experiment requires the following:</p>
 <ol class="arabic simple">
+<li><p>Visiting <code class="docutils literal notranslate"><span class="pre">http://[url]:8421/init</span></code> with the <code class="docutils literal notranslate"><span class="pre">[url]</span></code> from
+<a class="reference internal" href="installation.html#installation"><span class="std std-ref">Installation</span></a>,</p></li>
 <li><p>Creating a username/password</p></li>
 <li><p>Launching an experiment.</p></li>
 </ol>
@@ -232,7 +233,7 @@ the <code class="docutils literal notranslate"><span class="pre">targets</span><
 <span class="nt">max_queries</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">25</span>
 <span class="nt">samplers</span><span class="p">:</span>
   <span class="nt">RandomSampling</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
-  <span class="nt">RoundRobin</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
+  <span class="nt">RR</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
 </pre></div>
 </div>
 <p>The top-level elements like <code class="docutils literal notranslate"><span class="pre">max_queries</span></code> and <code class="docutils literal notranslate"><span class="pre">targets</span></code> are called “keys”

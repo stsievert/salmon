@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Generating embeddings offline &mdash; Salmon 0+untagged.1.g98c1ae0 documentation</title>
+  <title>Generating embeddings offline &mdash; Salmon 0+untagged.1.g0b9509b documentation</title>
   
 
   
@@ -101,6 +101,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="algorithms.html">Algorithm configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Benchmarks</span></p>
 <ul>
@@ -111,7 +112,6 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="adaptive.html">Adaptive algorithms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="developers.html">Developing algorithms</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api.html">Algorithm API</a></li>
 </ul>
 
             
@@ -229,8 +229,10 @@ $ conda activate salmon
 </pre></div>
 </div>
 <p>Some customization can be done with <code class="docutils literal notranslate"><span class="pre">model.history_</span></code>; it may not be necessary
-to train for 1,000,000 epochs. <code class="docutils literal notranslate"><span class="pre">model.history_</span></code> will include validation and
+to train for 400,000 epochs. <code class="docutils literal notranslate"><span class="pre">model.history_</span></code> will include validation and
 training scores, which might help limit the number of epochs.</p>
+<p>Documentation for <a class="reference internal" href="generated/salmon.triplets.offline.OfflineEmbedding.html#salmon.triplets.offline.OfflineEmbedding" title="salmon.triplets.offline.OfflineEmbedding"><code class="xref py py-class docutils literal notranslate"><span class="pre">OfflineEmbedding</span></code></a> is
+available on <a class="reference internal" href="api.html#api"><span class="std std-ref">API</span></a>.</p>
 </div>
 <div class="section" id="embedding-visualization">
 <h2>Embedding visualization<a class="headerlink" href="#embedding-visualization" title="Permalink to this headline">¶</a></h2>

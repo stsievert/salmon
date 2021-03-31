@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Algorithm API &mdash; Salmon 0+untagged.1.g98c1ae0 documentation</title>
+  <title>API &mdash; Salmon 0+untagged.1.g0b9509b documentation</title>
   
 
   
@@ -39,8 +39,8 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="salmon.backend.alg.Runner" href="generated/salmon.backend.alg.Runner.html" />
-    <link rel="prev" title="Developing algorithms" href="developers.html" /> 
+    <link rel="next" title="salmon.triplets.offline.OfflineEmbedding" href="generated/salmon.triplets.offline.OfflineEmbedding.html" />
+    <link rel="prev" title="Algorithm configuration" href="algorithms.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -89,12 +89,40 @@
             
             
               <p class="caption"><span class="caption-text">Usage</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting-started.html">Starting an experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="monitoring.html">Experiment monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="offline.html">Generating embeddings offline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="algorithms.html">Algorithm configuration</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#offline-embeddings">Offline embeddings</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/salmon.triplets.offline.OfflineEmbedding.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.offline</span></code>.OfflineEmbedding</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#samplers">Samplers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/salmon.backend.alg.Runner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.backend.alg</span></code>.Runner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#passive-algorithms">Passive Algorithms</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="generated/salmon.triplets.algs.RandomSampling.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.algs</span></code>.RandomSampling</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/salmon.triplets.algs.RoundRobin.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.algs</span></code>.RoundRobin</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#active-algorithms">Active Algorithms</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="generated/salmon.triplets.algs.Adaptive.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.algs</span></code>.Adaptive</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/salmon.triplets.algs.adaptive.Embedding.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.algs.adaptive</span></code>.Embedding</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/salmon.triplets.algs.RR.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.algs</span></code>.RR</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/salmon.triplets.algs.TSTE.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.algs</span></code>.TSTE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/salmon.triplets.algs.SOE.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.algs</span></code>.SOE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/salmon.triplets.algs.STE.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.algs</span></code>.STE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/salmon.triplets.algs.CKL.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.algs</span></code>.CKL</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/salmon.triplets.algs.GNMDS.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.algs</span></code>.GNMDS</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#interface">Interface</a></li>
+</ul>
+</li>
 </ul>
 <p class="caption"><span class="caption-text">Benchmarks</span></p>
 <ul>
@@ -102,27 +130,9 @@
 <li class="toctree-l1"><a class="reference internal" href="benchmarks/adaptive.html">Adaptive algorithms</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithm Developers</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="adaptive.html">Adaptive algorithms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="developers.html">Developing algorithms</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Algorithm API</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="generated/salmon.backend.alg.Runner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.backend.alg</span></code>.Runner</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#passive-algorithms">Passive Algorithms</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="generated/salmon.triplets.algs.RandomSampling.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.algs</span></code>.RandomSampling</a></li>
-<li class="toctree-l3"><a class="reference internal" href="generated/salmon.triplets.algs.RoundRobin.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.algs</span></code>.RoundRobin</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#active-algorithms">Active Algorithms</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="generated/salmon.triplets.algs.RR.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.algs</span></code>.RR</a></li>
-<li class="toctree-l3"><a class="reference internal" href="generated/salmon.triplets.algs.TSTE.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.algs</span></code>.TSTE</a></li>
-<li class="toctree-l3"><a class="reference internal" href="generated/salmon.triplets.algs.STE.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.algs</span></code>.STE</a></li>
-<li class="toctree-l3"><a class="reference internal" href="generated/salmon.triplets.algs.CKL.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.algs</span></code>.CKL</a></li>
-<li class="toctree-l3"><a class="reference internal" href="generated/salmon.triplets.algs.GNMDS.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.algs</span></code>.GNMDS</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#interface">Interface</a></li>
-</ul>
-</li>
 </ul>
 
             
@@ -171,7 +181,7 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Algorithm API</li>
+      <li>API</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -192,13 +202,29 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="algorithm-api">
-<span id="alg-api"></span><h1>Algorithm API<a class="headerlink" href="#algorithm-api" title="Permalink to this headline">¶</a></h1>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>These APIs are unstable.</p>
+  <div class="section" id="api">
+<span id="alg-api"></span><span id="id1"></span><h1>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="offline-embeddings">
+<h2>Offline embeddings<a class="headerlink" href="#offline-embeddings" title="Permalink to this headline">¶</a></h2>
+<p>This class can be used to create embeddings from a set of downloaded responses
+from Salmon:</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/salmon.triplets.offline.OfflineEmbedding.html#salmon.triplets.offline.OfflineEmbedding" title="salmon.triplets.offline.OfflineEmbedding"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.triplets.offline.OfflineEmbedding</span></code></a>([…])</p></td>
+<td><p>Generate an embedding offline (after responses are downloaded from Salmon).</p></td>
+</tr>
+</tbody>
+</table>
 </div>
-<p>All triplet embedding algorithms must conform to this API:</p>
+<div class="section" id="samplers">
+<h2>Samplers<a class="headerlink" href="#samplers" title="Permalink to this headline">¶</a></h2>
+<p>These classes are used to collect responses with Salmon. They can be configured
+using <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code> as mentioned in <a class="reference internal" href="algorithms.html#alg-config"><span class="std std-ref">Algorithm configuration</span></a>. They all conform to the
+following API:</p>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -216,7 +242,7 @@ you want to customize the running of the algorithm. By default, the algorithm
 uses <code class="docutils literal notranslate"><span class="pre">Runner.run</span></code> to run the algorithm.</p>
 <p>Every class below inherits from <a class="reference internal" href="generated/salmon.backend.alg.Runner.html#salmon.backend.alg.Runner" title="salmon.backend.alg.Runner"><code class="xref py py-class docutils literal notranslate"><span class="pre">Runner</span></code></a>.</p>
 <div class="section" id="passive-algorithms">
-<h2>Passive Algorithms<a class="headerlink" href="#passive-algorithms" title="Permalink to this headline">¶</a></h2>
+<h3>Passive Algorithms<a class="headerlink" href="#passive-algorithms" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -233,40 +259,69 @@ uses <code class="docutils literal notranslate"><span class="pre">Runner.run</sp
 </table>
 </div>
 <div class="section" id="active-algorithms">
-<h2>Active Algorithms<a class="headerlink" href="#active-algorithms" title="Permalink to this headline">¶</a></h2>
+<h3>Active Algorithms<a class="headerlink" href="#active-algorithms" title="Permalink to this headline">¶</a></h3>
+<p>There are two base classes for every adaptive algorithm:</p>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/salmon.triplets.algs.RR.html#salmon.triplets.algs.RR" title="salmon.triplets.algs.RR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.triplets.algs.RR</span></code></a>(n, d, R, ident, …)</p></td>
-<td><p>A randomized round robin algorithm.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/salmon.triplets.algs.Adaptive.html#salmon.triplets.algs.Adaptive" title="salmon.triplets.algs.Adaptive"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.triplets.algs.Adaptive</span></code></a>(*, n, d, …)</p></td>
+<td><p>The runner that runs adaptive algorithms.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/salmon.triplets.algs.TSTE.html#salmon.triplets.algs.TSTE" title="salmon.triplets.algs.TSTE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.triplets.algs.TSTE</span></code></a>(n, d, ident, optimizer)</p></td>
-<td><p>The t-Distributed STE (t-STE) embedding algorithm <a class="reference internal" href="generated/salmon.triplets.algs.TSTE.html#r1d0c09ce08dd-1" id="id1"><span>[R1d0c09ce08dd-1]</span></a>.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/salmon.triplets.algs.STE.html#salmon.triplets.algs.STE" title="salmon.triplets.algs.STE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.triplets.algs.STE</span></code></a>(n, d, ident, optimizer)</p></td>
-<td><p>The Stochastic Triplet Embedding <a class="reference internal" href="generated/salmon.triplets.algs.STE.html#r7fe386f21f90-1" id="id2"><span>[R7fe386f21f90-1]</span></a>.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/salmon.triplets.algs.CKL.html#salmon.triplets.algs.CKL" title="salmon.triplets.algs.CKL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.triplets.algs.CKL</span></code></a>(n, d, ident, optimizer)</p></td>
-<td><p>The crowd kernel embedding.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/salmon.triplets.algs.GNMDS.html#salmon.triplets.algs.GNMDS" title="salmon.triplets.algs.GNMDS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.triplets.algs.GNMDS</span></code></a>(n, d, ident, …)</p></td>
-<td><p>The Generalized Non-metric Multidimensional Scaling embedding <a class="reference internal" href="generated/salmon.triplets.algs.GNMDS.html#r059ae300cbf9-1" id="id3"><span>[R059ae300cbf9-1]</span></a>.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/salmon.triplets.algs.adaptive.Embedding.html#salmon.triplets.algs.adaptive.Embedding" title="salmon.triplets.algs.adaptive.Embedding"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.triplets.algs.adaptive.Embedding</span></code></a>(…)</p></td>
+<td><p>An triplet embedding algorithm.</p></td>
 </tr>
 </tbody>
 </table>
+<p>The class <a class="reference internal" href="generated/salmon.triplets.algs.Adaptive.html#salmon.triplets.algs.Adaptive" title="salmon.triplets.algs.Adaptive"><code class="xref py py-class docutils literal notranslate"><span class="pre">Adaptive</span></code></a> runs the adaptive algorithm
+and depends on <a class="reference internal" href="generated/salmon.triplets.algs.adaptive.Embedding.html#salmon.triplets.algs.adaptive.Embedding" title="salmon.triplets.algs.adaptive.Embedding"><code class="xref py py-class docutils literal notranslate"><span class="pre">Embedding</span></code></a> for
+optimization. To customize the optimization, all extra keyword arguments are
+passed to the optimizer.</p>
+<p>Then, all of these classes inherit from
+<a class="reference internal" href="generated/salmon.triplets.algs.Adaptive.html#salmon.triplets.algs.Adaptive" title="salmon.triplets.algs.Adaptive"><code class="xref py py-class docutils literal notranslate"><span class="pre">Adaptive</span></code></a>:</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/salmon.triplets.algs.RR.html#salmon.triplets.algs.RR" title="salmon.triplets.algs.RR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.triplets.algs.RR</span></code></a>(R[, module])</p></td>
+<td><p>A randomized round robin algorithm.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/salmon.triplets.algs.TSTE.html#salmon.triplets.algs.TSTE" title="salmon.triplets.algs.TSTE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.triplets.algs.TSTE</span></code></a>([alpha])</p></td>
+<td><p>The t-Distributed STE (t-STE) embedding algorithm <a class="reference internal" href="generated/salmon.triplets.algs.TSTE.html#r1d0c09ce08dd-1" id="id2"><span>[R1d0c09ce08dd-1]</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/salmon.triplets.algs.SOE.html#salmon.triplets.algs.SOE" title="salmon.triplets.algs.SOE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.triplets.algs.SOE</span></code></a>(**kwargs)</p></td>
+<td><p>The soft ordinal embedding detailed by Terada et al. <a class="reference internal" href="generated/salmon.triplets.algs.SOE.html#r1d35a8297943-1" id="id3"><span>[R1d35a8297943-1]</span></a> This is evaluated as “SOE” by Vankadara et al., <a class="reference internal" href="generated/salmon.triplets.algs.SOE.html#r1d35a8297943-2" id="id4"><span>[R1d35a8297943-2]</span></a> in which they use the hinge loss on the distances (not squared distances).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/salmon.triplets.algs.STE.html#salmon.triplets.algs.STE" title="salmon.triplets.algs.STE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.triplets.algs.STE</span></code></a>(**kwargs)</p></td>
+<td><p>The Stochastic Triplet Embedding <a class="reference internal" href="generated/salmon.triplets.algs.STE.html#r7fe386f21f90-1" id="id5"><span>[R7fe386f21f90-1]</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/salmon.triplets.algs.CKL.html#salmon.triplets.algs.CKL" title="salmon.triplets.algs.CKL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.triplets.algs.CKL</span></code></a>([mu])</p></td>
+<td><p>The crowd kernel embedding.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/salmon.triplets.algs.GNMDS.html#salmon.triplets.algs.GNMDS" title="salmon.triplets.algs.GNMDS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.triplets.algs.GNMDS</span></code></a>(**kwargs)</p></td>
+<td><p>The Generalized Non-metric Multidimensional Scaling embedding <a class="reference internal" href="generated/salmon.triplets.algs.GNMDS.html#r059ae300cbf9-1" id="id6"><span>[R059ae300cbf9-1]</span></a>.</p></td>
+</tr>
+</tbody>
+</table>
+<p>We have tested out the top three algorithms—RR, TSTE and SOE—in our
+experiments. We use <a class="reference internal" href="generated/salmon.triplets.algs.RR.html#salmon.triplets.algs.RR" title="salmon.triplets.algs.RR"><code class="xref py py-class docutils literal notranslate"><span class="pre">RR</span></code></a> for our adaptive sampling
+(which defaults to the noise model in <a class="reference internal" href="generated/salmon.triplets.algs.TSTE.html#salmon.triplets.algs.TSTE" title="salmon.triplets.algs.TSTE"><code class="xref py py-class docutils literal notranslate"><span class="pre">TSTE</span></code></a>) and
+use <a class="reference internal" href="generated/salmon.triplets.algs.SOE.html#salmon.triplets.algs.SOE" title="salmon.triplets.algs.SOE"><code class="xref py py-class docutils literal notranslate"><span class="pre">SOE</span></code></a> for the offline embeddings.</p>
 <p>These adaptive algorithms are all the same except for the underlying noise
 model, with the exception of <a class="reference internal" href="generated/salmon.triplets.algs.RR.html#salmon.triplets.algs.RR" title="salmon.triplets.algs.RR"><code class="xref py py-class docutils literal notranslate"><span class="pre">RR</span></code></a>.
 <a class="reference internal" href="generated/salmon.triplets.algs.RR.html#salmon.triplets.algs.RR" title="salmon.triplets.algs.RR"><code class="xref py py-class docutils literal notranslate"><span class="pre">RR</span></code></a> introduces some randomness by fixing the head
-and adding the top <code class="docutils literal notranslate"><span class="pre">5</span> <span class="pre">*</span> <span class="pre">n</span></code> triplets to the database. This is useful because
+and adding the top <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">*</span> <span class="pre">n</span></code> triplets to the database. This is useful because
 the information gain measure used by all of these algorithms (by default) is a
 rule-of-thumb.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Use of <a class="reference internal" href="generated/salmon.triplets.algs.RR.html#salmon.triplets.algs.RR" title="salmon.triplets.algs.RR"><code class="xref py py-class docutils literal notranslate"><span class="pre">RR</span></code></a> is recommended as it performs well
 in <a class="reference internal" href="benchmarks/adaptive.html#experiments"><span class="std std-ref">the experiments we have run</span></a>.</p>
+</div>
 </div>
 </div>
 <div class="section" id="interface">
@@ -342,8 +397,8 @@ in <a class="reference internal" href="benchmarks/adaptive.html#experiments"><sp
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="generated/salmon.backend.alg.Runner.html" class="btn btn-neutral float-right" title="salmon.backend.alg.Runner" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="developers.html" class="btn btn-neutral float-left" title="Developing algorithms" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="generated/salmon.triplets.offline.OfflineEmbedding.html" class="btn btn-neutral float-right" title="salmon.triplets.offline.OfflineEmbedding" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="algorithms.html" class="btn btn-neutral float-left" title="Algorithm configuration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

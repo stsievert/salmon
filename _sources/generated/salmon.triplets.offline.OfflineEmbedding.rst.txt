@@ -1,0 +1,14 @@
+﻿:mod:`salmon.triplets.offline`.OfflineEmbedding
+======================================================
+
+.. currentmodule:: salmon.triplets.offline
+
+.. autoclass:: OfflineEmbedding
+   :members:
+
+
+.. include:: salmon.triplets.offline.OfflineEmbedding.examples
+
+.. raw:: html
+
+    <div class="clearer"></div>

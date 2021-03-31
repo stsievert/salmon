@@ -1,0 +1,7 @@
+﻿:mod:`salmon.triplets.algs`.Adaptive
+===========================================
+
+.. currentmodule:: salmon.triplets.algs
+
+.. autoclass:: Adaptive
+   :members: __init__

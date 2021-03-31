@@ -1,0 +1,7 @@
+﻿:mod:`salmon.triplets.algs`.SOE
+======================================
+
+.. currentmodule:: salmon.triplets.algs
+
+.. autoclass:: SOE
+   :members: __init__

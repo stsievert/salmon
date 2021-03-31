@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Adaptive algorithms &mdash; Salmon 0+untagged.1.g98c1ae0 documentation</title>
+  <title>Adaptive algorithms &mdash; Salmon 0+untagged.1.g0b9509b documentation</title>
   
 
   
@@ -96,12 +96,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../monitoring.html">Experiment monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../offline.html">Generating embeddings offline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../algorithms.html">Algorithm configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Benchmarks</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="server.html">Concurrent Users</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Adaptive algorithms</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#synthetic-simulation">Synthetic simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#response-rate">Response rate</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#simulation-with-human-responses">Simulation with human responses</a></li>
 </ul>
 </li>
@@ -110,7 +111,6 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../adaptive.html">Adaptive algorithms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../developers.html">Developing algorithms</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api.html">Algorithm API</a></li>
 </ul>
 
             
@@ -186,35 +186,67 @@
 about a random question like random sampling. This can mean that higher
 accuracies are reached sooner, or that less human responses are required to
 reach a particular accuracy.</p>
+<p>This page will be concerned with the data scientist workflow, and every
+experiment below will use the same workflow a data scientists would:</p>
+<ol class="arabic simple">
+<li><p>Launch Salmon.</p></li>
+<li><p>Simulate human users. <a class="footnote-reference brackets" href="#noise" id="id1">4</a></p></li>
+<li><p>Download the human responses from Salmon</p></li>
+<li><p>Generate the embedding offline.</p></li>
+</ol>
+<p>Unless explicitly mentioned, every experiment on this page will use the “alien
+eggs” dataset that’s characterized by one parameter, the “smoothness” of each
+egg. For <span class="math notranslate nohighlight">\(n=30\)</span> objects, that dataset looks like the following:</p>
+<a class="reference internal image-reference" href="../_images/alien-eggs.png"><img alt="../_images/alien-eggs.png" class="align-center" src="../_images/alien-eggs.png" style="width: 100%;" /></a>
+<p>These are characterized by one parameter, and have a 1D embedding. However,
+let’s embed into <span class="math notranslate nohighlight">\(d=2\)</span> dimensions to simulate a mistake and to mirror
+prior work. <a class="footnote-reference brackets" href="#id8" id="id2">2</a> Unless explicitly mentioned, let’s compare random and active
+sampling with this <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code> configuration:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">samplers</span><span class="p">:</span>
+  <span class="nt">RR</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt">random_state</span><span class="p">:</span> <span class="nv">42</span><span class="p p-Indicator">}</span>  <span class="c1"># active or adaptive sampling</span>
+  <span class="nt">RandomSampling</span><span class="p">:</span> <span class="p p-Indicator">{}</span>  <span class="c1"># random sampling</span>
+</pre></div>
+</div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This page shows results of experiments run with Salmon.
 For complete details, see <a class="reference external" href="https://github.com/stsievert/salmon-experiments">https://github.com/stsievert/salmon-experiments</a></p>
 </div>
-<div class="section" id="synthetic-simulation">
-<h2>Synthetic simulation<a class="headerlink" href="#synthetic-simulation" title="Permalink to this headline">¶</a></h2>
-<p>Let’s compare adaptive sampling and random sampling. Specifically, let’s use
-Salmon like an experimentalist would:</p>
+<div class="section" id="response-rate">
+<h2>Response rate<a class="headerlink" href="#response-rate" title="Permalink to this headline">¶</a></h2>
+<p>This section will provide evidence for the following points:</p>
 <ol class="arabic simple">
-<li><p>Launch Salmon with the “alien eggs” dataset, with <span class="math notranslate nohighlight">\(n=30\)</span> objects
-embedded into <span class="math notranslate nohighlight">\(d=2\)</span> dimensions.</p></li>
-<li><p>Simulate human users (10 users with mean response time of 1s).</p></li>
-<li><p>Download the human responses from Salmon</p></li>
-<li><p>Generate the embedding offline.</p></li>
+<li><p><strong>Using adaptive sampling will not degrade embedding quality or accuracy.</strong></p></li>
+<li><p><strong>Adaptive sampling finds higher quality embeddings with fewer responses.</strong>
+In one case, adaptive sampling required about 1,250 responses instead of
+3,500 responses like random sampling to reach ground truth accuracy of 97%.</p></li>
+<li><p><strong>However, response rate determines how much adaptive gains are possible.</strong>
+Having 10 concurrent users will likely still present adaptive gains, but
+they’ll be smaller than if there were only 5 concurrent users.</p></li>
 </ol>
-<p>Let’s run this process for adaptive and random sampling. When we do that, this
-is the graph that’s produced:</p>
-<a class="reference internal image-reference" href="../_images/synth-eg-acc.png"><img alt="../_images/synth-eg-acc.png" class="align-center" src="../_images/synth-eg-acc.png" style="width: 600px;" /></a>
-<p>These are synthetic results, though they use a human noise model. These
-experiments provide evidence that Salmon works well with adaptive sampling.</p>
+<p>The number of users will be varied from 1 concurrent user to 10 concurrent
+users with a mean response time of 1 second. This matters for adaptive sampling
+because there will be less time for computation/searching. It doesn’t matter
+for random sampling because no computation/searching is performed. How does
+the response rate affect the embedding accuracy?</p>
+<a class="reference internal image-reference" href="../_images/accuracy.png"><img alt="../_images/accuracy.png" class="align-center" src="../_images/accuracy.png" style="width: 100%;" /></a>
+<p>This graph shows two measures: accuracy on a set of test human responses (left)
+and responses that are 100% accurate on the ground truth dataset (right). The
+graph on the right is a measure of quality on the underlying embedding. The
+graph on the left shows that that this quality is reflected in hold-out
+performance on human responses.</p>
+<p>These experiments provide evidence that the adaptive sampling above works well
+in crowdsourcing settings. Additionally, they provide evidence that Salmon’s
+adaptive sampling does not perform worse than random sampling.</p>
 <p>This measure provides evidence that Salmon’s active sampling approach
 outperforms random sampling. If true, this is an improvement over existing
 software to deploy triplet queries to crowdsourced audiences: in NEXT’s
-introduction paper, <a class="footnote-reference brackets" href="#id6" id="id1">2</a> the authors found “no evidence for gains from adaptive
-sampling” for (nearly) the same problem. <a class="footnote-reference brackets" href="#same" id="id2">3</a></p>
+introduction paper, <a class="footnote-reference brackets" href="#id8" id="id3">2</a> the authors found “no evidence for gains from adaptive
+sampling” for (nearly) the same problem. <a class="footnote-reference brackets" href="#same" id="id4">3</a></p>
 </div>
 <div class="section" id="simulation-with-human-responses">
 <h2>Simulation with human responses<a class="headerlink" href="#simulation-with-human-responses" title="Permalink to this headline">¶</a></h2>
+<p><em>This section uses the Zappos shoe dataset, not the alien eggs dataset</em></p>
 <p>The Zappos shoe dataset has <span class="math notranslate nohighlight">\(n=85\)</span> shoes, and asks every possible triplet
 4 times to crowdsourcing users. Let’s run a simulation with Salmon on that that
 dataset. We’ll embed into <span class="math notranslate nohighlight">\(d = 3\)</span> dimensions, and have a response rate of
@@ -222,16 +254,16 @@ about 2.5 response/sec (5 users with an average response time of 2.5 seconds).</
 <p>Let’s again compare adaptive sampling and random sampling:</p>
 <a class="reference internal image-reference" href="../_images/zappos.png"><img alt="../_images/zappos.png" class="align-center" src="../_images/zappos.png" style="width: 600px;" /></a>
 <p>The likelihood of a true response conveys “margin by which the models adhere to
-all responses.” <a class="footnote-reference brackets" href="#id5" id="id3">1</a> The performance above mirrors the performance by Heim et
-al. in their Figure 3. <a class="footnote-reference brackets" href="#id5" id="id4">1</a></p>
+all responses.” <a class="footnote-reference brackets" href="#id7" id="id5">1</a> The performance above mirrors the performance by Heim et
+al. in their Figure 3. <a class="footnote-reference brackets" href="#id7" id="id6">1</a></p>
 <p class="rubric">References</p>
 <dl class="footnote brackets">
-<dt class="label" id="id5"><span class="brackets">1</span><span class="fn-backref">(<a href="#id3">1</a>,<a href="#id4">2</a>)</span></dt>
+<dt class="label" id="id7"><span class="brackets">1</span><span class="fn-backref">(<a href="#id5">1</a>,<a href="#id6">2</a>)</span></dt>
 <dd><p>“Active Perceptual Similarity Modeling with Auxiliary Information” by E.
 Heim, M. Berger, and L. Seversky, and M. Hauskrecht. 2015.
 <a class="reference external" href="https://arxiv.org/pdf/1511.02254.pdf">https://arxiv.org/pdf/1511.02254.pdf</a></p>
 </dd>
-<dt class="label" id="id6"><span class="brackets"><a class="fn-backref" href="#id1">2</a></span></dt>
+<dt class="label" id="id8"><span class="brackets">2</span><span class="fn-backref">(<a href="#id2">1</a>,<a href="#id3">2</a>,<a href="#id9">3</a>)</span></dt>
 <dd><p>“NEXT: A System for Real-World Development, Evaluation, and Application
 of Active Learning” by K. Jamieson, L. Jain, C. Fernandez, N. Glattard
 and R. Nowak. 2017.
@@ -240,13 +272,17 @@ and R. Nowak. 2017.
 </dl>
 <p class="rubric">Footnotes</p>
 <dl class="footnote brackets">
-<dt class="label" id="same"><span class="brackets"><a class="fn-backref" href="#id2">3</a></span></dt>
+<dt class="label" id="same"><span class="brackets"><a class="fn-backref" href="#id4">3</a></span></dt>
 <dd><p>Both experiment use <span class="math notranslate nohighlight">\(n=30\)</span> objects and embed into <span class="math notranslate nohighlight">\(d=2\)</span>
 dimensions. The human noise model used in the Salmon experiments is
 generated from the responses collected during NEXT’s experiment. The
 are the same experiment, up to different responses (NEXT
 actually runs crowdsourcing experiments; Salmon’s noise model is
 generated from those responses).</p>
+</dd>
+<dt class="label" id="noise"><span class="brackets"><a class="fn-backref" href="#id1">4</a></span></dt>
+<dd><p>Specifically, with a noise model developed the human responses collected
+for Fig. 3 of the NEXT paper. <a class="footnote-reference brackets" href="#id8" id="id9">2</a></p>
 </dd>
 </dl>
 </div>
