@@ -476,6 +476,15 @@ async def _process_form(
 
 
 @app.delete("/reset", tags=["private"])
+def reset_delete(
+    force: int = 0,
+    authorized=Depends(_authorize),
+    tags=["private"],
+    timeout: float = 10,
+):
+    reset(force=force, authorized=authorized, timeout=timeout)
+    return {"success": True}
+
 @app.get("/reset", tags=["private"])
 def reset(
     force: int = 0,

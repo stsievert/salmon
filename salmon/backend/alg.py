@@ -115,7 +115,7 @@ class Runner:
                         "get_queries", self_future, stop=done, workers=workers[2],
                     )
                 else:
-                    f_search = client.submit(lambda x: ([], []), 0)
+                    f_search = client.submit(lambda x: ([], [], {}), 0)
 
                 time_model = 0.0
                 time_post = 0.0
@@ -174,11 +174,17 @@ class Runner:
             datum["time_loop"] = time() - loop_start
             rj.jsonarrappend(f"alg-perf-{self.ident}", root, datum)
             logger.info(datum)
+            f_sleep = client.submit(lambda: sleep(self.sleep_))
+            done = f_sleep.result()
             if "reset" in rj.keys() and rj.jsonget("reset", root):
                 logger.warning(f"Resetting {self.ident}")
                 self.reset(client, rj)
                 break
         return True
+
+    @property
+    def sleep_(self):
+        return 0
 
     def save(self) -> bool:
         rj2 = self.redis_client(decode_responses=False)
@@ -224,7 +230,7 @@ class Runner:
             sleep(0.1)
             n_queries = rj.zcard(key)
             logger.warning(f"n_queries={n_queries}")
-            if n_queries == 0:
+            if not n_queries:
                 break
         logger.warning(f"Clearing queries again for {self.ident}")
         self.clear_queries(rj)
@@ -234,7 +240,7 @@ class Runner:
             client.sync(client.restart())
         except:
             pass
-        logger.warning(f"Closiing Dask client for {self.ident}")
+        logger.warning(f"Closing Dask client for {self.ident}")
         try:
             client.sync(client.close())
         except:
