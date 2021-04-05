@@ -81,11 +81,10 @@ def _clear_logs(log=None):
 def server():
     server = Server("http://127.0.0.1:8421")
     server.authorize()
-    server.get("/reset?force=1", auth=server.creds)
+    r = server.delete("/reset?force=1", auth=server.creds, timeout=20)
+    assert r.json() == {"success": True}
     _clear_logs()
     yield server
-    r = server.get("/reset?force=1", auth=server.creds)
-    assert r.json() == {"success": True}
     dump = Path(__file__).absolute().parent.parent / "out" / "dump.rdb"
     if dump.exists():
         dump.unlink()

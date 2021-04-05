@@ -24,12 +24,12 @@ def test_basics(server, logs):
     Requires `docker-compose up` in salmon directory
     """
     server._authorized = False  # mock not unauthorized
-    server.delete("/reset", status_code=401, timeout=60)
+    server.delete("/reset", status_code=401, timeout=20)
     server.authorize()
-    r = server.delete("/reset?force=1", timeout=60)
+    r = server.delete("/reset?force=1", timeout=20)
     assert r.json() == {"success": True}
-    server.get("/reset", status_code=401, auth=("foo", "bar"))
-    r = server.get("/reset?force=1")
+    server.delete("/reset", status_code=401, auth=("foo", "bar"))
+    r = server.delete("/reset?force=1", timeout=20)
     assert r.json() == {"success": True}
     server.get("/init")
     exp = Path(__file__).parent / "data" / "exp.yaml"
@@ -155,7 +155,7 @@ def test_meta(server):
 
 def test_saves_state(server):
     server.authorize()
-    server.get("/reset?force=1")
+    server.delete("/reset?force=1", timeout=20)
     sleep(0.1)
     dump = Path(__file__).absolute().parent.parent / "out" / "dump.rdb"
     assert not dump.exists()
@@ -177,7 +177,7 @@ def test_saves_state(server):
 
     # Make sure saved resetting saves experiment state
     before_reset = datetime.now()
-    server.get("/reset?force=1")
+    server.delete("/reset?force=1", timeout=20)
     files = [f.name for f in dir.glob("*.rdb")]
     assert len(files) == 1
     written = datetime.strptime(files[0], "dump-%Y-%m-%dT%H:%M.rdb")
@@ -217,7 +217,7 @@ def test_logs(server, logs):
     dump = Path(__file__).absolute().parent.parent / "salmon" / "out" / "dump.rdb"
     assert not dump.exists()
     exp = Path(__file__).parent / "data" / "exp.yaml"
-    server.get("/reset?force=1")
+    server.delete("/reset?force=1", timeout=20)
     server.post("/init_exp", data={"exp": exp.read_bytes()})
     data = []
     puid = "adsfjkl4awjklra"
@@ -271,20 +271,20 @@ def test_no_init_twice(server, logs):
     """
     server.authorize()
     exp = Path(__file__).parent / "data" / "exp.yaml"
-    server.post("/init_exp", data={"exp": exp.read_bytes()}, timeout=60)
+    server.post("/init_exp", data={"exp": exp.read_bytes()}, timeout=20)
     query = server.get("/query")
     assert query
 
     # Make sure errors on re-initialization
     server.post(
-        "/init_exp", data={"exp": exp.read_bytes()}, status_code=403, timeout=60
+        "/init_exp", data={"exp": exp.read_bytes()}, status_code=403, timeout=20
     )
 
     # Make sure the prescribed method works (resetting, then re-init'ing)
-    server.delete("/reset", status_code=403, timeout=60)
-    server.delete("/reset?force=1", timeout=60)
+    server.delete("/reset", status_code=403, timeout=20)
+    server.delete("/reset?force=1", timeout=20)
 
-    server.post("/init_exp", data={"exp": exp.read_bytes()}, timeout=60)
+    server.post("/init_exp", data={"exp": exp.read_bytes()}, timeout=20)
     query = server.get("/query")
     assert query
 

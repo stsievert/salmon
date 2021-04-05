@@ -33,8 +33,7 @@ def test_directory_examples(eg_dir: str, server):
         for target_zip in _eg_dir.glob("*.zip"):
             success = _test_upload(exp, target_zip, server)
             assert success
-            query = server.get("/")
-            sleep(2)
-            r = server.get("/reset?force=1")
+            query = server.get("/", timeout=5)
+            r = server.delete("/reset?force=1", timeout=20)
             assert r.json() == {"success": True}
-            sleep(4)
+            sleep(2)

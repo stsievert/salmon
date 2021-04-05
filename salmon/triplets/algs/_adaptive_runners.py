@@ -107,6 +107,10 @@ class Adaptive(Runner):
             **kwargs,
         }
 
+    @property
+    def sleep_(self):
+        return 0
+
     def get_query(self) -> Tuple[Optional[Dict[str, int]], Optional[float]]:
         if self.meta["num_ans"] <= self.R * self.n:
             head, left, right = _random_query(self.n)

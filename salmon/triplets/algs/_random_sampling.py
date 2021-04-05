@@ -41,8 +41,6 @@ class RandomSampling(Runner):
     def process_answers(self, ans: List[Answer]):
         return self, False
 
-    def post_queries(self, *args, **kwargs):
-        return 0
-
-    def run(self, *args, **kwargs):
-        return True
+    @property
+    def sleep_(self):
+        return 1
