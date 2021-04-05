@@ -4,10 +4,11 @@
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
-  
+  <meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Starting an experiment &mdash; Salmon 0+untagged.1.g0b9509b documentation</title>
+  <title>Starting an experiment &mdash; Salmon 0+untagged.1.ga6e6685 documentation</title>
   
 
   
@@ -88,7 +89,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Usage</span></p>
+              <p><span class="caption-text">Usage</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Starting an experiment</a><ul>
@@ -102,12 +103,12 @@
 <li class="toctree-l1"><a class="reference internal" href="algorithms.html">Algorithm configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Benchmarks</span></p>
+<p><span class="caption-text">Benchmarks</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="benchmarks/server.html">Concurrent Users</a></li>
 <li class="toctree-l1"><a class="reference internal" href="benchmarks/adaptive.html">Adaptive algorithms</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Algorithm Developers</span></p>
+<p><span class="caption-text">Algorithm Developers</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="adaptive.html">Adaptive algorithms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="developers.html">Developing algorithms</a></li>
@@ -180,7 +181,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="starting-an-experiment">
+  <section id="starting-an-experiment">
 <span id="getting-started"></span><h1>Starting an experiment<a class="headerlink" href="#starting-an-experiment" title="Permalink to this headline">¶</a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -221,7 +222,7 @@ The version number is available at <code class="docutils literal notranslate"><s
 something like <code class="docutils literal notranslate"><span class="pre">v0.4.1</span></code>, typically shown right next to “Salmon.”</p>
 </div>
 <p>Now, let’s describe three methods on how to launch this experiment:</p>
-<div class="section" id="experiment-initialization-with-yaml-file">
+<section id="experiment-initialization-with-yaml-file">
 <h2>Experiment initialization with YAML file<a class="headerlink" href="#experiment-initialization-with-yaml-file" title="Permalink to this headline">¶</a></h2>
 <p>This section will specify the YAML file; including a ZIP file will only modify
 the <code class="docutils literal notranslate"><span class="pre">targets</span></code> key.</p>
@@ -268,8 +269,8 @@ button that says “new query.”</p></li>
 colors/borders/etc.</p></li>
 </ul>
 <p>Examples of these files are in <a class="reference external" href="https://github.com/stsievert/salmon/tree/master/tests/data">salmon/tests/data</a> and <a class="reference external" href="https://github.com/stsievert/salmon/tree/master/examples">salmon/examples</a>.</p>
-</div>
-<div class="section" id="yaml-file-with-zip-file">
+</section>
+<section id="yaml-file-with-zip-file">
 <h2>YAML file with ZIP file<a class="headerlink" href="#yaml-file-with-zip-file" title="Permalink to this headline">¶</a></h2>
 <p>If you upload a ZIP file alongside the <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code> YAML file, the <code class="docutils literal notranslate"><span class="pre">targets</span></code>
 key above will be configured to represent each object in the ZIP file. Here are
@@ -306,16 +307,16 @@ bolded text for “<strong>Ted Ligety</strong>.” That means we can also render
 </pre></div>
 </div>
 <p>One rendered target will be this image:</p>
-<img width="300px" src="https://upload.wikimedia.org/wikipedia/commons/8/89/Miller_Bode_2008_002.jpg" /></div>
-<div class="section" id="database-dump">
+<img width="300px" src="https://upload.wikimedia.org/wikipedia/commons/8/89/Miller_Bode_2008_002.jpg" /></section>
+<section id="database-dump">
 <h2>Database dump<a class="headerlink" href="#database-dump" title="Permalink to this headline">¶</a></h2>
 <p>The dashboard offers a link to download the experiment on the dashboard (that
 is, at <code class="docutils literal notranslate"><span class="pre">http://[url]:8421/dashboard</span></code>). This will download a file called
 <code class="docutils literal notranslate"><span class="pre">exp-[date]-vX.Y.Z.rdb</span></code>. Do not delete the numbers <code class="docutils literal notranslate"><span class="pre">X.Y.Z</span></code>!</p>
 <p>Salmon supports the upload of this file to the same version of Salmon. The
 upload of this file will restore the state of your experiment.</p>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

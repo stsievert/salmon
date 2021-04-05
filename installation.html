@@ -4,10 +4,11 @@
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
-  
+  <meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Installation &mdash; Salmon 0+untagged.1.g0b9509b documentation</title>
+  <title>Installation &mdash; Salmon 0+untagged.1.ga6e6685 documentation</title>
   
 
   
@@ -88,7 +89,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Usage</span></p>
+              <p><span class="caption-text">Usage</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#experimentalist">Experimentalist</a></li>
@@ -107,12 +108,12 @@
 <li class="toctree-l1"><a class="reference internal" href="algorithms.html">Algorithm configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Benchmarks</span></p>
+<p><span class="caption-text">Benchmarks</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="benchmarks/server.html">Concurrent Users</a></li>
 <li class="toctree-l1"><a class="reference internal" href="benchmarks/adaptive.html">Adaptive algorithms</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Algorithm Developers</span></p>
+<p><span class="caption-text">Algorithm Developers</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="adaptive.html">Adaptive algorithms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="developers.html">Developing algorithms</a></li>
@@ -185,7 +186,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="installation">
+  <section id="installation">
 <span id="id1"></span><h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
 <p>This pages details how to get Salmon running, either on EC2 or locally on your
 machine. After you get Salmon running, detail on how to launch experiments in
@@ -195,7 +196,7 @@ machine. After you get Salmon running, detail on how to launch experiments in
 <p>See the <a class="reference internal" href="#troubleshooting">Troubleshooting</a> section if you’re having difficulties with either
 of the processes below.</p>
 </div>
-<div class="section" id="experimentalist">
+<section id="experimentalist">
 <h2>Experimentalist<a class="headerlink" href="#experimentalist" title="Permalink to this headline">¶</a></h2>
 <ol class="arabic">
 <li><p>Sign into Amazon AWS (<a class="reference external" href="http://aws.amazon.com/">http://aws.amazon.com/</a>)</p></li>
@@ -261,8 +262,8 @@ the responses and experiment file.</p>
 logs when contacting the Salmon developers. They’d also appreciate it if
 you left the machine running.</p>
 </div>
-</div>
-<div class="section" id="local-machine">
+</section>
+<section id="local-machine">
 <h2>Local machine<a class="headerlink" href="#local-machine" title="Permalink to this headline">¶</a></h2>
 <p>This process is meant for developers. To launch, first download the code.  It’s
 possible to download <a class="reference external" href="https://github.com/stsievert/salmon/archive/refs/heads/master.zip">a ZIP file of Salmon’s source</a>, or if Git is installed,
@@ -290,31 +291,31 @@ but it will reduce the number of times required to run <code class="docutils lit
 <span class="pre">build,</span> <span class="pre">up}</span></code>.</p>
 <p>If you run the command <code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">SALMON_NO_AUTH=1</span></code>, the Salmon server will
 not require a username/password.</p>
-</div>
-<div class="section" id="troubleshooting">
+</section>
+<section id="troubleshooting">
 <h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="i-can-t-access-salmon-s-url">
+<section id="i-can-t-access-salmon-s-url">
 <h3>I can’t access Salmon’s URL<a class="headerlink" href="#i-can-t-access-salmon-s-url" title="Permalink to this headline">¶</a></h3>
 <p>Try using <code class="docutils literal notranslate"><span class="pre">http://</span></code> instead of <code class="docutils literal notranslate"><span class="pre">https://</span></code>.  By default, EC2 does not
 support HTTPS, and some browsers use HTTPS automatically.</p>
-</div>
-<div class="section" id="i-can-t-find-salmon-s-ami">
+</section>
+<section id="i-can-t-find-salmon-s-ami">
 <h3>I can’t find Salmon’s AMI<a class="headerlink" href="#i-can-t-find-salmon-s-ami" title="Permalink to this headline">¶</a></h3>
 <p>Are you in EC2’s Oregon region, <code class="docutils literal notranslate"><span class="pre">us-west-2</span></code>? That can be changed in the upper
 right of the Amazon EC2 interface.</p>
 <p>The Salmon AMI has been created in the <code class="docutils literal notranslate"><span class="pre">us-west-2</span></code> region, and EC2 AMIs are
 only available in the regions they’re created in.</p>
-</div>
-<div class="section" id="the-docker-machines-aren-t-launching">
+</section>
+<section id="the-docker-machines-aren-t-launching">
 <h3>The Docker machines aren’t launching<a class="headerlink" href="#the-docker-machines-aren-t-launching" title="Permalink to this headline">¶</a></h3>
 <p>Are you using the command <code class="docutils literal notranslate"><span class="pre">docker-compose</span> <span class="pre">up</span></code> to launch Salmon? The command
 <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">build</span> <span class="pre">.</span></code> doesn’t work.</p>
 <p>Salmon requires a Redis docker machine and certain directories/ports being
 available. Technically, it’s possible to build all the Docker machines
 yourself (but it’s not feasible).</p>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
            </div>

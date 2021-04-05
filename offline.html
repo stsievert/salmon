@@ -4,10 +4,11 @@
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
-  
+  <meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Generating embeddings offline &mdash; Salmon 0+untagged.1.g0b9509b documentation</title>
+  <title>Generating embeddings offline &mdash; Salmon 0+untagged.1.ga6e6685 documentation</title>
   
 
   
@@ -88,7 +89,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Usage</span></p>
+              <p><span class="caption-text">Usage</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting-started.html">Starting an experiment</a></li>
@@ -103,12 +104,12 @@
 <li class="toctree-l1"><a class="reference internal" href="algorithms.html">Algorithm configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Benchmarks</span></p>
+<p><span class="caption-text">Benchmarks</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="benchmarks/server.html">Concurrent Users</a></li>
 <li class="toctree-l1"><a class="reference internal" href="benchmarks/adaptive.html">Adaptive algorithms</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Algorithm Developers</span></p>
+<p><span class="caption-text">Algorithm Developers</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="adaptive.html">Adaptive algorithms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="developers.html">Developing algorithms</a></li>
@@ -181,7 +182,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="generating-embeddings-offline">
+  <section id="generating-embeddings-offline">
 <h1>Generating embeddings offline<a class="headerlink" href="#generating-embeddings-offline" title="Permalink to this headline">¶</a></h1>
 <p>Salmon is good at asking useful questions to crowdsourcing participants.</p>
 <p>These responses should be used to create an embedding <em>offline.</em> Yes, Salmon
@@ -194,12 +195,12 @@ embedding:</p>
 <li><p>Install Salmon on your own machine.</p></li>
 <li><p>Generate embedding.</p></li>
 </ol>
-<div class="section" id="downloading-responses">
+<section id="downloading-responses">
 <h2>Downloading responses<a class="headerlink" href="#downloading-responses" title="Permalink to this headline">¶</a></h2>
 <p>Download the responses, either by visiting <cite>http://[url]:8421/responses</cite> or clicking
 the link on the dashboard (as mentioned in <a class="reference internal" href="monitoring.html#exp-monitoring"><span class="std std-ref">Experiment monitoring</span></a>).</p>
-</div>
-<div class="section" id="install-salmon">
+</section>
+<section id="install-salmon">
 <h2>Install Salmon<a class="headerlink" href="#install-salmon" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/stsievert/salmon
 $ <span class="nb">cd</span> salmon
@@ -208,8 +209,8 @@ $ conda activate salmon
 <span class="o">(</span>salmon<span class="o">)</span> $ pip install -e .
 </pre></div>
 </div>
-</div>
-<div class="section" id="generate-embeddings">
+</section>
+<section id="generate-embeddings">
 <h2>Generate embeddings<a class="headerlink" href="#generate-embeddings" title="Permalink to this headline">¶</a></h2>
 <p>This code will generate an embedding:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">salmon.triplets.offline</span> <span class="kn">import</span> <span class="n">OfflineEmbedding</span>
@@ -233,8 +234,8 @@ to train for 400,000 epochs. <code class="docutils literal notranslate"><span cl
 training scores, which might help limit the number of epochs.</p>
 <p>Documentation for <a class="reference internal" href="generated/salmon.triplets.offline.OfflineEmbedding.html#salmon.triplets.offline.OfflineEmbedding" title="salmon.triplets.offline.OfflineEmbedding"><code class="xref py py-class docutils literal notranslate"><span class="pre">OfflineEmbedding</span></code></a> is
 available on <a class="reference internal" href="api.html#api"><span class="std std-ref">API</span></a>.</p>
-</div>
-<div class="section" id="embedding-visualization">
+</section>
+<section id="embedding-visualization">
 <h2>Embedding visualization<a class="headerlink" href="#embedding-visualization" title="Permalink to this headline">¶</a></h2>
 <p>The HTML for each target alongside the embedding coordinates is available from
 the dashboard by downloading the “embeddings” file (or visiting
@@ -246,8 +247,8 @@ the embedding, which might be <a class="reference external" href="https://matplo
 <a class="reference external" href="https://bokeh.org/">Bokeh</a> or <a class="reference external" href="https://altair-viz.github.io/">Altair</a>. The Pandas visualization API is likely the easiest to
 use, but won’t support showing HTML (images/video/etc). To do that, Salmon uses
 Bokeh for it’s visualization.</p>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
