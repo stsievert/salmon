@@ -1,9 +1,10 @@
 name: Documentation build
 
-# on:
-#   push:
-#     branches:
-#       - master
+on:
+  push:
+    branches:
+      - master
+      - clean
 
 jobs:
 
