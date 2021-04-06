@@ -1,10 +1,11 @@
 name: Documentation build
 
 on:
-  push:
-    branches:
-      - master
-      - clean
+  release:
+    types: [published]
+
+# Only run when release published (not created or edited, etc)
+# https://docs.github.com/en/actions/reference/events-that-trigger-workflows#release
 
 jobs:
 
