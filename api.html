@@ -4,11 +4,10 @@
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
-  <meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
-
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>API &mdash; Salmon 0+untagged.1.ga6e6685 documentation</title>
+  <title>API &mdash; Salmon v0.5.2+8.gf4064bd documentation</title>
   
 
   
@@ -89,7 +88,7 @@
               
             
             
-              <p><span class="caption-text">Usage</span></p>
+              <p class="caption"><span class="caption-text">Usage</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting-started.html">Starting an experiment</a></li>
@@ -125,12 +124,12 @@
 </ul>
 </li>
 </ul>
-<p><span class="caption-text">Benchmarks</span></p>
+<p class="caption"><span class="caption-text">Benchmarks</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="benchmarks/server.html">Concurrent Users</a></li>
 <li class="toctree-l1"><a class="reference internal" href="benchmarks/adaptive.html">Adaptive algorithms</a></li>
 </ul>
-<p><span class="caption-text">Algorithm Developers</span></p>
+<p class="caption"><span class="caption-text">Algorithm Developers</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="adaptive.html">Adaptive algorithms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="developers.html">Developing algorithms</a></li>
@@ -203,9 +202,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <section id="api">
+  <div class="section" id="api">
 <span id="alg-api"></span><span id="id1"></span><h1>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h1>
-<section id="offline-embeddings">
+<div class="section" id="offline-embeddings">
 <h2>Offline embeddings<a class="headerlink" href="#offline-embeddings" title="Permalink to this headline">¶</a></h2>
 <p>This class can be used to create embeddings from a set of downloaded responses
 from Salmon:</p>
@@ -220,8 +219,8 @@ from Salmon:</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="samplers">
+</div>
+<div class="section" id="samplers">
 <h2>Samplers<a class="headerlink" href="#samplers" title="Permalink to this headline">¶</a></h2>
 <p>These classes are used to collect responses with Salmon. They can be configured
 using <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code> as mentioned in <a class="reference internal" href="algorithms.html#alg-config"><span class="std std-ref">Algorithm configuration</span></a>. They all conform to the
@@ -242,7 +241,7 @@ convenient hooks to the database like <code class="docutils literal notranslate"
 you want to customize the running of the algorithm. By default, the algorithm
 uses <code class="docutils literal notranslate"><span class="pre">Runner.run</span></code> to run the algorithm.</p>
 <p>Every class below inherits from <a class="reference internal" href="generated/salmon.backend.alg.Runner.html#salmon.backend.alg.Runner" title="salmon.backend.alg.Runner"><code class="xref py py-class docutils literal notranslate"><span class="pre">Runner</span></code></a>.</p>
-<section id="passive-algorithms">
+<div class="section" id="passive-algorithms">
 <h3>Passive Algorithms<a class="headerlink" href="#passive-algorithms" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -258,8 +257,8 @@ uses <code class="docutils literal notranslate"><span class="pre">Runner.run</sp
 </tr>
 </tbody>
 </table>
-</section>
-<section id="active-algorithms">
+</div>
+<div class="section" id="active-algorithms">
 <h3>Active Algorithms<a class="headerlink" href="#active-algorithms" title="Permalink to this headline">¶</a></h3>
 <p>There are two base classes for every adaptive algorithm:</p>
 <table class="longtable docutils align-default">
@@ -323,9 +322,9 @@ rule-of-thumb.</p>
 <p>Use of <a class="reference internal" href="generated/salmon.triplets.algs.RR.html#salmon.triplets.algs.RR" title="salmon.triplets.algs.RR"><code class="xref py py-class docutils literal notranslate"><span class="pre">RR</span></code></a> is recommended as it performs well
 in <a class="reference internal" href="benchmarks/adaptive.html#experiments"><span class="std std-ref">the experiments we have run</span></a>.</p>
 </div>
-</section>
-</section>
-<section id="interface">
+</div>
+</div>
+<div class="section" id="interface">
 <h2>Interface<a class="headerlink" href="#interface" title="Permalink to this headline">¶</a></h2>
 <p>These algorithms all implement this interface:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -389,8 +388,8 @@ in <a class="reference internal" href="benchmarks/adaptive.html#experiments"><sp
         <span class="k">return</span> <span class="n">queries</span><span class="p">,</span> <span class="n">scores</span>
 </pre></div>
 </div>
-</section>
-</section>
+</div>
+</div>
 
 
            </div>

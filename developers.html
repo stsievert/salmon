@@ -4,11 +4,10 @@
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
-  <meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
-
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Developing algorithms &mdash; Salmon 0+untagged.1.ga6e6685 documentation</title>
+  <title>Developing algorithms &mdash; Salmon v0.5.2+8.gf4064bd documentation</title>
   
 
   
@@ -88,7 +87,7 @@
               
             
             
-              <p><span class="caption-text">Usage</span></p>
+              <p class="caption"><span class="caption-text">Usage</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting-started.html">Starting an experiment</a></li>
@@ -97,12 +96,12 @@
 <li class="toctree-l1"><a class="reference internal" href="algorithms.html">Algorithm configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
-<p><span class="caption-text">Benchmarks</span></p>
+<p class="caption"><span class="caption-text">Benchmarks</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="benchmarks/server.html">Concurrent Users</a></li>
 <li class="toctree-l1"><a class="reference internal" href="benchmarks/adaptive.html">Adaptive algorithms</a></li>
 </ul>
-<p><span class="caption-text">Algorithm Developers</span></p>
+<p class="caption"><span class="caption-text">Algorithm Developers</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="adaptive.html">Adaptive algorithms</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Developing algorithms</a><ul>
@@ -179,9 +178,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <section id="developing-algorithms">
+  <div class="section" id="developing-algorithms">
 <h1>Developing algorithms<a class="headerlink" href="#developing-algorithms" title="Permalink to this headline">¶</a></h1>
-<section id="basics">
+<div class="section" id="basics">
 <h2>Basics<a class="headerlink" href="#basics" title="Permalink to this headline">¶</a></h2>
 <p>First, write an algorithm on your machine. The basic interface requires two
 functions, one to get queries and one to process answers. Briefly, Salmon
@@ -223,8 +222,8 @@ thousands of users come to Salmon and deplete all the searched queries.</p></li>
 </ul>
 <p>It’s not a strong requirement, but I would encourage both <code class="docutils literal notranslate"><span class="pre">process_answers</span></code>
 and <code class="docutils literal notranslate"><span class="pre">get_queries</span></code> to be quick and complete in about a second each.</p>
-</section>
-<section id="debugging">
+</div>
+<div class="section" id="debugging">
 <h2>Debugging<a class="headerlink" href="#debugging" title="Permalink to this headline">¶</a></h2>
 <p>Let’s say you’ve integrated most of your algorithm into
 <a class="reference internal" href="generated/salmon.backend.alg.Runner.html#salmon.backend.alg.Runner" title="salmon.backend.alg.Runner"><code class="xref py py-class docutils literal notranslate"><span class="pre">Runner</span></code></a>. Now, you’d like to make sure everything is
@@ -256,8 +255,8 @@ working properly.</p>
     <span class="n">alg</span><span class="o">.</span><span class="n">process_answers</span><span class="p">([</span><span class="n">answer</span><span class="p">])</span>
 </pre></div>
 </div>
-</section>
-</section>
+</div>
+</div>
 
 
            </div>
