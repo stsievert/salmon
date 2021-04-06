@@ -36,4 +36,4 @@ def test_directory_examples(eg_dir: str, server):
             query = server.get("/", timeout=5)
             r = server.delete("/reset?force=1", timeout=20)
             assert r.json() == {"success": True}
-            sleep(2)
+            sleep(1)

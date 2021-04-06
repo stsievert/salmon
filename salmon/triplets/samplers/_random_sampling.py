@@ -5,7 +5,7 @@ from typing import List, Tuple, Optional
 import numpy as np
 
 from .utils import Answer, Query
-from ...backend.alg import Runner
+from ...backend.sampler import Runner
 
 logger = logging.getLogger(__name__)
 

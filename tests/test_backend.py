@@ -12,7 +12,7 @@ import yaml
 from joblib import Parallel, delayed
 
 from .utils import server, logs, LogError
-from salmon.triplets.algs import TSTE
+from salmon.triplets.samplers import TSTE
 
 
 def test_backend_basics(server, logs):
@@ -47,7 +47,7 @@ def test_init_errors_propogate(server):
     exp = Path(__file__).parent / "data" / "exp-active-bad.yaml"
     r = server.post("/init_exp", data={"exp": exp.read_bytes()}, error=True)
     assert r.status_code == 500
-    assert "module 'salmon.triplets.algs' has no attribute 'FooBar'" in r.text
+    assert "module 'salmon.triplets.samplers' has no attribute 'FooBar'" in r.text
 
 
 def test_run_errors_logged(server, logs):

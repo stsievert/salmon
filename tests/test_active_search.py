@@ -2,8 +2,8 @@ import itertools
 import numpy as np
 from sklearn.utils import check_random_state
 
-from salmon.triplets.algs.adaptive import InfoGainScorer
-from salmon.triplets.algs import TSTE
+from salmon.triplets.samplers.adaptive import InfoGainScorer
+from salmon.triplets.samplers import TSTE
 from .utils import alien_egg
 
 
