@@ -10,11 +10,11 @@ import numpy as np
 import numpy.linalg as LA
 import pandas as pd
 
-import salmon.triplets.algs.adaptive as adaptive
-from salmon.triplets.algs.adaptive import InfoGainScorer, UncertaintyScorer
+import salmon.triplets.samplers.adaptive as adaptive
+from salmon.triplets.samplers.adaptive import InfoGainScorer, UncertaintyScorer
 from salmon.backend import Runner
 from salmon.utils import get_logger
-from salmon.triplets.algs._random_sampling import _get_query as _random_query
+from salmon.triplets.samplers._random_sampling import _get_query as _random_query
 
 logger = get_logger(__name__)
 
@@ -48,7 +48,7 @@ class Adaptive(Runner):
     random_state : int, None, optional (default: ``None``)
         The random state to be used for initialization.
     kwargs : dict, optional
-        Keyword arguments to pass to :class:`~salmon.triplets.algs.adaptive.Embedding`.
+        Keyword arguments to pass to :class:`~salmon.triplets.samplers.adaptive.Embedding`.
     """
 
     def __init__(
@@ -252,7 +252,7 @@ class TSTE(Adaptive):
         The parameter that controls how heavily the tails of the probability
         distribution are.
     kwargs : dict
-        Keyword arguments to pass to :class:`~salmon.triplets.algs.Adaptive`.
+        Keyword arguments to pass to :class:`~salmon.triplets.samplers.Adaptive`.
 
     Notes
     -----
@@ -298,7 +298,7 @@ class ARR(Adaptive):
     module : str, optional (default ``"TSTE"``).
         The noise model to use.
     kwargs : dict
-        Keyword arguments to pass to :class:`~salmon.triplets.algs.Adaptive`.
+        Keyword arguments to pass to :class:`~salmon.triplets.samplers.Adaptive`.
 
     Notes
     -----
@@ -355,7 +355,7 @@ class STE(Adaptive):
     Parameters
     ----------
     kwargs : dict
-        Keyword arguments to pass to :class:`~salmon.triplets.algs.Adaptive`.
+        Keyword arguments to pass to :class:`~salmon.triplets.samplers.Adaptive`.
 
     References
     ----------
@@ -375,7 +375,7 @@ class GNMDS(Adaptive):
     Parameters
     ----------
     kwargs : dict
-        Keyword arguments to pass to :class:`~salmon.triplets.algs.Adaptive`.
+        Keyword arguments to pass to :class:`~salmon.triplets.samplers.Adaptive`.
 
     References
     ----------
@@ -397,7 +397,7 @@ class CKL(Adaptive):
     mu : float
         The mu or :math:`\\mu` used in the CKL embedding. This is typically small; the default is :math:`10^{-4}`.
     kwargs : dict
-        Keyword arguments to pass to :class:`~salmon.triplets.algs.Adaptive`.
+        Keyword arguments to pass to :class:`~salmon.triplets.samplers.Adaptive`.
 
     References
     ----------
@@ -418,7 +418,7 @@ class SOE(Adaptive):
     Parameters
     ----------
     kwargs : dict
-        Keyword arguments to pass to :class:`~salmon.triplets.algs.Adaptive`.
+        Keyword arguments to pass to :class:`~salmon.triplets.samplers.Adaptive`.
 
     References
     ----------
