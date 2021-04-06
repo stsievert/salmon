@@ -26,7 +26,7 @@ author = "Scott Sievert"
 # The full version, including alpha/beta/rc tags
 from salmon import __version__
 
-release = __version__
+release = __version__.replace(".dirty", "")
 
 html_context = {
     "display_github": True,  # Integrate GitHub
