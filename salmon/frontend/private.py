@@ -206,7 +206,10 @@ def upload_form():
         if len(passwords):
             user = list(passwords.keys())[0]
             letters = list(user)
-            letters[1:-1] = "*"
+            for k, letter in enumerate(letters):
+                if k in [0, len(letters) - 1]:
+                    continue
+                letters[k] = "*"
             user = "".join(letters)
             password = (
                 "<div style='text-align: center; padding: 10px;'>"

@@ -1,9 +1,11 @@
 name: Documentation build
 
 on:
-  push:
-    branches:
-      - master
+  release:
+    types: [published]
+
+# Only run when release published (not created or edited, etc)
+# https://docs.github.com/en/actions/reference/events-that-trigger-workflows#release
 
 jobs:
 
@@ -13,6 +15,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
     - name: Setup Python 3.7
       uses: actions/setup-python@v2
       with:
