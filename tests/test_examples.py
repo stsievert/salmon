@@ -1,6 +1,7 @@
 from pathlib import Path
 from zipfile import ZipFile
 from time import sleep
+import random
 
 import pytest
 from .utils import server
@@ -33,7 +34,13 @@ def test_directory_examples(eg_dir: str, server):
         for target_zip in _eg_dir.glob("*.zip"):
             success = _test_upload(exp, target_zip, server)
             assert success
-            query = server.get("/", timeout=5)
+            server.get("/", timeout=5)
+            for _ in range(3):
+                r = server.get("/query")
+                assert r.status_code == 200
+                query = r.json()
+                query["winner"] = random.choice([query["left"], query["right"]])
+                r = server.post("/answer", data=query)
+                assert r.status_code == 200
             r = server.delete("/reset?force=1", timeout=20)
             assert r.json() == {"success": True}
-            sleep(1)

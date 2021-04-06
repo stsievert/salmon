@@ -3,11 +3,6 @@
 Starting an experiment
 ======================
 
-.. note::
-
-   By default, Salmon does not support HTTPS. Make sure the URL begins with
-   ``http://``, not ``https://``.
-
 Initialization an experiment requires the following:
 
 1. Visiting ``http://[url]:8421/init`` with the ``[url]`` from
@@ -15,20 +10,21 @@ Initialization an experiment requires the following:
 2. Creating a username/password
 3. Launching an experiment.
 
-First, type a username/password and hit "create user." After a user has been
-successfully created, hit the back button and launch an experiment. You have
-three options:
+.. note::
+
+   By default, Salmon does not support HTTPS. Make sure the URL begins with
+   ``http://``, not ``https://``.
+
+When visiting ``http://[url]:8421/init``, first, type a username/password and
+hit "create user." After a user has been successfully created, hit the back
+button and launch an experiment. You have three options:
 
 1. Upload of a YAML file completely detailing the experiment.
 2. Upload of a YAML file describing experiment, and ZIP file for the targets.
 3. Upload of a database dump from Salmon.
 
-Through the documentation, the YAML file for initialization will be referred to
-as ``init.yaml``.
-
-"YAML files" must obey a standard; see for a (human-readable) description of
-the specification https://learnxinyminutes.com/docs/yaml/. To see if your YAML
-is valid, go to https://yamlchecker.com/.
+These options will be detailed below. Throughout the documentation, the YAML
+file for initialization will be referred to as ``init.yaml``.
 
 After you launch your experiment and vist ``http://[url]:8421``, you will see a query
 page:
@@ -56,6 +52,11 @@ Experiment initialization with YAML file
 
 This section will specify the YAML file; including a ZIP file will only modify
 the ``targets`` key.
+
+"YAML files" must obey a standard; see for a (human-readable) description of
+the specification https://learnxinyminutes.com/docs/yaml/. To see if your YAML
+is valid, go to https://yamlchecker.com/.
+
 
 Here's an example ``init.yaml`` YAML file for initialization:
 

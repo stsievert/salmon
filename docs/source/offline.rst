@@ -47,7 +47,7 @@ This code will generate an embedding:
    d = 2  # embed into 2 dimensions
 
    X_train, X_test = train_test_split(X, random_state=42, test_size=0.2)
-   model = OfflineEmbedding(n=n, d=d, max_epochs=1_000_000)
+   model = OfflineEmbedding(n=n, d=d)
    model.fit(X_train, X_test)
 
    model.embedding_  # embedding

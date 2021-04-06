@@ -27,17 +27,17 @@ def _score_query(q: Tuple[int, int, int]) -> float:
 class RoundRobin(Runner):
     """
     Let the head of the triplet query rotate through the available items while choosing the bottom two items randomly.
-
-    Parameters
-    ----------
-    n : int
-        Number of objects
-    ident : str
-        Identifier of the algorithm
-
     """
 
     def __init__(self, n, d=2, ident=""):
+        """
+        Parameters
+        ----------
+        n : int
+            Number of objects
+        ident : str
+            Identifier of the algorithm
+        """
         self.n = n
         self.d = d
         self.answers = []

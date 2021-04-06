@@ -47,7 +47,7 @@ Debugging
 ---------
 
 Let's say you've integrated most of your algorithm into
-:class:`~salmon.backend.alg.Runner`. Now, you'd like to make sure everything is
+:class:`~salmon.backend.sampler.Runner`. Now, you'd like to make sure everything is
 working properly.
 
 This script will help:
