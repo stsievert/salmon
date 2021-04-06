@@ -1,0 +1,7 @@
+﻿:mod:`salmon.triplets.samplers`.RoundRobin
+=================================================
+
+.. currentmodule:: salmon.triplets.samplers
+
+.. autoclass:: RoundRobin
+   :members: __init__

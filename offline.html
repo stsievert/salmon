@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Generating embeddings offline &mdash; Salmon v0.5.2+8.gf4064bd documentation</title>
+  <title>Generating embeddings offline &mdash; Salmon v0.6.0 documentation</title>
   
 
   
@@ -106,7 +106,7 @@
 <p class="caption"><span class="caption-text">Benchmarks</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="benchmarks/server.html">Concurrent Users</a></li>
-<li class="toctree-l1"><a class="reference internal" href="benchmarks/adaptive.html">Adaptive algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarks/adaptive.html">Adaptive algorithm performance</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithm Developers</span></p>
 <ul>
@@ -221,7 +221,7 @@ $ conda activate salmon
 <span class="n">d</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># embed into 2 dimensions</span>
 
 <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">OfflineEmbedding</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="n">d</span><span class="p">,</span> <span class="n">max_epochs</span><span class="o">=</span><span class="mi">1_000_000</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">OfflineEmbedding</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="n">d</span><span class="p">)</span>
 <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">)</span>
 
 <span class="n">model</span><span class="o">.</span><span class="n">embedding_</span>  <span class="c1"># embedding</span>

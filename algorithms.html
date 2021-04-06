@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Algorithm configuration &mdash; Salmon v0.5.2+8.gf4064bd documentation</title>
+  <title>Algorithm configuration &mdash; Salmon v0.6.0 documentation</title>
   
 
   
@@ -100,7 +100,7 @@
 <p class="caption"><span class="caption-text">Benchmarks</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="benchmarks/server.html">Concurrent Users</a></li>
-<li class="toctree-l1"><a class="reference internal" href="benchmarks/adaptive.html">Adaptive algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarks/adaptive.html">Adaptive algorithm performance</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithm Developers</span></p>
 <ul>
@@ -177,10 +177,6 @@
             
   <div class="section" id="algorithm-configuration">
 <span id="alg-config"></span><span id="adaptive-config"></span><h1>Algorithm configuration<a class="headerlink" href="#algorithm-configuration" title="Permalink to this headline">¶</a></h1>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>The API for these algorithms is (currently) unstable.</p>
-</div>
 <p>There are many queries to ask about in triplet embedding tasks. Most of these
 queries aren’t useful; chances are most queries will have obvious answers and
 won’t improve the embedding much.</p>
@@ -198,46 +194,44 @@ sampling.</p>
 <p>By default, <code class="docutils literal notranslate"><span class="pre">samplers</span></code> defaults to <code class="docutils literal notranslate"><span class="pre">RandomSampling:</span> <span class="pre">{}</span></code>. We have to customize the <code class="docutils literal notranslate"><span class="pre">samplers</span></code> key use adaptive sampling algorithms:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">targets</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;obj1&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;obj2&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;foo&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;bar&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;foobar!&quot;</span><span class="p p-Indicator">]</span>
 <span class="nt">samplers</span><span class="p">:</span>
-  <span class="nt">RR</span><span class="p">:</span>
-    <span class="nt">module</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">TSTE</span>
+  <span class="nt">ARR</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
 </pre></div>
 </div>
-<p>This will use <a class="reference internal" href="generated/salmon.triplets.algs.TSTE.html#salmon.triplets.algs.TSTE" title="salmon.triplets.algs.TSTE"><code class="xref py py-class docutils literal notranslate"><span class="pre">TSTE</span></code></a>. If we want to customize to
-include different keyword arguments, we need to look close at the arguments for
-<a class="reference internal" href="generated/salmon.triplets.algs.TSTE.html#salmon.triplets.algs.TSTE" title="salmon.triplets.algs.TSTE"><code class="xref py py-class docutils literal notranslate"><span class="pre">TSTE</span></code></a> <a class="footnote-reference brackets" href="#id2" id="id1">1</a>. For example, this could be a
+<p>When <code class="docutils literal notranslate"><span class="pre">ARR</span></code> is specified as a key for <code class="docutils literal notranslate"><span class="pre">samplers</span></code>,
+<a class="reference internal" href="generated/salmon.triplets.samplers.ARR.html#salmon.triplets.samplers.ARR" title="salmon.triplets.samplers.ARR"><code class="xref py py-class docutils literal notranslate"><span class="pre">salmon.triplets.samplers.ARR</span></code></a> is used for the sampling method.
+Customization is possible by passing different keyword arguments to
+<a class="reference internal" href="generated/salmon.triplets.samplers.ARR.html#salmon.triplets.samplers.ARR" title="salmon.triplets.samplers.ARR"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARR</span></code></a>. For example, this could be a
 configuration:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">targets</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;obj1&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;obj2&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;foo&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;bar&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;foobar!&quot;</span><span class="p p-Indicator">]</span>
 <span class="nt">samplers</span><span class="p">:</span>
   <span class="nt">RandomSampling</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
-  <span class="nt">RR</span><span class="p">:</span>
-    <span class="nt">module</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">TSTE</span>
-    <span class="nt">module__alpha</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1.1</span>
+  <span class="nt">ARR</span><span class="p">:</span>
+    <span class="nt">module</span><span class="p">:</span> <span class="s">&quot;TSTE&quot;</span>
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">alpha</span></code> is a keyword argument to
-<a class="reference internal" href="generated/salmon.triplets.algs.TSTE.html#salmon.triplets.algs.TSTE" title="salmon.triplets.algs.TSTE"><code class="xref py py-class docutils literal notranslate"><span class="pre">TSTE</span></code></a>.
-If we want to use two alternate configs for TSTE:</p>
+<p><code class="docutils literal notranslate"><span class="pre">module</span></code> is a keyword argument to <a class="reference internal" href="generated/salmon.triplets.samplers.ARR.html#salmon.triplets.samplers.ARR" title="salmon.triplets.samplers.ARR"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARR</span></code></a>, and
+determines the noise model used for query scoring/embedding. This configuration
+would compare two different instances of
+<a class="reference internal" href="generated/salmon.triplets.samplers.ARR.html#salmon.triplets.samplers.ARR" title="salmon.triplets.samplers.ARR"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARR</span></code></a>:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">targets</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;obj1&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;obj2&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;foo&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;bar&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;foobar!&quot;</span><span class="p p-Indicator">]</span>
+
 <span class="nt">samplers</span><span class="p">:</span>
   <span class="nt">RandomSampling</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
-  <span class="nt">tste1</span><span class="p">:</span>
-    <span class="nt">class</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">TSTE</span>
-  <span class="nt">tste2</span><span class="p">:</span>
-    <span class="nt">class</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">RR</span>
+  <span class="nt">arr_tste</span><span class="p">:</span>
+    <span class="nt">class</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ARR</span>
+    <span class="nt">module</span><span class="p">:</span> <span class="s">&quot;TSTE&quot;</span>
+  <span class="nt">arr_ckl</span><span class="p">:</span>
+    <span class="nt">class</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ARR</span>
+    <span class="nt">module</span><span class="p">:</span> <span class="s">&quot;CKL&quot;</span>
+    <span class="nt">module__mu</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.05</span>
+
 <span class="nt">sampling</span><span class="p">:</span>
-  <span class="nt">probs</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="s">&quot;RandomSampling&quot;</span><span class="p p-Indicator">:</span> <span class="nv">20</span><span class="p p-Indicator">,</span> <span class="s">&quot;tste1&quot;</span><span class="p p-Indicator">:</span> <span class="nv">40</span><span class="p p-Indicator">,</span> <span class="s">&quot;tste2&quot;</span><span class="p p-Indicator">:</span> <span class="nv">40</span><span class="p p-Indicator">}</span>
+  <span class="nt">probs</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="s">&quot;RandomSampling&quot;</span><span class="p p-Indicator">:</span> <span class="nv">20</span><span class="p p-Indicator">,</span> <span class="s">&quot;arr_ckl&quot;</span><span class="p p-Indicator">:</span> <span class="nv">40</span><span class="p p-Indicator">,</span> <span class="s">&quot;arr_tste&quot;</span><span class="p p-Indicator">:</span> <span class="nv">40</span><span class="p p-Indicator">}</span>
 </pre></div>
 </div>
-<p>This would test out different optimization methods underlying the embedding.</p>
-<dl class="footnote brackets">
-<dt class="label" id="id2"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
-<dd><p>Most of the other algorithms like <a class="reference internal" href="generated/salmon.triplets.algs.CKL.html#salmon.triplets.algs.CKL" title="salmon.triplets.algs.CKL"><code class="xref py py-class docutils literal notranslate"><span class="pre">CKL</span></code></a>
-have very similar but slightly different configurations.
-<a class="reference internal" href="generated/salmon.triplets.algs.CKL.html#salmon.triplets.algs.CKL" title="salmon.triplets.algs.CKL"><code class="xref py py-class docutils literal notranslate"><span class="pre">CKL</span></code></a> and
-<a class="reference internal" href="generated/salmon.triplets.algs.TSTE.html#salmon.triplets.algs.TSTE" title="salmon.triplets.algs.TSTE"><code class="xref py py-class docutils literal notranslate"><span class="pre">TSTE</span></code></a> have identical input parameters,
-except <code class="docutils literal notranslate"><span class="pre">CKL</span></code>’s input <code class="docutils literal notranslate"><span class="pre">mu</span></code> and <code class="docutils literal notranslate"><span class="pre">TSTE</span></code>’s <code class="docutils literal notranslate"><span class="pre">alpha</span></code>.</p>
-</dd>
-</dl>
+<p>In this configuration, custom names are provided for two instances of
+<a class="reference internal" href="generated/salmon.triplets.samplers.ARR.html#salmon.triplets.samplers.ARR" title="salmon.triplets.samplers.ARR"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARR</span></code></a>. Both instances are sampled 40% of the
+time, with the remaining 20% reserved for a test set with random queries.</p>
 </div>
 
 

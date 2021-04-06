@@ -1,0 +1,7 @@
+﻿:mod:`salmon.triplets.samplers`.SOE
+==========================================
+
+.. currentmodule:: salmon.triplets.samplers
+
+.. autoclass:: SOE
+   :members: __init__

@@ -1,0 +1,7 @@
+﻿:mod:`salmon.triplets.samplers`.CKL
+==========================================
+
+.. currentmodule:: salmon.triplets.samplers
+
+.. autoclass:: CKL
+   :members: __init__

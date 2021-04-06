@@ -1,0 +1,7 @@
+﻿:mod:`salmon.triplets.samplers`.RandomSampling
+=====================================================
+
+.. currentmodule:: salmon.triplets.samplers
+
+.. autoclass:: RandomSampling
+   :members: __init__

@@ -5,10 +5,6 @@
 Algorithm configuration
 =======================
 
-.. warning::
-
-   The API for these algorithms is (currently) unstable.
-
 There are many queries to ask about in triplet embedding tasks. Most of these
 queries aren't useful; chances are most queries will have obvious answers and
 won't improve the embedding much.
@@ -33,12 +29,12 @@ By default, ``samplers`` defaults to ``RandomSampling: {}``. We have to customiz
 
    targets: ["obj1", "obj2", "foo", "bar", "foobar!"]
    samplers:
-     RR:
-       module: TSTE
+     ARR: {}
 
-This will use :class:`~salmon.triplets.algs.TSTE`. If we want to customize to
-include different keyword arguments, we need to look close at the arguments for
-:class:`~salmon.triplets.algs.TSTE` [#]_. For example, this could be a
+When ``ARR`` is specified as a key for ``samplers``,
+:class:`salmon.triplets.samplers.ARR` is used for the sampling method.
+Customization is possible by passing different keyword arguments to
+:class:`~salmon.triplets.samplers.ARR`. For example, this could be a
 configuration:
 
 .. code-block:: yaml
@@ -46,30 +42,31 @@ configuration:
    targets: ["obj1", "obj2", "foo", "bar", "foobar!"]
    samplers:
      RandomSampling: {}
-     RR:
-       module: TSTE
-       module__alpha: 1.1
+     ARR:
+       module: "TSTE"
 
-``alpha`` is a keyword argument to
-:class:`~salmon.triplets.algs.TSTE`.
-If we want to use two alternate configs for TSTE:
+``module`` is a keyword argument to :class:`~salmon.triplets.samplers.ARR`, and
+determines the noise model used for query scoring/embedding. This configuration
+would compare two different instances of
+:class:`~salmon.triplets.samplers.ARR`:
 
 .. code-block:: yaml
 
    targets: ["obj1", "obj2", "foo", "bar", "foobar!"]
+
    samplers:
      RandomSampling: {}
-     tste1:
-       class: TSTE
-     tste2:
-       class: RR
+     arr_tste:
+       class: ARR
+       module: "TSTE"
+     arr_ckl:
+       class: ARR
+       module: "CKL"
+       module__mu: 0.05
+
    sampling:
-     probs: {"RandomSampling": 20, "tste1": 40, "tste2": 40}
+     probs: {"RandomSampling": 20, "arr_ckl": 40, "arr_tste": 40}
 
-This would test out different optimization methods underlying the embedding.
-
-.. [#] Most of the other algorithms like :class:`~salmon.triplets.algs.CKL`
-       have very similar but slightly different configurations.
-       :class:`~salmon.triplets.algs.CKL` and
-       :class:`~salmon.triplets.algs.TSTE` have identical input parameters,
-       except ``CKL``'s input ``mu`` and ``TSTE``'s ``alpha``.
+In this configuration, custom names are provided for two instances of
+:class:`~salmon.triplets.samplers.ARR`. Both instances are sampled 40% of the
+time, with the remaining 20% reserved for a test set with random queries.

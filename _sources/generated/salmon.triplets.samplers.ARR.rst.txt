@@ -1,0 +1,7 @@
+﻿:mod:`salmon.triplets.samplers`.ARR
+==========================================
+
+.. currentmodule:: salmon.triplets.samplers
+
+.. autoclass:: ARR
+   :members: __init__

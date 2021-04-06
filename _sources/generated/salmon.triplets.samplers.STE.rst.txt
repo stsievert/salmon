@@ -1,0 +1,7 @@
+﻿:mod:`salmon.triplets.samplers`.STE
+==========================================
+
+.. currentmodule:: salmon.triplets.samplers
+
+.. autoclass:: STE
+   :members: __init__

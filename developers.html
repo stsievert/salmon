@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Developing algorithms &mdash; Salmon v0.5.2+8.gf4064bd documentation</title>
+  <title>Developing algorithms &mdash; Salmon v0.6.0 documentation</title>
   
 
   
@@ -99,7 +99,7 @@
 <p class="caption"><span class="caption-text">Benchmarks</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="benchmarks/server.html">Concurrent Users</a></li>
-<li class="toctree-l1"><a class="reference internal" href="benchmarks/adaptive.html">Adaptive algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarks/adaptive.html">Adaptive algorithm performance</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithm Developers</span></p>
 <ul class="current">
@@ -201,11 +201,11 @@ saved in the database, and popped when a user requests a query.</p></li>
 <p>For complete documentation, see <a class="reference internal" href="api.html#alg-api"><span class="std std-ref">API</span></a>. In short, your algorithm should
 be a class that implement <code class="docutils literal notranslate"><span class="pre">get_query</span></code> and <code class="docutils literal notranslate"><span class="pre">process_answers</span></code>.</p>
 <p>After you have developed these functions, look at other algorithms in
-<code class="docutils literal notranslate"><span class="pre">salmon/triplets/algs</span></code> (e.g, <code class="docutils literal notranslate"><span class="pre">_adaptive_runners.py</span></code> or <code class="docutils literal notranslate"><span class="pre">_round_robin.py</span></code>)
+<code class="docutils literal notranslate"><span class="pre">salmon/triplets/samplers</span></code> (e.g, <code class="docutils literal notranslate"><span class="pre">_adaptive_runners.py</span></code> or <code class="docutils literal notranslate"><span class="pre">_round_robin.py</span></code>)
 to figure out inheritance details. In short, the following details are
 important:</p>
 <ul class="simple">
-<li><p><strong>Inheriting from</strong> <a class="reference internal" href="generated/salmon.backend.alg.Runner.html#salmon.backend.alg.Runner" title="salmon.backend.alg.Runner"><code class="xref py py-class docutils literal notranslate"><span class="pre">Runner</span></code></a>, which enables Salmon
+<li><p><strong>Inheriting from</strong> <code class="xref py py-class docutils literal notranslate"><span class="pre">Runner</span></code>, which enables Salmon
 to work with custom algorithms.</p></li>
 <li><p><strong>Accepting an</strong> <code class="docutils literal notranslate"><span class="pre">ident:</span> <span class="pre">str</span></code> keyword argument in <code class="docutils literal notranslate"><span class="pre">__init__</span></code> <strong>and
 passing that argument to</strong> <code class="docutils literal notranslate"><span class="pre">super().__init__</span></code>. (<code class="docutils literal notranslate"><span class="pre">ident</span></code> is passed to all
@@ -226,10 +226,10 @@ and <code class="docutils literal notranslate"><span class="pre">get_queries</sp
 <div class="section" id="debugging">
 <h2>Debugging<a class="headerlink" href="#debugging" title="Permalink to this headline">¶</a></h2>
 <p>Let’s say you’ve integrated most of your algorithm into
-<a class="reference internal" href="generated/salmon.backend.alg.Runner.html#salmon.backend.alg.Runner" title="salmon.backend.alg.Runner"><code class="xref py py-class docutils literal notranslate"><span class="pre">Runner</span></code></a>. Now, you’d like to make sure everything is
+<a class="reference internal" href="generated/salmon.backend.sampler.Runner.html#salmon.backend.sampler.Runner" title="salmon.backend.sampler.Runner"><code class="xref py py-class docutils literal notranslate"><span class="pre">Runner</span></code></a>. Now, you’d like to make sure everything is
 working properly.</p>
 <p>This script will help:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">salmon.triplets.algs</span> <span class="kn">import</span> <span class="n">STE</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">salmon.triplets.samplers</span> <span class="kn">import</span> <span class="n">STE</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
 <span class="kn">import</span> <span class="nn">random</span>
 

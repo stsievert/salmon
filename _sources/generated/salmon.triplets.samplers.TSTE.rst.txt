@@ -1,0 +1,7 @@
+﻿:mod:`salmon.triplets.samplers`.TSTE
+===========================================
+
+.. currentmodule:: salmon.triplets.samplers
+
+.. autoclass:: TSTE
+   :members: __init__

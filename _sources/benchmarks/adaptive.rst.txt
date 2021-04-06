@@ -1,7 +1,7 @@
 .. _experiments:
 
-Adaptive algorithms
-===================
+Adaptive algorithm performance
+==============================
 
 Adaptive algorithms decide which questions to ask about, instead of asking
 about a random question like random sampling. This can mean that higher
@@ -32,8 +32,12 @@ sampling with this ``init.yaml`` configuration:
 .. code-block:: yaml
 
    samplers:
-     RR: {random_state: 42}  # active or adaptive sampling
+     ARR: {random_state: 42}  # active or adaptive sampling
      RandomSampling: {}  # random sampling
+
+The "ARR" stands for "active round robin." That is, the head rotates through
+available choices ("round robin") and for each head, the best comparisons are
+chosen (by some measure with information gain).
 
 .. note::
 
@@ -53,11 +57,13 @@ This section will provide evidence for the following points:
    Having 10 concurrent users will likely still present adaptive gains, but
    they'll be smaller than if there were only 5 concurrent users.
 
-The number of users will be varied from 1 concurrent user to 10 concurrent
-users with a mean response time of 1 second. This matters for adaptive sampling
-because there will be less time for computation/searching. It doesn't matter
-for random sampling because no computation/searching is performed. How does
-the response rate affect the embedding accuracy?
+The experiment to confirm these points has been run with (functionally) Salmon
+v0.6.0. In this experiment, the number of users varies between 1 concurrent
+user to 10 concurrent users with a mean response time of 1 second. This matters
+for adaptive sampling because there will be less time for
+computation/searching. It doesn't matter for random sampling because no
+computation/searching is performed. How does the response rate affect the
+embedding accuracy?
 
 .. image:: imgs/accuracy.png
    :width: 100%

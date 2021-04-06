@@ -1,0 +1,7 @@
+﻿:mod:`salmon.triplets.samplers`.GNMDS
+============================================
+
+.. currentmodule:: salmon.triplets.samplers
+
+.. autoclass:: GNMDS
+   :members: __init__

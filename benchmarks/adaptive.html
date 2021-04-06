@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Adaptive algorithms &mdash; Salmon v0.5.2+8.gf4064bd documentation</title>
+  <title>Adaptive algorithm performance &mdash; Salmon v0.6.0 documentation</title>
   
 
   
@@ -101,7 +101,7 @@
 <p class="caption"><span class="caption-text">Benchmarks</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="server.html">Concurrent Users</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Adaptive algorithms</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Adaptive algorithm performance</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#response-rate">Response rate</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#simulation-with-human-responses">Simulation with human responses</a></li>
 </ul>
@@ -159,7 +159,7 @@
     
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Adaptive algorithms</li>
+      <li>Adaptive algorithm performance</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -180,8 +180,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="adaptive-algorithms">
-<span id="experiments"></span><h1>Adaptive algorithms<a class="headerlink" href="#adaptive-algorithms" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="adaptive-algorithm-performance">
+<span id="experiments"></span><h1>Adaptive algorithm performance<a class="headerlink" href="#adaptive-algorithm-performance" title="Permalink to this headline">¶</a></h1>
 <p>Adaptive algorithms decide which questions to ask about, instead of asking
 about a random question like random sampling. This can mean that higher
 accuracies are reached sooner, or that less human responses are required to
@@ -203,10 +203,13 @@ let’s embed into <span class="math notranslate nohighlight">\(d=2\)</span> dim
 prior work. <a class="footnote-reference brackets" href="#id8" id="id2">2</a> Unless explicitly mentioned, let’s compare random and active
 sampling with this <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code> configuration:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">samplers</span><span class="p">:</span>
-  <span class="nt">RR</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt">random_state</span><span class="p">:</span> <span class="nv">42</span><span class="p p-Indicator">}</span>  <span class="c1"># active or adaptive sampling</span>
+  <span class="nt">ARR</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt">random_state</span><span class="p">:</span> <span class="nv">42</span><span class="p p-Indicator">}</span>  <span class="c1"># active or adaptive sampling</span>
   <span class="nt">RandomSampling</span><span class="p">:</span> <span class="p p-Indicator">{}</span>  <span class="c1"># random sampling</span>
 </pre></div>
 </div>
+<p>The “ARR” stands for “active round robin.” That is, the head rotates through
+available choices (“round robin”) and for each head, the best comparisons are
+chosen (by some measure with information gain).</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This page shows results of experiments run with Salmon.
@@ -224,11 +227,13 @@ In one case, adaptive sampling required about 1,250 responses instead of
 Having 10 concurrent users will likely still present adaptive gains, but
 they’ll be smaller than if there were only 5 concurrent users.</p></li>
 </ol>
-<p>The number of users will be varied from 1 concurrent user to 10 concurrent
-users with a mean response time of 1 second. This matters for adaptive sampling
-because there will be less time for computation/searching. It doesn’t matter
-for random sampling because no computation/searching is performed. How does
-the response rate affect the embedding accuracy?</p>
+<p>The experiment to confirm these points has been run with (functionally) Salmon
+v0.6.0. In this experiment, the number of users varies between 1 concurrent
+user to 10 concurrent users with a mean response time of 1 second. This matters
+for adaptive sampling because there will be less time for
+computation/searching. It doesn’t matter for random sampling because no
+computation/searching is performed. How does the response rate affect the
+embedding accuracy?</p>
 <a class="reference internal image-reference" href="../_images/accuracy.png"><img alt="../_images/accuracy.png" class="align-center" src="../_images/accuracy.png" style="width: 100%;" /></a>
 <p>This graph shows two measures: accuracy on a set of test human responses (left)
 and responses that are 100% accurate on the ground truth dataset (right). The

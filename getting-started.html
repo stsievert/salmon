@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Starting an experiment &mdash; Salmon v0.5.2+8.gf4064bd documentation</title>
+  <title>Starting an experiment &mdash; Salmon v0.6.0 documentation</title>
   
 
   
@@ -105,7 +105,7 @@
 <p class="caption"><span class="caption-text">Benchmarks</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="benchmarks/server.html">Concurrent Users</a></li>
-<li class="toctree-l1"><a class="reference internal" href="benchmarks/adaptive.html">Adaptive algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarks/adaptive.html">Adaptive algorithm performance</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithm Developers</span></p>
 <ul>
@@ -182,11 +182,6 @@
             
   <div class="section" id="starting-an-experiment">
 <span id="getting-started"></span><h1>Starting an experiment<a class="headerlink" href="#starting-an-experiment" title="Permalink to this headline">¶</a></h1>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>By default, Salmon does not support HTTPS. Make sure the URL begins with
-<code class="docutils literal notranslate"><span class="pre">http://</span></code>, not <code class="docutils literal notranslate"><span class="pre">https://</span></code>.</p>
-</div>
 <p>Initialization an experiment requires the following:</p>
 <ol class="arabic simple">
 <li><p>Visiting <code class="docutils literal notranslate"><span class="pre">http://[url]:8421/init</span></code> with the <code class="docutils literal notranslate"><span class="pre">[url]</span></code> from
@@ -194,19 +189,21 @@
 <li><p>Creating a username/password</p></li>
 <li><p>Launching an experiment.</p></li>
 </ol>
-<p>First, type a username/password and hit “create user.” After a user has been
-successfully created, hit the back button and launch an experiment. You have
-three options:</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>By default, Salmon does not support HTTPS. Make sure the URL begins with
+<code class="docutils literal notranslate"><span class="pre">http://</span></code>, not <code class="docutils literal notranslate"><span class="pre">https://</span></code>.</p>
+</div>
+<p>When visiting <code class="docutils literal notranslate"><span class="pre">http://[url]:8421/init</span></code>, first, type a username/password and
+hit “create user.” After a user has been successfully created, hit the back
+button and launch an experiment. You have three options:</p>
 <ol class="arabic simple">
 <li><p>Upload of a YAML file completely detailing the experiment.</p></li>
 <li><p>Upload of a YAML file describing experiment, and ZIP file for the targets.</p></li>
 <li><p>Upload of a database dump from Salmon.</p></li>
 </ol>
-<p>Through the documentation, the YAML file for initialization will be referred to
-as <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code>.</p>
-<p>“YAML files” must obey a standard; see for a (human-readable) description of
-the specification <a class="reference external" href="https://learnxinyminutes.com/docs/yaml/">https://learnxinyminutes.com/docs/yaml/</a>. To see if your YAML
-is valid, go to <a class="reference external" href="https://yamlchecker.com/">https://yamlchecker.com/</a>.</p>
+<p>These options will be detailed below. Throughout the documentation, the YAML
+file for initialization will be referred to as <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code>.</p>
 <p>After you launch your experiment and vist <code class="docutils literal notranslate"><span class="pre">http://[url]:8421</span></code>, you will see a query
 page:</p>
 <a class="reference internal image-reference" href="_images/query_page.png"><img alt="_images/query_page.png" class="align-center" src="_images/query_page.png" style="width: 500px;" /></a>
@@ -225,6 +222,9 @@ something like <code class="docutils literal notranslate"><span class="pre">v0.4
 <h2>Experiment initialization with YAML file<a class="headerlink" href="#experiment-initialization-with-yaml-file" title="Permalink to this headline">¶</a></h2>
 <p>This section will specify the YAML file; including a ZIP file will only modify
 the <code class="docutils literal notranslate"><span class="pre">targets</span></code> key.</p>
+<p>“YAML files” must obey a standard; see for a (human-readable) description of
+the specification <a class="reference external" href="https://learnxinyminutes.com/docs/yaml/">https://learnxinyminutes.com/docs/yaml/</a>. To see if your YAML
+is valid, go to <a class="reference external" href="https://yamlchecker.com/">https://yamlchecker.com/</a>.</p>
 <p>Here’s an example <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code> YAML file for initialization:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: init.yaml</span>
 <span class="nt">targets</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">1</span><span class="p p-Indicator">,</span> <span class="nv">2</span><span class="p p-Indicator">,</span> <span class="nv">3</span><span class="p p-Indicator">,</span> <span class="nv">4</span><span class="p p-Indicator">,</span> <span class="nv">5</span><span class="p p-Indicator">]</span>
@@ -233,7 +233,7 @@ the <code class="docutils literal notranslate"><span class="pre">targets</span><
 <span class="nt">max_queries</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">25</span>
 <span class="nt">samplers</span><span class="p">:</span>
   <span class="nt">RandomSampling</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
-  <span class="nt">RR</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
+  <span class="nt">ARR</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
 </pre></div>
 </div>
 <p>The top-level elements like <code class="docutils literal notranslate"><span class="pre">max_queries</span></code> and <code class="docutils literal notranslate"><span class="pre">targets</span></code> are called “keys”
