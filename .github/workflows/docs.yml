@@ -1,9 +1,9 @@
 name: Documentation build
 
-on:
-  push:
-    branches:
-      - master
+# on:
+#   push:
+#     branches:
+#       - master
 
 jobs:
 
@@ -13,6 +13,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+      fetch-depth: 0
     - name: Setup Python 3.7
       uses: actions/setup-python@v2
       with:
