@@ -12,9 +12,9 @@ from sklearn.exceptions import NotFittedError
 import torch.optim as optim
 import torch
 
-from salmon.triplets.algs.adaptive import GD, OGD
-from salmon.triplets.algs.adaptive import CKL
-import salmon.triplets.algs.adaptive as adaptive
+from salmon.triplets.samplers.adaptive import GD, OGD
+from salmon.triplets.samplers.adaptive import CKL
+import salmon.triplets.samplers.adaptive as adaptive
 
 
 def _get_params(opt_):

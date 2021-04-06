@@ -14,7 +14,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from rejson import Client, Path
 
 from salmon.frontend.utils import ServerException
-from ..triplets import algs
+from ..triplets import samplers
 from ..utils import get_logger
 
 DEBUG = os.environ.get("SALMON_DEBUG", 0)
@@ -104,11 +104,11 @@ async def init(ident: str, background_tasks: BackgroundTasks) -> bool:
             logger.warning(f"Initializing alg from config")
             params = config["samplers"][ident]
             _class = params.pop("class", ident)
-            Alg = getattr(algs, _class)
+            Sampler = getattr(samplers, _class)
             params = {k: _fmt_params(k, v) for k, v in params.items()}
-            logger.warning("Alg for %s = %s", ident, Alg)
+            logger.warning("Sampler for %s = %s", ident, Sampler)
             logger.warning("params = %s", params)
-            alg = Alg(ident=ident, n=config["n"], d=config["d"], **params)
+            alg = Sampler(ident=ident, n=config["n"], d=config["d"], **params)
     except Exception as e:
         msg = exception_to_string(e)
         logger.error(f"Error on alg={ident} init: {msg}")

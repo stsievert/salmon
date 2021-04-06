@@ -1,2 +1,2 @@
-from .alg import Runner
+from .sampler import Runner
 from .core import app

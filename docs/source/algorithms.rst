@@ -35,9 +35,9 @@ By default, ``samplers`` defaults to ``RandomSampling: {}``. We have to customiz
    samplers:
      ARR: {}
 
-This will use :class:`~salmon.triplets.algs.ARR`. If we want to customize to
+This will use :class:`~salmon.triplets.samplers.ARR`. If we want to customize to
 include different keyword arguments, we need to look close at the arguments for
-:class:`~salmon.triplets.algs.ARR` [#]_. For example, this could be a
+:class:`~salmon.triplets.samplers.ARR` [#]_. For example, this could be a
 configuration:
 
 .. code-block:: yaml
@@ -50,7 +50,7 @@ configuration:
        optimizer__batch_size: 1024
 
 ``module`` is a keyword argument to
-:class:`~salmon.triplets.algs.ARR`.
+:class:`~salmon.triplets.samplers.ARR`.
 If we want to use two alternate configs for ARR:
 
 .. code-block:: yaml
@@ -71,8 +71,8 @@ If we want to use two alternate configs for ARR:
 
 This would test out different optimization methods underlying the embedding.
 
-.. [#] Most of the other algorithms like :class:`~salmon.triplets.algs.CKL`
+.. [#] Most of the other algorithms like :class:`~salmon.triplets.samplers.CKL`
        have very similar but slightly different configurations.
-       :class:`~salmon.triplets.algs.CKL` and
-       :class:`~salmon.triplets.algs.TSTE` have identical input parameters,
+       :class:`~salmon.triplets.samplers.CKL` and
+       :class:`~salmon.triplets.samplers.TSTE` have identical input parameters,
        except ``CKL``'s input ``mu`` and ``TSTE``'s ``alpha``.

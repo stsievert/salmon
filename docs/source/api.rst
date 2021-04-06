@@ -47,8 +47,8 @@ Passive Algorithms
    :toctree: generated/
    :template: only-init.rst
 
-   salmon.triplets.algs.RandomSampling
-   salmon.triplets.algs.RoundRobin
+   salmon.triplets.samplers.RandomSampling
+   salmon.triplets.samplers.RoundRobin
 
 Active Algorithms
 ^^^^^^^^^^^^^^^^^
@@ -59,43 +59,43 @@ There are two base classes for every adaptive algorithm:
    :toctree: generated/
    :template: only-init.rst
 
-   salmon.triplets.algs.Adaptive
-   salmon.triplets.algs.adaptive.Embedding
+   salmon.triplets.samplers.Adaptive
+   salmon.triplets.samplers.adaptive.Embedding
 
-The class :class:`~salmon.triplets.algs.Adaptive` runs the adaptive algorithm
-and depends on :class:`~salmon.triplets.algs.adaptive.Embedding` for
+The class :class:`~salmon.triplets.samplers.Adaptive` runs the adaptive algorithm
+and depends on :class:`~salmon.triplets.samplers.adaptive.Embedding` for
 optimization. To customize the optimization, all extra keyword arguments are
 passed to the optimizer.
 
 Then, all of these classes inherit from
-:class:`~salmon.triplets.algs.Adaptive`:
+:class:`~salmon.triplets.samplers.Adaptive`:
 
 .. autosummary::
    :toctree: generated/
    :template: only-init.rst
 
-   salmon.triplets.algs.ARR
-   salmon.triplets.algs.TSTE
-   salmon.triplets.algs.SOE
-   salmon.triplets.algs.STE
-   salmon.triplets.algs.CKL
-   salmon.triplets.algs.GNMDS
+   salmon.triplets.samplers.ARR
+   salmon.triplets.samplers.TSTE
+   salmon.triplets.samplers.SOE
+   salmon.triplets.samplers.STE
+   salmon.triplets.samplers.CKL
+   salmon.triplets.samplers.GNMDS
 
 We have tested out the top three algorithms---ARR, TSTE and SOE---in our
-experiments. We use :class:`~salmon.triplets.algs.ARR` for our adaptive sampling
-(which defaults to the noise model in :class:`~salmon.triplets.algs.TSTE`) and
-use :class:`~salmon.triplets.algs.SOE` for the offline embeddings.
+experiments. We use :class:`~salmon.triplets.samplers.ARR` for our adaptive sampling
+(which defaults to the noise model in :class:`~salmon.triplets.samplers.TSTE`) and
+use :class:`~salmon.triplets.samplers.SOE` for the offline embeddings.
 
 These adaptive algorithms are all the same except for the underlying noise
-model, with the exception of :class:`~salmon.triplets.algs.ARR`.
-:class:`~salmon.triplets.algs.ARR` introduces some randomness by fixing the head
+model, with the exception of :class:`~salmon.triplets.samplers.ARR`.
+:class:`~salmon.triplets.samplers.ARR` introduces some randomness by fixing the head
 and adding the top ``1 * n`` triplets to the database. This is useful because
 the information gain measure used by all of these algorithms (by default) is a
 rule-of-thumb.
 
 .. note::
 
-   Use of :class:`~salmon.triplets.algs.ARR` is recommended as it performs well
+   Use of :class:`~salmon.triplets.samplers.ARR` is recommended as it performs well
    in :ref:`the experiments we have run <experiments>`.
 
 Interface
