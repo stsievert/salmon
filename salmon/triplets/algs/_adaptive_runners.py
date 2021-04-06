@@ -287,7 +287,7 @@ class TSTE(Adaptive):
         super().__init__(module="TSTE", module__alpha=alpha, **kwargs)
 
 
-class RR(Adaptive):
+class ARR(Adaptive):
     """
     A randomized round robin algorithm.
 

@@ -14,4 +14,4 @@ samplers:
   CKL: {}
   GNMDS:
     scorer: uncertainty
-  RR: {}
+  ARR: {}

@@ -74,28 +74,28 @@ Then, all of these classes inherit from
    :toctree: generated/
    :template: only-init.rst
 
-   salmon.triplets.algs.RR
+   salmon.triplets.algs.ARR
    salmon.triplets.algs.TSTE
    salmon.triplets.algs.SOE
    salmon.triplets.algs.STE
    salmon.triplets.algs.CKL
    salmon.triplets.algs.GNMDS
 
-We have tested out the top three algorithms---RR, TSTE and SOE---in our
-experiments. We use :class:`~salmon.triplets.algs.RR` for our adaptive sampling
+We have tested out the top three algorithms---ARR, TSTE and SOE---in our
+experiments. We use :class:`~salmon.triplets.algs.ARR` for our adaptive sampling
 (which defaults to the noise model in :class:`~salmon.triplets.algs.TSTE`) and
 use :class:`~salmon.triplets.algs.SOE` for the offline embeddings.
 
 These adaptive algorithms are all the same except for the underlying noise
-model, with the exception of :class:`~salmon.triplets.algs.RR`.
-:class:`~salmon.triplets.algs.RR` introduces some randomness by fixing the head
+model, with the exception of :class:`~salmon.triplets.algs.ARR`.
+:class:`~salmon.triplets.algs.ARR` introduces some randomness by fixing the head
 and adding the top ``1 * n`` triplets to the database. This is useful because
 the information gain measure used by all of these algorithms (by default) is a
 rule-of-thumb.
 
 .. note::
 
-   Use of :class:`~salmon.triplets.algs.RR` is recommended as it performs well
+   Use of :class:`~salmon.triplets.algs.ARR` is recommended as it performs well
    in :ref:`the experiments we have run <experiments>`.
 
 Interface

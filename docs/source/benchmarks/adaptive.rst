@@ -1,7 +1,7 @@
 .. _experiments:
 
-Adaptive algorithms
-===================
+Adaptive algorithm performance
+==============================
 
 Adaptive algorithms decide which questions to ask about, instead of asking
 about a random question like random sampling. This can mean that higher
@@ -32,8 +32,12 @@ sampling with this ``init.yaml`` configuration:
 .. code-block:: yaml
 
    samplers:
-     RR: {random_state: 42}  # active or adaptive sampling
+     ARR: {random_state: 42}  # active or adaptive sampling
      RandomSampling: {}  # random sampling
+
+The "ARR" stands for "active round robin." That is, the head rotates through
+available choices ("round robin") and for each head, the best comparisons are
+chosen (by some measure with information gain).
 
 .. note::
 

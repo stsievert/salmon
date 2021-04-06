@@ -33,12 +33,11 @@ By default, ``samplers`` defaults to ``RandomSampling: {}``. We have to customiz
 
    targets: ["obj1", "obj2", "foo", "bar", "foobar!"]
    samplers:
-     RR:
-       module: TSTE
+     ARR: {}
 
-This will use :class:`~salmon.triplets.algs.TSTE`. If we want to customize to
+This will use :class:`~salmon.triplets.algs.ARR`. If we want to customize to
 include different keyword arguments, we need to look close at the arguments for
-:class:`~salmon.triplets.algs.TSTE` [#]_. For example, this could be a
+:class:`~salmon.triplets.algs.ARR` [#]_. For example, this could be a
 configuration:
 
 .. code-block:: yaml
@@ -46,25 +45,29 @@ configuration:
    targets: ["obj1", "obj2", "foo", "bar", "foobar!"]
    samplers:
      RandomSampling: {}
-     RR:
-       module: TSTE
-       module__alpha: 1.1
+     ARR:
+       module: "TSTE"
+       optimizer__batch_size: 1024
 
-``alpha`` is a keyword argument to
-:class:`~salmon.triplets.algs.TSTE`.
-If we want to use two alternate configs for TSTE:
+``module`` is a keyword argument to
+:class:`~salmon.triplets.algs.ARR`.
+If we want to use two alternate configs for ARR:
 
 .. code-block:: yaml
 
    targets: ["obj1", "obj2", "foo", "bar", "foobar!"]
+
    samplers:
      RandomSampling: {}
-     tste1:
-       class: TSTE
-     tste2:
-       class: RR
+     arr_ckl:
+       class: ARR
+       module: "CKL"
+     arr_tste:
+       class: ARR
+       module: "TSTE"
+
    sampling:
-     probs: {"RandomSampling": 20, "tste1": 40, "tste2": 40}
+     probs: {"RandomSampling": 20, "arr_ckl": 40, "arr_tste": 40}
 
 This would test out different optimization methods underlying the embedding.
 

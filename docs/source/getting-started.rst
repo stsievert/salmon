@@ -68,7 +68,7 @@ Here's an example ``init.yaml`` YAML file for initialization:
    max_queries: 25
    samplers:
      RandomSampling: {}
-     RR: {}
+     ARR: {}
 
 The top-level elements like ``max_queries`` and ``targets`` are called "keys"
 in YAML jargon. Here's documentation for each key:
