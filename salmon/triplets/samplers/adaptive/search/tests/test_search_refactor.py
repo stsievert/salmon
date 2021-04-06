@@ -7,7 +7,7 @@ from sklearn.utils import check_random_state
 from .. import gram_utils
 from .. import _search as search
 from . import utilsSTE
-from salmon.triplets.algs.adaptive import InfoGainScorer, STE, TSTE
+from salmon.triplets.samplers.adaptive import InfoGainScorer, STE, TSTE
 
 
 def test_probs():

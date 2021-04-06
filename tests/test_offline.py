@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split
 from pathlib import Path
 import pytest
 
-from salmon.triplets.algs import TSTE
+from salmon.triplets.samplers import TSTE
 from salmon.triplets.offline import OfflineEmbedding
 
 

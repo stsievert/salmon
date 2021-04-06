@@ -1,7 +1,7 @@
 import cloudpickle
 import numpy as np
 
-from salmon.triplets.algs import RoundRobin
+from salmon.triplets.samplers import RoundRobin
 
 
 def test_rr():

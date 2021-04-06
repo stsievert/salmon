@@ -10,11 +10,11 @@ import numpy as np
 import numpy.linalg as LA
 import pandas as pd
 
-import salmon.triplets.algs.adaptive as adaptive
-from salmon.triplets.algs.adaptive import InfoGainScorer, UncertaintyScorer
+import salmon.triplets.samplers.adaptive as adaptive
+from salmon.triplets.samplers.adaptive import InfoGainScorer, UncertaintyScorer
 from salmon.backend import Runner
 from salmon.utils import get_logger
-from salmon.triplets.algs._random_sampling import _get_query as _random_query
+from salmon.triplets.samplers._random_sampling import _get_query as _random_query
 
 logger = get_logger(__name__)
 
@@ -25,30 +25,6 @@ Answer = TypeVar("Answer")
 class Adaptive(Runner):
     """
     The runner that runs adaptive algorithms.
-
-    Parameters
-    ----------
-    n : int
-        The number of items to embed.
-    d : int (optional, default: ``2``)
-        Embedding dimension.
-    ident : str (optional, default: ``""``).
-        The identity of this runner. Must be unique among all adaptive algorithms.
-    optimizer : str (optional, default: ``Embedding``).
-        The optimizer underlying the embedding. This method specifies how to
-        change the batch size. Choices are
-        ``["Embedding", "PadaDampG", "GeoDamp"]``.
-    R : int (optional, default: ``1``)
-        Adaptive sampling after ``R * n`` responses have been received.
-    scorer : str (optional, default: ``"infogain"``)
-        How queries should be scored. Scoring with ``scorer='infogain'``
-        tries to link query score and "embedding improvement," and
-        ``scorer='uncertainty'`` looks at the query that's closest to the
-        decision boundary (or 50% probability).
-    random_state : int, None, optional (default: ``None``)
-        The random state to be used for initialization.
-    kwargs : dict, optional
-        Keyword arguments to pass to :class:`~salmon.triplets.algs.adaptive.Embedding`.
     """
 
     def __init__(
@@ -64,6 +40,31 @@ class Adaptive(Runner):
         random_state: Optional[int] = None,
         **kwargs,
     ):
+        """
+        Parameters
+        ----------
+        n : int
+            The number of items to embed.
+        d : int (optional, default: ``2``)
+            Embedding dimension.
+        ident : str (optional, default: ``""``).
+            The identity of this runner. Must be unique among all adaptive algorithms.
+        optimizer : str (optional, default: ``Embedding``).
+            The optimizer underlying the embedding. This method specifies how to
+            change the batch size. Choices are
+            ``["Embedding", "PadaDampG", "GeoDamp"]``.
+        R : int (optional, default: ``1``)
+            Adaptive sampling after ``R * n`` responses have been received.
+        scorer : str (optional, default: ``"infogain"``)
+            How queries should be scored. Scoring with ``scorer='infogain'``
+            tries to link query score and "embedding improvement," and
+            ``scorer='uncertainty'`` looks at the query that's closest to the
+            decision boundary (or 50% probability).
+        random_state : int, None, optional (default: ``None``)
+            The random state to be used for initialization.
+        kwargs : dict, optional
+            Keyword arguments to pass to :class:`~salmon.triplets.samplers.adaptive.Embedding`.
+        """
         super().__init__(ident=ident)
 
         self.n = n
@@ -246,14 +247,6 @@ class TSTE(Adaptive):
     """
     The t-Distributed STE (t-STE) embedding algorithm [1]_.
 
-    Parameters
-    ----------
-    alpha : float, default=1
-        The parameter that controls how heavily the tails of the probability
-        distribution are.
-    kwargs : dict
-        Keyword arguments to pass to :class:`~salmon.triplets.algs.Adaptive`.
-
     Notes
     -----
     This algorithm is proposed for the following reason:
@@ -284,21 +277,21 @@ class TSTE(Adaptive):
     """
 
     def __init__(self, alpha=1, **kwargs):
+        """
+        Parameters
+        ----------
+        alpha : float, default=1
+            The parameter that controls how heavily the tails of the probability
+            distribution are.
+        kwargs : dict
+            Keyword arguments to pass to :class:`~salmon.triplets.samplers.Adaptive`.
+        """
         super().__init__(module="TSTE", module__alpha=alpha, **kwargs)
 
 
-class RR(Adaptive):
+class ARR(Adaptive):
     """
     A randomized round robin algorithm.
-
-    Parameters
-    ----------
-    R: int = 1
-        Adaptive sampling starts are ``R * n`` response have been received.
-    module : str, optional (default ``"TSTE"``).
-        The noise model to use.
-    kwargs : dict
-        Keyword arguments to pass to :class:`~salmon.triplets.algs.Adaptive`.
 
     Notes
     -----
@@ -319,6 +312,16 @@ class RR(Adaptive):
     """
 
     def __init__(self, R: int = 1, module="TSTE", **kwargs):
+        """
+        Parameters
+        ----------
+        R: int = 1
+            Adaptive sampling starts are ``R * n`` response have been received.
+        module : str, optional (default ``"TSTE"``).
+            The noise model to use.
+        kwargs : dict
+            Keyword arguments to pass to :class:`~salmon.triplets.samplers.Adaptive`.
+        """
         super().__init__(R=R, module=module, **kwargs)
 
     def get_queries(self, *args, **kwargs):
@@ -352,11 +355,6 @@ class STE(Adaptive):
     """
     The Stochastic Triplet Embedding [1]_.
 
-    Parameters
-    ----------
-    kwargs : dict
-        Keyword arguments to pass to :class:`~salmon.triplets.algs.Adaptive`.
-
     References
     ----------
     .. [1] "Stochastic Triplet Embedding". 2012.
@@ -365,17 +363,18 @@ class STE(Adaptive):
     """
 
     def __init__(self, **kwargs):
+        """
+        Parameters
+        ----------
+        kwargs : dict
+            Keyword arguments to pass to :class:`~salmon.triplets.samplers.Adaptive`.
+        """
         super().__init__(module="STE", **kwargs)
 
 
 class GNMDS(Adaptive):
     """
     The Generalized Non-metric Multidimensional Scaling embedding [1]_.
-
-    Parameters
-    ----------
-    kwargs : dict
-        Keyword arguments to pass to :class:`~salmon.triplets.algs.Adaptive`.
 
     References
     ----------
@@ -385,19 +384,18 @@ class GNMDS(Adaptive):
     """
 
     def __init__(self, **kwargs):
+        """
+        Parameters
+        ----------
+        kwargs : dict
+            Keyword arguments to pass to :class:`~salmon.triplets.samplers.Adaptive`.
+        """
         super().__init__(module="GNMDS", **kwargs)
 
 
 class CKL(Adaptive):
     """
     The crowd kernel embedding. Proposed in [1]_.
-
-    Parameters
-    ----------
-    mu : float
-        The mu or :math:`\\mu` used in the CKL embedding. This is typically small; the default is :math:`10^{-4}`.
-    kwargs : dict
-        Keyword arguments to pass to :class:`~salmon.triplets.algs.Adaptive`.
 
     References
     ----------
@@ -406,6 +404,14 @@ class CKL(Adaptive):
     """
 
     def __init__(self, mu=1, **kwargs):
+        """
+        Parameters
+        ----------
+        mu : float
+            The mu or :math:`\\mu` used in the CKL embedding. This is typically small; the default is :math:`10^{-4}`.
+        kwargs : dict
+            Keyword arguments to pass to :class:`~salmon.triplets.samplers.Adaptive`.
+        """
         super().__init__(module__mu=mu, module="CKL", **kwargs)
 
 
@@ -414,11 +420,6 @@ class SOE(Adaptive):
     The soft ordinal embedding detailed by Terada et al. [1]_ This is evaluated
     as "SOE" by Vankadara et al., [2]_ in which they use the hinge loss on the
     distances (not squared distances).
-
-    Parameters
-    ----------
-    kwargs : dict
-        Keyword arguments to pass to :class:`~salmon.triplets.algs.Adaptive`.
 
     References
     ----------
@@ -433,4 +434,10 @@ class SOE(Adaptive):
     """
 
     def __init__(self, **kwargs):
+        """
+        Parameters
+        ----------
+        kwargs : dict
+            Keyword arguments to pass to :class:`~salmon.triplets.samplers.Adaptive`.
+        """
         super().__init__(module="SOE", **kwargs)

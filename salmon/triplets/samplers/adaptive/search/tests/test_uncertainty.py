@@ -1,6 +1,6 @@
 import numpy as np
 import numpy.linalg as LA
-from salmon.triplets.algs.adaptive import UncertaintyScorer
+from salmon.triplets.samplers.adaptive import UncertaintyScorer
 
 
 def test_uncertainty_sampling(random_state=42):

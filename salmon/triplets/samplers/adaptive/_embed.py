@@ -34,9 +34,9 @@ class NumpyDataset(SkorchDataset):
 
 class Embedding(BaseEstimator):
     """
-    An triplet embedding algorithm.
+    An optimization algorithm that produces an embedding from human responses
+    of the form ``[head, winner, loser]``.
     """
-
     def __init__(
         self,
         module,
@@ -46,9 +46,28 @@ class Embedding(BaseEstimator):
         warm_start=True,
         max_epochs=100,
         initial_batch_size=512,
-        random_state=None,
         **kwargs,
     ):
+        """
+        Parameters
+        ----------
+        module : nn.Module
+            The noise model to use.
+        module__n : int
+            The number of items to embed.
+        module__d : int, optional (default: 2)
+            The number of dimensions to embed into.
+        optimizer : torch.optim.Optimizer
+            The optimizer to use.
+        max_epochs : int, optional (default: 100)
+            The number of epochs—or passes through the dataset—to perform.
+        warm_start : bool, optional (default: True)
+            Whether to use the existing embedding.
+        initial_batch_size : int, optional (default: 512)
+            The optimizer's (initial) batch size.
+        kwargs : dict, optional
+            Additional keyword arguments to pass to Skorch's ``NeuralNet``.
+        """
         self.module = module
         self.module__n = module__n
         self.module__d = module__d
@@ -59,11 +78,13 @@ class Embedding(BaseEstimator):
         self.kwargs = kwargs
 
     def initialize(self):
+        """
+        Initialize this optimization algorithm.
+        """
         self.meta_ = {"num_answers": 0, "model_updates": 0, "num_grad_comps": 0}
         self.initialized_ = True
         self.answers_ = np.zeros((1000, 3), dtype="uint16")
 
-        opt_kwargs = {}
         self.net_ = NeuralNet(
             module=self.module,
             module__n=self.module__n,
@@ -77,7 +98,6 @@ class Embedding(BaseEstimator):
             max_epochs=self.max_epochs,
             train_split=None,
             dataset=NumpyDataset,
-            **opt_kwargs,
         ).initialize()
         return self
 
@@ -102,6 +122,20 @@ class Embedding(BaseEstimator):
     #     return grad_error < self.epsilon
 
     def push(self, answers: Union[list, np.ndarray]):
+        """
+        Push some answers to train on when ``partial_fit`` is called.
+
+        Parameters
+        ----------
+        answers : Union[list, np.ndarray]
+            Answers with 2 dimensions. The answers should be organized
+            ``[head, winner, loser]``.
+
+        Returns
+        -------
+        nbytes : int
+            The number of bytes all of the stored answers.
+        """
         if not (hasattr(self, "initialized_") and self.initialized_):
             self.initialize()
         if isinstance(answers, list):
@@ -222,11 +256,11 @@ class Embedding(BaseEstimator):
         return self.embedding()
 
     @property
-    def module_(self) -> np.ndarray:
+    def module_(self):
         return self.net_.module_
 
     @property
-    def optimizer_(self) -> np.ndarray:
+    def optimizer_(self):
         return self.net_.optimizer_
 
     def get_train_idx(self, n_ans):

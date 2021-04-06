@@ -21,7 +21,7 @@ For complete documentation, see :ref:`alg-api`. In short, your algorithm should
 be a class that implement ``get_query`` and ``process_answers``.
 
 After you have developed these functions, look at other algorithms in
-``salmon/triplets/algs`` (e.g, ``_adaptive_runners.py`` or ``_round_robin.py``)
+``salmon/triplets/samplers`` (e.g, ``_adaptive_runners.py`` or ``_round_robin.py``)
 to figure out inheritance details. In short, the following details are
 important:
 
@@ -47,14 +47,14 @@ Debugging
 ---------
 
 Let's say you've integrated most of your algorithm into
-:class:`~salmon.backend.alg.Runner`. Now, you'd like to make sure everything is
+:class:`~salmon.backend.sampler.Runner`. Now, you'd like to make sure everything is
 working properly.
 
 This script will help:
 
 .. code-block:: python
 
-   from salmon.triplets.algs import STE
+   from salmon.triplets.samplers import STE
    from copy import copy
    import random
 

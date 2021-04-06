@@ -24,7 +24,8 @@ Experimentalist
 6. Select an appropriate instance type.
 
     * ``t3.large`` is recommended for passive algorithms (i.e, random sampling).
-    * ``t3.xlarge`` is recommended for adaptive algorithms (e.g, TSTE).
+    * ``t3.xlarge`` is recommended for adaptive algorithms (e.g., ARR; see
+      :ref:`experiments`).
     * (note: https://ec2instances.info/ is a great resource to check costs)
 
 7. Don't click the big blue button yet. Continue to the rules page, and add
