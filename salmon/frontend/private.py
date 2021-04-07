@@ -786,6 +786,23 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
             "response_times": response_times,
             "network_latency": network_latency,
         }
+
+    gaps = df["time_received"].diff().to_numpy()
+    gaps = gaps[~np.isnan(gaps)]
+    if len(gaps):
+        rate = 1 / gaps
+        rate = rate[~(np.isnan(rate) | np.isinf(rate))]
+        _rates = {p: np.percentile(rate, p) for p in [25, 50, 75, 90]}
+        rates = {k: f"{v:0.1f}" for k, v in _rates.items()}
+        try:
+            response_rate_cdf = await plotting._get_response_rate_cdf(rate)
+            plots["response_rate_cdf"] = json.dumps(json_item(response_rate_cdf))
+        except Exception as e:
+            logger.exception(e)
+            plots["response_rate_cdf"] = {"/": "exception"}
+    else:
+        rates = {}
+
     try:
         endpoint_timing = await plotting.get_endpoint_time_plots()
         plots["endpoint_timings"] = {
@@ -860,6 +877,7 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
             "config": exp_config,
             "samplers": idents,
             "query_db_perfs": query_db,
+            "rates": rates,
             **plots,
         },
     )

@@ -169,6 +169,31 @@
       Bokeh.embed.embed_item(plot, "concurrent-users");
       </script>
     </div>
+    <script>
+    function toggle_vis(divId) {
+      $(divId).toggle();
+    }
+    </script>
+    <div class="row justify-content-center">
+      <div>
+        <ul>
+        {% for prob, t in rates.items() %}
+        <li>{{prob}}% of the time, less than {{t}} responses are received per second</li>
+        {% endfor %}
+        </ul>
+      </div>
+    </div>
+    <div class="row justify-content-center">
+        <button onclick="toggle_vis('#responseCDF');">More detail</button>
+    </div>
+    <div class="row justify-content-center">
+      <div id="responseCDF" style="display: none;">
+      </div>
+      <script>
+        plot = JSON.parse({{ response_rate_cdf | tojson }});
+        Bokeh.embed.embed_item(plot, "responseCDF");
+      </script>
+    </div>
     <div class="row justify-content-center">
       <h2>Algorithm performance</h2>
     </div>

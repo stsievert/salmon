@@ -12,6 +12,7 @@ from bokeh.models import (
     Text,
     ImageURL,
     Legend,
+    NumeralTickFormatter,
 )
 from bokeh.palettes import brewer, d3
 from bokeh.embed import json_item
@@ -60,7 +61,6 @@ def _make_hist(
     p.legend.background_fill_color = "#fefefe"
     p.xaxis.axis_label = xlabel
     p.yaxis.axis_label = "Frequency"
-    p.grid.grid_line_color = "white"
     return p
 
 
@@ -388,4 +388,30 @@ async def _get_query_db(df):
     items = list(zip(names, lines))
     legend = Legend(items=items, location="top_left")  # , label_width=130)
     p.add_layout(legend, "right")
+    return p
+
+async def _get_response_rate_cdf(rate: np.ndarray):
+    upper = np.percentile(rate, 99.5)
+    lower = np.percentile(rate, 0.5)
+    bins = [i / 4 for i in range(int(lower) * 4, int(np.ceil(upper)) * 4)]
+    bin_heights, edges = np.histogram(rate, bins=bins if len(bins) <= 40 else 40)
+    bin_heights = bin_heights / bin_heights.sum()
+
+    p = figure(
+        title="Rate at which responses received",
+        background_fill_color="#fafafa",
+        width=600,
+        height=200,
+        toolbar_location="above",
+    )
+    p.line(edges, [0] + bin_heights.cumsum().tolist())
+    p.scatter(edges, [0] + bin_heights.cumsum().tolist())
+
+    p.legend.location = "center_right"
+    p.legend.background_fill_color = "#fefefe"
+    p.xaxis.axis_label = "R (responses/sec)"
+    p.yaxis.axis_label = "Prob. rate <= R"
+    p.yaxis[0].formatter = NumeralTickFormatter(format="0%")
+    p.xgrid.visible = p.ygrid.visible = True
+    #  p.xgrid.grid_line_color = p.ygrid.grid_line_color = "#aaaaaa"
     return p
