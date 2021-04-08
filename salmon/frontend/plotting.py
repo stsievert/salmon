@@ -391,10 +391,8 @@ async def _get_query_db(df):
     return p
 
 async def _get_response_rate_cdf(rate: np.ndarray):
-    upper = np.percentile(rate, 99.5)
-    lower = np.percentile(rate, 0.5)
-    bins = [i / 4 for i in range(int(lower) * 4, int(np.ceil(upper)) * 4)]
-    bin_heights, edges = np.histogram(rate, bins=bins if len(bins) <= 40 else 40)
+    middle = np.percentile(rate, 75)
+    bin_heights, edges = np.histogram(rate, range=(0, 2 * middle), bins="auto")
     bin_heights = bin_heights / bin_heights.sum()
 
     p = figure(

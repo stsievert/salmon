@@ -412,7 +412,8 @@ async def process_form(
         return ret
     except Exception as e:
         logger.error(e)
-        _reset(timeout=5)
+        if authorized:
+            _reset(timeout=5)
         if isinstance(e, (ExpParsingError, HTTPException)):
             raise e
         msg = exception_to_string(e)
@@ -485,8 +486,10 @@ def reset_delete(
     tags=["private"],
     timeout: float = 10,
 ):
-    reset(force=force, authorized=authorized, timeout=timeout)
-    return {"success": True}
+    if authorized:
+        reset(force=force, authorized=authorized, timeout=timeout)
+        return {"success": True}
+    return {"success": False}
 
 @app.get("/reset", tags=["private"])
 def reset(
@@ -787,12 +790,14 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
             "network_latency": network_latency,
         }
 
-    gaps = df["time_received"].diff().to_numpy()
-    gaps = gaps[~np.isnan(gaps)]
-    if len(gaps):
+    df2 = df.sort_values(by="time_received")
+    gaps = df2["time_received"].diff().to_numpy()
+    good = ~np.isnan(gaps)
+    if good.sum():
+        gaps = gaps[good]
         rate = 1 / gaps
         rate = rate[~(np.isnan(rate) | np.isinf(rate))]
-        _rates = {p: np.percentile(rate, p) for p in [25, 50, 75, 90]}
+        _rates = {p: np.percentile(rate, p) for p in [25, 50, 75]}
         rates = {k: f"{v:0.1f}" for k, v in _rates.items()}
         try:
             response_rate_cdf = await plotting._get_response_rate_cdf(rate)
