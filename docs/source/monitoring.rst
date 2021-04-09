@@ -69,6 +69,9 @@ Database
 Targets
 -------
 
+I only show the first 4 targets below; the other targets can be seen in the
+embedding above.
+
 .. image:: imgs/dashboard/targets.png
    :align: center
    :width: 500px
