@@ -491,6 +491,7 @@ def reset_delete(
         return {"success": True}
     return {"success": False}
 
+
 @app.get("/reset", tags=["private"])
 def reset(
     force: int = 0,
@@ -573,9 +574,7 @@ def _reset(timeout: float = 5):
                 f" (rj.keys() == {rj.keys()}"
             )
             if timeout and time() >= __deadline:
-                logger.warning(
-                    f"Hit timeout={timeout} w/ stopped={stopped}. Breaking!"
-                )
+                logger.warning(f"Hit timeout={timeout} w/ stopped={stopped}. Breaking!")
                 break
 
         logger.warning("    starting with clearing queries...")
@@ -790,21 +789,16 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
             "network_latency": network_latency,
         }
 
-    df2 = df.sort_values(by="time_received")
-    gaps = df2["time_received"].diff().to_numpy()
-    good = ~np.isnan(gaps)
-    if good.sum():
-        gaps = gaps[good]
-        rate = 1 / gaps
-        rate = rate[~(np.isnan(rate) | np.isinf(rate))]
-        _rates = {p: np.percentile(rate, p) for p in [25, 50, 75]}
-        rates = {k: f"{v:0.1f}" for k, v in _rates.items()}
-        try:
-            response_rate_cdf = await plotting._get_response_rate_cdf(rate)
-            plots["response_rate_cdf"] = json.dumps(json_item(response_rate_cdf))
-        except Exception as e:
-            logger.exception(e)
-            plots["response_rate_cdf"] = {"/": "exception"}
+    try:
+        x = df["time_received"]
+        rr_cdf, gaps_hist, response_meta = await plotting._get_response_rate_plots(x)
+        plots["response_rate_cdf"] = json.dumps(json_item(rr_cdf))
+        plots["gaps_histogram"] = json.dumps(json_item(gaps_hist))
+    except Exception as e:
+        logger.exception(e)
+        plots["response_rate_cdf"] = {"/": "exception"}
+        plots["gaps_histogram"] = {"/": "exception"}
+        response_meta = {}
     else:
         rates = {}
 
@@ -842,18 +836,22 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
         try:
             perfs[ident] = await _get_alg_perf(ident)
         except Exception as e:
+            raise e
             logger.exception(e)
             perfs[ident] = None
 
-    try:
-        _alg_perfs = {
-            alg: await plotting._get_alg_perf(pd.DataFrame(data))
-            for alg, data in perfs.items()
-            if data
-        }
-        alg_perfs = {k: json.dumps(json_item(v)) for k, v in _alg_perfs.items()}
-    except:
-        alg_perfs = {"/": "Error getting algorithm performance"}
+    _alg_perfs = {}
+    for alg, data in perfs.items():
+        if data:
+            try:
+                _alg_perfs[alg] = await plotting._get_alg_perf(pd.DataFrame(data))
+            except Exception as e:
+                logger.exception(e)
+                _alg_perfs[ident] = "Error getting performace"
+    alg_perfs = {
+        k: json.dumps(json_item(v)) if not isinstance(v, str) else v
+        for k, v in _alg_perfs.items()
+    }
 
     try:
         _query_db = {
@@ -882,8 +880,8 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
             "config": exp_config,
             "samplers": idents,
             "query_db_perfs": query_db,
-            "rates": rates,
             **plots,
+            **response_meta,
         },
     )
 

@@ -139,7 +139,7 @@ async def network_latency(df: pd.DataFrame):
     bins = await _get_nbins(x)
     bin_heights, edges = np.histogram(x, bins=bins)
     p = _make_hist(
-        f"Client side latency",
+        f"Time waiting for new query",
         "Time (s)",
         bin_heights,
         edges,
@@ -287,7 +287,11 @@ async def get_endpoint_time_plots():
         p.yaxis.axis_label = "Frequency"
         p.xaxis.axis_label = "Processing time (s)"
         p.yaxis.minor_tick_line_color = None  # turn off x-axis minor ticks
-        out[e] = p
+
+        hits = np.asarray(_data["between"])
+        hits = hits[~np.isnan(hits)]
+        if hits.sum() > 1: # Only put plots in that have more than 1 hit
+            out[e] = p
     return out
 
 
@@ -343,7 +347,7 @@ async def response_rate(df, n_sec=30):
         title="Responses per second",
         x_axis_type="datetime",
         x_axis_label="Time since start",
-        y_axis_label="(30s moving avg)",
+        y_axis_label=f"({n_sec}s moving avg)",
         width=600,
         height=200,
         toolbar_location="above",
@@ -390,26 +394,58 @@ async def _get_query_db(df):
     p.add_layout(legend, "right")
     return p
 
-async def _get_response_rate_cdf(rate: np.ndarray):
-    middle = np.percentile(rate, 75)
-    bin_heights, edges = np.histogram(rate, range=(0, 2 * middle), bins="auto")
-    bin_heights = bin_heights / bin_heights.sum()
 
-    p = figure(
-        title="Rate at which responses received",
-        background_fill_color="#fafafa",
-        width=600,
-        height=200,
-        toolbar_location="above",
+async def _get_response_rate_plots(timestamps: pd.Series):
+    """
+    Parameters
+    ----------
+    timestamps : pd.Series
+        Seconds responses received.
+    """
+    timestamps = timestamps.sort_values()
+    timestamps -= timestamps.min()
+
+    rates_per_sec = timestamps.astype(int).value_counts()
+    rates_per_sec = rates_per_sec.value_counts().sort_index()
+    rates = rates_per_sec.index
+    prob = rates_per_sec.to_numpy() / rates_per_sec.sum()
+    rates = rates[prob >= 0.01]
+    prob = prob[prob >= 0.01]
+
+    rates = np.array(rates.tolist() + [rates.max() + 1])
+
+    p1 = _make_hist(
+        "Rate responses received",
+        "Rate (responses/sec over 1s)",
+        prob,
+        rates - 1.0,
+        width=300,
+        toolbar_location=None,
+        x_range=(0, max(4, rates.max())),
     )
-    p.line(edges, [0] + bin_heights.cumsum().tolist())
-    p.scatter(edges, [0] + bin_heights.cumsum().tolist())
+    p1.xaxis.ticker = list(range(1000))
+    p1.yaxis.axis_label = "Probability (empirical)"
+    p1.yaxis[0].formatter = NumeralTickFormatter(format="0%")
 
-    p.legend.location = "center_right"
-    p.legend.background_fill_color = "#fefefe"
-    p.xaxis.axis_label = "R (responses/sec)"
-    p.yaxis.axis_label = "Prob. rate <= R"
-    p.yaxis[0].formatter = NumeralTickFormatter(format="0%")
-    p.xgrid.visible = p.ygrid.visible = True
-    #  p.xgrid.grid_line_color = p.ygrid.grid_line_color = "#aaaaaa"
-    return p
+    gaps = timestamps.diff().dropna()
+
+    _bins = [[1 * 10 ** i, 2 * 10 ** i, 5 * 10 ** i] for i in range(-5, 5)]
+    bins = [
+        b
+        for bins3 in _bins
+        for b in bins3
+        if np.percentile(gaps, 1) <= b <= 5 * gaps.max()
+    ]
+    bin_heights, edges = np.histogram(gaps, bins=bins)
+    p2 = _make_hist(
+        f"Delay between responses",
+        "Time (s)",
+        bin_heights,
+        edges,
+        width=300,
+        toolbar_location=None,
+        x_axis_type="log",
+    )
+
+    meta = {"median_response_delay": "{:0.2f}".format(np.median(gaps))}
+    return p1, p2, meta

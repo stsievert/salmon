@@ -36,13 +36,8 @@
 <div class="container">
   <div class="outline justify-content-center">
     <div class="row justify-content-center">
-      <div id="activity-plot"></div>
-      <script>
-      plot = JSON.parse({{ activity | tojson }});
-      Bokeh.embed.embed_item(plot, "activity-plot");
-      </script>
+      <h3>Basic info</h3>
     </div>
-    <br>
     <div class="row justify-content-center">
       <ul>
         <li>Start time: {{ start }} UTC </li>
@@ -57,6 +52,49 @@
         </li>
       </ul>
     </div>
+    <div class="row justify-content-center">
+      <h3>Activity</h3>
+    </div>
+    <br>
+    <div class="row justify-content-center">
+      <ul class="nav nav-tabs" id="responseTimingTab" role="tablist">
+        <li class="nav-item">
+          <a class="nav-link active" id="coarse-timings-tab" data-toggle="tab" href="#coarse-timings" role="tab" aria-controls="coarse-timings" aria-selected="true">
+              Count
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="fine-timings-tab" data-toggle="tab" href="#fine-timings" role="tab" aria-controls="fine-timings" aria-selected="false">
+          Rate
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="row justify-content-center">
+      <div class="tab-content" id="coarseTimingTabContent">
+        <div class="tab-pane fade show active"
+             id="coarse-timings"
+             role="tabpanel"
+             aria-labelledby="coarse-timings-tab"
+        >
+          <script>
+            plot = JSON.parse({{ activity | tojson }});
+            Bokeh.embed.embed_item(plot, "coarse-timings");
+          </script>
+        </div>
+        <div class="tab-pane fade"
+              id="fine-timings"
+              role="tabpanel"
+              aria-labelledby="fine-timings-tab"
+        >
+          <script>
+            plot = JSON.parse({{ response_rate | tojson }});
+            Bokeh.embed.embed_item(plot, "fine-timings");
+          </script>
+        </div>
+      </div>
+    </div>
+    <br>
     <div class="row justify-content-center">
       <h3>Downloads</h3>
     </div>
@@ -93,7 +131,7 @@
           <a href="/logs">Logs</a>, which are useful for debugging&nbsp;
           (<a href="/docs#/private/get_logs_logs_get">docs</a>)
         </li>
-        <li><a href="/docs">Complete API Documentation</a>, which are useful for developing.</li>
+        <li><a href="/docs">Complete API documentation</a>, which is useful for debugging.</li>
       </ul>
     </div>
     <div class="row justify-content-center">
@@ -107,7 +145,7 @@
     </div>
     <br>
     <div class="row justify-content-center">
-      <ul class="nav nav-tabs" id="myTab" role="tablist">
+      <ul class="nav nav-tabs" id="timingTab" role="tablist">
         {% for endpoint in endpoints %}
           <li class="nav-item">
               <a class="nav-link {% if loop.first %}active{% endif %}" id="{{endpoint}}-tab" data-toggle="tab" href="#{{endpoint}}" role="tab" aria-controls="{{endpoint}}" aria-selected={% if loop.first %}"true"{% else %}"false"{% endif %}>
@@ -117,8 +155,9 @@
         {% endfor %}
       </ul>
     </div>
+    <br>
     <div class="row justify-content-center">
-        <div class="tab-content" id="myTabContent">
+        <div class="tab-content" id="timingTabContent">
           {% for endpoint in endpoints %}
           <div class="tab-pane fade {% if loop.first %}show active{% endif %}"
                 id="{{ endpoint }}"
@@ -135,6 +174,23 @@
     </div>
     <br>
     <div class="row justify-content-center">
+      <p>The median delay between responses is {{median_response_delay}} seconds.</p>
+    </div>
+    <div class="row justify-content-center">
+      <div id="gapsHist"> </div>
+      <script>
+        plot = JSON.parse({{ gaps_histogram | tojson }});
+        Bokeh.embed.embed_item(plot, "gapsHist");
+      </script>
+
+      <div id="responseCDF"> </div>
+      <script>
+        plot = JSON.parse({{ response_rate_cdf | tojson }});
+        Bokeh.embed.embed_item(plot, "responseCDF");
+      </script>
+    </div>
+    <br>
+    <div class="row justify-content-center">
         <p>
         <a href="/" onclick="javascript:event.target.port=7381">
             Redis live monitoring</a>.
@@ -145,9 +201,6 @@
       <h3>Client-side timing</h3>
     </div>
     <br>
-    <div class="row col-lg-8 offset-lg-3">
-      <p>Here's how long users took to answer queries (left) and wait for a new query (right):</p>
-    </div>
     <div class="row justify-content-center">
       <span id="responses"></span>
       <span id="network-latency"></span>
@@ -158,41 +211,8 @@
       Bokeh.embed.embed_item(plot, "network-latency");
       </script>
     </div>
-    <br>
     <div class="row col-lg-8 offset-lg-3">
-      <p>Here's the number of responses received per second by the sever:</p>
-    </div>
-    <div class="row justify-content-center">
-      <div id="concurrent-users"></div>
-      <script>
-      plot = JSON.parse({{ response_rate | tojson }});
-      Bokeh.embed.embed_item(plot, "concurrent-users");
-      </script>
-    </div>
-    <script>
-    function toggle_vis(divId) {
-      $(divId).toggle();
-    }
-    </script>
-    <div class="row justify-content-center">
-      <div>
-        <ul>
-        {% for prob, t in rates.items() %}
-        <li>{{prob}}% of the time, less than {{t}} responses are received per second</li>
-        {% endfor %}
-        </ul>
-      </div>
-    </div>
-    <div class="row justify-content-center">
-        <button onclick="toggle_vis('#responseCDF');">More detail</button>
-    </div>
-    <div class="row justify-content-center">
-      <div id="responseCDF" style="display: none;">
-      </div>
-      <script>
-        plot = JSON.parse({{ response_rate_cdf | tojson }});
-        Bokeh.embed.embed_item(plot, "responseCDF");
-      </script>
+      <p>These times are recorded client-side and reported back to Salmon.</p>
     </div>
     <div class="row justify-content-center">
       <h2>Algorithm performance</h2>
