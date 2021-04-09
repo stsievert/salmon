@@ -143,12 +143,20 @@ class Adaptive(Runner):
                 break
         queries = np.concatenate(ret_queries).astype(int)
         scores = np.concatenate(ret_scores)
+        queries = self._sort_query_order(queries)
 
         ## Rest of this function takes about 450ms
         df = pd.DataFrame(queries)
         hashes = pd.util.hash_pandas_object(df, index=False)
         _, idx = np.unique(hashes.to_numpy(), return_index=True)
         return queries[idx], scores[idx], {}
+
+    @staticmethod
+    def _sort_query_order(queries: np.ndarray)-> np.ndarray:
+        mins = np.minimum(queries[1], queries[2])
+        maxs = np.maximum(queries[1], queries[2])
+        queries[1], queries[2] = mins, maxs
+        return queries
 
     def process_answers(self, answers: List[Answer]):
         if not len(answers):
