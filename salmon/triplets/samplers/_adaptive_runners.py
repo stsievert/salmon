@@ -153,9 +153,9 @@ class Adaptive(Runner):
 
     @staticmethod
     def _sort_query_order(queries: np.ndarray)-> np.ndarray:
-        mins = np.minimum(queries[1], queries[2])
-        maxs = np.maximum(queries[1], queries[2])
-        queries[1], queries[2] = mins, maxs
+        mins = np.minimum(queries[:, 1], queries[:, 2])
+        maxs = np.maximum(queries[:, 1], queries[:, 2])
+        queries[:, 1], queries[:, 2] = mins, maxs
         return queries
 
     def process_answers(self, answers: List[Answer]):
