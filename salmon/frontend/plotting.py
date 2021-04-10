@@ -435,7 +435,7 @@ async def _get_response_rate_plots(timestamps: pd.Series):
         b
         for bins3 in _bins
         for b in bins3
-        if np.percentile(gaps, 1) <= b <= 5 * gaps.max()
+        if np.percentile(gaps, 1) <= b <= np.percentile(gaps, 99)
     ]
     bin_heights, edges = np.histogram(gaps, bins=bins)
     p2 = _make_hist(
