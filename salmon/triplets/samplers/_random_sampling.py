@@ -5,7 +5,7 @@ from typing import List, Tuple, Optional
 import numpy as np
 
 from .utils import Answer, Query
-from ...backend.sampler import Runner
+from salmon.backend.sampler import Runner, root, DaskClient
 
 logger = logging.getLogger(__name__)
 
@@ -44,3 +44,6 @@ class RandomSampling(Runner):
     @property
     def sleep_(self):
         return 1
+
+    def run(self, *args, **kwargs):
+        return None
