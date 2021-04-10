@@ -290,20 +290,23 @@ async def get_endpoint_time_plots():
 
         hits = np.asarray(_data["between"])
         hits = hits[~np.isnan(hits)]
-        if hits.sum() > 1: # Only put plots in that have more than 1 hit
+        if hits.sum() > 1:  # Only put plots in that have more than 1 hit
             out[e] = p
     return out
 
 
-async def _get_alg_perf(df):
+async def _get_alg_perf(df, agg="median"):
     cols = [c for c in df.columns if "time_" == c[:5] and c != "time_loop"]
 
     s = df[cols + ["time"]].copy()
+    partial = df[list(cols)].copy().to_numpy()
     s["timedelta"] = pd.to_timedelta(s["time"] - s["time"].min(), unit="s")
-    s = s.rolling(window="30s", on="timedelta").mean()
+    s = s.sort_values(by="timedelta")
 
     source = ColumnDataSource(s)
 
+    names = {"_".join(v.split("_")[:-1]) for v in cols}
+    lims = (partial.min(), partial.max())
     p = figure(
         title="Algorithm timing",
         x_axis_label="Time since start",
@@ -314,12 +317,12 @@ async def _get_alg_perf(df):
         toolbar_location="above",
         background_fill_color="#fafafa",
     )
-    names = list(reversed(cols))
-    colors = d3["Category10"][len(names)]
+
+    colors = d3["Category10"][10]
     for name, color in zip(names, colors):
-        base = dict(x="timedelta", y=name, source=source, color=color,)
-        p.line(**base, legend_label=name, line_width=2)
-        p.circle(**base, size=5)
+        base = dict(x="timedelta", y=f"{name}_{agg}", source=source)
+        p.line(**base, legend_label=name, line_width=2, line_color=color)
+        p.circle(**base, size=5, color=color)
     p.legend.location = "top_left"
     return p
 
@@ -357,7 +360,7 @@ async def response_rate(df, n_sec=30):
     return p
 
 
-async def _get_query_db(df):
+async def _get_query_db(df, agg="median"):
     d = df.copy()
     d["time_since_start"] = d["time"] - d["time"].min()
     d["datetime"] = d["time_since_start"].apply(
@@ -365,7 +368,7 @@ async def _get_query_db(df):
     )
     source = ColumnDataSource(d)
 
-    Y = [c for c in d.columns if "n_queries" in c]
+    Y = [c for c in d.columns if ("n_queries" in c) and (agg in c)]
     ratio = df[Y].max().max() / df[Y].min().min()
     kwargs = {} if ratio < 50 else dict(y_axis_type="log")
     p = figure(
@@ -380,6 +383,9 @@ async def _get_query_db(df):
         **kwargs,
     )
 
+    if not len(Y):
+        logger.warning(f"No columns to plot! Y = {Y} but d.columns = {d.columns}")
+        return None
     COLORS = d3["Category10"][len(Y)]
     lines = []
     for y, color in zip(Y, COLORS):
@@ -388,7 +394,7 @@ async def _get_query_db(df):
         p.circle(**base, size=5, color=color)
         lines.append([line])
 
-    names = [y.replace("n_queries_", "") for y in Y]
+    names = [y.replace("n_queries_", "").replace(f"_{agg}", "") for y in Y]
     items = list(zip(names, lines))
     legend = Legend(items=items, location="top_left")  # , label_width=130)
     p.add_layout(legend, "right")

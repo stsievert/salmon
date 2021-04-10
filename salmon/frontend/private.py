@@ -404,15 +404,19 @@ async def process_form(
                 "\n3. Revisit /init and re-upload the experiment."
                 "\n\n(visiting /foo means visiting '[url]:8421/foo'",
             )
+            experiment_set = True
             raise HTTPException(status_code=403, detail=detail)
+        experiment_set = False
         ret = await _process_form(request, exp, targets, rdb)
+
         if rdb:
             return ret
+
         await _ensure_initialized()
         return ret
     except Exception as e:
         logger.error(e)
-        if authorized:
+        if authorized and not experiment_set:
             _reset(timeout=5)
         if isinstance(e, (ExpParsingError, HTTPException)):
             raise e
@@ -527,7 +531,7 @@ def reset(
         "The Salmon databasse has (largely) been cleared. "
         "To completely clear the database, the server needs to be restarted "
         "(likely via 'Actions > Instance state > Reboot' on Amazon EC2 "
-        "or `docker-compose down; docker-compose up`."
+        "or `docker-compose stop; docker-compose up`."
     )
 
 
@@ -537,21 +541,6 @@ def _reset(timeout: float = 5):
     except ResponseError as e:
         if "save already in progress" not in str(e):
             raise e
-
-    now = datetime.now().isoformat()[: 10 + 6]
-
-    save_dir = ROOT_DIR / "out"
-    files = [f.name for f in save_dir.glob("*")]
-    logger.warning(f"dump_rdb in files? {'dump.rdb' in files}")
-    logger.warning(f"files={files}")
-    if "dump.rdb" in files:
-        logger.error(f"Moving dump.rdb to dump-{now}.rdb")
-        shutil.move(str(save_dir / "dump.rdb"), str(save_dir / f"dump-{now}.rdb"))
-        files = [f.name for f in save_dir.glob("*")]
-        logger.warning(f"dump_rdb in files? {'dump.rdb' in files}")
-        logger.warning(f"files={files}")
-    files = [f.name for f in save_dir.glob("*")]
-    assert "dump.rdb" not in files
 
     # Stop background jobs (ie adaptive algs)
     rj.jsonset("reset", root, True)
@@ -598,6 +587,19 @@ def _reset(timeout: float = 5):
         _rj.flushdb(asynchronous=False)
         sleep(1)
         _rj.flushall(asynchronous=False)
+
+    now = datetime.now().isoformat()[: 10 + 6]
+
+    save_dir = ROOT_DIR / "out"
+    files = [f.name for f in save_dir.glob("*")]
+    logger.warning(f"dump_rdb in files? {'dump.rdb' in files}")
+    if "dump.rdb" in files:
+        logger.error(f"Moving dump.rdb to dump-{now}.rdb")
+        shutil.move(str(save_dir / "dump.rdb"), str(save_dir / f"dump-{now}.rdb"))
+        files = [f.name for f in save_dir.glob("*")]
+        logger.warning(f"after moving, dump_rdb in files? {'dump.rdb' in files}")
+    files = [f.name for f in save_dir.glob("*")]
+    assert "dump.rdb" not in files
 
     logger.warning("After reset, rj.keys=%s", rj.keys())
     rj.jsonset("responses", root, {})
@@ -836,7 +838,6 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
         try:
             perfs[ident] = await _get_alg_perf(ident)
         except Exception as e:
-            raise e
             logger.exception(e)
             perfs[ident] = None
 
@@ -859,8 +860,9 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
             for alg, data in perfs.items()
             if data
         }
-        query_db = {k: json.dumps(json_item(v)) for k, v in _query_db.items()}
-    except:
+        query_db = {k: json.dumps(json_item(v)) for k, v in _query_db.items() if v}
+    except Exception as e:
+        logger.exception(e)
         query_db = {"/": "Error getting query database stats"}
 
     return templates.TemplateResponse(

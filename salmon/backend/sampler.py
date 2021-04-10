@@ -73,6 +73,7 @@ class Runner:
         n_model_updates = 0
         rj.jsonset(f"alg-perf-{self.ident}", root, [])
         save_deadline = 0.0  # right away
+        data: List[Dict[str, Any]] = []
         for k in itertools.count():
             try:
                 loop_start = time()
@@ -93,6 +94,8 @@ class Runner:
                     __start = time()
                     self.clear_queries(rj)
                     datum["time_clearing"] = time() - __start
+                else:
+                    datum["cleared_queries"] = False
                 done = distributed.Event(name="pa_finished")
                 done.clear()
 
@@ -172,10 +175,39 @@ class Runner:
                 self.save()
                 datum["time_save"] = time() - _s
             datum["time_loop"] = time() - loop_start
-            rj.jsonarrappend(f"alg-perf-{self.ident}", root, datum)
+
+            data.append(datum)
             logger.info(datum)
-            f_sleep = client.submit(lambda: sleep(self.sleep_))
-            done = f_sleep.result()
+            posting_deadline = data[0]["time"] + 2 * 60
+            if time() >= posting_deadline or k == 10 or k == 20:
+                keys = data[-1].keys()
+                to_post = {}
+                for _k in keys:
+                    vals = [d.get(_k, None) for d in data]
+                    vals = [v for v in vals if v]
+                    if not len(vals):
+                        continue
+                    if isinstance(vals[0], (int, np.integer)):
+                        Type = int
+                    elif isinstance(vals[0], (float, np.floating)):
+                        Type = float
+                    else:
+                        continue
+                    _update = {
+                        f"{_k}_median": np.median(vals),
+                        f"{_k}_mean": np.mean(vals),
+                        f"{_k}_min": np.min(vals),
+                        f"{_k}_max": np.max(vals),
+                    }
+                    if _k == "time":
+                        _update = {"time": _update["time_median"]}
+                    to_post.update({k: Type(v) for k, v in _update.items()})
+
+                rj.jsonarrappend(f"alg-perf-{self.ident}", root, to_post)
+                data = []
+
+            client.submit(lambda: sleep(self.sleep_)).result()
+
             if "reset" in rj.keys() and rj.jsonget("reset", root):
                 logger.warning(f"Resetting {self.ident}")
                 self.reset(client, rj)
