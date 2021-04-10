@@ -206,17 +206,11 @@ class Runner:
                 rj.jsonarrappend(f"alg-perf-{self.ident}", root, to_post)
                 data = []
 
-            client.submit(lambda: sleep(self.sleep_)).result()
-
             if "reset" in rj.keys() and rj.jsonget("reset", root):
                 logger.warning(f"Resetting {self.ident}")
                 self.reset(client, rj)
                 break
         return True
-
-    @property
-    def sleep_(self):
-        return 0
 
     def save(self) -> bool:
         rj2 = self.redis_client(decode_responses=False)

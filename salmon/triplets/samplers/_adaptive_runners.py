@@ -1,6 +1,6 @@
 import itertools
 from collections import defaultdict
-from time import time, sleep
+from time import time
 from textwrap import dedent
 from typing import List, TypeVar, Tuple, Dict, Any, Optional
 from copy import deepcopy
@@ -107,10 +107,6 @@ class Adaptive(Runner):
             "optimizer": optimizer,
             **kwargs,
         }
-
-    @property
-    def sleep_(self):
-        return 0
 
     def get_query(self) -> Tuple[Optional[Dict[str, int]], Optional[float]]:
         if self.meta["num_ans"] <= self.R * self.n:
