@@ -1,7 +1,7 @@
 .. _experiments:
 
-Adaptive algorithm performance
-==============================
+Adaptive algorithms
+===================
 
 Adaptive algorithms decide which questions to ask about, instead of asking
 about a random question like random sampling. This can mean that higher
