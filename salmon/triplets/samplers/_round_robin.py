@@ -3,7 +3,7 @@ from typing import List, Tuple
 import numpy as np
 
 from .utils import Answer, Query
-from ...backend.sampler import Runner
+from ...backend.sampler import Runner, Path
 
 
 logger = logging.getLogger(__name__)
@@ -55,4 +55,6 @@ class RoundRobin(Runner):
         return self, False
 
     def run(self, *args, **kwargs):
+        rj = self.redis_client()
+        rj.jsonset(f"stopped-{self.ident}", Path("."), True)
         return None

@@ -5,7 +5,7 @@ from typing import List, Tuple, Optional
 import numpy as np
 
 from .utils import Answer, Query
-from salmon.backend.sampler import Runner, root, DaskClient
+from salmon.backend.sampler import Runner, root, DaskClient, Path
 
 logger = logging.getLogger(__name__)
 
@@ -42,4 +42,6 @@ class RandomSampling(Runner):
         return self, False
 
     def run(self, *args, **kwargs):
+        rj = self.redis_client()
+        rj.jsonset(f"stopped-{self.ident}", Path("."), True)
         return None
