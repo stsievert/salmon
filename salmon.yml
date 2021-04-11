@@ -5,21 +5,25 @@ channels:
   - pytorch
   - anaconda
 dependencies:
-  - python==3.7.*  # skorch doesn't officialy support 3.8 yet
-  - Cython
-  - numba
+  - python>=3.7.0
+  - pip
   - numpy>=1.18.0
   - scipy
   - pandas>=1.0.1
+  - Cython
+  - numba
   - scikit-learn
-  - pip
   - nomkl
   - dask>=2.30.0
   - distributed>=2.30.0
+  - lz4
+  - python-blosc
+  - tini==0.18.0
+  - cytoolz
   - ujson
   - msgpack-python>=1.0.0  # some issues w/ FORTE
   - msgpack-numpy  # some issues w/ FORTE
-  - pytorch==1.4.*  # skorch doesn't support 1.5 yet
+  - pytorch
   - cpuonly
   - nb_conda_kernels
   - pip:

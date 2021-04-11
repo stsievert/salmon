@@ -13,7 +13,7 @@ setup(
     description="Efficient crowdsourcing of triplet queries",
     author="Scott Sievert",
     author_email="dev@stsievert.com",
-    url="https://stsievert.com/salmon",
+    url="https://docs.stsievert.com/salmon",
     packages=["salmon"],
     #  install_requires=requirements,
 )
