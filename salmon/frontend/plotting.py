@@ -13,6 +13,7 @@ from bokeh.models import (
     ImageURL,
     Legend,
     NumeralTickFormatter,
+    tickers,
 )
 from bokeh.palettes import brewer, d3
 from bokeh.embed import json_item
@@ -411,8 +412,8 @@ async def _get_response_rate_plots(timestamps: pd.Series):
     timestamps = timestamps.sort_values()
     timestamps -= timestamps.min()
 
-    window = 2
-    _rates_per_sec = (timestamps / window).astype(int).value_counts()
+    window = 1
+    _rates_per_sec = timestamps.astype(int).value_counts()
     rates_per_sec = _rates_per_sec.value_counts().sort_index()
     rates = rates_per_sec.index
     prob = rates_per_sec.to_numpy() / rates_per_sec.sum()
@@ -421,16 +422,18 @@ async def _get_response_rate_plots(timestamps: pd.Series):
 
     rates = np.array(rates.tolist() + [rates.max() + 1])
 
+    x = rates - 1
     p1 = _make_hist(
         "Rate responses received",
         f"Rate (responses/sec over {window}s)",
         prob,
-        rates - 1.0,
+        x,
         width=300,
         toolbar_location=None,
-        x_range=(0, max(4, rates.max())),
+        x_range=(x.min(), x.max()),
     )
-    p1.xaxis.ticker = list(range(1000))
+    p1.xaxis.ticker = tickers.BasicTicker(min_interval=1)
+    p1.xaxis[0].formatter = NumeralTickFormatter(format="0,0")
     p1.yaxis.axis_label = "Probability (empirical)"
     p1.yaxis[0].formatter = NumeralTickFormatter(format="0%")
 

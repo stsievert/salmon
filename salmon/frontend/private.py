@@ -801,8 +801,6 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
         plots["response_rate_cdf"] = {"/": "exception"}
         plots["gaps_histogram"] = {"/": "exception"}
         response_meta = {}
-    else:
-        rates = {}
 
     try:
         endpoint_timing = await plotting.get_endpoint_time_plots()
@@ -853,6 +851,8 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
         k: json.dumps(json_item(v)) if not isinstance(v, str) else v
         for k, v in _alg_perfs.items()
     }
+    if not len(alg_perfs):
+        alg_perfs = {"no sampler timings": "none"}
 
     try:
         _query_db = {
@@ -864,6 +864,8 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
     except Exception as e:
         logger.exception(e)
         query_db = {"/": "Error getting query database stats"}
+    if not len(query_db):
+        query_db = {"no queries in database": "none"}
 
     return templates.TemplateResponse(
         "dashboard.html",
