@@ -28,7 +28,7 @@ dependencies:
   - nb_conda_kernels
   - pip:
     - fastapi[all]
-    - skorch==0.8.0
+    - skorch>=0.8.0
     - pyarrow
     - fastparquet
     - dask-ml
