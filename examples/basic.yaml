@@ -1,4 +1,4 @@
-targets: 30
+targets: 10
 d: 2
 max_queries: 100
 samplers:

@@ -2,11 +2,5 @@ instructions: Which of the comparison objects is most similar to the target obje
 debrief: Thanks! Please enter this participant ID in the assignment.
 max_queries: 100  # took about 2.05 minutes for 100 queries
 d: 2
-sampling:
-  probs: {"ARR": 80, "RandomSampling": 20}
 samplers:
-  ARR:
-    module: "CKL"
-    module__mu: 0.05
-    random_state: 42
-  RandomSampling: {}
+  ARR: {}
