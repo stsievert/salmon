@@ -191,7 +191,7 @@ class OfflineEmbedding(BaseEstimator):
             if (
                 (self.verbose and k % self.verbose == 0)
                 or abs(self.max_epochs - k) <= 10
-                or k <= 100
+                or (k <= 100 and k % 5 == 0)
             ):
                 datum = deepcopy(self._meta)
                 datum.update(self.opt_.meta_)
