@@ -132,12 +132,13 @@ class OfflineEmbedding(BaseEstimator):
                 max_epochs=self.max_epochs,
             )
             kwargs.update(self.kwargs)
-            self.opt = OGD(**kwargs)
-            # TODO: change defaults for Embedding and children
-        self.opt.push(X_train)
+            opt = OGD(**kwargs)
+        else:
+            opt = self.opt
+        opt.push(X_train)
         self._meta: Dict[str, Number] = {"pf_calls": 0}
 
-        self.opt_ = self.opt
+        self.opt_ = opt
         self._history_ = []
         self.initialized_ = True
         return self
