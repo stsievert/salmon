@@ -28,10 +28,11 @@ $ git push --set-upstream origin paper
 
 Then, I click on the big green button GitHub provides:
 
+![Pull request button]("docs/source/imgs/pull-request.png")
+
 ## Seeking more support?
 
-Email me at `salmon@stsievert.com`. I'll (very likely) be curious to hear about
-your project.
+Email me at `salmon@stsievert.com`.
 
 
 [fork-docs]:https://docs.github.com/en/github/getting-started-with-github/fork-a-repo
