@@ -19,21 +19,20 @@ please follow this workflow:
 In practice, I make changes to my fork/branch and push my changes:
 
 ``` shell
+$ # fork Salmon on GitHub
 $ git clone https://github.com/USERNAME/salmon.git
-$ # make changes
 $ git checkout -b new-feature
 $ # make changes
-$ git push --set-upstream origin paper
+$ git push --set-upstream origin new-feature
 ```
 
 Then, I click on the big green button GitHub provides:
 
-![Pull request button](docs/source/imgs/pull-request.png)
+<img src="docs/source/imgs/pull-request.png" width="400px" />
 
 ## Seeking more support?
 
 Email me at `salmon@stsievert.com`.
-
 
 [fork-docs]:https://docs.github.com/en/github/getting-started-with-github/fork-a-repo
 [Salmon source]:https://github.com/stsievert/salmon
