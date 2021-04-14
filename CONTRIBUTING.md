@@ -13,7 +13,7 @@ Changes to Salmon are greatly appreciated. If you'd like to submit a change,
 please follow this workflow:
 
 1. Fork on Salmon on GitHub ([docs][fork-docs], [Salmon source]).
-2. Make changes.
+2. Make changes on a new branch.
 3. Submit a pull request ([docs][pr-docs]).
 
 In practice, I make changes to my fork/branch and push my changes:
