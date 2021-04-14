@@ -28,7 +28,7 @@ $ git push --set-upstream origin paper
 
 Then, I click on the big green button GitHub provides:
 
-![Pull request button]("docs/source/imgs/pull-request.png")
+![Pull request button](docs/source/imgs/pull-request.png)
 
 ## Seeking more support?
 
