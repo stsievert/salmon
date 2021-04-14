@@ -9,10 +9,9 @@ are of the form "is object :math:`a` more similar to object :math:`b` or
    :width: 300px
    :align: center
 
-These queries are interesting because they provide some relative similarity
-structure: a response might indicate that object :math:`a` is closer to object
-:math:`b` than object :math:`c` as determined by humans and the instructions
-they are given. For example, these triplet queries have been used by
+These queries provide a relative similarity measure: a response indicates that
+object :math:`a` is closer to object :math:`b` than object :math:`c` as
+determined by humans. For example, these triplet queries have been used by
 psychologists to determine what facial emotions human find similar:
 
 .. image:: imgs/face-embedding.png
@@ -27,6 +26,11 @@ can be configured to only require (say) 10,000 answers from crowdsourcing
 partipants to be (say) 95% confident in the result. Other approaches or Salmon
 by default will require more responses to triplet queries (say 20,000) to reach
 the same confidence.
+
+If you'd like to report bugs/issues, or improve Salmon please see `Salmon's
+contribution guide`_.
+
+.. _Salmon's contribution guide: https://github.com/stsievert/salmon/blob/master/CONTRIBUTING.md
 
 .. toctree::
    :maxdepth: 2

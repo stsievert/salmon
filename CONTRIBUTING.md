@@ -16,6 +16,8 @@ please follow this workflow:
 2. Make changes on a new branch.
 3. Submit a pull request ([docs][pr-docs]).
 
+This generally follows [GitHub Flow][git-flow].
+
 In practice, I make changes to my fork/branch and push my changes:
 
 ``` shell
@@ -28,7 +30,7 @@ $ git push --set-upstream origin new-feature
 
 Then, I click on the big green button GitHub provides:
 
-<img src="docs/source/imgs/pull-request.png" width="400px" />
+<img src="docs/source/imgs/pull-request.png" width="500px" />
 
 ## Seeking more support?
 
@@ -37,3 +39,4 @@ Email me at `salmon@stsievert.com`.
 [fork-docs]:https://docs.github.com/en/github/getting-started-with-github/fork-a-repo
 [Salmon source]:https://github.com/stsievert/salmon
 [pr-docs]:https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork
+[git-flow]:https://guides.github.com/introduction/flow/
