@@ -21,11 +21,14 @@ psychologists to determine what facial emotions human find similar:
 Only distance is relevant in this embedding, not the vertical/horizontal axes.
 However, if you look closely, you can see two axes: positivity and intensity.
 
-Salmon provides efficient methods for collecting these triplet queries.  Salmon
-can be configured to only require (say) 10,000 answers from crowdsourcing
-partipants to be (say) 95% confident in the result. Other approaches or Salmon
-by default will require more responses to triplet queries (say 20,000) to reach
-the same confidence.
+**Salmon provides efficient methods for collecting these triplet queries.**
+Typically, generating embeddings above require far too many human responses.
+Salmon provides the ability to generate the same embeddings with fewer human
+responses – in our experiments, about 1,000 queries are required to reach a
+particular quality level instead of about 3,000 queries. If you're paying for
+each human response (say on Mechanical Turk), this means that collecting
+responses will be reduced by a factor of 3 when compared with naive methods of
+collecting triplet queries.
 
 If you'd like to report bugs/issues, or improve Salmon please see `Salmon's
 contribution guide`_.
