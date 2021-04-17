@@ -144,7 +144,7 @@ class Adaptive(Runner):
                 break
         queries = np.concatenate(ret_queries).astype(int)
         scores = np.concatenate(ret_scores)
-        #  queries = self._sort_query_order(queries)
+        queries = self._sort_query_order(queries)
 
         ## Rest of this function takes about 450ms
         df = pd.DataFrame(queries)
