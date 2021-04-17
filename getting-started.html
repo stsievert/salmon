@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Starting an experiment &mdash; Salmon v0.6.1rc1 documentation</title>
+  <title>Starting an experiment &mdash; Salmon v0.6.1rc2 documentation</title>
   
 
   
@@ -105,7 +105,7 @@
 <p class="caption"><span class="caption-text">Benchmarks</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="benchmarks/server.html">Concurrent Users</a></li>
-<li class="toctree-l1"><a class="reference internal" href="benchmarks/adaptive.html">Adaptive algorithm performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarks/adaptive.html">Adaptive algorithms</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithm Developers</span></p>
 <ul>
@@ -227,13 +227,15 @@ the specification <a class="reference external" href="https://learnxinyminutes.c
 is valid, go to <a class="reference external" href="https://yamlchecker.com/">https://yamlchecker.com/</a>.</p>
 <p>Here’s an example <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code> YAML file for initialization:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: init.yaml</span>
-<span class="nt">targets</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">1</span><span class="p p-Indicator">,</span> <span class="nv">2</span><span class="p p-Indicator">,</span> <span class="nv">3</span><span class="p p-Indicator">,</span> <span class="nv">4</span><span class="p p-Indicator">,</span> <span class="nv">5</span><span class="p p-Indicator">]</span>
+<span class="nt">targets</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">1</span><span class="p p-Indicator">,</span> <span class="nv">2</span><span class="p p-Indicator">,</span> <span class="nv">3</span><span class="p p-Indicator">,</span> <span class="nv">4</span><span class="p p-Indicator">,</span> <span class="nv">5</span><span class="p p-Indicator">,</span> <span class="nv">6</span><span class="p p-Indicator">,</span> <span class="nv">7</span><span class="p p-Indicator">,</span> <span class="nv">8</span><span class="p p-Indicator">,</span> <span class="nv">9</span><span class="p p-Indicator">,</span> <span class="nv">10</span><span class="p p-Indicator">]</span>
 <span class="nt">instructions</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Select the item on the bottom most similar to the item on the top.</span>
 <span class="nt">debrief</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Thanks! Use the participant ID below in Mechnical Turk.</span>
-<span class="nt">max_queries</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">25</span>
+<span class="nt">max_queries</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">100</span>
 <span class="nt">samplers</span><span class="p">:</span>
-  <span class="nt">RandomSampling</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
   <span class="nt">ARR</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
+  <span class="nt">RandomSampling</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
+<span class="nt">sampling</span><span class="p">:</span>
+  <span class="nt">probs</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="s">&quot;ARR&quot;</span><span class="p p-Indicator">:</span> <span class="nv">80</span><span class="p p-Indicator">,</span> <span class="s">&quot;RandomSampling&quot;</span><span class="p p-Indicator">:</span> <span class="nv">20</span><span class="p p-Indicator">}</span>
 </pre></div>
 </div>
 <p>The top-level elements like <code class="docutils literal notranslate"><span class="pre">max_queries</span></code> and <code class="docutils literal notranslate"><span class="pre">targets</span></code> are called “keys”

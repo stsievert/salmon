@@ -63,13 +63,15 @@ Here's an example ``init.yaml`` YAML file for initialization:
 .. code-block:: yaml
 
    # file: init.yaml
-   targets: [1, 2, 3, 4, 5]
+   targets: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
    instructions: Select the item on the bottom most similar to the item on the top.
    debrief: Thanks! Use the participant ID below in Mechnical Turk.
-   max_queries: 25
+   max_queries: 100
    samplers:
-     RandomSampling: {}
      ARR: {}
+     RandomSampling: {}
+   sampling:
+     probs: {"ARR": 80, "RandomSampling": 20}
 
 The top-level elements like ``max_queries`` and ``targets`` are called "keys"
 in YAML jargon. Here's documentation for each key:
