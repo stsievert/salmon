@@ -162,7 +162,7 @@ class Adaptive(Runner):
     def process_answers(self, answers: List[Answer]):
         if not len(answers):
             self.meta["empty_pa_calls"] += 1
-            if self.meta["empty_pa_calls"] >= 10:
+            if self.meta["empty_pa_calls"] >= 20:
                 self.meta["empty_pa_calls"] = 0
                 return self, True
 
@@ -197,7 +197,7 @@ class Adaptive(Runner):
             max_epochs = 50
 
         # max_epochs above for completely random initializations
-        self.opt.set_params(max_epochs=max_epochs * 2)
+        self.opt.set_params(max_epochs=max_epochs)
 
         valid_ans = self.opt.answers_[:n_ans]
         self.opt.fit(valid_ans)
