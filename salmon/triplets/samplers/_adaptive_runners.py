@@ -99,7 +99,12 @@ class Adaptive(Runner):
 
         self.search = search
         self.search.push([])
-        self.meta = {"num_ans": 0, "model_updates": 0, "process_answers_calls": 0}
+        self.meta = {
+            "num_ans": 0,
+            "model_updates": 0,
+            "process_answers_calls": 0,
+            "empty_pa_calls": 0,
+        }
         self.params = {
             "n": n,
             "d": d,
@@ -139,7 +144,7 @@ class Adaptive(Runner):
                 break
         queries = np.concatenate(ret_queries).astype(int)
         scores = np.concatenate(ret_scores)
-        queries = self._sort_query_order(queries)
+        #  queries = self._sort_query_order(queries)
 
         ## Rest of this function takes about 450ms
         df = pd.DataFrame(queries)
@@ -148,7 +153,7 @@ class Adaptive(Runner):
         return queries[idx], scores[idx], {}
 
     @staticmethod
-    def _sort_query_order(queries: np.ndarray)-> np.ndarray:
+    def _sort_query_order(queries: np.ndarray) -> np.ndarray:
         mins = np.minimum(queries[:, 1], queries[:, 2])
         maxs = np.maximum(queries[:, 1], queries[:, 2])
         queries[:, 1], queries[:, 2] = mins, maxs
@@ -156,21 +161,23 @@ class Adaptive(Runner):
 
     def process_answers(self, answers: List[Answer]):
         if not len(answers):
-            return self, False
+            self.meta["empty_pa_calls"] += 1
+            if self.meta["empty_pa_calls"] >= 10:
+                self.meta["empty_pa_calls"] = 0
+                return self, True
 
         self.meta["num_ans"] += len(answers)
         self.meta["process_answers_calls"] += 1
         logger.debug("self.meta = %s", self.meta)
         logger.debug("self.R, self.n = %s, %s", self.R, self.n)
 
+        # fmt: off
         alg_ans = [
-            (
-                a["head"],
-                a["winner"],
-                a["left"] if a["winner"] == a["right"] else a["right"],
-            )
+            (a["head"], a["winner"],
+             a["left"] if a["winner"] == a["right"] else a["right"])
             for a in answers
         ]
+        # fmt: on
         self.search.push(alg_ans)
         self.search.embedding = self.opt.embedding()
         self.opt.push(alg_ans)
@@ -190,9 +197,7 @@ class Adaptive(Runner):
             max_epochs = 50
 
         # max_epochs above for completely random initializations
-        # Use max_epochs // 2 because online and will already be
-        # partially fit
-        self.opt.set_params(max_epochs=max_epochs)
+        self.opt.set_params(max_epochs=max_epochs * 2)
 
         valid_ans = self.opt.answers_[:n_ans]
         self.opt.fit(valid_ans)
