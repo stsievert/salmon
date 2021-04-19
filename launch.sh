@@ -3,8 +3,16 @@
 # Currently so don't have to rebuild docker machines; see
 # https://github.com/dask/dask-docker/pull/108
 
+export SALMON_NPROC=$(getconf _NPROCESSORS_ONLN)
+
+# chose nthreads=1 because best practice [1]
+# [1]: https://docs.dask.org/en/latest/array-best-practices.html#avoid-oversubscribing-threads
+export OMP_NUM_THREADS=1
+export MKL_NUM_THREADS=1
+export OPENBLAS_NUM_THREADS=1
+
 dask-scheduler --host 127.0.0.2 --port 8786 --dashboard-address :8787 &
-dask-worker --nprocs 3 127.0.0.2:8786 &
+dask-worker --nprocs $SALMON_NPROC --nthreads 1 127.0.0.2:8786 &
 
 if [ $SALMON_DEBUG ]
 then

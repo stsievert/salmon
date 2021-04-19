@@ -38,6 +38,7 @@ the same confidence.
    offline
    algorithms
    api
+   faq
 
 .. toctree::
    :maxdepth: 2
