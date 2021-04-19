@@ -188,10 +188,9 @@ class OfflineEmbedding(BaseEstimator):
             if self.opt_.meta_["num_grad_comps"] >= self.max_epochs * len(X_train):
                 break
 
-            if (
-                (self.verbose and k % self.verbose == 0)
-                or abs(self.max_epochs - k) <= 10
-                or (k <= 100 and k % 5 == 0)
+            to_check = list(range(11)) + [20, 35, 50, 70, 100, 200, 400, 500, 700, 1000]
+            if self.verbose and (
+                k % self.verbose == 0 or abs(self.max_epochs - k) <= 3 or k in to_check
             ):
                 datum = deepcopy(self._meta)
                 datum.update(self.opt_.meta_)
