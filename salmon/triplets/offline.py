@@ -70,6 +70,7 @@ class OfflineEmbedding(BaseEstimator):
         ident="",
         noise_model="SOE",
         random_state=None,
+        eps=1e-4,
         **kwargs,
     ):
         self.opt = opt
@@ -80,6 +81,7 @@ class OfflineEmbedding(BaseEstimator):
         self.ident = ident
         self.noise_model = noise_model
         self.random_state = random_state
+        self.eps = eps
         self.kwargs = kwargs
 
     @property
@@ -201,6 +203,12 @@ class OfflineEmbedding(BaseEstimator):
                 datum["_elapsed_time"] = time() - _start
                 show = {k: _print_fmt(datum[k]) for k in keys}
                 self._history_.append(datum)
+                if k >= 2 * max(to_check) and k > 10 * self.verbose:
+                    _p = self._history_[-2]
+                    _c = self._history_[-1]
+                    if _c["score_test"] < _p["score_test"] + self.eps:
+                        break
+
             if self.verbose and k % self.verbose == 0:
                 print(show)
 
