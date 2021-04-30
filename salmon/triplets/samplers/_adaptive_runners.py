@@ -11,7 +11,7 @@ import pandas as pd
 import torch.optim
 
 import salmon.triplets.samplers.adaptive as adaptive
-from salmon.backend import Runner
+from ...backend.sampler import Runner
 from salmon.triplets.samplers._random_sampling import \
     _get_query as _random_query
 from salmon.triplets.samplers.adaptive import InfoGainScorer, UncertaintyScorer

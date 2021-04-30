@@ -39,6 +39,7 @@ dependencies:
     - redis>=3.0.0
     - matplotlib
     - gunicorn
+    - python-multipart  # optional dep required by gunicorn
     - starlette-prometheus
     - sphinx
     - numpydoc
