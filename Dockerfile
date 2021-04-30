@@ -6,7 +6,6 @@ RUN conda -V
 
 COPY salmon.yml /salmon/salmon.yml
 RUN conda env update --file /salmon/salmon.yml --prefix $(which python)/../..
-RUN pip install --ignore-installed PyYAML
 
 # to view Dask dashboard
 RUN pip install jupyter-server-proxy
