@@ -66,7 +66,8 @@ def test_offline_embedding():
     assert isinstance(model.history_, list)
     assert all(isinstance(h, dict) for h in model.history_)
     epochs = model.history_[-1]["num_grad_comps"] / len(X_train)
-    assert max_epochs - 0.3 <= epochs <= max_epochs + 0.3
+    eps = 0.75
+    assert max_epochs - eps <= epochs <= max_epochs + eps
 
 
 def test_offline_embedding_random_state():
