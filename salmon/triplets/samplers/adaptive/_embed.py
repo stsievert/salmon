@@ -35,6 +35,7 @@ class Embedding(BaseEstimator):
     An optimization algorithm that produces an embedding from human responses
     of the form ``[head, winner, loser]``.
     """
+
     def __init__(
         self,
         module,
@@ -273,33 +274,17 @@ class GD(Embedding):
 
 
 class OGD(Embedding):
-    def __init__(self, shuffle=True, dwell=1, **kwargs):
-        self.shuffle = shuffle
+    def __init__(self, dwell=30, **kwargs):
         self.dwell = dwell
         super().__init__(**kwargs)
 
     def get_train_idx(self, n_ans):
         bs = self.initial_batch_size
         if self.dwell > 0 and self.meta_["model_updates"] % self.dwell == 0:
-            bs += int(self.meta_["model_updates"] / (5 * self.dwell))
+            bs += int(self.meta_["model_updates"] / (30 * self.dwell))
         n_idx = min(bs, n_ans)
         rng = np.random.RandomState()
-
-        if self.shuffle:
-            return rng.choice(n_ans, size=n_idx, replace=True)
-
-        ## Assume answers are ordered by time stamp
-        limit = 10 * self.module__n
-        n_active_idx = max(0, n_idx - limit)
-
-        if n_ans <= limit:
-            return rng.choice(n_ans, size=n_idx, replace=True)
-
-        rand_idx = np.arange(limit)
-        active_idx = np.arange(limit, limit + n_active_idx)
-
-        ret = np.hstack((rand_idx, active_idx)).astype(int)
-        return ret[:n_idx]
+        return rng.choice(n_ans, size=n_idx, replace=False)
 
 
 class Damper(Embedding):

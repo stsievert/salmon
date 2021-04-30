@@ -67,7 +67,7 @@ class OfflineEmbedding(BaseEstimator):
         opt=None,
         verbose=1000,
         ident="",
-        noise_model="SOE",
+        noise_model="CKL",
         random_state=None,
         **kwargs,
     ):
