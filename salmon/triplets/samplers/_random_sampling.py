@@ -1,11 +1,12 @@
 import logging
 from time import sleep
-from typing import List, Tuple, Optional
+from typing import List, Optional, Tuple
 
 import numpy as np
 
+from salmon.backend.sampler import DaskClient, Path, Runner, root
+
 from .utils import Answer, Query
-from salmon.backend.sampler import Runner, root, DaskClient, Path
 
 logger = logging.getLogger(__name__)
 

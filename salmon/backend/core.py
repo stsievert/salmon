@@ -1,8 +1,8 @@
-import os
 import json
+import os
 import random
-import traceback
 import threading
+import traceback
 from typing import Dict, Union
 
 import cloudpickle
@@ -10,10 +10,11 @@ from dask.distributed import Client as DaskClient
 from dask.distributed import fire_and_forget
 from fastapi import BackgroundTasks, FastAPI, HTTPException
 from fastapi.responses import PlainTextResponse
-from starlette.exceptions import HTTPException as StarletteHTTPException
 from rejson import Client, Path
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from salmon.frontend.utils import ServerException
+
 from ..triplets import samplers
 from ..utils import get_logger
 

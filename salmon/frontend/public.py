@@ -1,5 +1,5 @@
-import random
 import pathlib
+import random
 from copy import copy
 from datetime import datetime, timedelta
 from textwrap import dedent
@@ -8,19 +8,18 @@ from typing import Dict, Union
 
 import numpy as np
 import requests as httpx
+import ujson
 from fastapi import FastAPI
-from rejson import Client, Path
 from redis.exceptions import ResponseError
+from rejson import Client, Path
 from starlette.requests import Request
 from starlette.staticfiles import StaticFiles
 from starlette.templating import Jinja2Templates
-from starlette_prometheus import metrics, PrometheusMiddleware
-
-import ujson
+from starlette_prometheus import PrometheusMiddleware, metrics
 
 from ..triplets import manager
-from .utils import ServerException, sha256
 from ..utils import get_logger
+from .utils import ServerException, sha256
 
 logger = get_logger(__name__)
 

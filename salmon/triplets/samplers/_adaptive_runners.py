@@ -1,20 +1,21 @@
 import itertools
 from collections import defaultdict
-from time import time
-from textwrap import dedent
-from typing import List, TypeVar, Tuple, Dict, Any, Optional
 from copy import deepcopy
+from textwrap import dedent
+from time import time
+from typing import Any, Dict, List, Optional, Tuple, TypeVar
 
-import torch.optim
 import numpy as np
 import numpy.linalg as LA
 import pandas as pd
+import torch.optim
 
 import salmon.triplets.samplers.adaptive as adaptive
-from salmon.triplets.samplers.adaptive import InfoGainScorer, UncertaintyScorer
 from salmon.backend import Runner
+from salmon.triplets.samplers._random_sampling import \
+    _get_query as _random_query
+from salmon.triplets.samplers.adaptive import InfoGainScorer, UncertaintyScorer
 from salmon.utils import get_logger
-from salmon.triplets.samplers._random_sampling import _get_query as _random_query
 
 logger = get_logger(__name__)
 

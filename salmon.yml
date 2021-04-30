@@ -1,4 +1,4 @@
-name: salmon
+name: salmon2
 channels:
   - conda-forge
   - defaults
@@ -19,11 +19,8 @@ dependencies:
   - distributed>=2.30.0
   - lz4
   - python-blosc
-  - tini==0.18.0
   - cytoolz
   - ujson
-  - msgpack-python>=1.0.0  # some issues w/ FORTE
-  - msgpack-numpy  # some issues w/ FORTE
   - pytorch
   - cpuonly
   - nb_conda_kernels
@@ -42,7 +39,6 @@ dependencies:
     - rejson
     - httpx
     - aiofiles
-    - altair
     - matplotlib
     - joblib
     - gunicorn

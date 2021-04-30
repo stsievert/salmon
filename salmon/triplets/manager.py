@@ -1,8 +1,8 @@
+import random
 from datetime import datetime, timedelta
 from typing import Any, Dict, List
-import random
-import numpy as np
 
+import numpy as np
 from pydantic import BaseModel
 
 

@@ -1,10 +1,10 @@
 import logging
 from typing import List, Tuple
+
 import numpy as np
 
+from ...backend.sampler import Path, Runner
 from .utils import Answer, Query
-from ...backend.sampler import Runner, Path
-
 
 logger = logging.getLogger(__name__)
 

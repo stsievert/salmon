@@ -6,14 +6,13 @@ import numpy as np
 import torch
 import torch.optim as optim
 from numba import jit, prange
-from skorch.net import NeuralNet
+from scipy.special import binom
+from sklearn.base import BaseEstimator
 from skorch.dataset import Dataset as SkorchDataset
+from skorch.net import NeuralNet
+from skorch.utils import is_dataset
 from torch.nn.modules.loss import _Loss
 from torch.utils.data import TensorDataset
-
-from sklearn.base import BaseEstimator
-from scipy.special import binom
-from skorch.utils import is_dataset
 
 from salmon.utils import get_logger
 

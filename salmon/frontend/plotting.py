@@ -1,28 +1,18 @@
-from math import pi
-from datetime import timedelta, datetime
-from typing import List
 import json
-
-from bokeh.plotting import figure, show
-from bokeh.models import (
-    ColumnDataSource,
-    Grid,
-    LinearAxis,
-    Plot,
-    Text,
-    ImageURL,
-    Legend,
-    NumeralTickFormatter,
-    tickers,
-)
-from bokeh.palettes import brewer, d3
-from bokeh.embed import json_item
+from datetime import datetime, timedelta
+from math import pi
+from typing import List
 
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import requests
+from bokeh.embed import json_item
+from bokeh.models import (ColumnDataSource, Grid, ImageURL, Legend, LinearAxis,
+                          NumeralTickFormatter, Plot, Text, tickers)
+from bokeh.palettes import brewer, d3
+from bokeh.plotting import figure, show
 
 from .utils import get_logger, image_url
 

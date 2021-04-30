@@ -1,12 +1,13 @@
+from pathlib import Path
+
 import numpy as np
 import numpy.linalg as LA
 import pandas as pd
-from sklearn.model_selection import train_test_split
-from pathlib import Path
 import pytest
+from sklearn.model_selection import train_test_split
 
-from salmon.triplets.samplers import TSTE
 from salmon.triplets.offline import OfflineEmbedding
+from salmon.triplets.samplers import TSTE
 
 
 def test_score_predict_basic():

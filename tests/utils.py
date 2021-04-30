@@ -1,13 +1,13 @@
 import json
+from logging import getLogger
 from pathlib import Path
 from time import sleep
 from typing import Tuple
-from logging import getLogger
 from warnings import warn
 
+import httpx as requests
 import numpy as np
 import pytest
-import httpx as requests
 import yaml
 from sklearn.utils import check_random_state
 

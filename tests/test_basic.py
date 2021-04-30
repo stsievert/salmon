@@ -3,20 +3,18 @@ import json
 import os
 import pickle
 import random
+from datetime import datetime, timedelta
 from pathlib import Path
 from time import sleep, time
 from typing import Tuple
-from datetime import datetime, timedelta
 
 import numpy as np
 import pandas as pd
-import requests
 import pytest
+import requests
 import yaml
-from joblib import Parallel, delayed
-from requests.auth import HTTPBasicAuth, HTTPDigestAuth
 
-from .utils import server, logs
+from .utils import logs, server
 
 
 def test_basics(server, logs):

@@ -9,10 +9,10 @@ import numpy as np
 import pandas as pd
 import pytest
 import yaml
-from joblib import Parallel, delayed
 
-from .utils import server, logs, LogError
 from salmon.triplets.samplers import TSTE
+
+from .utils import LogError, logs, server
 
 
 def test_backend_basics(server, logs):

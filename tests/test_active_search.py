@@ -1,9 +1,11 @@
 import itertools
+
 import numpy as np
 from sklearn.utils import check_random_state
 
-from salmon.triplets.samplers.adaptive import InfoGainScorer
 from salmon.triplets.samplers import TSTE
+from salmon.triplets.samplers.adaptive import InfoGainScorer
+
 from .utils import alien_egg
 
 

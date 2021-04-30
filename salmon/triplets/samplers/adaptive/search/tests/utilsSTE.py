@@ -14,11 +14,12 @@ You may also consider getLoss to check how well an embedding is performing.
 """
 
 from __future__ import print_function
-from numpy import *
-from numpy.random import *
+
 import numpy.random
-from numpy.linalg import *
 from numba import jit
+from numpy import *
+from numpy.linalg import *
+from numpy.random import *
 
 # eig = numpy.linalg
 norm = linalg.norm

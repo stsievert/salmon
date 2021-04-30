@@ -1,20 +1,19 @@
 import itertools
-import pandas as pd
-import numpy as np
-from time import time
-from copy import deepcopy, copy
-from typing import Dict, Union
+from copy import copy, deepcopy
 from numbers import Number
+from time import time
+from typing import Dict, Union
 
-from sklearn.model_selection import train_test_split
+import numpy as np
+import pandas as pd
+import torch
+import torch.optim as optim
 from sklearn.base import BaseEstimator
 from sklearn.exceptions import NotFittedError
-import torch.optim as optim
-import torch
+from sklearn.model_selection import train_test_split
 
-from salmon.triplets.samplers.adaptive import GD, OGD
-from salmon.triplets.samplers.adaptive import CKL
 import salmon.triplets.samplers.adaptive as adaptive
+from salmon.triplets.samplers.adaptive import CKL, GD, OGD
 
 
 def _get_params(opt_):

@@ -1,51 +1,42 @@
 import asyncio
 import hashlib
-import os
 import itertools
 import json
+import os
 import pathlib
 import pprint
-import sys
 import shutil
+import sys
 import traceback
 from copy import deepcopy
 from datetime import datetime, timedelta
 from io import StringIO
 from textwrap import dedent
 from time import sleep, time
-from typing import Any, Dict, Optional, List
+from typing import Any, Dict, List, Optional
 
+import numpy as np
 import pandas as pd
 import requests as httpx
-import numpy as np
 import yaml
 from bokeh.embed import json_item
-from fastapi import Depends, File, HTTPException, Form
-from fastapi.responses import (
-    HTMLResponse,
-    JSONResponse,
-    PlainTextResponse,
-    FileResponse,
-)
+from fastapi import Depends, File, Form, HTTPException
+from fastapi.responses import (FileResponse, HTMLResponse, JSONResponse,
+                               PlainTextResponse)
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
+from redis import ResponseError
 from rejson import Client, Path
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.requests import Request
 from starlette.status import HTTP_401_UNAUTHORIZED, HTTP_409_CONFLICT
-from redis import ResponseError
-
 
 import salmon
+
 from ..triplets import manager
 from . import plotting
 from .public import _ensure_initialized, app, templates
-from .utils import (
-    ServerException,
-    _extract_zipfile,
-    _format_target,
-    get_logger,
-    _format_targets,
-)
+from .utils import (ServerException, _extract_zipfile, _format_target,
+                    _format_targets, get_logger)
 
 security = HTTPBasic()
 

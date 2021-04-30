@@ -1,15 +1,16 @@
 import itertools
 import random
 from pprint import pprint
-from time import time, sleep
-from typing import List, TypeVar, Tuple, Dict, Any, Optional
+from time import sleep, time
+from typing import Any, Dict, List, Optional, Tuple, TypeVar
 
 import cloudpickle
-import numpy as np
 import dask.distributed as distributed
-from redis.exceptions import ResponseError
-from rejson import Client as RedisClient, Path
+import numpy as np
 from dask.distributed import Client as DaskClient
+from redis.exceptions import ResponseError
+from rejson import Client as RedisClient
+from rejson import Path
 
 from ..utils import get_logger
 
