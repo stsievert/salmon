@@ -12,7 +12,6 @@ dependencies:
   - pandas>=1.0.1
   - Cython
   - scikit-learn
-  - PyYAML
   - dask>=2020.12.0
   - distributed>=2020.12.0
   - lz4
@@ -45,3 +44,5 @@ dependencies:
     - numpydoc
     - sphinx_rtd_theme
     - pytest
+    - jupyter-server-proxy  # to view Dask dashboard
+    - PyYAML==5.4.1  # pinned because of bug on CI; 'no mapping allowed here'
