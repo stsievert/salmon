@@ -5,7 +5,6 @@ from typing import List, Tuple, Union
 import numpy as np
 import torch
 import torch.optim as optim
-from numba import jit, prange
 from scipy.special import binom
 from sklearn.base import BaseEstimator
 from skorch.dataset import Dataset as SkorchDataset

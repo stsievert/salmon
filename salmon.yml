@@ -1,4 +1,4 @@
-name: salmon2
+name: salmon
 channels:
   - conda-forge
   - defaults
@@ -11,12 +11,10 @@ dependencies:
   - scipy
   - pandas>=1.0.1
   - Cython
-  - numba
   - scikit-learn
   - PyYAML
-  - nomkl
-  - dask>=2.30.0
-  - distributed>=2.30.0
+  - dask>=2020.12.0
+  - distributed>=2020.12.0
   - lz4
   - python-blosc
   - cytoolz
@@ -24,23 +22,22 @@ dependencies:
   - pytorch
   - cpuonly
   - nb_conda_kernels
+  - nomkl
   - pip:
-    - fastapi[all]
+    - fastapi
+    - uvicorn[standard]
+    - rejson
+    - httpx
+    - aiofiles
     - skorch>=0.8.0
     - pyarrow
     - fastparquet
     - dask-ml
-    - bokeh==2.0.1
+    - bokeh>=2.0.1,<3
     - cloudpickle
-    - seaborn
-    - uvicorn[standard]
     - jinja2
     - redis>=3.0.0
-    - rejson
-    - httpx
-    - aiofiles
     - matplotlib
-    - joblib
     - gunicorn
     - starlette-prometheus
     - sphinx

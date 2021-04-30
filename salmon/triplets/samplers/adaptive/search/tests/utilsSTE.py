@@ -16,7 +16,6 @@ You may also consider getLoss to check how well an embedding is performing.
 from __future__ import print_function
 
 import numpy.random
-from numba import jit
 from numpy import *
 from numpy.linalg import *
 from numpy.random import *
@@ -85,7 +84,6 @@ def main():
     print("Training loss = %f,   Test loss = %f" % (emp_loss_train, emp_loss_test))
 
 
-@jit
 def getRandomQuery(X):
     """
     Outputs a triplet [i,j,k] chosen uniformly at random from all possible triplets 
@@ -117,7 +115,6 @@ def getRandomQuery(X):
     return q, score
 
 
-@jit
 def getTripletScore(X, q):
     """
     Given X,q=[i,j,k] returns score = ||x_j - x_k||^2 - ||x_i - x_k||^2
@@ -165,7 +162,6 @@ def getLoss(X, S, alpha):
     return emp_loss, hinge_loss, log_loss
 
 
-@jit
 def getSTETripletProbability(i, j, k, alpha=1):
     """
     Return the probability of triplet [i,l,j] where a is closer to b than c.

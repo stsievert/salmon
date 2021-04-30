@@ -1,5 +1,4 @@
 import numpy as np
-from numba import jit, prange
 from sklearn.base import BaseEstimator
 
 import salmon.utils as utils
