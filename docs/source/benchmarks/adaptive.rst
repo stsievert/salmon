@@ -3,10 +3,40 @@
 Adaptive algorithms
 ===================
 
+Experimentalists often ask "how many responses should I collect?" Let's
+investigate how the choice of the number of targets :math:`n` and embedding
+dimension :math:`d` influence the number of responses required to achieve an
+accurate embedding.
+
 Adaptive algorithms decide which questions to ask about, instead of asking
-about a random question like random sampling. This can mean that higher
-accuracies are reached sooner, or that less human responses are required to
-reach a particular accuracy.
+random questions. This can mean that higher accuracies are reached sooner, or
+that less human responses are required to reach a particular accuracy. This
+might enable you to ask about more items.
+
+To illustrate the difference between random and active sampling, let's run some
+experiments with the "alien eggs" dataset.  For :math:`n=30` objects, that
+dataset looks like the following:
+
+.. image:: imgs/alien-eggs.png
+   :width: 100%
+   :align: center
+
+This dataset is characterized by one parameter, the "smoothness" of each egg,
+so they have a 1D embedding. However, let's embed into :math:`d=2` dimensions
+to simulate a mistake and to mirror prior work. [2]_ Unless explicitly
+mentioned, let's compare random and active sampling with this snippet of
+``init.yaml``:
+
+.. code-block:: yaml
+
+   d: 2
+   samplers:
+     ARR: {random_state: 42}  # active or adaptive sampling
+     RandomSampling: {}  # random sampling
+
+The "ARR" stands for "active round robin." That is, the head rotates through
+available choices ("round robin") and for each head, the best comparisons are
+chosen (by some measure with information gain).
 
 This page will be concerned with the data scientist workflow, and every
 experiment below will use the same workflow a data scientists would:
@@ -16,54 +46,100 @@ experiment below will use the same workflow a data scientists would:
 3. Download the human responses from Salmon
 4. Generate the embedding offline.
 
-Unless explicitly mentioned, every experiment on this page will use the "alien
-eggs" dataset that's characterized by one parameter, the "smoothness" of each
-egg. For :math:`n=30` objects, that dataset looks like the following:
+Every graph shows points with this data flow. Each point shown only changes the
+number of responses available or the sampling method used. [#]_
 
-.. image:: imgs/alien-eggs.png
-   :width: 100%
-   :align: center
-
-These are characterized by one parameter, and have a 1D embedding. However,
-let's embed into :math:`d=2` dimensions to simulate a mistake and to mirror
-prior work. [2]_ Unless explicitly mentioned, let's compare random and active
-sampling with this ``init.yaml`` configuration:
-
-.. code-block:: yaml
-
-   samplers:
-     ARR: {random_state: 42}  # active or adaptive sampling
-     RandomSampling: {}  # random sampling
-
-The "ARR" stands for "active round robin." That is, the head rotates through
-available choices ("round robin") and for each head, the best comparisons are
-chosen (by some measure with information gain).
+.. [#] For random sampling, the order is also shuffled (not the case for active).
 
 .. note::
 
    This page shows results of experiments run with Salmon.
    For complete details, see https://github.com/stsievert/salmon-experiments
 
+.. _exp-baseline:
+
+Baseline
+--------
+First, let's run a basic experiment, one that will very closely mirror prior
+work: [2]_ let's develop a noise model from their collected responses and
+submit responses at the same time as their responses.
+
+Let's do this many times, and generate a graph of how many responses are
+required to reach a particular accuracy:
+
+.. image:: TODO
+   :width: 100%
+   :align: center
+
+Astute observers might notice that this isn't great performance when comparing
+with prior work. [2]_ However, the noise model we developed isn't perfect;
+turns out it generates embeddings that are about 1.5% less accurate.
+
+However, the experimentalist often cares about the underlying structure more
+than the accuracy. Here's some embeddings for particular accuracy levels on
+human responses:
+
+.. image:: imgs/embeddings-n=30.svg
+   :width: 100%
+   :align: center
+
+.. note::
+
+   Only relative distances matter in these embeddings. It doesn't matter
+   how the embedding is rotated, or how the axes are scaled.
+
+Number of targets
+-----------------
+
+**How does the number of targets influence embedding quality?** Users of Salmon
+frequently have a variable number of target items. For example, they might be
+asking about colors -- a continuous space, so they can easily change the
+"number of targets."
+
+To examine that, let's run the same experiment above, but with 30, 90, 180 and
+300 "alien eggs." Here's the number of responses required to reach a particular
+accuracy to *simulated* human responses:
+
+.. image:: TODO
+   :width: 100%
+   :align: center
+
+Here's the underlying embeddings for :math:`n = 180` for various accuracy
+levels on *simulated* human responses:
+
+.. image:: imgs/embeddings-n=180.svg
+   :width: 100%
+   :align: center
+
+"Test accuracy: 80%" means "80% accurate on simulated human responses not used
+for training." The local accuracy gets much better as accuracy increases. The
+global structure is correct for all these embeddings, but the local detail in
+the 83% accurate embedding is
+
 Response rate
 -------------
 
-This section will provide evidence for the following points:
+One detail has been swept under the rug: the rate at which Salmon received
+responses. There would be no gain from adaptive algorithms if all 10,000
+responses were received in 1 second. In fact, the response rate above is
+variable:
 
-1. **Using adaptive sampling will not degrade embedding quality or accuracy.**
-2. **Adaptive sampling finds higher quality embeddings with fewer responses.**
-   In one case, adaptive sampling required about 1,250 responses instead of
-   3,500 responses like random sampling to reach ground truth accuracy of 97%.
-3. **However, response rate determines how much adaptive gains are possible.**
-   Having 10 concurrent users will likely still present adaptive gains, but
-   they'll be smaller than if there were only 5 concurrent users.
+.. image:: imgs/dashboard-rate.png
+   :width: 75%
+   :align: center
 
-The experiment to confirm these points has been run with (functionally) Salmon
-v0.6.0. In this experiment, the number of users varies between 1 concurrent
-user to 10 concurrent users with a mean response time of 1 second. This matters
-for adaptive sampling because there will be less time for
-computation/searching. It doesn't matter for random sampling because no
-computation/searching is performed. How does the response rate affect the
-embedding accuracy?
+Here's a summary of the server side timings:
+
+.. image:: imgs/dashboard-server-side.png
+   :width: 75%
+   :align: center
+
+**How does this variable response rate affect adaptive gains?** Let's run the
+same data flow as above, but with a constant response rate and (functionally)
+Salmon v0.6.0. In this experiment, the number of users varies between 1
+concurrent user to 10 concurrent users with a mean response time of 1 second.
+Here's the performance we see for :math:`n=30` alien eggs (the same setup as in
+:ref:`exp-baseline`).
 
 .. image:: imgs/accuracy.png
    :width: 100%
@@ -86,27 +162,6 @@ introduction paper, [2]_ the authors found "no evidence for gains from adaptive
 sampling" for (nearly) the same problem. [#same]_
 
 
-Simulation with human responses
--------------------------------
-
-*This section uses the Zappos shoe dataset, not the alien eggs dataset*
-
-The Zappos shoe dataset has :math:`n=85` shoes, and asks every possible triplet
-4 times to crowdsourcing users. Let's run a simulation with Salmon on that that
-dataset. We'll embed into :math:`d = 3` dimensions, and have a response rate of
-about 2.5 response/sec (5 users with an average response time of 2.5 seconds).
-
-Let's again compare adaptive sampling and random sampling:
-
-.. image:: imgs/zappos.png
-   :width: 600px
-   :align: center
-
-The likelihood of a true response conveys "margin by which the models adhere to
-all responses." [1]_ The performance above mirrors the performance by Heim et
-al. in their Figure 3. [1]_
-
-
 .. rubric:: References
 
 .. [1] "Active Perceptual Similarity Modeling with Auxiliary Information" by E.
@@ -117,6 +172,10 @@ al. in their Figure 3. [1]_
        of Active Learning" by K. Jamieson, L. Jain, C. Fernandez, N. Glattard
        and R. Nowak. 2017.
        http://papers.nips.cc/paper/5868-next-a-system-for-real-world-development-evaluation-and-application-of-active-learning.pdf
+
+.. [3] "Finite Sample Prediction and Recovery Bounds for Ordinal Embedding."
+       Jain, Jamieson, & Nowak, (2016).
+       https://papers.nips.cc/paper/2016/file/4e0d67e54ad6626e957d15b08ae128a6-Paper.pdf
 
 
 
