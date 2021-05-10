@@ -38,12 +38,8 @@ affect the embeddings.
 .. note::
 
    Generally, the number of responses required to reach a certain embedding
-   quality scales like :math:`nd\log_2(n)`.  [3]_ [4]_ i.e, if an embedding
-   below requires 5,000 responses for :math:`n=30`, scaling to :math:`n=40`
-   with :math:`d=1` would likely require about 3,600 responses for the same
-   dataset.
-
-   More detail is in the FAQ ":ref:`faq-n_responses`."
+   quality scales like :math:`nd\log_2(n)`.  [3]_ [4]_
+   For more detail, see the FAQ ":ref:`faq-n_responses`."
 
 
 Setup
@@ -108,16 +104,20 @@ required to reach a particular accuracy:
    :width: 100%
    :align: center
 
-As with the NEXT paper, [2]_ "nearest neighbor accuracy" means "is the true
-nearest neighbor one of the three closest objects?" Astute observers might
-notice that this isn't great performance when comparing with prior work. [2]_
-However, the noise model we developed isn't perfect; turns out it generates
-embeddings that are about 1.5% less accurate.
+This graph uses the same test set as the NEXT paper, and (mis)defines "nearest
+neighbor accuracy" as "is the true nearest neighbor one of the three closest
+objects?" [2]_ Astute observers might notice that this isn't great performance
+when compared with NEXT's results. However, the noise model we developed isn't
+perfect; turns out it generates embeddings that are about 1.5% less accurate
+(shown below).
 
-However, the experimentalist often cares about the underlying structure more
-than the accuracy. To start, let's assume that there's no clear relationship
-between items. Then, this visualization is most appropriate for the embeddings
-of particular accuracies:
+How good is the embedding?
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Experimentalist often cares about the underlying structure more than the
+accuracy. To start, let's assume that there's no clear relationship between
+items. Then, this visualization is most appropriate for the embeddings of
+particular accuracies:
 
 .. image:: imgs/embeddings-n=30-colorless.svg
    :width: 90%
@@ -140,10 +140,10 @@ on:
 Number of targets
 -----------------
 
-**How does the number of targets influence embedding quality?** Users of Salmon
-frequently have a variable number of target items. For example, they might be
-asking about colors -- a continuous space, so they can easily change the
-"number of targets."
+Users of Salmon frequently have a variable number of target items. For example,
+they might be asking about colors -- a continuous space, so they can easily
+change the "number of targets." So, **how does the number of targets influence
+embedding quality?**
 
 To examine that, let's run the same experiment above, but with 30, 90, 180 and
 300 "alien eggs." Here's the number of responses required to reach a particular
@@ -167,8 +167,9 @@ levels on *simulated* human responses:
 
 "Test accuracy: 80%" means "80% accurate on simulated human responses not used
 for training." The local accuracy gets much better as accuracy increases. To
-visualize that, let's look at the average items closer than the true nearest
-neighbor:
+visualize the structure of the underlying embedding, let's look at the
+**average items closer than the true nearest neighbor**. The smaller this value
+is, the smoother the color gradient is above.
 
 .. figure:: imgs/N-true-NN-dist.png
    :width: 100%
@@ -180,6 +181,10 @@ neighbor:
    region/solid line has the same meaning as above, the interquartile range and
    median.
 
+If the embedding were a 1D manifold but not quite perfect, [#perfect]_ the
+value on this plot would be 0.5. As with accuracy, there's a clear advantage to
+active sampling -- active sampling requires a lot fewer responses to obtain a
+high quality embedding in this simulation.
 
 Response rate
 -------------
@@ -261,3 +266,7 @@ sampling" for (nearly) the same problem. [#same]_
 
 .. [#noise] Specifically, with a noise model developed the human responses collected
             for Fig. 3 of the NEXT paper. [2]_
+
+.. [#perfect] "Not quite perfect" means "1D manifold with a constant distance
+              to the nearest neighbor: an embedding with coordinates ``[[1, 0],
+              [2, 0], [3, 0], ..., [n - 1, 0]]``.

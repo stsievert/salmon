@@ -11,21 +11,29 @@ Depends on the targets used, and how humans respond. Let's say there are
 we can provide bounds on how many responses you'll need:
 
 * **Lower bound:** at least :math:`nd\log_2(n)` responses are needed for a
-  perfect embedding (aka sorting :math:`n` items in :math:`d` dimensions
-  independently). Triplet embeddings have been shown in obey this bound. [1]_
+  `perfect` embedding with noiseless responses. Active triplet algorithms
+  require :math:`\Omega(nd\log_2(n))` responses (so a constant number of
+  responses more/less). [1]_
 * **Upper bound:** if random responses are collected, a high quality embedding
-  will likely be generated with :math:`20 nd \log_2(n)` responses, possibly
-  :math:`10 nd \log_2(n)`. [2]_
+  will likely be generated with :math:`O(nd\log_2(n))` responses, likely
+  :math:`20 nd \log_2(n)` responses (or possibly :math:`10 nd \log_2(n)`). [2]_
 
-See the :ref:`benchmarks on active sampling <experiments>` for more detail and
-specific numbers.
+This suggests that the number of responses required when :math:`n` and
+:math:`d` are changed scaled like :math:`nd\log_2(n)`.  i.e, if an embedding
+below requires 5,000 responses for :math:`n=30`, scaling to :math:`n=40` with
+:math:`d=1` would likely require about :math:`3600 \approx 5000\frac{40 \cdot 1
+\cdot \log_2(40)}{30\cdot 2 \cdot \log_2(30)}` responses for the same dataset.
+
+See the :ref:`benchmarks on active sampling <experiments>` for some
+benchmarks/landmarks on the specific number of responses required for a
+particular dataset.
 
 What adaptive algorithms are recommended?
 -----------------------------------------
 
-We recommend :class:`~salmon.triplets.samplers.ARR` for triplet scenarios.  See
-the :ref:`benchmarks on active sampling <experiments>` for an example
-configuration.
+Use of :class:`~salmon.triplets.samplers.ARR` is most recommended.  See the
+:ref:`benchmarks on active sampling <experiments>` for an example
+configuration and the number of responses required for that usage.
 
 Can I choose a different machine?
 ---------------------------------
