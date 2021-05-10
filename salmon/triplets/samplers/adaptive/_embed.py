@@ -65,7 +65,8 @@ class Embedding(BaseEstimator):
         initial_batch_size : int, optional (default: 512)
             The optimizer's (initial) batch size.
         kwargs : dict, optional
-            Additional keyword arguments to pass to Skorch's ``NeuralNet``.
+            Additional keyword arguments to pass the underlying noise model
+            (CKL, TSTE, etc).
         """
         self.module = module
         self.module__n = module__n

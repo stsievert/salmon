@@ -63,8 +63,16 @@ Every active algorithm inherits from one class:
 
 The class :class:`~salmon.triplets.samplers.Adaptive` runs the adaptive algorithm
 and depends on :class:`~salmon.triplets.samplers.adaptive.Embedding` for
-optimization. To customize the optimization, all extra keyword arguments are
-passed to the optimizer.
+optimization:
+
+.. autosummary::
+   :toctree: generated/
+   :template: only-init.rst
+
+   salmon.triplets.samplers.adaptive.Embedding
+
+To customize the optimization, all extra keyword arguments are passed to the
+optimizer.
 
 Then, all of these classes inherit from
 :class:`~salmon.triplets.samplers.Adaptive`:

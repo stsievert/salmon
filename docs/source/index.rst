@@ -22,11 +22,18 @@ psychologists to determine what facial emotions human find similar:
 Only distance is relevant in this embedding, not the vertical/horizontal axes.
 However, if you look closely, you can see two axes: positivity and intensity.
 
-Salmon provides efficient methods for collecting these triplet queries.  Salmon
-can be configured to only require (say) 10,000 answers from crowdsourcing
-partipants to be (say) 95% confident in the result. Other approaches or Salmon
-by default will require more responses to triplet queries (say 20,000) to reach
-the same confidence.
+Salmon provides efficient methods for collecting these triplet queries. For
+example, Salmon can generate an accurate embedding from only 1,000 responses in
+certain use cases. For the same use case, other approaches might require 2,000
+responses. More detail is in the :ref:`benchmarks on active sampling
+<experiments>`.
+
+Users
+=====
+
+Salmon is currently being actively used by several  psychologists at the
+University of Wisconsin--Madison, and has seen serious interest from the Air
+Force Research Lab and a psychologist at Louisiana State University.
 
 .. toctree::
    :maxdepth: 2
@@ -45,7 +52,7 @@ the same confidence.
    :caption: Benchmarks
 
    benchmarks/server
-   benchmarks/adaptive
+   benchmarks/active
 
 .. toctree::
    :maxdepth: 2

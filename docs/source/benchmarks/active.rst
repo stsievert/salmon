@@ -13,15 +13,16 @@ random questions. This can mean that higher accuracies are reached sooner, or
 that less human responses are required to reach a particular accuracy. This
 might enable you to ask about more items.
 
-Let's compare using active and random sampling with Salmon. Below, we'll run
-simulations that provide evidence for the following points:
+Let's compare using active and random sampling with Salmon. Simulations have
+been run and have presented evidence that suggest the following claims are
+true:
 
-1. Salmon's active sampling requires **fewer** human responses than random
-   sampling for crowdsourcing.
-2. Salmon's active sampling works well regardless of the number of targets
+1. Random sampling requires about **2–3× more human responses** than Salmon's
+   active sampling.
+2. Salmon's active sampling works well for any (practical) number of targets
    :math:`n`.
-3. Even if the **response rate is high,** Salmon performs (approximately) the
-   same as random sampling.
+3. Even if **responses are received very quickly,** Salmon's active sampling
+   (almost always) performs no worse than random sampling.
 
 First, let's walk through the experimental setup before detailing how Salmon's
 active sampling performs when compared with previous work. [2]_ Then, let's
@@ -174,9 +175,10 @@ neighbor:
    :align: center
 
    The average number of items closer than the true nearest neighbor. The upper
-   limit represents a very moderately accurate embedding, not quite as good as
-   the 80% embedding above. The shaded region/solid line has the same meaning
-   as above, the interquartile range and median.
+   limit on the y-axis represents a very moderately accurate embedding,
+   slightly worse than the 80% accurate embedding above. The shaded
+   region/solid line has the same meaning as above, the interquartile range and
+   median.
 
 
 Response rate

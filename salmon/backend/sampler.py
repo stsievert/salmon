@@ -38,6 +38,9 @@ class Runner:
         self.meta_ = []
 
     def redis_client(self, decode_responses=True) -> RedisClient:
+        """
+        Get the database (/Redis client)
+        """
         return RedisClient(host="redis", port=6379, decode_responses=decode_responses)
 
     def run(self, client: DaskClient):
@@ -214,6 +217,9 @@ class Runner:
         return True
 
     def save(self) -> bool:
+        """
+        Save the runner's state and current embedding to the database.
+        """
         rj2 = self.redis_client(decode_responses=False)
 
         out = cloudpickle.dumps(self)
@@ -336,6 +342,9 @@ class Runner:
         raise NotImplementedError
 
     def clear_queries(self, rj: RedisClient) -> bool:
+        """
+        Clear all queries that this runner has posted from the database.
+        """
         rj.delete(f"alg-{self.ident}-queries")
         return True
 
@@ -346,6 +355,23 @@ class Runner:
         rj: Optional[RedisClient] = None,
         done=None,
     ) -> int:
+        """
+        Post scored queries to the database.
+
+        Parameters
+        ----------
+        queries : List[Query]
+            Queries to post to the database
+        scores : List[float]
+            The scores for each query
+        rj : RedisClient, optional
+            The databaase
+
+        Returns
+        -------
+        n_queries : int
+            The number of queries posted to the database.
+        """
         if rj is None:
             rj = self.redis_client()
 
@@ -390,11 +416,17 @@ class Runner:
         return n_queries
 
     def serialize_query(self, q: Query) -> str:
+        """
+        Serialize a query (so it can go in the database).
+        """
         # TODO: use ast.literal_eval or json.loads
         h, a, b = q
         return f"{h}-{a}-{b}"
 
     def get_answers(self, rj: RedisClient, clear: bool = True) -> List[Answer]:
+        """
+        Get all answers the frontend has received.
+        """
         if not clear:
             raise NotImplementedError
         key = f"alg-{self.ident}-answers"

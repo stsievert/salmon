@@ -115,12 +115,14 @@ class Adaptive(Runner):
         }
 
     def get_query(self) -> Tuple[Optional[Dict[str, int]], Optional[float]]:
+        """Randomly select a query where there are few responses"""
         if self.meta["num_ans"] <= self.R * self.n:
             head, left, right = _random_query(self.n)
             return {"head": int(head), "left": int(left), "right": int(right)}, -9999
         return None, -9999
 
     def get_queries(self, num=None, stop=None) -> Tuple[List[Query], List[float], dict]:
+        """Get and score many queries."""
         if num:
             queries, scores = self.search.score(num=num)
             return queries[:num], scores[:num]
@@ -161,6 +163,11 @@ class Adaptive(Runner):
         return queries
 
     def process_answers(self, answers: List[Answer]):
+        """Process answers from the database.
+
+        This function requires pulling from the database, and feeding those
+        answers to the underlying optimization algorithm.
+        """
         if not len(answers):
             self.meta["empty_pa_calls"] += 1
             if self.meta["empty_pa_calls"] >= 20:
@@ -206,6 +213,9 @@ class Adaptive(Runner):
         return self, True
 
     def get_model(self) -> Dict[str, Any]:
+        """
+        Get the embedding alongside other related information.
+        """
         return {
             "embedding": self.search.embedding.tolist(),
             **self.meta,
@@ -249,13 +259,32 @@ class Adaptive(Runner):
         return right_closer.astype("uint8")
 
     def score(self, X, y, embedding=None):
+        """
+        Evaluate to see if current embedding agrees with the provided queries.
+
+        Parameters
+        ----------
+        X : array-like, shape (n, 3)
+            The columns should be aranged
+        y : array-like, shape (n, )
+            The answers to specific queries. The ``i``th value should be 0 if
+            ``X[i, 1]`` won the query and 1 if ``X[i, 2]`` won the query.
+        embedding : array-like, optional
+            The embedding to use instead of the current embedding.
+            The values in ``X`` will be treated as indices to this array.
+
+        Returns
+        -------
+        acc : float
+            The percentage of queries that agree with the current embedding.
+
+        """
         y_hat = self.predict(X, embedding=embedding)
         return (y_hat == y).mean()
 
 
 class TSTE(Adaptive):
-    """
-    The t-Distributed STE (t-STE) embedding algorithm [1]_.
+    """The t-Distributed STE (t-STE) embedding algorithm [1]_.
 
     Notes
     -----
@@ -300,8 +329,7 @@ class TSTE(Adaptive):
 
 
 class ARR(Adaptive):
-    """
-    A randomized round robin algorithm.
+    """A randomized round robin algorithm.
 
     Notes
     -----
@@ -362,8 +390,7 @@ class ARR(Adaptive):
 
 
 class STE(Adaptive):
-    """
-    The Stochastic Triplet Embedding [1]_.
+    """The Stochastic Triplet Embedding [1]_.
 
     References
     ----------
@@ -383,8 +410,7 @@ class STE(Adaptive):
 
 
 class GNMDS(Adaptive):
-    """
-    The Generalized Non-metric Multidimensional Scaling embedding [1]_.
+    """The Generalized Non-metric Multidimensional Scaling embedding [1]_.
 
     References
     ----------
@@ -404,8 +430,7 @@ class GNMDS(Adaptive):
 
 
 class CKL(Adaptive):
-    """
-    The crowd kernel embedding. Proposed in [1]_.
+    """The crowd kernel embedding. Proposed in [1]_.
 
     References
     ----------
@@ -426,10 +451,10 @@ class CKL(Adaptive):
 
 
 class SOE(Adaptive):
-    """
-    The soft ordinal embedding detailed by Terada et al. [1]_ This is evaluated
-    as "SOE" by Vankadara et al., [2]_ in which they use the hinge loss on the
-    distances (not squared distances).
+    """The soft ordinal embedding detailed by Terada et al. [1]_
+
+    This is evaluated as "SOE" by Vankadara et al., [2]_ in which they use the
+    hinge loss on the distances (not squared distances).
 
     References
     ----------
