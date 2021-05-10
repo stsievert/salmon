@@ -1,52 +1,17 @@
 .. _experiments:
 
-Active sampling
-===============
+Adaptive algorithms
+===================
 
-Experimentalists often ask **"how many responses should I collect with
-Mechanical Turk?"** It'd be nice to obtain high quality embeddings with few
-human responses, both to reduce expenses and to ask informative questions for
-humans.
+Experimentalists often ask "how many responses should I collect?" Let's
+investigate how the choice of the number of targets :math:`n` and embedding
+dimension :math:`d` influence the number of responses required to achieve an
+accurate embedding.
 
-Active sampling decides which questions to ask about, instead of asking
+Adaptive algorithms decide which questions to ask about, instead of asking
 random questions. This can mean that higher accuracies are reached sooner, or
 that less human responses are required to reach a particular accuracy. This
 might enable you to ask about more items.
-
-Let's compare using active and random sampling with Salmon. Below, we'll run
-simulations that provide evidence for the following points:
-
-1. Salmon's active sampling requires **fewer** human responses than random
-   sampling for crowdsourcing.
-2. Salmon's active sampling works well regardless of the number of targets
-   :math:`n`.
-3. Even if the **response rate is high,** Salmon performs (approximately) the
-   same as random sampling.
-
-First, let's walk through the experimental setup before detailing how Salmon's
-active sampling performs when compared with previous work. [2]_ Then, let's
-investigate how changing the number of targets :math:`n` and the response rate
-affect the embeddings.
-
-.. warning::
-
-   All results on this page are for a specific dataset with simulated human
-   responses. Other papers provide evidence of active gains; [1]_ however, they
-   are more moderate than the results here.
-
-.. note::
-
-   Generally, the number of responses required to reach a certain embedding
-   quality scales like :math:`nd\log_2(n)`.  [3]_ [4]_ i.e, if an embedding
-   below requires 5,000 responses for :math:`n=30`, scaling to :math:`n=40`
-   with :math:`d=1` would likely require about 3,600 responses for the same
-   dataset.
-
-   More detail is in the FAQ ":ref:`faq-n_responses`."
-
-
-Setup
------
 
 To illustrate the difference between random and active sampling, let's run some
 experiments with the "alien eggs" dataset.  For :math:`n=30` objects, that
@@ -82,7 +47,9 @@ experiment below will use the same workflow a data scientists would:
 4. Generate the embedding offline.
 
 Every graph shows points with this data flow. Each point shown only changes the
-number of responses available or the sampling method used. [#shuffle]_
+number of responses available or the sampling method used. [#]_
+
+.. [#] For random sampling, the order is also shuffled (not the case for active).
 
 .. note::
 
@@ -93,12 +60,9 @@ number of responses available or the sampling method used. [#shuffle]_
 
 Baseline
 --------
-
 First, let's run a basic experiment, one that will very closely mirror prior
-work: [2]_ let's take the :math:`n= 30` objects above and embed them into
-:math:`d=2` dimensions. To mirror their setup, let's develop a noise model from
-their collected responses and submit responses at the same time as their
-responses.
+work: [2]_ let's develop a noise model from their collected responses and
+submit responses at the same time as their responses.
 
 Let's do this many times, and generate a graph of how many responses are
 required to reach a particular accuracy:
@@ -107,29 +71,22 @@ required to reach a particular accuracy:
    :width: 100%
    :align: center
 
-As with the NEXT paper, [2]_ "nearest neighbor accuracy" means "is the true
+As with the NEXT paper,[2]_ "nearest neighbor accuracy" means "is the true
 nearest neighbor one of the three closest objects?" Astute observers might
 notice that this isn't great performance when comparing with prior work. [2]_
 However, the noise model we developed isn't perfect; turns out it generates
 embeddings that are about 1.5% less accurate.
 
 However, the experimentalist often cares about the underlying structure more
-than the accuracy. To start, let's assume that there's no clear relationship
-between items. Then, this visualization is most appropriate for the embeddings
-of particular accuracies:
-
-.. image:: imgs/embeddings-n=30-colorless.svg
-   :width: 90%
-   :align: center
-
-These embeddings are remarkably simple, and have a clear and known
-relationship. Because of that, let's show the embeddings with colors from now
-on:
+than the accuracy. Here's some embeddings for particular accuracy levels on
+human responses:
 
 .. image:: imgs/embeddings-n=30.svg
-   :width: 95%
+   :width: 100%
    :align: center
 
+The "alien eggs" are very simple and have a clear relationship, the reason the
+colors are shown for the "smoothness" of the alien eggs.
 
 .. note::
 
@@ -148,14 +105,9 @@ To examine that, let's run the same experiment above, but with 30, 90, 180 and
 300 "alien eggs." Here's the number of responses required to reach a particular
 accuracy to *simulated* human responses:
 
-.. figure:: imgs/N-accuracy.png
+.. image:: TODO
    :width: 100%
    :align: center
-
-   The accuracy of simulated human responses for various number of responses.
-   The shaded region represents the 25–75% percentile among 10 runs, and the
-   solid line represents the median. The y-axis labels are shared with all
-   plots.
 
 Here's the underlying embeddings for :math:`n = 180` for various accuracy
 levels on *simulated* human responses:
@@ -165,19 +117,9 @@ levels on *simulated* human responses:
    :align: center
 
 "Test accuracy: 80%" means "80% accurate on simulated human responses not used
-for training." The local accuracy gets much better as accuracy increases. To
-visualize that, let's look at the average items closer than the true nearest
-neighbor:
-
-.. figure:: imgs/N-true-NN-dist.png
-   :width: 100%
-   :align: center
-
-   The average number of items closer than the true nearest neighbor. The upper
-   limit represents a very moderately accurate embedding, not quite as good as
-   the 80% embedding above. The shaded region/solid line has the same meaning
-   as above, the interquartile range and median.
-
+for training." The local accuracy gets much better as accuracy increases. The
+global structure is correct for all these embeddings, but the local detail in
+the 83% accurate embedding is
 
 Response rate
 -------------
@@ -240,14 +182,9 @@ sampling" for (nearly) the same problem. [#same]_
        Jain, Jamieson, & Nowak, (2016).
        https://papers.nips.cc/paper/2016/file/4e0d67e54ad6626e957d15b08ae128a6-Paper.pdf
 
-.. [4] "Low-dimensional embedding using adaptively selected ordinal data."
-       Jamieson, Nowak (2011).
-       https://homes.cs.washington.edu/~jamieson/resources/activeMDS.pdf
 
 
 .. rubric:: Footnotes
-
-.. [#shuffle] For random sampling, the order is also shuffled (not the case for active).
 
 .. [#same] Both experiment use :math:`n=30` objects and embed into :math:`d=2`
            dimensions. The human noise model used in the Salmon experiments is

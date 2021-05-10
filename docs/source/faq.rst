@@ -1,8 +1,13 @@
 FAQ
 ===
 
+.. _faq-n_responses:
+
 How many responses will be needed?
 ----------------------------------
+
+See the :ref:`benchmarks on active sampling <experiments>` for more detail and
+specific numbers.
 
 Depends on your targets, and how humans respond. Let's say you have :math:`n`
 targets that are being embedded into :math:`d` dimensions. At most, we can
@@ -15,9 +20,6 @@ provide bounds on how many responses you'll need:
 * **Upper bound:** if random responses are collected, you'll probably be fine
   with :math:`20 nd \log_2(n)` responses. You might be fine with :math:`10 nd
   \log_2(n)`. [2]_
-
-For how ever many responses random sampling requires, our experiments indicate
-about a factor of 2 or 3 less responses will be required.
 
 .. [1] "Low-dimensional embedding using adaptively selected ordinal data."
    Jamieson and Nowak. 2011. Allerton Conference on Communication, Control, and
