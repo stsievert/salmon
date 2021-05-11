@@ -7,6 +7,7 @@ RUN conda -V
 RUN pip install --ignore-installed PyYAML==5.4.1
 COPY salmon.yml /salmon/salmon.yml
 RUN conda env update --file /salmon/salmon.yml --prefix $(which python)/../..
+RUN pip install --ignore-installed PyYAML==5.4.1
 
 VOLUME /salmon
 VOLUME /data
