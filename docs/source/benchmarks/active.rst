@@ -105,13 +105,9 @@ responses are required to reach a particular accuracy:
    :width: 100%
    :align: center
 
-This graph uses the same test set as the NEXT paper, and (mis)defines "nearest
-neighbor accuracy" as the average response to "is the true nearest neighbor one
-of the three closest objects?" [2]_ (the reason for the ``*`` in the title).
-Astute observers might notice that the accuracy doesn't perform well when
-directly compared with NEXT's results. However, the developed noise model
-doesn't exactly mirror the human responses; it's about 1.5% less accurate
-(shown below).
+This graph uses the same test set as the NEXT paper, which (mis)defines
+"nearest neighbor accuracy" as "is the true nearest neighbor one of the three
+closest objects?" [2]_ (the reason for the ``*`` in the title). [#accuracy]_
 
 Embedding quality
 ^^^^^^^^^^^^^^^^^
@@ -269,6 +265,14 @@ sampling" for (nearly) the same problem. [#same]_
            actually runs crowdsourcing experiments; Salmon's noise model is
            generated from those responses).
 
+
+.. [#accuracy] Astute observers might notice that the accuracy doesn't perform
+               well when directly compared with NEXT's results. However, the
+               developed noise model doesn't exactly mirror the human
+               responses; it's about 1.5% less accurate (shown below).
+               However, the nearest neighbor accuracy is a measure of the
+               underlying embedding, and Salmon perform better than the NEXT
+               results.
 
 .. [#noise] Specifically, with a noise model developed the human responses collected
             for Fig. 3 of the NEXT paper. [2]_
