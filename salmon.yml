@@ -39,7 +39,7 @@ dependencies:
     - gunicorn
     - python-multipart  # optional dep required by gunicorn
     - starlette-prometheus
-    - sphinx
+    - sphinx>=4.0.0
     - numpydoc
     - sphinx_rtd_theme
     - pytest

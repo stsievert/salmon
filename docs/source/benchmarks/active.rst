@@ -13,19 +13,21 @@ random questions. This can mean that higher accuracies are reached sooner, or
 that less human responses are required to reach a particular accuracy. This
 might enable you to ask about more items.
 
-Let's compare using active and random sampling with Salmon. Simulations have
-been run and have presented evidence that suggest the following claims are
-true:
+Active sampling algorithms are difficult in this "triplet embedding" context,
+especially when in the crowdsourcing setting. **However, Salmon enables good
+performance of active sampling algorithms in crowdsourcing settings.**
+Specifically, there is evidence that Salmon provides the following features:
 
-1. Random sampling requires about **2–3× more human responses** than Salmon's
-   active sampling.
-2. Salmon's active sampling works well for any (practical) number of targets
+1. Salmon's active sampling works well for any (practical) number of targets
    :math:`n`.
+2. Random sampling requires about **2–3× more human responses** than Salmon's
+   active sampling.
 3. Even if **responses are received very quickly,** Salmon's active sampling
    (almost always) performs no worse than random sampling.
 
-First, let's walk through the experimental setup before detailing how Salmon's
-active sampling performs when compared with previous work. [2]_ Then, let's
+Simulations have been run for each of these points. To show these points, let's
+first walk through the experimental setup before detailing how Salmon's active
+sampling performs when compared with previous work. [2]_ Then, let's
 investigate how changing the number of targets :math:`n` and the response rate
 affect the embeddings.
 
@@ -55,9 +57,19 @@ dataset looks like the following:
 
 This dataset is characterized by one parameter, the "smoothness" of each egg,
 so they have a 1D embedding. However, let's embed into :math:`d=2` dimensions
-to simulate a mistake and to mirror prior work. [2]_ Unless explicitly
-mentioned, let's compare random and active sampling with this snippet of
-``init.yaml``:
+to simulate a mistake and to mirror prior work. [2]_ This page will be
+concerned with the data scientist workflow, and every experiment below will use
+the same workflow a data scientists would:
+
+1. Launch Salmon.
+2. Simulate human users. [#noise]_
+3. Download the human responses from Salmon
+4. Generate the embedding offline.
+
+Every graph shows points with this data flow. Each point shown only changes the
+number of responses available or the sampling method used. [#shuffle]_ Unless
+explicitly mentioned, let's compare random and active
+sampling with these ``init.yaml`` configurations:
 
 .. code-block:: yaml
 
@@ -66,20 +78,11 @@ mentioned, let's compare random and active sampling with this snippet of
      ARR: {random_state: 42}  # active or adaptive sampling
      RandomSampling: {}  # random sampling
 
-The "ARR" stands for "active round robin." That is, the head rotates through
+The "ARR" stands for "active round robin" and creates an instance of
+:class:`~salmon.triplets.samplers.ARR`. For this class, head rotates through
 available choices ("round robin") and for each head, the best comparisons are
 chosen (by some measure with information gain).
 
-This page will be concerned with the data scientist workflow, and every
-experiment below will use the same workflow a data scientists would:
-
-1. Launch Salmon.
-2. Simulate human users. [#noise]_
-3. Download the human responses from Salmon
-4. Generate the embedding offline.
-
-Every graph shows points with this data flow. Each point shown only changes the
-number of responses available or the sampling method used. [#shuffle]_
 
 .. note::
 
@@ -95,24 +98,23 @@ First, let's run a basic experiment, one that will very closely mirror prior
 work: [2]_ let's take the :math:`n= 30` objects above and embed them into
 :math:`d=2` dimensions. To mirror their setup, let's develop a noise model from
 their collected responses and submit responses at the same time as their
-responses.
-
-Let's do this many times, and generate a graph of how many responses are
-required to reach a particular accuracy:
+responses.  Let's do this many times, and generate a graph of how many
+responses are required to reach a particular accuracy:
 
 .. image:: imgs/next.png
    :width: 100%
    :align: center
 
 This graph uses the same test set as the NEXT paper, and (mis)defines "nearest
-neighbor accuracy" as "is the true nearest neighbor one of the three closest
-objects?" [2]_ Astute observers might notice that this isn't great performance
-when compared with NEXT's results. However, the noise model we developed isn't
-perfect; turns out it generates embeddings that are about 1.5% less accurate
+neighbor accuracy" as the average response to "is the true nearest neighbor one
+of the three closest objects?" [2]_ (the reason for the ``*`` in the title).
+Astute observers might notice that the accuracy doesn't perform well when
+directly compared with NEXT's results. However, the developed noise model
+doesn't exactly mirror the human responses; it's about 1.5% less accurate
 (shown below).
 
-How good is the embedding?
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+Embedding quality
+^^^^^^^^^^^^^^^^^
 
 Experimentalist often cares about the underlying structure more than the
 accuracy. To start, let's assume that there's no clear relationship between
@@ -157,6 +159,10 @@ accuracy to *simulated* human responses:
    The shaded region represents the 25–75% percentile among 10 runs, and the
    solid line represents the median. The y-axis labels are shared with all
    plots.
+
+
+Embedding quality
+^^^^^^^^^^^^^^^^^
 
 Here's the underlying embeddings for :math:`n = 180` for various accuracy
 levels on *simulated* human responses:

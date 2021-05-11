@@ -13,8 +13,8 @@ process:
 4. Sending the URL ``http://[url]:8421/`` to crowdsourcing participants.
 
 
-Visiting initialization page
----------------------------
+Initialization page
+-------------------
 
 By default, Salmon does not support HTTPS. Make sure the URL begins with
 ``http://``, not ``https://``. For example, the URL you visit may look like:
