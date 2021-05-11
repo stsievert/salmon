@@ -4,8 +4,8 @@ RUN apt-get update
 RUN apt-get install -y gcc cmake g++
 RUN conda -V
 
-COPY salmon.yml /salmon/salmon.yml
 RUN pip install --ignore-installed PyYAML==5.4.1
+COPY salmon.yml /salmon/salmon.yml
 RUN conda env update --file /salmon/salmon.yml --prefix $(which python)/../..
 
 VOLUME /salmon

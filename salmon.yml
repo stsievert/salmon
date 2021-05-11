@@ -5,7 +5,7 @@ channels:
   - pytorch
   - anaconda
 dependencies:
-  - python>=3.7.0
+  - python>=3.7.0,<3.9
   - pip
   - numpy>=1.18.0
   - scipy
