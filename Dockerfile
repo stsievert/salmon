@@ -1,13 +1,11 @@
 FROM continuumio/miniconda3:4.9.2
 
 RUN apt-get update
-RUN apt-get install -y gcc cmake g++
+RUN apt-get install -y gcc cmake g++ python-yaml
 RUN conda -V
 
-RUN pip install --ignore-installed PyYAML==5.4.1
 COPY salmon.yml /salmon/salmon.yml
-RUN conda env update --file /salmon/salmon.yml --prefix $(which python)/../..
-RUN pip install --ignore-installed PyYAML==5.4.1
+RUN conda env update --file /salmon/salmon.yml --prune
 
 VOLUME /salmon
 VOLUME /data

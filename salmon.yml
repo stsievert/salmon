@@ -5,7 +5,7 @@ channels:
   - pytorch
   - anaconda
 dependencies:
-  - python>=3.7.0,<3.9
+  - python==3.8.*
   - pip
   - numpy>=1.18.0
   - scipy
@@ -21,6 +21,7 @@ dependencies:
   - pytorch
   - cpuonly
   - nb_conda_kernels
+  - pyyaml
   - pip:
     - fastapi
     - uvicorn[standard]
