@@ -1,5 +1,4 @@
-# filename: exp.yaml
-targets: [0, 1, 2, 3, 4, 5, 6]
+targets: [0, 1, 2, 3, 4, 5]
 instructions: These are <b>instructions</b>!
 max_queries: 10
 debrief: Thanks for participating!
