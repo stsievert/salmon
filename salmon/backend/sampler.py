@@ -81,7 +81,7 @@ class Runner:
         for k in itertools.count():
             try:
                 loop_start = time()
-                datum = {"iteration": k, "ident": self.ident}
+                datum = {"iteration": k, "ident": self.ident, "time": time()}
 
                 answers = self.get_answers(rj, clear=True)
                 datum["num_answers"] = len(answers)

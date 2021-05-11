@@ -38,7 +38,7 @@ def test_active_bad_keys(server, logs):
         "sampling": {"probs": {"a1": 50, "a2": 40}},
         "samplers": {"a1": {"class": "RandomSampling"}},
     }
-    r = server.post("/init_exp", data={"exp": json.dumps(exp)}, error=True)
+    r = server.post("/init_exp", data={"exp": exp}, error=True)
     assert r.status_code == 500
     assert all(
         x in r.text.lower()
@@ -50,7 +50,7 @@ def test_active_basics(server, logs):
     server.authorize()
     exp = Path(__file__).parent / "data" / "active.yaml"
     print("init'ing exp")
-    server.post("/init_exp", data={"exp": exp.read_bytes()})
+    server.post("/init_exp", data={"exp": exp.read_text()})
     print("done")
 
     with open(exp, "r") as f:
@@ -71,13 +71,14 @@ def test_active_basics(server, logs):
         r = server.get("/responses")
         df = pd.DataFrame(r.json())
         assert (df["score"] <= 1).all()
-        assert set(df.alg_ident.unique()) == {"TSTE", "ARR", "CKL", "tste2", "GNMDS"}
+        algs = df.alg_ident.unique()
+        assert set(algs) == {"TSTE", "ARR", "CKL", "tste2", "GNMDS"}
 
 
 def test_round_robin(server, logs):
     server.authorize()
     exp = Path(__file__).parent / "data" / "round-robin.yaml"
-    server.post("/init_exp", data={"exp": exp.read_bytes()})
+    server.post("/init_exp", data={"exp": exp.read_text()})
 
     with open(exp, "r") as f:
         config = yaml.load(f, Loader=yaml.SafeLoader)

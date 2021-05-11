@@ -18,8 +18,8 @@ from .utils import LogError, logs, server
 def test_backend_basics(server, logs):
     exp = Path(__file__).parent / "data" / "round-robin.yaml"
     server.authorize()
-    server.post("/init_exp", data={"exp": exp.read_bytes()})
-    exp_config = yaml.safe_load(exp.read_bytes())
+    server.post("/init_exp", data={"exp": exp.read_text()})
+    exp_config = yaml.safe_load(exp.read_text())
 
     # ran into a bug that happened with len(samplers) > 1
     assert len(exp_config["samplers"]) == 1
@@ -45,7 +45,7 @@ def test_init_errors_propogate(server):
     server.authorize()
     server.get("/init")
     exp = Path(__file__).parent / "data" / "exp-active-bad.yaml"
-    r = server.post("/init_exp", data={"exp": exp.read_bytes()}, error=True)
+    r = server.post("/init_exp", data={"exp": exp.read_text()}, error=True)
     assert r.status_code == 500
     assert "module 'salmon.triplets.samplers' has no attribute 'FooBar'" in r.text
 
@@ -54,7 +54,7 @@ def test_run_errors_logged(server, logs):
     server.authorize()
     server.get("/init")
     config = {"targets": list(range(10)), "d": 1, "samplers": {"Test": {}}}
-    r = server.post("/init_exp", data={"exp": yaml.safe_dump(config)})
+    r = server.post("/init_exp", data={"exp": config})
     with pytest.raises(LogError, match="Test error"):
         with logs:
             for k in range(10):
