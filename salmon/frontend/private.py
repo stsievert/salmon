@@ -279,6 +279,8 @@ async def _get_config_endpoint(json: bool = True):
 
 async def _get_config(exp: bytes, targets: bytes) -> Dict[str, Any]:
     config = yaml.safe_load(exp)
+    logger.warning(f"exp = {exp}")
+    logger.warning(f"config = {config}")
     exp_config: Dict = {
         "instructions": "Default instructions (can include <i>arbitrary</i> HTML)",
         "max_queries": None,

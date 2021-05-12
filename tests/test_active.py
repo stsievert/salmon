@@ -66,10 +66,11 @@ def test_active_basics(server, logs):
             q["alg_ident"] = samplers[k % len(samplers)]
 
             ans = {"winner": random.choice([q["left"], q["right"]]), "puid": "foo", **q}
-            server.post("/answer", data=ans)
+            server.post("/answer", json=ans)
 
         r = server.get("/responses")
-        df = pd.DataFrame(r.json())
+        d = r.json()
+        df = pd.DataFrame(d)
         assert (df["score"] <= 1).all()
         algs = df.alg_ident.unique()
         assert set(algs) == {"TSTE", "ARR", "CKL", "tste2", "GNMDS"}
@@ -90,7 +91,7 @@ def test_round_robin(server, logs):
             q = server.get("/query").json()
 
             ans = {"winner": random.choice([q["left"], q["right"]]), "puid": "foo", **q}
-            server.post("/answer", data=ans)
+            server.post("/answer", json=ans)
             sleep(0.1)
 
         r = server.get("/responses")

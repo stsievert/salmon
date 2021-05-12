@@ -31,7 +31,7 @@ def test_basics(server, logs):
     assert r.json() == {"success": True}
     server.get("/init")
     exp = Path(__file__).parent / "data" / "exp.yaml"
-    server.post("/init_exp", data={"exp": exp.read_bytes()})
+    server.post("/init_exp", data={"exp": exp.read_text()})
     exp_config = yaml.safe_load(exp.read_bytes())
     puid = "puid-foo"
     answers = []
@@ -121,7 +121,7 @@ def test_bad_file_upload(server):
 def test_no_repeats(server):
     server.authorize()
     exp = Path(__file__).parent / "data" / "exp.yaml"
-    server.post("/init_exp", data={"exp": exp.read_bytes()})
+    server.post("/init_exp", data={"exp": exp.read_text()})
     for k in range(50):
         q = server.get("/query").json()
         ans = {"winner": random.choice([q["left"], q["right"]]), "puid": "foo", **q}
@@ -275,14 +275,14 @@ def test_no_init_twice(server, logs):
 
     # Make sure errors on re-initialization
     server.post(
-        "/init_exp", data={"exp": exp.read_bytes()}, status_code=403, timeout=20
+        "/init_exp", data={"exp": exp.read_text()}, status_code=403, timeout=20
     )
 
     # Make sure the prescribed method works (resetting, then re-init'ing)
     server.delete("/reset", status_code=403, timeout=20)
     server.delete("/reset?force=1", timeout=20)
 
-    server.post("/init_exp", data={"exp": exp.read_bytes()}, timeout=20)
+    server.post("/init_exp", data={"exp": exp.read_text()}, timeout=20)
     query = server.get("/query")
     assert query
 

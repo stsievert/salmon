@@ -12,8 +12,7 @@ import torch.optim
 
 import salmon.triplets.samplers.adaptive as adaptive
 from ...backend.sampler import Runner
-from salmon.triplets.samplers._random_sampling import \
-    _get_query as _random_query
+from salmon.triplets.samplers._random_sampling import _get_query as _random_query
 from salmon.triplets.samplers.adaptive import InfoGainScorer, UncertaintyScorer
 from salmon.utils import get_logger
 
@@ -89,12 +88,11 @@ class Adaptive(Runner):
         )
         self.opt.initialize()
 
+        probs = self.opt.net_.module_.probs
         if scorer == "infogain":
-            search = InfoGainScorer(
-                embedding=self.opt.embedding(), probs=self.opt.net_.module_.probs,
-            )
+            search = InfoGainScorer(embedding=self.opt.embedding(), probs=probs)
         elif scorer == "uncertainty":
-            search = UncertaintyScorer(embedding=self.opt.embedding(),)
+            search = UncertaintyScorer(embedding=self.opt.embedding(), probs=probs)
         else:
             raise ValueError(f"scorer={scorer} not in ['uncertainty', 'infogain']")
 

@@ -170,50 +170,50 @@ class Runner:
                     datum["time_update"] = time() - _s
                     n_model_updates += 1
 
+                if time() > save_deadline + 1e-3:
+                    save_deadline = time() + 60
+                    _s = time()
+                    self.save()
+                    datum["time_save"] = time() - _s
+                datum["time_loop"] = time() - loop_start
+
+                data.append(datum)
+                logger.info(datum)
+                posting_deadline = data[0]["time"] + 2 * 60
+                if time() >= posting_deadline or k == 10 or k == 20:
+                    keys = data[-1].keys()
+                    to_post = {}
+                    for _k in keys:
+                        vals = [d.get(_k, None) for d in data]
+                        vals = [v for v in vals if v]
+                        if not len(vals):
+                            continue
+                        if isinstance(vals[0], (int, np.integer)):
+                            Type = int
+                        elif isinstance(vals[0], (float, np.floating)):
+                            Type = float
+                        else:
+                            continue
+                        _update = {
+                            f"{_k}_median": np.median(vals),
+                            f"{_k}_mean": np.mean(vals),
+                            f"{_k}_min": np.min(vals),
+                            f"{_k}_max": np.max(vals),
+                        }
+                        if _k == "time":
+                            _update = {"time": _update["time_median"]}
+                        to_post.update({k: Type(v) for k, v in _update.items()})
+
+                    rj.jsonarrappend(f"alg-perf-{self.ident}", root, to_post)
+                    data = []
+
+                if "reset" in rj.keys() and rj.jsonget("reset", root):
+                    logger.warning(f"Resetting {self.ident}")
+                    self.reset(client, rj)
+                    break
+
             except Exception as e:
                 logger.exception(e)
-
-            if time() > save_deadline + 1e-3:
-                save_deadline = time() + 60
-                _s = time()
-                self.save()
-                datum["time_save"] = time() - _s
-            datum["time_loop"] = time() - loop_start
-
-            data.append(datum)
-            logger.info(datum)
-            posting_deadline = data[0]["time"] + 2 * 60
-            if time() >= posting_deadline or k == 10 or k == 20:
-                keys = data[-1].keys()
-                to_post = {}
-                for _k in keys:
-                    vals = [d.get(_k, None) for d in data]
-                    vals = [v for v in vals if v]
-                    if not len(vals):
-                        continue
-                    if isinstance(vals[0], (int, np.integer)):
-                        Type = int
-                    elif isinstance(vals[0], (float, np.floating)):
-                        Type = float
-                    else:
-                        continue
-                    _update = {
-                        f"{_k}_median": np.median(vals),
-                        f"{_k}_mean": np.mean(vals),
-                        f"{_k}_min": np.min(vals),
-                        f"{_k}_max": np.max(vals),
-                    }
-                    if _k == "time":
-                        _update = {"time": _update["time_median"]}
-                    to_post.update({k: Type(v) for k, v in _update.items()})
-
-                rj.jsonarrappend(f"alg-perf-{self.ident}", root, to_post)
-                data = []
-
-            if "reset" in rj.keys() and rj.jsonget("reset", root):
-                logger.warning(f"Resetting {self.ident}")
-                self.reset(client, rj)
-                break
         return True
 
     def save(self) -> bool:

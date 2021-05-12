@@ -20,11 +20,12 @@ dependencies:
   - ujson
   - pytorch
   - cpuonly
-  - nb_conda_kernels
   - pyyaml
+  - ipykernel  # to run this environ in jupyter (required for viz)
+  - nb_conda_kernels
   - pip:
-    - fastapi
-    - uvicorn[standard]
+    - seaborn
+    - fastapi[all]
     - rejson
     - httpx
     - aiofiles
