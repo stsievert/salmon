@@ -1,0 +1,309 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>FAQ &mdash; Salmon v0.6.1rc3 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Concurrent Users" href="benchmarks/server.html" />
+    <link rel="prev" title="salmon.triplets.samplers.GNMDS" href="generated/salmon.triplets.samplers.GNMDS.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #494646" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Usage</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Starting an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="monitoring.html">Experiment monitoring</a></li>
+<li class="toctree-l1"><a class="reference internal" href="offline.html">Generating embeddings offline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.html">Algorithm configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#how-many-responses-will-be-needed">How many responses will be needed?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#what-adaptive-algorithms-are-recommended">What adaptive algorithms are recommended?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#can-i-choose-a-different-machine">Can I choose a different machine?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-do-i-see-the-dask-dashboard">How do I see the Dask dashboard?</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Benchmarks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="benchmarks/server.html">Concurrent Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarks/active.html">Active sampling</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Algorithm Developers</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="adaptive.html">Adaptive algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developers.html">Developing algorithms</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Salmon</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>FAQ</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+              <a href="https://github.com/stsievert/salmon/blob/master/source/faq.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="faq">
+<h1>FAQ<a class="headerlink" href="#faq" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="how-many-responses-will-be-needed">
+<span id="faq-n-responses"></span><h2>How many responses will be needed?<a class="headerlink" href="#how-many-responses-will-be-needed" title="Permalink to this headline">¶</a></h2>
+<p>Depends on the targets used, and how humans respond. Let’s say there are
+<span class="math notranslate nohighlight">\(n\)</span> targets that are being embedded into <span class="math notranslate nohighlight">\(d\)</span> dimensions. At most,
+we can provide bounds on how many responses you’ll need:</p>
+<ul class="simple">
+<li><p><strong>Lower bound:</strong> at least <span class="math notranslate nohighlight">\(nd\log_2(n)\)</span> responses are needed for a
+<cite>perfect</cite> embedding with noiseless responses. Active triplet algorithms
+require <span class="math notranslate nohighlight">\(\Omega(nd\log_2(n))\)</span> responses (so a constant number of
+responses more/less). <a class="footnote-reference brackets" href="#id3" id="id1">1</a></p></li>
+<li><p><strong>Upper bound:</strong> if random responses are collected, a high quality embedding
+will likely be generated with <span class="math notranslate nohighlight">\(O(nd\log_2(n))\)</span> responses, likely
+<span class="math notranslate nohighlight">\(20 nd \log_2(n)\)</span> responses (or possibly <span class="math notranslate nohighlight">\(10 nd \log_2(n)\)</span>). <a class="footnote-reference brackets" href="#id4" id="id2">2</a></p></li>
+</ul>
+<p>This suggests that the number of responses required when <span class="math notranslate nohighlight">\(n\)</span> and
+<span class="math notranslate nohighlight">\(d\)</span> are changed scaled like <span class="math notranslate nohighlight">\(nd\log_2(n)\)</span>.  i.e, if an embedding
+below requires 5,000 responses for <span class="math notranslate nohighlight">\(n=30\)</span>, scaling to <span class="math notranslate nohighlight">\(n=40\)</span> with
+<span class="math notranslate nohighlight">\(d=1\)</span> would likely require about <span class="math notranslate nohighlight">\(3600 \approx 5000\frac{40 \cdot 1
+\cdot \log_2(40)}{30\cdot 2 \cdot \log_2(30)}\)</span> responses for the same dataset.</p>
+<p>See the <a class="reference internal" href="benchmarks/active.html#experiments"><span class="std std-ref">benchmarks on active sampling</span></a> for some
+benchmarks/landmarks on the specific number of responses required for a
+particular dataset.</p>
+</div>
+<div class="section" id="what-adaptive-algorithms-are-recommended">
+<h2>What adaptive algorithms are recommended?<a class="headerlink" href="#what-adaptive-algorithms-are-recommended" title="Permalink to this headline">¶</a></h2>
+<p>Use of <a class="reference internal" href="generated/salmon.triplets.samplers.ARR.html#salmon.triplets.samplers.ARR" title="salmon.triplets.samplers.ARR"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARR</span></code></a> is most recommended.  See the
+<a class="reference internal" href="benchmarks/active.html#experiments"><span class="std std-ref">benchmarks on active sampling</span></a> for an example
+configuration and the number of responses required for that usage.</p>
+</div>
+<div class="section" id="can-i-choose-a-different-machine">
+<h2>Can I choose a different machine?<a class="headerlink" href="#can-i-choose-a-different-machine" title="Permalink to this headline">¶</a></h2>
+<p>All of our experiments are run with <code class="docutils literal notranslate"><span class="pre">t3.xlarge</span></code> instances. If you want to
+choose a different machine, ensure that is has the following:</p>
+<ul class="simple">
+<li><p>At least 4GB of RAM</p></li>
+<li><p>At least 3 CPU cores.</p></li>
+</ul>
+<p>These are required because Salmon requires 3.2GB of memory and Dask has three
+tasks per adaptive algorithm: posting queries, searching queries, model
+updating. Generally, the number of cores should be <code class="docutils literal notranslate"><span class="pre">3</span> <span class="pre">*</span> <span class="pre">n_algs</span></code>. This isn’t a
+strict guideline; only 2 out of the 3 tasks take significant amounts of time.
+Using <code class="docutils literal notranslate"><span class="pre">2</span> <span class="pre">*</span> <span class="pre">n_algs</span></code> will work at a small performance hit; we recommend at
+least 4 cores for two algorithms.</p>
+</div>
+<div class="section" id="how-do-i-see-the-dask-dashboard">
+<h2>How do I see the Dask dashboard?<a class="headerlink" href="#how-do-i-see-the-dask-dashboard" title="Permalink to this headline">¶</a></h2>
+<p>Look at port 8787 if you want more information on how jobs are scheduled. If on
+EC2, this will require some port forwarding to your own machine:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ssh -i key.pem -L <span class="m">7787</span>:localhost:8787 ubuntu@34.222.199.114
+<span class="c1"># visit http://localhost:7787 in the browser to see Salmon&#39;s Dask dashboard</span>
+</pre></div>
+</div>
+<p>If desired, it is possible to open port 8787 on the Amazon EC2 machine. If that
+action is taken, it is recommended to only allow a specific IP to view that
+port.</p>
+<dl class="footnote brackets">
+<dt class="label" id="id3"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dd><p>“Low-dimensional embedding using adaptively selected ordinal data.”
+Jamieson and Nowak. 2011. Allerton Conference on Communication, Control, and
+Computing. <a class="reference external" href="https://homes.cs.washington.edu/~jamieson/resources/activeMDS.pdf">https://homes.cs.washington.edu/~jamieson/resources/activeMDS.pdf</a></p>
+</dd>
+<dt class="label" id="id4"><span class="brackets"><a class="fn-backref" href="#id2">2</a></span></dt>
+<dd><p>“Finite sample prediction and recovery bounds for ordinal embedding.”
+Jain, Jamieson and Nowak. 2016. NeurIPS.
+<a class="reference external" href="https://nowak.ece.wisc.edu/ordinal_embedding.pdf">https://nowak.ece.wisc.edu/ordinal_embedding.pdf</a></p>
+</dd>
+</dl>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="benchmarks/server.html" class="btn btn-neutral float-right" title="Concurrent Users" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="generated/salmon.triplets.samplers.GNMDS.html" class="btn btn-neutral float-left" title="salmon.triplets.samplers.GNMDS" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2019, Scott Sievert.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

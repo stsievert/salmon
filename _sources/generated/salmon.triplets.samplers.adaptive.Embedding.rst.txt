@@ -1,0 +1,7 @@
+﻿:mod:`salmon.triplets.samplers.adaptive`.Embedding
+=========================================================
+
+.. currentmodule:: salmon.triplets.samplers.adaptive
+
+.. autoclass:: Embedding
+   :members: __init__

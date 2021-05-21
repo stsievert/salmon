@@ -7,12 +7,14 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Index &mdash; Salmon v0.6.1rc2 documentation</title>
+  <title>Index &mdash; Salmon v0.6.1rc3 documentation</title>
   
 
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/basic.css" type="text/css" />
 
   
@@ -30,6 +32,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
@@ -94,11 +97,12 @@
 <li class="toctree-l1"><a class="reference internal" href="offline.html">Generating embeddings offline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="algorithms.html">Algorithm configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Benchmarks</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="benchmarks/server.html">Concurrent Users</a></li>
-<li class="toctree-l1"><a class="reference internal" href="benchmarks/adaptive.html">Adaptive algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarks/active.html">Active sampling</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithm Developers</span></p>
 <ul>
@@ -199,6 +203,8 @@
       <li><a href="generated/salmon.triplets.samplers.Adaptive.html#salmon.triplets.samplers.Adaptive.__init__">__init__() (salmon.triplets.samplers.Adaptive method)</a>
 
       <ul>
+        <li><a href="generated/salmon.triplets.samplers.adaptive.Embedding.html#salmon.triplets.samplers.adaptive.Embedding.__init__">(salmon.triplets.samplers.adaptive.Embedding method)</a>
+</li>
         <li><a href="generated/salmon.triplets.samplers.ARR.html#salmon.triplets.samplers.ARR.__init__">(salmon.triplets.samplers.ARR method)</a>
 </li>
         <li><a href="generated/salmon.triplets.samplers.CKL.html#salmon.triplets.samplers.CKL.__init__">(salmon.triplets.samplers.CKL method)</a>
@@ -238,7 +244,9 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="generated/salmon.backend.sampler.Runner.html#salmon.backend.sampler.Runner.clear">clear() (salmon.backend.sampler.Runner property)</a>
+      <li><a href="generated/salmon.backend.sampler.Runner.html#salmon.backend.sampler.Runner.clear">clear (salmon.backend.sampler.Runner property)</a>
+</li>
+      <li><a href="generated/salmon.backend.sampler.Runner.html#salmon.backend.sampler.Runner.clear_queries">clear_queries() (salmon.backend.sampler.Runner method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -246,7 +254,11 @@
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="generated/salmon.triplets.offline.OfflineEmbedding.html#salmon.triplets.offline.OfflineEmbedding.embedding_">embedding_() (salmon.triplets.offline.OfflineEmbedding property)</a>
+      <li><a href="generated/salmon.triplets.samplers.adaptive.Embedding.html#salmon.triplets.samplers.adaptive.Embedding">Embedding (class in salmon.triplets.samplers.adaptive)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/salmon.triplets.offline.OfflineEmbedding.html#salmon.triplets.offline.OfflineEmbedding.embedding_">embedding_ (salmon.triplets.offline.OfflineEmbedding property)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -262,10 +274,12 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="generated/salmon.backend.sampler.Runner.html#salmon.backend.sampler.Runner.get_model">get_model() (salmon.backend.sampler.Runner method)</a>
+      <li><a href="generated/salmon.backend.sampler.Runner.html#salmon.backend.sampler.Runner.get_answers">get_answers() (salmon.backend.sampler.Runner method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/salmon.backend.sampler.Runner.html#salmon.backend.sampler.Runner.get_model">get_model() (salmon.backend.sampler.Runner method)</a>
+</li>
       <li><a href="generated/salmon.triplets.samplers.GNMDS.html#salmon.triplets.samplers.GNMDS">GNMDS (class in salmon.triplets.samplers)</a>
 </li>
   </ul></td>
@@ -274,7 +288,7 @@
 <h2 id="H">H</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="generated/salmon.triplets.offline.OfflineEmbedding.html#salmon.triplets.offline.OfflineEmbedding.history_">history_() (salmon.triplets.offline.OfflineEmbedding property)</a>
+      <li><a href="generated/salmon.triplets.offline.OfflineEmbedding.html#salmon.triplets.offline.OfflineEmbedding.history_">history_ (salmon.triplets.offline.OfflineEmbedding property)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -290,7 +304,7 @@
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="generated/salmon.triplets.offline.OfflineEmbedding.html#salmon.triplets.offline.OfflineEmbedding.meta_">meta_() (salmon.triplets.offline.OfflineEmbedding property)</a>
+      <li><a href="generated/salmon.triplets.offline.OfflineEmbedding.html#salmon.triplets.offline.OfflineEmbedding.meta_">meta_ (salmon.triplets.offline.OfflineEmbedding property)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -310,6 +324,8 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/salmon.backend.sampler.Runner.html#salmon.backend.sampler.Runner.post_queries">post_queries() (salmon.backend.sampler.Runner method)</a>
+</li>
       <li><a href="generated/salmon.backend.sampler.Runner.html#salmon.backend.sampler.Runner.process_answers">process_answers() (salmon.backend.sampler.Runner method)</a>
 </li>
   </ul></td>
@@ -319,6 +335,8 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="generated/salmon.triplets.samplers.RandomSampling.html#salmon.triplets.samplers.RandomSampling">RandomSampling (class in salmon.triplets.samplers)</a>
+</li>
+      <li><a href="generated/salmon.backend.sampler.Runner.html#salmon.backend.sampler.Runner.redis_client">redis_client() (salmon.backend.sampler.Runner method)</a>
 </li>
       <li><a href="generated/salmon.backend.sampler.Runner.html#salmon.backend.sampler.Runner.reset">reset() (salmon.backend.sampler.Runner method)</a>
 </li>
@@ -336,10 +354,14 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/salmon.backend.sampler.Runner.html#salmon.backend.sampler.Runner.save">save() (salmon.backend.sampler.Runner method)</a>
+</li>
       <li><a href="generated/salmon.triplets.offline.OfflineEmbedding.html#salmon.triplets.offline.OfflineEmbedding.score">score() (salmon.triplets.offline.OfflineEmbedding method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/salmon.backend.sampler.Runner.html#salmon.backend.sampler.Runner.serialize_query">serialize_query() (salmon.backend.sampler.Runner method)</a>
+</li>
       <li><a href="generated/salmon.triplets.samplers.SOE.html#salmon.triplets.samplers.SOE">SOE (class in salmon.triplets.samplers)</a>
 </li>
       <li><a href="generated/salmon.triplets.samplers.STE.html#salmon.triplets.samplers.STE">STE (class in salmon.triplets.samplers)</a>

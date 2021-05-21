@@ -7,12 +7,14 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>salmon.triplets.samplers.RoundRobin &mdash; Salmon v0.6.1rc2 documentation</title>
+  <title>salmon.triplets.samplers.RoundRobin &mdash; Salmon v0.6.1rc3 documentation</title>
   
 
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
 
   
@@ -30,6 +32,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
@@ -109,11 +112,12 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">FAQ</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Benchmarks</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../benchmarks/server.html">Concurrent Users</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../benchmarks/adaptive.html">Adaptive algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks/active.html">Active sampling</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithm Developers</span></p>
 <ul>
@@ -193,12 +197,12 @@
   <div class="section" id="salmon-triplets-samplers-roundrobin">
 <h1><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.samplers</span></code>.RoundRobin<a class="headerlink" href="#salmon-triplets-samplers-roundrobin" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
-<dt id="salmon.triplets.samplers.RoundRobin">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">salmon.triplets.samplers.</span></code><code class="sig-name descname"><span class="pre">RoundRobin</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ident</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.samplers.RoundRobin" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="salmon.triplets.samplers.RoundRobin">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">salmon.triplets.samplers.</span></span><span class="sig-name descname"><span class="pre">RoundRobin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ident</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.samplers.RoundRobin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Let the head of the triplet query rotate through the available items while choosing the bottom two items randomly.</p>
 <dl class="py method">
-<dt id="salmon.triplets.samplers.RoundRobin.__init__">
-<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ident</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.samplers.RoundRobin.__init__" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="salmon.triplets.samplers.RoundRobin.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ident</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.samplers.RoundRobin.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">

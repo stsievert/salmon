@@ -7,12 +7,14 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>API &mdash; Salmon v0.6.1rc2 documentation</title>
+  <title>API &mdash; Salmon v0.6.1rc3 documentation</title>
   
 
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/basic.css" type="text/css" />
 
   
@@ -30,6 +32,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
@@ -109,6 +112,7 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#active-algorithms">Active Algorithms</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="generated/salmon.triplets.samplers.Adaptive.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.samplers</span></code>.Adaptive</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/salmon.triplets.samplers.adaptive.Embedding.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.samplers.adaptive</span></code>.Embedding</a></li>
 <li class="toctree-l4"><a class="reference internal" href="generated/salmon.triplets.samplers.ARR.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.samplers</span></code>.ARR</a></li>
 <li class="toctree-l4"><a class="reference internal" href="generated/salmon.triplets.samplers.TSTE.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.samplers</span></code>.TSTE</a></li>
 <li class="toctree-l4"><a class="reference internal" href="generated/salmon.triplets.samplers.SOE.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.samplers</span></code>.SOE</a></li>
@@ -121,11 +125,12 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Benchmarks</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="benchmarks/server.html">Concurrent Users</a></li>
-<li class="toctree-l1"><a class="reference internal" href="benchmarks/adaptive.html">Adaptive algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarks/active.html">Active sampling</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithm Developers</span></p>
 <ul>
@@ -271,9 +276,21 @@ uses <code class="docutils literal notranslate"><span class="pre">Runner.run</sp
 </tbody>
 </table>
 <p>The class <a class="reference internal" href="generated/salmon.triplets.samplers.Adaptive.html#salmon.triplets.samplers.Adaptive" title="salmon.triplets.samplers.Adaptive"><code class="xref py py-class docutils literal notranslate"><span class="pre">Adaptive</span></code></a> runs the adaptive algorithm
-and depends on <code class="xref py py-class docutils literal notranslate"><span class="pre">Embedding</span></code> for
-optimization. To customize the optimization, all extra keyword arguments are
-passed to the optimizer.</p>
+and depends on <a class="reference internal" href="generated/salmon.triplets.samplers.adaptive.Embedding.html#salmon.triplets.samplers.adaptive.Embedding" title="salmon.triplets.samplers.adaptive.Embedding"><code class="xref py py-class docutils literal notranslate"><span class="pre">Embedding</span></code></a> for
+optimization:</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/salmon.triplets.samplers.adaptive.Embedding.html#salmon.triplets.samplers.adaptive.Embedding" title="salmon.triplets.samplers.adaptive.Embedding"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.triplets.samplers.adaptive.Embedding</span></code></a>(…)</p></td>
+<td><p>An optimization algorithm that produces an embedding from human responses of the form <code class="docutils literal notranslate"><span class="pre">[head,</span> <span class="pre">winner,</span> <span class="pre">loser]</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+<p>To customize the optimization, all extra keyword arguments are passed to the
+optimizer.</p>
 <p>Then, all of these classes inherit from
 <a class="reference internal" href="generated/salmon.triplets.samplers.Adaptive.html#salmon.triplets.samplers.Adaptive" title="salmon.triplets.samplers.Adaptive"><code class="xref py py-class docutils literal notranslate"><span class="pre">Adaptive</span></code></a>:</p>
 <table class="longtable docutils align-default">
@@ -289,16 +306,16 @@ passed to the optimizer.</p>
 <td><p>The t-Distributed STE (t-STE) embedding algorithm <a class="reference internal" href="generated/salmon.triplets.samplers.TSTE.html#r4f12f95c5f32-1" id="id2"><span>[R4f12f95c5f32-1]</span></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/salmon.triplets.samplers.SOE.html#salmon.triplets.samplers.SOE" title="salmon.triplets.samplers.SOE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.triplets.samplers.SOE</span></code></a>(**kwargs)</p></td>
-<td><p>The soft ordinal embedding detailed by Terada et al. <a class="reference internal" href="generated/salmon.triplets.samplers.SOE.html#r4edb93585d19-1" id="id3"><span>[R4edb93585d19-1]</span></a> This is evaluated as “SOE” by Vankadara et al., <a class="reference internal" href="generated/salmon.triplets.samplers.SOE.html#r4edb93585d19-2" id="id4"><span>[R4edb93585d19-2]</span></a> in which they use the hinge loss on the distances (not squared distances).</p></td>
+<td><p>The soft ordinal embedding detailed by Terada et al. <a class="reference internal" href="generated/salmon.triplets.samplers.SOE.html#r4edb93585d19-1" id="id3"><span>[R4edb93585d19-1]</span></a>.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="generated/salmon.triplets.samplers.STE.html#salmon.triplets.samplers.STE" title="salmon.triplets.samplers.STE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.triplets.samplers.STE</span></code></a>(**kwargs)</p></td>
-<td><p>The Stochastic Triplet Embedding <a class="reference internal" href="generated/salmon.triplets.samplers.STE.html#r1e0364a4a1f5-1" id="id5"><span>[R1e0364a4a1f5-1]</span></a>.</p></td>
+<td><p>The Stochastic Triplet Embedding <a class="reference internal" href="generated/salmon.triplets.samplers.STE.html#r1e0364a4a1f5-1" id="id4"><span>[R1e0364a4a1f5-1]</span></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/salmon.triplets.samplers.CKL.html#salmon.triplets.samplers.CKL" title="salmon.triplets.samplers.CKL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.triplets.samplers.CKL</span></code></a>([mu])</p></td>
 <td><p>The crowd kernel embedding.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="generated/salmon.triplets.samplers.GNMDS.html#salmon.triplets.samplers.GNMDS" title="salmon.triplets.samplers.GNMDS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.triplets.samplers.GNMDS</span></code></a>(**kwargs)</p></td>
-<td><p>The Generalized Non-metric Multidimensional Scaling embedding <a class="reference internal" href="generated/salmon.triplets.samplers.GNMDS.html#rc897032fff92-1" id="id6"><span>[Rc897032fff92-1]</span></a>.</p></td>
+<td><p>The Generalized Non-metric Multidimensional Scaling embedding <a class="reference internal" href="generated/salmon.triplets.samplers.GNMDS.html#rc897032fff92-1" id="id5"><span>[Rc897032fff92-1]</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -315,7 +332,7 @@ rule-of-thumb.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Use of <a class="reference internal" href="generated/salmon.triplets.samplers.ARR.html#salmon.triplets.samplers.ARR" title="salmon.triplets.samplers.ARR"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARR</span></code></a> is recommended as it performs well
-in <a class="reference internal" href="benchmarks/adaptive.html#experiments"><span class="std std-ref">the experiments we have run</span></a>.</p>
+in <a class="reference internal" href="benchmarks/active.html#experiments"><span class="std std-ref">the experiments we have run</span></a>.</p>
 </div>
 </div>
 </div>

@@ -7,12 +7,14 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Starting an experiment &mdash; Salmon v0.6.1rc2 documentation</title>
+  <title>Starting an experiment &mdash; Salmon v0.6.1rc3 documentation</title>
   
 
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/basic.css" type="text/css" />
 
   
@@ -30,6 +32,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
@@ -92,20 +95,27 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Starting an experiment</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#experiment-initialization-with-yaml-file">Experiment initialization with YAML file</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#yaml-file-with-zip-file">YAML file with ZIP file</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#database-dump">Database dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#initialization-page">Initialization page</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#username-password">Username/password</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#experiment-initialization">Experiment initialization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#experiment-initialization-with-yaml-file">Experiment initialization with YAML file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#yaml-file-with-zip-file">YAML file with ZIP file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#database-dump">Database dump</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#send-the-url-to-participants">Send the URL to participants</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="monitoring.html">Experiment monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="offline.html">Generating embeddings offline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="algorithms.html">Algorithm configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Benchmarks</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="benchmarks/server.html">Concurrent Users</a></li>
-<li class="toctree-l1"><a class="reference internal" href="benchmarks/adaptive.html">Adaptive algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarks/active.html">Active sampling</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithm Developers</span></p>
 <ul>
@@ -182,20 +192,36 @@
             
   <div class="section" id="starting-an-experiment">
 <span id="getting-started"></span><h1>Starting an experiment<a class="headerlink" href="#starting-an-experiment" title="Permalink to this headline">¶</a></h1>
-<p>Initialization an experiment requires the following:</p>
+<p>Launching an experiment to crowdsourcing participants requires following this
+process:</p>
 <ol class="arabic simple">
 <li><p>Visiting <code class="docutils literal notranslate"><span class="pre">http://[url]:8421/init</span></code> with the <code class="docutils literal notranslate"><span class="pre">[url]</span></code> from
-<a class="reference internal" href="installation.html#installation"><span class="std std-ref">Installation</span></a>,</p></li>
+<a class="reference internal" href="installation.html#installation"><span class="std std-ref">Installation</span></a>.</p></li>
 <li><p>Creating a username/password</p></li>
 <li><p>Launching an experiment.</p></li>
+<li><p>Sending the URL <code class="docutils literal notranslate"><span class="pre">http://[url]:8421/</span></code> to crowdsourcing participants.</p></li>
 </ol>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
+<div class="section" id="initialization-page">
+<h2>Initialization page<a class="headerlink" href="#initialization-page" title="Permalink to this headline">¶</a></h2>
 <p>By default, Salmon does not support HTTPS. Make sure the URL begins with
-<code class="docutils literal notranslate"><span class="pre">http://</span></code>, not <code class="docutils literal notranslate"><span class="pre">https://</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">http://</span></code>, not <code class="docutils literal notranslate"><span class="pre">https://</span></code>. For example, the URL you visit may look like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">ec2</span><span class="o">-</span><span class="mi">52</span><span class="o">-</span><span class="mi">204</span><span class="o">-</span><span class="mi">122</span><span class="o">-</span><span class="mf">132.</span><span class="n">compute</span><span class="o">-</span><span class="mf">1.</span><span class="n">amazonaws</span><span class="o">.</span><span class="n">com</span><span class="p">:</span><span class="mi">8421</span><span class="o">/</span><span class="n">init</span>
+</pre></div>
 </div>
+</div>
+<div class="section" id="username-password">
+<h2>Username/password<a class="headerlink" href="#username-password" title="Permalink to this headline">¶</a></h2>
 <p>When visiting <code class="docutils literal notranslate"><span class="pre">http://[url]:8421/init</span></code>, first, type a username/password and
-hit “create user.” After a user has been successfully created, hit the back
+hit “create user.”</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Do not lose this username/password! You need the username/password to view
+the dashboard and download the received responses.</p>
+</div>
+</div>
+<div class="section" id="experiment-initialization">
+<h2>Experiment initialization<a class="headerlink" href="#experiment-initialization" title="Permalink to this headline">¶</a></h2>
+<p>After a user has been successfully created, hit the back
 button and launch an experiment. You have three options:</p>
 <ol class="arabic simple">
 <li><p>Upload of a YAML file completely detailing the experiment.</p></li>
@@ -219,7 +245,7 @@ something like <code class="docutils literal notranslate"><span class="pre">v0.4
 </div>
 <p>Now, let’s describe three methods on how to launch this experiment:</p>
 <div class="section" id="experiment-initialization-with-yaml-file">
-<h2>Experiment initialization with YAML file<a class="headerlink" href="#experiment-initialization-with-yaml-file" title="Permalink to this headline">¶</a></h2>
+<h3>Experiment initialization with YAML file<a class="headerlink" href="#experiment-initialization-with-yaml-file" title="Permalink to this headline">¶</a></h3>
 <p>This section will specify the YAML file; including a ZIP file will only modify
 the <code class="docutils literal notranslate"><span class="pre">targets</span></code> key.</p>
 <p>“YAML files” must obey a standard; see for a (human-readable) description of
@@ -272,7 +298,7 @@ colors/borders/etc.</p></li>
 <p>Examples of these files are in <a class="reference external" href="https://github.com/stsievert/salmon/tree/master/tests/data">salmon/tests/data</a> and <a class="reference external" href="https://github.com/stsievert/salmon/tree/master/examples">salmon/examples</a>.</p>
 </div>
 <div class="section" id="yaml-file-with-zip-file">
-<h2>YAML file with ZIP file<a class="headerlink" href="#yaml-file-with-zip-file" title="Permalink to this headline">¶</a></h2>
+<h3>YAML file with ZIP file<a class="headerlink" href="#yaml-file-with-zip-file" title="Permalink to this headline">¶</a></h3>
 <p>If you upload a ZIP file alongside the <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code> YAML file, the <code class="docutils literal notranslate"><span class="pre">targets</span></code>
 key above will be configured to represent each object in the ZIP file. Here are
 the choices for different files to include in the ZIP file:</p>
@@ -310,12 +336,24 @@ bolded text for “<strong>Ted Ligety</strong>.” That means we can also render
 <p>One rendered target will be this image:</p>
 <img width="300px" src="https://upload.wikimedia.org/wikipedia/commons/8/89/Miller_Bode_2008_002.jpg" /></div>
 <div class="section" id="database-dump">
-<h2>Database dump<a class="headerlink" href="#database-dump" title="Permalink to this headline">¶</a></h2>
+<h3>Database dump<a class="headerlink" href="#database-dump" title="Permalink to this headline">¶</a></h3>
 <p>The dashboard offers a link to download the experiment on the dashboard (that
 is, at <code class="docutils literal notranslate"><span class="pre">http://[url]:8421/dashboard</span></code>). This will download a file called
 <code class="docutils literal notranslate"><span class="pre">exp-[date]-vX.Y.Z.rdb</span></code>. Do not delete the numbers <code class="docutils literal notranslate"><span class="pre">X.Y.Z</span></code>!</p>
 <p>Salmon supports the upload of this file to the same version of Salmon. The
 upload of this file will restore the state of your experiment.</p>
+</div>
+</div>
+<div class="section" id="send-the-url-to-participants">
+<h2>Send the URL to participants<a class="headerlink" href="#send-the-url-to-participants" title="Permalink to this headline">¶</a></h2>
+<p>The URL to send to the crowdsourcing participants is <code class="docutils literal notranslate"><span class="pre">http://[url]:8421/</span></code>.
+For example, that may be</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">ec2</span><span class="o">-</span><span class="mi">52</span><span class="o">-</span><span class="mi">204</span><span class="o">-</span><span class="mi">122</span><span class="o">-</span><span class="mf">132.</span><span class="n">compute</span><span class="o">-</span><span class="mf">1.</span><span class="n">amazonaws</span><span class="o">.</span><span class="n">com</span><span class="p">:</span><span class="mi">8421</span><span class="o">/</span><span class="n">init</span>
+</pre></div>
+</div>
+<p>Typically, paid services like Mechantical Turk are used to recruit
+crowdsourcing participants. Reddit and email have been used for unpaid
+recruitment.</p>
 </div>
 </div>
 

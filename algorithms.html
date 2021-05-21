@@ -7,12 +7,14 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Algorithm configuration &mdash; Salmon v0.6.1rc2 documentation</title>
+  <title>Algorithm configuration &mdash; Salmon v0.6.1rc3 documentation</title>
   
 
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/basic.css" type="text/css" />
 
   
@@ -30,6 +32,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
@@ -96,11 +99,12 @@
 <li class="toctree-l1"><a class="reference internal" href="offline.html">Generating embeddings offline</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Algorithm configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Benchmarks</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="benchmarks/server.html">Concurrent Users</a></li>
-<li class="toctree-l1"><a class="reference internal" href="benchmarks/adaptive.html">Adaptive algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarks/active.html">Active sampling</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithm Developers</span></p>
 <ul>
@@ -223,7 +227,7 @@ would compare two different instances of
   <span class="nt">arr_ckl</span><span class="p">:</span>
     <span class="nt">class</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ARR</span>
     <span class="nt">module</span><span class="p">:</span> <span class="s">&quot;CKL&quot;</span>
-    <span class="nt">module__mu</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.05</span>
+    <span class="nt">module__mu</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.02</span>
 
 <span class="nt">sampling</span><span class="p">:</span>
   <span class="nt">probs</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="s">&quot;RandomSampling&quot;</span><span class="p p-Indicator">:</span> <span class="nv">20</span><span class="p p-Indicator">,</span> <span class="s">&quot;arr_ckl&quot;</span><span class="p p-Indicator">:</span> <span class="nv">40</span><span class="p p-Indicator">,</span> <span class="s">&quot;arr_tste&quot;</span><span class="p p-Indicator">:</span> <span class="nv">40</span><span class="p p-Indicator">}</span>

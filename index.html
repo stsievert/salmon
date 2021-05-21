@@ -7,12 +7,14 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Welcome to Salmon’s documentation! &mdash; Salmon v0.6.1rc2 documentation</title>
+  <title>Welcome to Salmon’s documentation! &mdash; Salmon v0.6.1rc3 documentation</title>
   
 
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/basic.css" type="text/css" />
 
   
@@ -30,10 +32,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -96,11 +99,12 @@
 <li class="toctree-l1"><a class="reference internal" href="offline.html">Generating embeddings offline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="algorithms.html">Algorithm configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Benchmarks</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="benchmarks/server.html">Concurrent Users</a></li>
-<li class="toctree-l1"><a class="reference internal" href="benchmarks/adaptive.html">Adaptive algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarks/active.html">Active sampling</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithm Developers</span></p>
 <ul>
@@ -189,11 +193,16 @@ psychologists to determine what facial emotions human find similar:</p>
 <a class="reference internal image-reference" href="_images/face-embedding.png"><img alt="_images/face-embedding.png" class="align-center" src="_images/face-embedding.png" style="width: 500px;" /></a>
 <p>Only distance is relevant in this embedding, not the vertical/horizontal axes.
 However, if you look closely, you can see two axes: positivity and intensity.</p>
-<p>Salmon provides efficient methods for collecting these triplet queries.  Salmon
-can be configured to only require (say) 10,000 answers from crowdsourcing
-partipants to be (say) 95% confident in the result. Other approaches or Salmon
-by default will require more responses to triplet queries (say 20,000) to reach
-the same confidence.</p>
+<p>Salmon provides efficient methods for collecting these triplet queries. For
+example, Salmon can generate an accurate embedding from only 1,000 responses in
+certain use cases. For the same use case, other approaches might require 2,000
+responses. More detail is in the <a class="reference internal" href="benchmarks/active.html#experiments"><span class="std std-ref">benchmarks on active sampling</span></a>.</p>
+</div>
+<div class="section" id="users">
+<h1>Users<a class="headerlink" href="#users" title="Permalink to this headline">¶</a></h1>
+<p>Salmon is currently being actively used by several  psychologists at the
+University of Wisconsin–Madison, and has seen serious interest from the Air
+Force Research Lab and a psychologist at Louisiana State University.</p>
 <div class="toctree-wrapper compound">
 <p class="caption"><span class="caption-text">Usage</span></p>
 <ul>
@@ -204,9 +213,10 @@ the same confidence.</p>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="getting-started.html">Starting an experiment</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="getting-started.html#experiment-initialization-with-yaml-file">Experiment initialization with YAML file</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getting-started.html#yaml-file-with-zip-file">YAML file with ZIP file</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getting-started.html#database-dump">Database dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#initialization-page">Initialization page</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#username-password">Username/password</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#experiment-initialization">Experiment initialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#send-the-url-to-participants">Send the URL to participants</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="monitoring.html">Experiment monitoring</a><ul>
@@ -232,15 +242,24 @@ the same confidence.</p>
 <li class="toctree-l2"><a class="reference internal" href="api.html#samplers">Samplers</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#how-many-responses-will-be-needed">How many responses will be needed?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#what-adaptive-algorithms-are-recommended">What adaptive algorithms are recommended?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#can-i-choose-a-different-machine">Can I choose a different machine?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#how-do-i-see-the-dask-dashboard">How do I see the Dask dashboard?</a></li>
+</ul>
+</li>
 </ul>
 </div>
 <div class="toctree-wrapper compound">
 <p class="caption"><span class="caption-text">Benchmarks</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="benchmarks/server.html">Concurrent Users</a></li>
-<li class="toctree-l1"><a class="reference internal" href="benchmarks/adaptive.html">Adaptive algorithms</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="benchmarks/adaptive.html#response-rate">Response rate</a></li>
-<li class="toctree-l2"><a class="reference internal" href="benchmarks/adaptive.html#simulation-with-human-responses">Simulation with human responses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarks/active.html">Active sampling</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks/active.html#setup">Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks/active.html#baseline">Baseline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks/active.html#number-of-targets">Number of targets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks/active.html#response-rate">Response rate</a></li>
 </ul>
 </li>
 </ul>
