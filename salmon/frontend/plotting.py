@@ -403,7 +403,7 @@ async def _get_response_rate_plots(timestamps: pd.Series):
     timestamps -= timestamps.min()
 
     window = 1
-    _rates_per_sec = timestamps.astype(int).value_counts()
+    _rates_per_sec = (timestamps.copy() / window).astype(int).value_counts()
     rates_per_sec = _rates_per_sec.value_counts().sort_index()
     rates = rates_per_sec.index
     prob = rates_per_sec.to_numpy() / rates_per_sec.sum()
@@ -411,8 +411,10 @@ async def _get_response_rate_plots(timestamps: pd.Series):
     prob = prob[prob >= 0.01]
 
     rates = np.array(rates.tolist() + [rates.max() + 1])
+    rates = rates - 1
+    rates = (rates * 1.0) / window
 
-    x = rates - 1
+    x = rates.copy()
     p1 = _make_hist(
         "Rate responses received",
         f"Rate (responses/sec over {window}s)",

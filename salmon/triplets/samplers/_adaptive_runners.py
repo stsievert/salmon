@@ -71,11 +71,15 @@ class Adaptive(Runner):
         self.d = d
         self.R = R
 
+        self.n_search = kwargs.pop("n_search", 0)
+
+
         Opt = getattr(adaptive, optimizer)
         Module = getattr(adaptive, module)
 
         logger.info("Module = %s", Module)
         logger.info("opt = %s", Opt)
+
         self.opt = Opt(
             module=Module,
             module__n=n,
@@ -121,9 +125,10 @@ class Adaptive(Runner):
 
     def get_queries(self, num=None, stop=None) -> Tuple[List[Query], List[float], dict]:
         """Get and score many queries."""
-        if num:
-            queries, scores = self.search.score(num=num)
-            return queries[:num], scores[:num]
+        if num or self.n_search:
+            n_ret = int(num or self.n_search)
+            queries, scores = self.search.score(num=n_ret)
+            return queries[:n_ret], scores[:n_ret], {}
         ret_queries = []
         ret_scores = []
         n_searched = 0
