@@ -33,7 +33,7 @@ dependencies:
     - pyarrow
     - fastparquet
     - dask-ml
-    - bokeh>=2.0.1,<3
+    - bokeh==2.0.1  # because templates/dashboard.html requires this version
     - cloudpickle
     - jinja2
     - redis>=3.0.0
