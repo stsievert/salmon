@@ -1,20 +1,19 @@
 import itertools
-import pandas as pd
-import numpy as np
-from time import time
-from copy import deepcopy, copy
-from typing import Dict, Union
+from copy import copy, deepcopy
 from numbers import Number
+from time import time
+from typing import Dict, Union
 
-from sklearn.model_selection import train_test_split
+import numpy as np
+import pandas as pd
+import torch
+import torch.optim as optim
 from sklearn.base import BaseEstimator
 from sklearn.exceptions import NotFittedError
-import torch.optim as optim
-import torch
+from sklearn.model_selection import train_test_split
 
-from salmon.triplets.samplers.adaptive import GD, OGD
-from salmon.triplets.samplers.adaptive import CKL
 import salmon.triplets.samplers.adaptive as adaptive
+from salmon.triplets.samplers.adaptive import CKL, GD, OGD
 
 
 def _get_params(opt_):
@@ -68,7 +67,7 @@ class OfflineEmbedding(BaseEstimator):
         opt=None,
         verbose=1000,
         ident="",
-        noise_model="SOE",
+        noise_model="CKL",
         random_state=None,
         **kwargs,
     ):
@@ -132,12 +131,13 @@ class OfflineEmbedding(BaseEstimator):
                 max_epochs=self.max_epochs,
             )
             kwargs.update(self.kwargs)
-            self.opt = OGD(**kwargs)
-            # TODO: change defaults for Embedding and children
-        self.opt.push(X_train)
+            opt = OGD(**kwargs)
+        else:
+            opt = self.opt
+        opt.push(X_train)
         self._meta: Dict[str, Number] = {"pf_calls": 0}
 
-        self.opt_ = self.opt
+        self.opt_ = opt
         self._history_ = []
         self.initialized_ = True
         return self
@@ -187,10 +187,8 @@ class OfflineEmbedding(BaseEstimator):
             if self.opt_.meta_["num_grad_comps"] >= self.max_epochs * len(X_train):
                 break
 
-            if (
-                (self.verbose and k % self.verbose == 0)
-                or abs(self.max_epochs - k) <= 10
-                or k <= 100
+            if self.verbose and (
+                k % self.verbose == 0 or abs(self.max_epochs - k) <= 3
             ):
                 datum = deepcopy(self._meta)
                 datum.update(self.opt_.meta_)

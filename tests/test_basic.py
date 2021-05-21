@@ -3,20 +3,18 @@ import json
 import os
 import pickle
 import random
+from datetime import datetime, timedelta
 from pathlib import Path
 from time import sleep, time
 from typing import Tuple
-from datetime import datetime, timedelta
 
 import numpy as np
 import pandas as pd
-import requests
 import pytest
+import requests
 import yaml
-from joblib import Parallel, delayed
-from requests.auth import HTTPBasicAuth, HTTPDigestAuth
 
-from .utils import server, logs
+from .utils import logs, server
 
 
 def test_basics(server, logs):
@@ -33,7 +31,7 @@ def test_basics(server, logs):
     assert r.json() == {"success": True}
     server.get("/init")
     exp = Path(__file__).parent / "data" / "exp.yaml"
-    server.post("/init_exp", data={"exp": exp.read_bytes()})
+    server.post("/init_exp", data={"exp": exp.read_text()})
     exp_config = yaml.safe_load(exp.read_bytes())
     puid = "puid-foo"
     answers = []
@@ -113,7 +111,7 @@ def test_bad_file_upload(server):
     server.authorize()
     server.get("/init")
     exp = Path(__file__).parent / "data" / "bad_exp.yaml"
-    r = server.post("/init_exp", data={"exp": exp.read_bytes()}, error=True)
+    r = server.post("/init_exp", data={"exp": exp.read_text()}, error=True)
     assert r.status_code == 500
     assert "Error" in r.text
     assert "yaml" in r.text
@@ -123,7 +121,7 @@ def test_bad_file_upload(server):
 def test_no_repeats(server):
     server.authorize()
     exp = Path(__file__).parent / "data" / "exp.yaml"
-    server.post("/init_exp", data={"exp": exp.read_bytes()})
+    server.post("/init_exp", data={"exp": exp.read_text()})
     for k in range(50):
         q = server.get("/query").json()
         ans = {"winner": random.choice([q["left"], q["right"]]), "puid": "foo", **q}
@@ -142,7 +140,7 @@ def test_no_repeats(server):
 def test_meta(server):
     server.authorize()
     exp = Path(__file__).parent / "data" / "exp.yaml"
-    server.post("/init_exp", data={"exp": exp.read_bytes()})
+    server.post("/init_exp", data={"exp": exp.read_text()})
     num_ans = 10
     for k in range(num_ans):
         q = server.get("/query").json()
@@ -160,7 +158,7 @@ def test_saves_state(server):
     dump = Path(__file__).absolute().parent.parent / "out" / "dump.rdb"
     assert not dump.exists()
     exp = Path(__file__).parent / "data" / "exp.yaml"
-    server.post("/init_exp", data={"exp": exp.read_bytes()})
+    server.post("/init_exp", data={"exp": exp.read_text()})
     for k in range(10):
         q = server.get("/query").json()
         ans = {"winner": random.choice([q["left"], q["right"]]), "puid": str(k), **q}
@@ -194,7 +192,7 @@ def test_download_restore(server):
     dump = Path(__file__).absolute().parent.parent / "out" / "dump.rdb"
     assert not dump.exists()
     exp = Path(__file__).parent / "data" / "exp.yaml"
-    server.post("/init_exp", data={"exp": exp.read_bytes()})
+    server.post("/init_exp", data={"exp": exp.read_text()})
     data = []
     for k in range(10):
         q = server.get("/query").json()
@@ -218,7 +216,7 @@ def test_logs(server, logs):
     assert not dump.exists()
     exp = Path(__file__).parent / "data" / "exp.yaml"
     server.delete("/reset?force=1", timeout=20)
-    server.post("/init_exp", data={"exp": exp.read_bytes()})
+    server.post("/init_exp", data={"exp": exp.read_text()})
     data = []
     puid = "adsfjkl4awjklra"
     with logs:
@@ -247,13 +245,13 @@ def test_zip_upload(server):
     t = targets.read_bytes()
     assert len(t) > 0
     assert t[:4] == b"\x50\x4B\x03\x04"
-    server.post("/init_exp", data={"exp": exp.read_bytes()}, files={"targets": t})
+    server.post("/init_exp", data={"exp": exp.read_text()}, files={"targets": t})
 
 
 def test_get_config(server):
     server.authorize()
     exp = Path(__file__).parent / "data" / "exp.yaml"
-    server.post("/init_exp", data={"exp": exp.read_bytes()})
+    server.post("/init_exp", data={"exp": exp.read_text()})
     my_config = yaml.safe_load(exp.read_text())
     rendered_config = server.get("/config").json()
     assert set(my_config).issubset(rendered_config)
@@ -271,20 +269,20 @@ def test_no_init_twice(server, logs):
     """
     server.authorize()
     exp = Path(__file__).parent / "data" / "exp.yaml"
-    server.post("/init_exp", data={"exp": exp.read_bytes()}, timeout=20)
+    server.post("/init_exp", data={"exp": exp.read_text()}, timeout=20)
     query = server.get("/query")
     assert query
 
     # Make sure errors on re-initialization
     server.post(
-        "/init_exp", data={"exp": exp.read_bytes()}, status_code=403, timeout=20
+        "/init_exp", data={"exp": exp.read_text()}, status_code=403, timeout=20
     )
 
     # Make sure the prescribed method works (resetting, then re-init'ing)
     server.delete("/reset", status_code=403, timeout=20)
     server.delete("/reset?force=1", timeout=20)
 
-    server.post("/init_exp", data={"exp": exp.read_bytes()}, timeout=20)
+    server.post("/init_exp", data={"exp": exp.read_text()}, timeout=20)
     query = server.get("/query")
     assert query
 

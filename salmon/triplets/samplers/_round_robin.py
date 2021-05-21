@@ -1,10 +1,10 @@
 import logging
 from typing import List, Tuple
+
 import numpy as np
 
+from ...backend.sampler import Path, Runner
 from .utils import Answer, Query
-from ...backend.sampler import Runner
-
 
 logger = logging.getLogger(__name__)
 
@@ -54,6 +54,7 @@ class RoundRobin(Runner):
     def process_answers(self, ans: List[Answer]):
         return self, False
 
-    @property
-    def sleep_(self):
-        return 1
+    def run(self, *args, **kwargs):
+        rj = self.redis_client()
+        rj.jsonset(f"stopped-{self.ident}", Path("."), True)
+        return None

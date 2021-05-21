@@ -1,0 +1,8 @@
+targets: 10
+d: 2
+max_queries: 100
+samplers:
+  ARR: {}
+  RandomSampling: {}
+sampling:
+  probs: {"ARR": 80, "RandomSampling": 20}

@@ -1,9 +1,10 @@
-from pathlib import Path
-from zipfile import ZipFile
-from time import sleep
 import random
+from pathlib import Path
+from time import sleep
+from zipfile import ZipFile
 
 import pytest
+
 from .utils import server
 
 EG_DIR = Path(__file__).parent.parent / "examples"

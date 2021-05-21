@@ -16,9 +16,9 @@ embedding:
 
 Downloading responses
 ---------------------
-Download the responses, either by visiting `http://[url]:8421/responses` or clicking
-the link on the dashboard (as mentioned in :ref:`exp-monitoring`).
 
+Download the responses, either by visiting ``http://[url]:8421/responses`` or
+clicking the link on the dashboard (as mentioned in :ref:`exp-monitoring`).
 
 Install Salmon
 --------------
@@ -27,6 +27,11 @@ Install Salmon
 
    $ git clone https://github.com/stsievert/salmon
    $ cd salmon
+   $
+   $ # latest release (/tag in git parlance)
+   $ latestRelease=$(git describe --tags `git rev-list --tags --max-count=1`)
+   $ git checkout $latestRelease
+   $
    $ conda env create -f salmon.yml
    $ conda activate salmon
    (salmon) $ pip install -e .

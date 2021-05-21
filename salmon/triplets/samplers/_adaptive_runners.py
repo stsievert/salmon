@@ -1,20 +1,20 @@
 import itertools
 from collections import defaultdict
-from time import time, sleep
-from textwrap import dedent
-from typing import List, TypeVar, Tuple, Dict, Any, Optional
 from copy import deepcopy
+from textwrap import dedent
+from time import time
+from typing import Any, Dict, List, Optional, Tuple, TypeVar
 
-import torch.optim
 import numpy as np
 import numpy.linalg as LA
 import pandas as pd
+import torch.optim
 
 import salmon.triplets.samplers.adaptive as adaptive
-from salmon.triplets.samplers.adaptive import InfoGainScorer, UncertaintyScorer
-from salmon.backend import Runner
-from salmon.utils import get_logger
+from ...backend.sampler import Runner
 from salmon.triplets.samplers._random_sampling import _get_query as _random_query
+from salmon.triplets.samplers.adaptive import InfoGainScorer, UncertaintyScorer
+from salmon.utils import get_logger
 
 logger = get_logger(__name__)
 
@@ -71,11 +71,15 @@ class Adaptive(Runner):
         self.d = d
         self.R = R
 
+        self.n_search = kwargs.pop("n_search", 0)
+
+
         Opt = getattr(adaptive, optimizer)
         Module = getattr(adaptive, module)
 
         logger.info("Module = %s", Module)
         logger.info("opt = %s", Opt)
+
         self.opt = Opt(
             module=Module,
             module__n=n,
@@ -88,18 +92,22 @@ class Adaptive(Runner):
         )
         self.opt.initialize()
 
+        probs = self.opt.net_.module_.probs
         if scorer == "infogain":
-            search = InfoGainScorer(
-                embedding=self.opt.embedding(), probs=self.opt.net_.module_.probs,
-            )
+            search = InfoGainScorer(embedding=self.opt.embedding(), probs=probs)
         elif scorer == "uncertainty":
-            search = UncertaintyScorer(embedding=self.opt.embedding(),)
+            search = UncertaintyScorer(embedding=self.opt.embedding(), probs=probs)
         else:
             raise ValueError(f"scorer={scorer} not in ['uncertainty', 'infogain']")
 
         self.search = search
         self.search.push([])
-        self.meta = {"num_ans": 0, "model_updates": 0, "process_answers_calls": 0}
+        self.meta = {
+            "num_ans": 0,
+            "model_updates": 0,
+            "process_answers_calls": 0,
+            "empty_pa_calls": 0,
+        }
         self.params = {
             "n": n,
             "d": d,
@@ -108,20 +116,19 @@ class Adaptive(Runner):
             **kwargs,
         }
 
-    @property
-    def sleep_(self):
-        return 0
-
     def get_query(self) -> Tuple[Optional[Dict[str, int]], Optional[float]]:
+        """Randomly select a query where there are few responses"""
         if self.meta["num_ans"] <= self.R * self.n:
             head, left, right = _random_query(self.n)
             return {"head": int(head), "left": int(left), "right": int(right)}, -9999
         return None, -9999
 
     def get_queries(self, num=None, stop=None) -> Tuple[List[Query], List[float], dict]:
-        if num:
-            queries, scores = self.search.score(num=num)
-            return queries[:num], scores[:num]
+        """Get and score many queries."""
+        if num or self.n_search:
+            n_ret = int(num or self.n_search)
+            queries, scores = self.search.score(num=n_ret)
+            return queries[:n_ret], scores[:n_ret], {}
         ret_queries = []
         ret_scores = []
         n_searched = 0
@@ -143,6 +150,7 @@ class Adaptive(Runner):
                 break
         queries = np.concatenate(ret_queries).astype(int)
         scores = np.concatenate(ret_scores)
+        queries = self._sort_query_order(queries)
 
         ## Rest of this function takes about 450ms
         df = pd.DataFrame(queries)
@@ -150,23 +158,37 @@ class Adaptive(Runner):
         _, idx = np.unique(hashes.to_numpy(), return_index=True)
         return queries[idx], scores[idx], {}
 
+    @staticmethod
+    def _sort_query_order(queries: np.ndarray) -> np.ndarray:
+        mins = np.minimum(queries[:, 1], queries[:, 2])
+        maxs = np.maximum(queries[:, 1], queries[:, 2])
+        queries[:, 1], queries[:, 2] = mins, maxs
+        return queries
+
     def process_answers(self, answers: List[Answer]):
+        """Process answers from the database.
+
+        This function requires pulling from the database, and feeding those
+        answers to the underlying optimization algorithm.
+        """
         if not len(answers):
-            return self, False
+            self.meta["empty_pa_calls"] += 1
+            if self.meta["empty_pa_calls"] >= 20:
+                self.meta["empty_pa_calls"] = 0
+                return self, True
 
         self.meta["num_ans"] += len(answers)
         self.meta["process_answers_calls"] += 1
         logger.debug("self.meta = %s", self.meta)
         logger.debug("self.R, self.n = %s, %s", self.R, self.n)
 
+        # fmt: off
         alg_ans = [
-            (
-                a["head"],
-                a["winner"],
-                a["left"] if a["winner"] == a["right"] else a["right"],
-            )
+            (a["head"], a["winner"],
+             a["left"] if a["winner"] == a["right"] else a["right"])
             for a in answers
         ]
+        # fmt: on
         self.search.push(alg_ans)
         self.search.embedding = self.opt.embedding()
         self.opt.push(alg_ans)
@@ -186,8 +208,6 @@ class Adaptive(Runner):
             max_epochs = 50
 
         # max_epochs above for completely random initializations
-        # Use max_epochs // 2 because online and will already be
-        # partially fit
         self.opt.set_params(max_epochs=max_epochs)
 
         valid_ans = self.opt.answers_[:n_ans]
@@ -196,6 +216,9 @@ class Adaptive(Runner):
         return self, True
 
     def get_model(self) -> Dict[str, Any]:
+        """
+        Get the embedding alongside other related information.
+        """
         return {
             "embedding": self.search.embedding.tolist(),
             **self.meta,
@@ -239,13 +262,32 @@ class Adaptive(Runner):
         return right_closer.astype("uint8")
 
     def score(self, X, y, embedding=None):
+        """
+        Evaluate to see if current embedding agrees with the provided queries.
+
+        Parameters
+        ----------
+        X : array-like, shape (n, 3)
+            The columns should be aranged
+        y : array-like, shape (n, )
+            The answers to specific queries. The ``i``th value should be 0 if
+            ``X[i, 1]`` won the query and 1 if ``X[i, 2]`` won the query.
+        embedding : array-like, optional
+            The embedding to use instead of the current embedding.
+            The values in ``X`` will be treated as indices to this array.
+
+        Returns
+        -------
+        acc : float
+            The percentage of queries that agree with the current embedding.
+
+        """
         y_hat = self.predict(X, embedding=embedding)
         return (y_hat == y).mean()
 
 
 class TSTE(Adaptive):
-    """
-    The t-Distributed STE (t-STE) embedding algorithm [1]_.
+    """The t-Distributed STE (t-STE) embedding algorithm [1]_.
 
     Notes
     -----
@@ -290,8 +332,7 @@ class TSTE(Adaptive):
 
 
 class ARR(Adaptive):
-    """
-    A randomized round robin algorithm.
+    """A randomized round robin algorithm.
 
     Notes
     -----
@@ -352,8 +393,7 @@ class ARR(Adaptive):
 
 
 class STE(Adaptive):
-    """
-    The Stochastic Triplet Embedding [1]_.
+    """The Stochastic Triplet Embedding [1]_.
 
     References
     ----------
@@ -373,8 +413,7 @@ class STE(Adaptive):
 
 
 class GNMDS(Adaptive):
-    """
-    The Generalized Non-metric Multidimensional Scaling embedding [1]_.
+    """The Generalized Non-metric Multidimensional Scaling embedding [1]_.
 
     References
     ----------
@@ -394,8 +433,7 @@ class GNMDS(Adaptive):
 
 
 class CKL(Adaptive):
-    """
-    The crowd kernel embedding. Proposed in [1]_.
+    """The crowd kernel embedding. Proposed in [1]_.
 
     References
     ----------
@@ -416,10 +454,10 @@ class CKL(Adaptive):
 
 
 class SOE(Adaptive):
-    """
-    The soft ordinal embedding detailed by Terada et al. [1]_ This is evaluated
-    as "SOE" by Vankadara et al., [2]_ in which they use the hinge loss on the
-    distances (not squared distances).
+    """The soft ordinal embedding detailed by Terada et al. [1]_
+
+    This is evaluated as "SOE" by Vankadara et al., [2]_ in which they use the
+    hinge loss on the distances (not squared distances).
 
     References
     ----------

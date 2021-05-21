@@ -5,44 +5,44 @@ channels:
   - pytorch
   - anaconda
 dependencies:
-  - python==3.7.*  # skorch doesn't officialy support 3.8 yet
-  - Cython
-  - numba
+  - python==3.8.*
+  - pip
   - numpy>=1.18.0
   - scipy
   - pandas>=1.0.1
+  - Cython
   - scikit-learn
-  - pip
-  - nomkl
-  - dask>=2.30.0
-  - distributed>=2.30.0
+  - dask>=2021.02.0
+  - distributed>=2021.02.0
+  - lz4
+  - python-blosc
+  - cytoolz
   - ujson
-  - msgpack-python>=1.0.0  # some issues w/ FORTE
-  - msgpack-numpy  # some issues w/ FORTE
-  - pytorch==1.4.*  # skorch doesn't support 1.5 yet
+  - pytorch
   - cpuonly
+  - pyyaml
+  - ipykernel  # to run this environ in jupyter (required for viz)
   - nb_conda_kernels
   - pip:
-    - fastapi[all]
-    - skorch==0.8.0
-    - pyarrow
-    - fastparquet
-    - dask-ml
-    - bokeh==2.0.1
-    - cloudpickle
     - seaborn
-    - uvicorn[standard]
-    - jinja2
-    - redis>=3.0.0
+    - fastapi[all]
     - rejson
     - httpx
     - aiofiles
-    - altair
+    - skorch>=0.8.0
+    - pyarrow
+    - fastparquet
+    - dask-ml
+    - bokeh==2.0.1  # because templates/dashboard.html requires this version
+    - cloudpickle
+    - jinja2
+    - redis>=3.0.0
     - matplotlib
-    - joblib
     - gunicorn
+    - python-multipart  # optional dep required by gunicorn
     - starlette-prometheus
-    - sphinx
+    - sphinx>=4.0.0
     - numpydoc
     - sphinx_rtd_theme
     - pytest
+    - jupyter-server-proxy  # to view Dask dashboard

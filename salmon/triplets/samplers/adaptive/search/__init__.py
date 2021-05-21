@@ -1,1 +1,1 @@
-from ._search import decide, score, posterior
+from ._search import decide, posterior, score

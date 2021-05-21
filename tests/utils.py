@@ -1,13 +1,13 @@
 import json
+from logging import getLogger
 from pathlib import Path
 from time import sleep
 from typing import Tuple
-from logging import getLogger
 from warnings import warn
 
+import httpx as requests
 import numpy as np
 import pytest
-import httpx as requests
 import yaml
 from sklearn.utils import check_random_state
 
@@ -28,7 +28,7 @@ class Server:
         if "auth" not in kwargs and self._authorized:
             kwargs.update(auth=self.creds)
         if "reset" in endpoint and "timeout" not in kwargs:
-            kwargs.update(timeout=80)
+            kwargs.update(timeout=90)
 
         logger.info(f"Getting {endpoint}")
         r = requests.get(self.url + endpoint, **kwargs)
