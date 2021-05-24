@@ -40,7 +40,9 @@ class Server:
         if "auth" not in kwargs and self._authorized:
             kwargs.update(auth=self.creds)
         if "init_exp" in endpoint and "timeout" not in kwargs:
-            kwargs.update(timeout=80)
+            kwargs.update(timeout=120)
+        if "timeout" not in kwargs:
+            kwargs.update(timeout=20)
         if isinstance(data, dict) and "exp" not in data and "rdb" not in data:
             data = json.dumps(data)
         logger.info(f"Getting {endpoint}")
