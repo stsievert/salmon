@@ -256,6 +256,8 @@ def test_get_config(server):
     rendered_config = server.get("/config").json()
     assert set(my_config).issubset(rendered_config)
     for k, v in my_config.items():
+        if k == "targets":
+            v = [str(t) for t in v]
         assert rendered_config[k] == v
 
     yaml_config = server.get("/config?json=0").text
