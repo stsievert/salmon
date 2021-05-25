@@ -11,7 +11,6 @@ from typing import Tuple
 import numpy as np
 import pandas as pd
 import pytest
-import requests
 import yaml
 
 from .utils import logs, server
