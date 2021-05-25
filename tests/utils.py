@@ -30,7 +30,7 @@ class Server:
         if "reset" in endpoint and "timeout" not in kwargs:
             kwargs.update(timeout=90)
         if "timeout" not in kwargs:
-            kwargs.update(timeout=30)
+            kwargs.update(timeout=90)
 
         logger.info(f"Getting {endpoint}")
         r = requests.get(self.url + endpoint, **kwargs)
