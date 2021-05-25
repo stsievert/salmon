@@ -29,6 +29,8 @@ class Server:
             kwargs.update(auth=self.creds)
         if "reset" in endpoint and "timeout" not in kwargs:
             kwargs.update(timeout=90)
+        if "timeout" not in kwargs:
+            kwargs.update(timeout=30)
 
         logger.info(f"Getting {endpoint}")
         r = requests.get(self.url + endpoint, **kwargs)
