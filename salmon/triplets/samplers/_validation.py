@@ -12,6 +12,9 @@ logger = logging.getLogger(__name__)
 class Validation(RoundRobin):
     def __init__(self, n, d=2, n_queries=20, ident=""):
         """
+        This sampler asks the same questions repeatedly, useful to evaluate
+        query difficulty.
+
         Parameters
         ----------
         n : int
