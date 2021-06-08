@@ -76,9 +76,11 @@ class TripletDist(nn.Module):
         return self.numpy_or_torch(self._probs)(win2, lose2)
 
     def _get_dists(self, h_w_l):
-        heads = self._embedding[h_w_l[:, 0]]
-        winners = self._embedding[h_w_l[:, 1]]
-        losers = self._embedding[h_w_l[:, 2]]
+        H_W_L = h_w_l.T
+        h, w, l = H_W_L[0], H_W_L[1], H_W_L[2]
+        heads = self._embedding[h]
+        winners = self._embedding[w]
+        losers = self._embedding[l]
 
         win_dist2 = torch.norm(heads - winners, dim=1) ** 2
         lose_dist2 = torch.norm(heads - losers, dim=1) ** 2
