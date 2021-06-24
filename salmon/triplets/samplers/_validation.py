@@ -22,8 +22,7 @@ class Validation(RoundRobin):
         ident : str
             Identifier of the algorithm
         n_queries : int, optional (default=20)
-            Number of validation queries. If not specified, choose one query
-            for each "head".
+            Number of validation queries.
         d : int
             Embedding dimension.
         """
