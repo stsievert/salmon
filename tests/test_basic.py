@@ -11,7 +11,6 @@ from typing import Tuple
 import numpy as np
 import pandas as pd
 import pytest
-import requests
 import yaml
 
 from .utils import logs, server
@@ -256,6 +255,8 @@ def test_get_config(server):
     rendered_config = server.get("/config").json()
     assert set(my_config).issubset(rendered_config)
     for k, v in my_config.items():
+        if k == "targets":
+            v = [str(t) for t in v]
         assert rendered_config[k] == v
 
     yaml_config = server.get("/config?json=0").text
@@ -274,9 +275,7 @@ def test_no_init_twice(server, logs):
     assert query
 
     # Make sure errors on re-initialization
-    server.post(
-        "/init_exp", data={"exp": exp.read_text()}, status_code=403, timeout=20
-    )
+    server.post("/init_exp", data={"exp": exp.read_text()}, status_code=403, timeout=20)
 
     # Make sure the prescribed method works (resetting, then re-init'ing)
     server.delete("/reset", status_code=403, timeout=20)
@@ -294,3 +293,35 @@ def test_auth_repeated_entries(server):
     server._authorized = True
     r = server.post(f"/create_user/{name}/{pword}", status_code=403)
     assert "maximum number of users" in r.text.lower()
+
+
+def test_validation_sampling(server, logs):
+    server.authorize()
+    n_val = 5
+    exp = {
+        "targets": [0, 1, 2, 3, 4, 5],
+        "samplers": {"Validation": {"n_queries": n_val}},
+    }
+    server.post("/init_exp", data={"exp": exp})
+    data = []
+    puid = "adsfjkl4awjklra"
+    with logs:
+        for k in range(3 * n_val):
+            q = server.get("/query").json()
+            ans = {"winner": random.choice([q["left"], q["right"]]), "puid": k, **q}
+            server.post("/answer", data=ans)
+            data.append(ans)
+
+        sleep(1)
+        r = server.get("/responses")
+    queries = [(q["head"], (q["left"], q["right"])) for q in r.json()]
+    uniq_queries = [(h, (min(c), max(c))) for h, c in queries]
+    assert len(set(uniq_queries)) == n_val
+    order = [hash(q) for q in queries]
+    round_orders = [
+        order[k * n_val : (k + 1) * n_val]
+        for k in range(3)
+    ]
+    for round_order in round_orders:
+        assert len(set(round_order)) == n_val
+    assert all(round_orders[0] != order for order in round_orders[1:])

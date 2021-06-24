@@ -9,9 +9,7 @@ from typing import Tuple
 
 import numpy as np
 import pandas as pd
-import requests
 import yaml
-from requests.auth import HTTPBasicAuth, HTTPDigestAuth
 
 from .utils import logs, server
 

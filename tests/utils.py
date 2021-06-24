@@ -12,6 +12,7 @@ import yaml
 from sklearn.utils import check_random_state
 
 logger = getLogger(__name__)
+TIMEOUT = 200
 
 
 class Server:
@@ -28,7 +29,9 @@ class Server:
         if "auth" not in kwargs and self._authorized:
             kwargs.update(auth=self.creds)
         if "reset" in endpoint and "timeout" not in kwargs:
-            kwargs.update(timeout=90)
+            kwargs.update(timeout=TIMEOUT)
+        if "timeout" not in kwargs:
+            kwargs.update(timeout=TIMEOUT)
 
         logger.info(f"Getting {endpoint}")
         r = requests.get(self.url + endpoint, **kwargs)
@@ -40,7 +43,9 @@ class Server:
         if "auth" not in kwargs and self._authorized:
             kwargs.update(auth=self.creds)
         if "init_exp" in endpoint and "timeout" not in kwargs:
-            kwargs.update(timeout=80)
+            kwargs.update(timeout=TIMEOUT)
+        if "timeout" not in kwargs:
+            kwargs.update(timeout=TIMEOUT)
         if isinstance(data, dict) and "exp" not in data and "rdb" not in data:
             data = json.dumps(data)
         logger.info(f"Getting {endpoint}")
@@ -81,7 +86,7 @@ def _clear_logs(log=None):
 def server():
     server = Server("http://127.0.0.1:8421")
     server.authorize()
-    r = server.delete("/reset?force=1", auth=server.creds, timeout=20)
+    r = server.delete("/reset?force=1", auth=server.creds, timeout=TIMEOUT)
     assert r.json() == {"success": True}
     _clear_logs()
     yield server
