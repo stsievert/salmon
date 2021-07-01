@@ -73,7 +73,6 @@ class Adaptive(Runner):
 
         self.n_search = kwargs.pop("n_search", 0)
 
-
         Opt = getattr(adaptive, optimizer)
         Module = getattr(adaptive, module)
 
@@ -352,7 +351,7 @@ class ARR(Adaptive):
 
     """
 
-    def __init__(self, R: int = 1, module="TSTE", **kwargs):
+    def __init__(self, R: int = 1, n_top=3, module="TSTE", **kwargs):
         """
         Parameters
         ----------
@@ -363,6 +362,7 @@ class ARR(Adaptive):
         kwargs : dict
             Keyword arguments to pass to :class:`~salmon.triplets.samplers.Adaptive`.
         """
+        self.n_top = n_top
         super().__init__(R=R, module=module, **kwargs)
 
     def get_queries(self, *args, **kwargs):
@@ -373,7 +373,7 @@ class ARR(Adaptive):
         df["score"] = scores
 
         # Find the top scores per head
-        top_scores_by_head = df.groupby(by="h")["score"].nlargest(n=3)
+        top_scores_by_head = df.groupby(by="h")["score"].nlargest(n=self.n_top)
         top_idx = top_scores_by_head.index.droplevel(0)
 
         top_queries = df.loc[top_idx]
