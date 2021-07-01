@@ -124,10 +124,6 @@ class Adaptive(Runner):
 
     def get_queries(self, num=None, stop=None) -> Tuple[List[Query], List[float], dict]:
         """Get and score many queries."""
-        if num or self.n_search:
-            n_ret = int(num or self.n_search)
-            queries, scores = self.search.score(num=n_ret)
-            return queries[:n_ret], scores[:n_ret], {}
         ret_queries = []
         ret_scores = []
         n_searched = 0
@@ -147,6 +143,11 @@ class Adaptive(Runner):
             # let's limit it to be 32MB in size
             if (n_searched >= 2e6) or (stop is not None and stop.is_set()):
                 break
+            if num or self.n_search:
+                n_ret = int(num or self.n_search)
+                if n_searched >= 3 * n_ret:
+                    break
+
         queries = np.concatenate(ret_queries).astype(int)
         scores = np.concatenate(ret_scores)
         queries = self._sort_query_order(queries)
@@ -155,7 +156,13 @@ class Adaptive(Runner):
         df = pd.DataFrame(queries)
         hashes = pd.util.hash_pandas_object(df, index=False)
         _, idx = np.unique(hashes.to_numpy(), return_index=True)
-        return queries[idx], scores[idx], {}
+        queries = queries[idx]
+        scores = scores[idx]
+        if num or self.n_search:
+            n_ret = int(num or self.n_search)
+            queries = queries[:n_ret]
+            scores = scores[:n_ret]
+        return queries, scores, {}
 
     @staticmethod
     def _sort_query_order(queries: np.ndarray) -> np.ndarray:
