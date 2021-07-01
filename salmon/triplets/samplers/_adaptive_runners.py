@@ -333,16 +333,18 @@ class TSTE(Adaptive):
 class ARR(Adaptive):
     """A randomized round robin algorithm.
 
+    In practice, this sampling algorithm randomly asks about high scoring
+    queries for each head.
+
     Notes
     -----
-    This algorithm is proposed in [1]_. They propose this algorithm because
-    "scoring every triplet is prohibitvely expensive." It's also useful because it adds some randomness to the queries. This presents itself in a couple use cases:
+    This algorithms asks about "high scoring queries" uniformly at random. For
+    each head, the top ``n_top`` queries are selected. The query shown to the
+    user is a query selected uniformly at random from this set.
 
-    * When models don't update instantly (common). In that case, the user will
-      query the database for multiple queries, and queries with the same head
-      object may be returned.
-    * When the noise model does not precisely model the human responses. In
-      this case, the most informative query will
+    This algorithm is proposed because "scoring every triplet is prohibitvely
+    expensive." It's perhaps more useful with Salmon's complete search
+    because adds some randomness to the query shown to the user.
 
     References
     ----------
@@ -355,10 +357,12 @@ class ARR(Adaptive):
         """
         Parameters
         ----------
-        R: int = 1
+        R: int (optional, default ``1``)
             Adaptive sampling starts are ``R * n`` response have been received.
         module : str, optional (default ``"TSTE"``).
             The noise model to use.
+        n_top : int (optional, default ``3``)
+            For each head, the number of top-scoring queries to ask about.
         kwargs : dict
             Keyword arguments to pass to :class:`~salmon.triplets.samplers.Adaptive`.
         """
