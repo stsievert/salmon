@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Algorithm configuration &mdash; Salmon v0.6.1rc3 documentation</title>
+  <title>Algorithm configuration &mdash; Salmon v0.6.1rc4 documentation</title>
   
 
   
@@ -193,6 +193,7 @@ sampling.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">targets</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;obj1&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;obj2&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;foo&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;bar&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;foobar!&quot;</span><span class="p p-Indicator">]</span>
 <span class="nt">samplers</span><span class="p">:</span>
   <span class="nt">RandomSampling</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
+  <span class="nt">Validation</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="s">&quot;n_queries&quot;</span><span class="p p-Indicator">:</span> <span class="nv">10</span><span class="p p-Indicator">}</span>
 </pre></div>
 </div>
 <p>By default, <code class="docutils literal notranslate"><span class="pre">samplers</span></code> defaults to <code class="docutils literal notranslate"><span class="pre">RandomSampling:</span> <span class="pre">{}</span></code>. We have to customize the <code class="docutils literal notranslate"><span class="pre">samplers</span></code> key use adaptive sampling algorithms:</p>
