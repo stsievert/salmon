@@ -348,7 +348,7 @@ class ARR(Adaptive):
 
     References
     ----------
-    .. [1] Heim, Eric, et al. "Active perceptual similarity modeling withi
+    .. [1] Heim, Eric, et al. "Active perceptual similarity modeling with
            auxiliary information." arXiv preprint arXiv:1511.02254 (2015). https://arxiv.org/abs/1511.02254
 
     """
@@ -382,6 +382,7 @@ class ARR(Adaptive):
 
         top_queries = df.loc[top_idx]
         top_scores = top_queries["score"].to_numpy()
+        top_queries = top_queries.sample(frac=1, replace=False)
 
         posted = top_queries[["h", "l", "r"]].to_numpy().astype("int64")
         r_scores = np.random.uniform(low=10, high=11, size=len(posted))
