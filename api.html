@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>API &mdash; Salmon v0.6.1rc6 documentation</title>
+  <title>API &mdash; Salmon v0.6.1rc7 documentation</title>
   
 
   
@@ -108,6 +108,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#passive-algorithms">Passive Algorithms</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="generated/salmon.triplets.samplers.RandomSampling.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.samplers</span></code>.RandomSampling</a></li>
 <li class="toctree-l4"><a class="reference internal" href="generated/salmon.triplets.samplers.RoundRobin.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.samplers</span></code>.RoundRobin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/salmon.triplets.samplers.Validation.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.samplers</span></code>.Validation</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#active-algorithms">Active Algorithms</a><ul>
@@ -258,6 +259,9 @@ uses <code class="docutils literal notranslate"><span class="pre">Runner.run</sp
 <tr class="row-even"><td><p><a class="reference internal" href="generated/salmon.triplets.samplers.RoundRobin.html#salmon.triplets.samplers.RoundRobin" title="salmon.triplets.samplers.RoundRobin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.triplets.samplers.RoundRobin</span></code></a>(n[, d, …])</p></td>
 <td><p>Let the head of the triplet query rotate through the available items while choosing the bottom two items randomly.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/salmon.triplets.samplers.Validation.html#salmon.triplets.samplers.Validation" title="salmon.triplets.samplers.Validation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.triplets.samplers.Validation</span></code></a>(n[, d, …])</p></td>
+<td><p>Ask about the same queries repeatedly</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -299,7 +303,7 @@ optimizer.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/salmon.triplets.samplers.ARR.html#salmon.triplets.samplers.ARR" title="salmon.triplets.samplers.ARR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.triplets.samplers.ARR</span></code></a>(R[, module])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/salmon.triplets.samplers.ARR.html#salmon.triplets.samplers.ARR" title="salmon.triplets.samplers.ARR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.triplets.samplers.ARR</span></code></a>(R[, n_top, module])</p></td>
 <td><p>A randomized round robin algorithm.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="generated/salmon.triplets.samplers.TSTE.html#salmon.triplets.samplers.TSTE" title="salmon.triplets.samplers.TSTE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.triplets.samplers.TSTE</span></code></a>([alpha])</p></td>

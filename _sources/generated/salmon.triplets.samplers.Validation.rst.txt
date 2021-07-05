@@ -1,0 +1,7 @@
+﻿:mod:`salmon.triplets.samplers`.Validation
+=================================================
+
+.. currentmodule:: salmon.triplets.samplers
+
+.. autoclass:: Validation
+   :members: __init__
