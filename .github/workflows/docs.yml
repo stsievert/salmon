@@ -1,5 +1,6 @@
 name: Documentation build
 
+on: push
 # on:
   # release:
     # types: [published]
