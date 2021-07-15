@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>salmon.triplets.samplers.Validation &mdash; Salmon v0.6.1rc8 documentation</title>
+  <title>salmon.triplets.samplers.Validation &mdash; Salmon v0.6.1rc8+1.g5ea1f33 documentation</title>
   
 
   
@@ -199,16 +199,16 @@
 <h1><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.samplers</span></code>.Validation<a class="headerlink" href="#salmon-triplets-samplers-validation" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="salmon.triplets.samplers.Validation">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">salmon.triplets.samplers.</span></span><span class="sig-name descname"><span class="pre">Validation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_queries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ident</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.samplers.Validation" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">salmon.triplets.samplers.</span></span><span class="sig-name descname"><span class="pre">Validation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_queries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">queries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ident</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.samplers.Validation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Ask about the same queries repeatedly</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="salmon.triplets.samplers.Validation.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_queries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ident</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.samplers.Validation.__init__" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_queries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">queries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ident</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.samplers.Validation.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>This sampler asks the same questions repeatedly, useful to evaluate
 query difficulty.</p>
-<dl class="field-list simple">
+<dl class="field-list">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
+<dd class="field-odd"><dl>
 <dt><strong>n</strong><span class="classifier">int</span></dt><dd><p>Number of objects</p>
 </dd>
 <dt><strong>ident</strong><span class="classifier">str</span></dt><dd><p>Identifier of the algorithm</p>
@@ -216,6 +216,16 @@ query difficulty.</p>
 <dt><strong>n_queries</strong><span class="classifier">int, optional (default=20)</span></dt><dd><p>Number of validation queries.</p>
 </dd>
 <dt><strong>d</strong><span class="classifier">int</span></dt><dd><p>Embedding dimension.</p>
+</dd>
+<dt><strong>queries</strong><span class="classifier">List[Tuple[int, int, int]]</span></dt><dd><p>The list of queries to ask about. Each query is
+<code class="docutils literal notranslate"><span class="pre">(head,</span> <span class="pre">obj1,</span> <span class="pre">obj2)</span></code> where <code class="docutils literal notranslate"><span class="pre">obj1</span></code> and <code class="docutils literal notranslate"><span class="pre">obj2</span></code> are
+randomly shown on the left and right. Each item in the tuple
+is the <cite>index</cite> of the target to ask about. For example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">queries</span><span class="o">=</span><span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">)]</span>
+</pre></div>
+</div>
+<p>will first ask about a query with <code class="docutils literal notranslate"><span class="pre">head_index=0</span></code>, then
+<code class="docutils literal notranslate"><span class="pre">head_index=3</span></code>, then <code class="docutils literal notranslate"><span class="pre">head_index=6</span></code>.</p>
 </dd>
 </dl>
 </dd>
