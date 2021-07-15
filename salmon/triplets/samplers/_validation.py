@@ -40,7 +40,7 @@ class Validation(RoundRobin):
             ``head_index=3``, then ``head_index=6``.
         """
         self.n_queries = n_queries
-        if queries is not None:
+        if queries is None:
             queries = [np.random.choice(n, size=3, replace=False) for _ in range(n_queries)]
         self._val_queries = queries
         super().__init__(n=n, d=d, ident=ident)

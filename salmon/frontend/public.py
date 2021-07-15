@@ -100,13 +100,14 @@ async def _ensure_initialized():
 
 
 @app.get("/", tags=["public"])
-async def get_query_page(request: Request):
+async def get_query_page(request: Request, puid: str=""):
     """
     Load the query page and present a "triplet query".
     """
     exp_config = await _ensure_initialized()
-    uid = "salmon-{}".format(np.random.randint(2 ** 32 - 1))
-    puid = sha256(uid)[:16]
+    if puid == "":
+        uid = "salmon-{}".format(np.random.randint(2 ** 32 - 1))
+        puid = sha256(uid)[:16]
     items = {
         "puid": puid,
         "instructions": exp_config["instructions"],
