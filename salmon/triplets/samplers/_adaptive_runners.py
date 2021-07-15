@@ -73,7 +73,6 @@ class Adaptive(Runner):
 
         self.n_search = kwargs.pop("n_search", 0)
 
-
         Opt = getattr(adaptive, optimizer)
         Module = getattr(adaptive, module)
 
@@ -125,10 +124,6 @@ class Adaptive(Runner):
 
     def get_queries(self, num=None, stop=None) -> Tuple[List[Query], List[float], dict]:
         """Get and score many queries."""
-        if num or self.n_search:
-            n_ret = int(num or self.n_search)
-            queries, scores = self.search.score(num=n_ret)
-            return queries[:n_ret], scores[:n_ret], {}
         ret_queries = []
         ret_scores = []
         n_searched = 0
@@ -148,6 +143,11 @@ class Adaptive(Runner):
             # let's limit it to be 32MB in size
             if (n_searched >= 2e6) or (stop is not None and stop.is_set()):
                 break
+            if num or self.n_search:
+                n_ret = int(num or self.n_search)
+                if n_searched >= 3 * n_ret:
+                    break
+
         queries = np.concatenate(ret_queries).astype(int)
         scores = np.concatenate(ret_scores)
         queries = self._sort_query_order(queries)
@@ -156,7 +156,13 @@ class Adaptive(Runner):
         df = pd.DataFrame(queries)
         hashes = pd.util.hash_pandas_object(df, index=False)
         _, idx = np.unique(hashes.to_numpy(), return_index=True)
-        return queries[idx], scores[idx], {}
+        queries = queries[idx]
+        scores = scores[idx]
+        if num or self.n_search:
+            n_ret = int(num or self.n_search)
+            queries = queries[:n_ret]
+            scores = scores[:n_ret]
+        return queries, scores, {}
 
     @staticmethod
     def _sort_query_order(queries: np.ndarray) -> np.ndarray:
@@ -334,35 +340,40 @@ class TSTE(Adaptive):
 class ARR(Adaptive):
     """A randomized round robin algorithm.
 
+    In practice, this sampling algorithm randomly asks about high scoring
+    queries for each head.
+
     Notes
     -----
-    This algorithm is proposed in [1]_. They propose this algorithm because
-    "scoring every triplet is prohibitvely expensive." It's also useful because it adds some randomness to the queries. This presents itself in a couple use cases:
+    This algorithms asks about "high scoring queries" uniformly at random. For
+    each head, the top ``n_top`` queries are selected. The query shown to the
+    user is a query selected uniformly at random from this set.
 
-    * When models don't update instantly (common). In that case, the user will
-      query the database for multiple queries, and queries with the same head
-      object may be returned.
-    * When the noise model does not precisely model the human responses. In
-      this case, the most informative query will
+    This algorithm is proposed because "scoring every triplet is prohibitvely
+    expensive." It's perhaps more useful with Salmon's complete search
+    because adds some randomness to the query shown to the user.
 
     References
     ----------
-    .. [1] Heim, Eric, et al. "Active perceptual similarity modeling withi
+    .. [1] Heim, Eric, et al. "Active perceptual similarity modeling with
            auxiliary information." arXiv preprint arXiv:1511.02254 (2015). https://arxiv.org/abs/1511.02254
 
     """
 
-    def __init__(self, R: int = 1, module="TSTE", **kwargs):
+    def __init__(self, R: int = 1, n_top=3, module="TSTE", **kwargs):
         """
         Parameters
         ----------
-        R: int = 1
+        R: int (optional, default ``1``)
             Adaptive sampling starts are ``R * n`` response have been received.
         module : str, optional (default ``"TSTE"``).
             The noise model to use.
+        n_top : int (optional, default ``3``)
+            For each head, the number of top-scoring queries to ask about.
         kwargs : dict
             Keyword arguments to pass to :class:`~salmon.triplets.samplers.Adaptive`.
         """
+        self.n_top = n_top
         super().__init__(R=R, module=module, **kwargs)
 
     def get_queries(self, *args, **kwargs):
@@ -373,11 +384,12 @@ class ARR(Adaptive):
         df["score"] = scores
 
         # Find the top scores per head
-        top_scores_by_head = df.groupby(by="h")["score"].nlargest(n=3)
+        top_scores_by_head = df.groupby(by="h")["score"].nlargest(n=self.n_top)
         top_idx = top_scores_by_head.index.droplevel(0)
 
         top_queries = df.loc[top_idx]
         top_scores = top_queries["score"].to_numpy()
+        top_queries = top_queries.sample(frac=1, replace=False)
 
         posted = top_queries[["h", "l", "r"]].to_numpy().astype("int64")
         r_scores = np.random.uniform(low=10, high=11, size=len(posted))

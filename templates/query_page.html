@@ -170,8 +170,7 @@ async function send(winner, id) {
     var response_time = getTime() - response_start;
     num_queries = num_queries + 1;
     $("#num-queries").html("" + num_queries);
-    $.post("/answer",
-      JSON.stringify({
+    var data = {
           "head": head,
           "left": left,
           "right": right,
@@ -181,8 +180,14 @@ async function send(winner, id) {
           "network_latency": latency,
           "score": score,
           "alg_ident": ident,
-      })
-    );
+    };
+    $.ajax({
+      "url": "/answer",
+      "method": "POST",
+      "dataType": "json",
+      "contentType": "application/json",
+      "data": JSON.stringify(data),
+    });
   }
 }
 
