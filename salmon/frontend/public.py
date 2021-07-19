@@ -116,18 +116,20 @@ async def get_query_page(request: Request, puid: str=""):
         "debrief": exp_config["debrief"],
         "skip_button": exp_config["skip_button"],
         "css": exp_config["css"],
+        "samplers_per_user": exp_config["sampling"]["samplers_per_user"],
     }
     items.update(request=request)
     return templates.TemplateResponse("query_page.html", items)
 
 
 @app.get("/query", tags=["public"])
-async def get_query() -> Dict[str, Union[int, str, float]]:
-    idents = rj.jsonget("samplers")
-    probs = rj.jsonget("sampling_probs")
+async def get_query(ident="") -> Dict[str, Union[int, str, float]]:
+    if ident == "":
+        idents = rj.jsonget("samplers")
+        probs = rj.jsonget("sampling_probs")
 
-    idx = np.random.choice(len(idents), p=probs)
-    ident = idents[idx]
+        idx = np.random.choice(len(idents), p=probs)
+        ident = idents[idx]
 
     r = httpx.get(f"http://localhost:8400/query-{ident}")
     if r.status_code == 200:

@@ -293,11 +293,24 @@ async def _get_config(exp: bytes, targets: bytes) -> Dict[str, Any]:
     }
     exp_config.update(config)
     if "sampling" not in exp_config:
+        exp_config["sampling"] = {}
+
+    if "probs" not in exp_config["sampling"]:
         n = len(exp_config["samplers"])
         freqs = [100 // n] * n
         freqs[0] += 100 % n
         sampling_percent = {k: f for k, f in zip(exp_config["samplers"], freqs)}
-        exp_config["sampling"] = {"probs": sampling_percent}
+        exp_config["sampling"]["probs"] = sampling_percent
+
+    if "samplers_per_user" not in exp_config["sampling"]:
+        exp_config["sampling"]["samplers_per_user"] = 0
+
+    if exp_config["sampling"]["samplers_per_user"] not in {0, 1}:
+        s = exp_config["sampling"]["samplers_per_user"]
+        raise NotImplementedError(
+            "Only samplers_per_user in {0, 1} is implemented, not "
+            f"samplers_per_user={s}"
+        )
 
     if set(exp_config["sampling"]["probs"]) != set(exp_config["samplers"]):
         sf = set(exp_config["sampling"]["probs"])

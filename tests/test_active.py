@@ -74,6 +74,33 @@ def test_active_basics(server, logs):
         assert set(algs) == {"TSTE", "ARR", "CKL", "tste2", "GNMDS"}
 
 
+def test_samplers_per_user(server, logs):
+    server.authorize()
+    exp = Path(__file__).parent / "data" / "active.yaml"
+    print("init'ing exp")
+    exp2 = yaml.safe_load(exp.read_bytes())
+    exp2["sampling"] = {"samplers_per_user": 1}
+    server.post("/init_exp", data={"exp": str(exp2)})
+    print("done")
+
+    with open(exp, "r") as f:
+        config = yaml.load(f, Loader=yaml.SafeLoader)
+    samplers = list(config["samplers"].keys())
+
+    ident = random.choice(samplers)
+    with logs:
+        for k in range(len(samplers) * 2):
+            q = server.get(f"/query?ident={ident}").json()
+            ans = {"winner": random.choice([q["left"], q["right"]]), "puid": "foo", **q}
+            server.post("/answer", json=ans)
+
+        r = server.get("/responses")
+        d = r.json()
+        df = pd.DataFrame(d)
+        algs = df.alg_ident.unique()
+        assert len(set(algs)) == 1
+
+
 def test_round_robin(server, logs):
     server.authorize()
     exp = Path(__file__).parent / "data" / "round-robin.yaml"

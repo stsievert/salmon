@@ -151,6 +151,7 @@ var latency = -1;
 var max_queries = {{ max_queries }};
 var num_queries = 0;  // queries submitted
 var show_queries = getTime();
+var samplers_per_user = {{ samplers_per_user }};
 
 async function send(winner, id) {
   setTimeout(function() {
@@ -210,9 +211,20 @@ class FixedLengthArray{
 }
 
 var prev_queries = new FixedLengthArray(5);
+var ident = "";
 
 function getquery(){
-  $.get("/query", function(data){
+  console.log(ident);
+  if ((ident == "") | (samplers_per_user == 0)){
+    var endpoint = "/query"
+  } else if (samplers_per_user == 1) {
+    var endpoint = "/query?ident=" + ident;
+  } else {
+      var msg ="samplers_per_user=" + samplers_per_user + " is not implemented";
+      console.log(msg);
+      alert(msg);
+  }
+  $.get(endpoint, function(data){
       head = data["head"];
       right = data["right"];
       left = data["left"];
