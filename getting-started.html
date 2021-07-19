@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Starting an experiment &mdash; Salmon v0.6.1rc8+2.gf9ecaa0 documentation</title>
+  <title>Starting an experiment &mdash; Salmon v0.6.1rc9 documentation</title>
   
 
   
@@ -274,8 +274,17 @@ through in the responses).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">max_queries</span></code>: int. The number of queries a participant should answer. Set
 <code class="docutils literal notranslate"><span class="pre">max_queries:</span> <span class="pre">-1</span></code> for unlimited queries.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">samplers</span></code>. See <a class="reference internal" href="algorithms.html#adaptive-config"><span class="std std-ref">Algorithm configuration</span></a> for more detail.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">sampling</span></code>. A dictionary with the key <code class="docutils literal notranslate"><span class="pre">probs</span></code> and percentage
-probabilities for each algorithm.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sampling</span></code>. A dictionary with the following keys:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">probs</span></code>, a map between sampler names and the percentage that
+each sampler is selected.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">samplers_per_user</span></code>: (optional int, default=0). Controls the
+number of samplers each user sees. If <code class="docutils literal notranslate"><span class="pre">samplers_per_user=0</span></code>, show
+users a random sampler.</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p><code class="docutils literal notranslate"><span class="pre">targets</span></code>, optional list. Choices:</p>
 <blockquote>
 <div><ul class="simple">
