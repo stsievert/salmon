@@ -1,10 +1,24 @@
+ <!DOCTYPE html>
 
-<meta http-equiv="refresh" content="0; URL='http://34.223.104.82:8421/'" />
+<html>
+  <body>
 
-<script>
-  window.location = "http://34.223.104.82:8421/";
-</script>
+  <div id="msg">
+    <p>Please enable Javascript for a (random) redirection</p>
+  </div>
 
-<div>
-Redirecting to <a href="http://34.223.104.82:8421/">http://34.223.104.82:8421/</a>...
-</div>
+  <script>
+    var urls = ["http://44.234.149.136:8421", "http://44.234.188.246:8421"];
+    var p_first_url = 0.21;
+    var url = "";
+    if (Math.random() < p_first_url) {
+        url = urls[0];
+    } else {
+        url = urls[1];
+    }
+    document.getElementById("msg").innerHTML = "<p>Redirecting to " + url + "</p>";
+
+    window.open(url, '_self');
+  </script>
+  </body>
+</html>
