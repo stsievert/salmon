@@ -405,8 +405,20 @@ class ARR(Adaptive):
         return new_self, True
 
 
-class ARRProxy(ARR):
+class SARR(ARR):
+    """
+    A adaptive round robin scheme that runs a synchronous search,
+    a modification of :class:`~salmon.triplets.samplers.ARR`.
+    """
     def __init__(self, *args, n_search=400, **kwargs):
+        """
+        Parameters
+        ----------
+        n_search: int (optional, default ``400``)
+            How many queries should be searched per user?
+        kwargs : dict
+            Keyword arguments to pass to :class:`~salmon.triplets.samplers.ARR`.
+        """
         super().__init__(*args, **kwargs)
         self.n_search = n_search
         self.run_get_queries_ = False
