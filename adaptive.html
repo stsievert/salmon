@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Adaptive algorithms &mdash; Salmon v0.6.1rc9+3.g72416e4 documentation</title>
+  <title>Adaptive algorithms &mdash; Salmon v0.6.1rc9+4.g3ccb004 documentation</title>
   
 
   
@@ -189,9 +189,6 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/salmon.backend.sampler.Runner.html#salmon.backend.sampler.Runner" title="salmon.backend.sampler.Runner"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.backend.sampler.Runner</span></code></a>(ident)</p></td>
-<td><p>Run a sampling algorithm.</p></td>
-</tr>
 </tbody>
 </table>
 <p>This API balances the fundamentally serial nature of adaptive algorithms with
@@ -215,7 +212,7 @@ following:</p>
     <span class="n">db</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">answer</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The <a class="reference internal" href="generated/salmon.backend.sampler.Runner.html#salmon.backend.sampler.Runner" title="salmon.backend.sampler.Runner"><code class="xref py py-class docutils literal notranslate"><span class="pre">Runner</span></code></a> API balances the two and runs the code
+<p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">Runner</span></code> API balances the two and runs the code
 to <cite>receive answers</cite> and <cite>process answers</cite> in separate processes.
 <cite>Processing the received answers</cite> is an optimization that needs to be performed
 quickly because <code class="docutils literal notranslate"><span class="pre">model.best_query</span></code> depends on the optimization.</p>
