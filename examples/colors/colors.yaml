@@ -5,9 +5,9 @@ d: 2
 samplers:
   ARR:
     random_state: 42
-  RandomSampling: {}
+  Random: {}
 sampling:
-  probs: {"RandomSampling": 38, "ARR": 62}
+  probs: {"Random": 38, "ARR": 62}
 css: >
   body {
     background-color: #414141;

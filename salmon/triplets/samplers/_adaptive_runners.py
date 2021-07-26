@@ -11,7 +11,7 @@ import pandas as pd
 import torch.optim
 
 import salmon.triplets.samplers.adaptive as adaptive
-from ...backend.sampler import Runner
+from ...backend.sampler import Sampler
 from salmon.triplets.samplers._random_sampling import _get_query as _random_query
 from salmon.triplets.samplers.adaptive import InfoGainScorer, UncertaintyScorer
 from salmon.utils import get_logger
@@ -22,9 +22,9 @@ Query = TypeVar("Query")
 Answer = TypeVar("Answer")
 
 
-class Adaptive(Runner):
+class Adaptive(Sampler):
     """
-    The runner that runs adaptive algorithms.
+    The sampler that runs adaptive algorithms.
     """
 
     def __init__(
@@ -66,6 +66,7 @@ class Adaptive(Runner):
             Keyword arguments to pass to :class:`~salmon.triplets.samplers.adaptive.Embedding`.
         """
         super().__init__(ident=ident)
+        self.run_get_queries_ = True
 
         self.n = n
         self.d = d
@@ -402,6 +403,30 @@ class ARR(Adaptive):
         # Always return True to clear queries from the database (limits
         # randomness)
         return new_self, True
+
+
+class ARRProxy(ARR):
+    def __init__(self, *args, n_search=400, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.n_search = n_search
+        self.run_get_queries_ = False
+        self.head_ = 0
+
+    def get_query(self):
+        q, score = super().get_query()
+        if q is not None:
+            return q, score
+
+        _choices = list(set(range(self.n)) - {self.head_})
+        choices = np.array(_choices)
+        bottoms = [np.random.choice(choices, size=2, replace=False) for _ in range(self.n_search)]
+
+        _queries = [[self.head_, l, r] for l, r in bottoms]
+        queries, scores = self.search.score(queries=_queries)
+
+        top_idx = np.argmax(scores)
+        self.head_ = (self.head_ + 1) % self.n
+        return queries[top_idx], scores[top_idx]
 
 
 class STE(Adaptive):

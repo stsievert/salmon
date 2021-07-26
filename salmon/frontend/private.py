@@ -21,8 +21,12 @@ import requests as httpx
 import yaml
 from bokeh.embed import json_item
 from fastapi import Depends, File, Form, HTTPException
-from fastapi.responses import (FileResponse, HTMLResponse, JSONResponse,
-                               PlainTextResponse)
+from fastapi.responses import (
+    FileResponse,
+    HTMLResponse,
+    JSONResponse,
+    PlainTextResponse,
+)
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from redis import ResponseError
 from rejson import Client, Path
@@ -35,8 +39,13 @@ import salmon
 from ..triplets import manager
 from . import plotting
 from .public import _ensure_initialized, app, templates
-from .utils import (ServerException, _extract_zipfile, _format_target,
-                    _format_targets, get_logger)
+from .utils import (
+    ServerException,
+    _extract_zipfile,
+    _format_target,
+    _format_targets,
+    get_logger,
+)
 
 security = HTTPBasic()
 
@@ -285,7 +294,7 @@ async def _get_config(exp: bytes, targets: bytes) -> Dict[str, Any]:
         "instructions": "Default instructions (can include <i>arbitrary</i> HTML)",
         "max_queries": None,
         "debrief": "Thanks!",
-        "samplers": {"random": {"class": "RandomSampling"}},
+        "samplers": {"random": {"class": "Random"}},
         "max_queries": -1,
         "d": 2,
         "skip_button": False,
@@ -311,6 +320,8 @@ async def _get_config(exp: bytes, targets: bytes) -> Dict[str, Any]:
             "Only samplers_per_user in {0, 1} is implemented, not "
             f"samplers_per_user={s}"
         )
+    if "RandomSampling" in exp_config["samplers"]:
+        raise ValueError("The sampler `RandomSampling` has be renamed to `Random`")
 
     if set(exp_config["sampling"]["probs"]) != set(exp_config["samplers"]):
         sf = set(exp_config["sampling"]["probs"])

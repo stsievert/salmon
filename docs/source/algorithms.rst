@@ -21,10 +21,10 @@ sampling.
 
    targets: ["obj1", "obj2", "foo", "bar", "foobar!"]
    samplers:
-     RandomSampling: {}
+     Random: {}
      Validation: {"n_queries": 10}
 
-By default, ``samplers`` defaults to ``RandomSampling: {}``. We have to customize the ``samplers`` key use adaptive sampling algorithms:
+By default, ``samplers`` defaults to ``Random: {}``. We have to customize the ``samplers`` key use adaptive sampling algorithms:
 
 .. code-block:: yaml
 
@@ -42,7 +42,7 @@ configuration:
 
    targets: ["obj1", "obj2", "foo", "bar", "foobar!"]
    samplers:
-     RandomSampling: {}
+     Random: {}
      ARR:
        module: "TSTE"
 
@@ -56,7 +56,7 @@ would compare two different instances of
    targets: ["obj1", "obj2", "foo", "bar", "foobar!"]
 
    samplers:
-     RandomSampling: {}
+     Random: {}
      arr_tste:
        class: ARR
        module: "TSTE"
@@ -66,7 +66,7 @@ would compare two different instances of
        module__mu: 0.02
 
    sampling:
-     probs: {"RandomSampling": 20, "arr_ckl": 40, "arr_tste": 40}
+     probs: {"Random": 20, "arr_ckl": 40, "arr_tste": 40}
 
 In this configuration, custom names are provided for two instances of
 :class:`~salmon.triplets.samplers.ARR`. Both instances are sampled 40% of the

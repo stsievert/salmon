@@ -20,8 +20,8 @@ def test_active_wrong_proportion(server, logs):
         "targets": 10,
         "sampling": {"probs": {"a1": 50, "a2": 40}},
         "samplers": {
-            "a1": {"class": "RandomSampling"},
-            "a2": {"class": "RandomSampling"},
+            "a1": {"class": "Random"},
+            "a2": {"class": "Random"},
         },
     }
     r = server.post("/init_exp", data={"exp": json.dumps(exp)}, error=True)
@@ -34,7 +34,7 @@ def test_active_bad_keys(server, logs):
     exp = {
         "targets": 10,
         "sampling": {"probs": {"a1": 50, "a2": 40}},
-        "samplers": {"a1": {"class": "RandomSampling"}},
+        "samplers": {"a1": {"class": "Random"}},
     }
     r = server.post("/init_exp", data={"exp": exp}, error=True)
     assert r.status_code == 500

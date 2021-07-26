@@ -3,7 +3,7 @@ import random
 
 import numpy as np
 
-from ...backend.sampler import Path, Runner
+from ...backend.sampler import Path
 from .utils import Answer, Query
 from ._round_robin import _get_query, _score_query, RoundRobin
 logger = logging.getLogger(__name__)

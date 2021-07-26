@@ -21,7 +21,7 @@ Answer = TypeVar("Answer")
 root = Path.rootPath()
 
 
-class Runner:
+class Sampler:
     """
     Run a sampling algorithm. Provides hooks to connect with the database and
     the Dask cluster.
@@ -36,6 +36,7 @@ class Runner:
     def __init__(self, ident: str = ""):
         self.ident = ident
         self.meta_ = []
+        self.run_get_queries_ = False
 
     def redis_client(self, decode_responses=True) -> RedisClient:
         """
@@ -117,7 +118,7 @@ class Runner:
                     "process_answers", self_future, answers, workers=workers[1],
                 )
 
-                if hasattr(self, "get_queries"):
+                if self.run_get_queries_:
                     f_search = submit(
                         "get_queries", self_future, stop=done, workers=workers[2],
                     )
@@ -218,7 +219,7 @@ class Runner:
 
     def save(self) -> bool:
         """
-        Save the runner's state and current embedding to the database.
+        Save the sampler's state and current embedding to the database.
         """
         rj2 = self.redis_client(decode_responses=False)
 
@@ -343,7 +344,7 @@ class Runner:
 
     def clear_queries(self, rj: RedisClient) -> bool:
         """
-        Clear all queries that this runner has posted from the database.
+        Clear all queries that this sampler has posted from the database.
         """
         rj.delete(f"alg-{self.ident}-queries")
         return True
