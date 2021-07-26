@@ -321,7 +321,7 @@ async def _get_config(exp: bytes, targets: bytes) -> Dict[str, Any]:
             f"samplers_per_user={s}"
         )
     if "RandomSampling" in exp_config["samplers"]:
-        raise ValueError("The sampler `RandomSampling` has be renamed to `Random`")
+        raise ValueError("The sampler `RandomSampling` has been renamed to `Random`.")
 
     if set(exp_config["sampling"]["probs"]) != set(exp_config["samplers"]):
         sf = set(exp_config["sampling"]["probs"])

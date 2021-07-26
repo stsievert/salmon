@@ -410,23 +410,26 @@ class ARRProxy(ARR):
         super().__init__(*args, **kwargs)
         self.n_search = n_search
         self.run_get_queries_ = False
-        self.head_ = 0
+
+    def get_queries(self, *args, **kwargs):
+        raise NotImplementedError
 
     def get_query(self):
         q, score = super().get_query()
         if q is not None:
             return q, score
 
-        _choices = list(set(range(self.n)) - {self.head_})
+        head = int(np.random.choice(self.n))
+        _choices = list(set(range(self.n)) - {head})
         choices = np.array(_choices)
         bottoms = [np.random.choice(choices, size=2, replace=False) for _ in range(self.n_search)]
 
-        _queries = [[self.head_, l, r] for l, r in bottoms]
+        _queries = [[head, l, r] for l, r in bottoms]
         queries, scores = self.search.score(queries=_queries)
 
         top_idx = np.argmax(scores)
-        self.head_ = (self.head_ + 1) % self.n
-        return queries[top_idx], scores[top_idx]
+        (h, l, r), score = queries[top_idx], float(scores[top_idx])
+        return {"head": int(h), "left": int(l), "right": int(r)}, score
 
 
 class STE(Adaptive):
