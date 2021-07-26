@@ -36,7 +36,6 @@ class Sampler:
     def __init__(self, ident: str = ""):
         self.ident = ident
         self.meta_ = []
-        self.run_get_queries_ = False
 
     def redis_client(self, decode_responses=True) -> RedisClient:
         """
@@ -118,12 +117,9 @@ class Sampler:
                     "process_answers", self_future, answers, workers=workers[1],
                 )
 
-                if self.run_get_queries_:
-                    f_search = submit(
-                        "get_queries", self_future, stop=done, workers=workers[2],
-                    )
-                else:
-                    f_search = client.submit(lambda x: ([], [], {}), 0)
+                f_search = submit(
+                    "get_queries", self_future, stop=done, workers=workers[2],
+                )
 
                 time_model = 0.0
                 time_post = 0.0
@@ -310,25 +306,27 @@ class Sampler:
         """
         raise NotImplementedError
 
-        #  def get_queries(self) -> Tuple[List[Query], List[float]]:
-        """
-        Get queries.
+        def get_queries(self) -> Tuple[List[Query], List[float]]:
+            """
+            Get queries.
 
-        Returns
-        -------
-        queries : List[Query]
-            The list of queries
-        scores : List[float]
-            The scores for each query. Higher scores are sampled more
-            often.
+            Returns
+            -------
+            queries : List[Query]
+                The list of queries
+            scores : List[float]
+                The scores for each query. Higher scores are sampled more
+                often.
+            meta : Dict[str, Any]
+                Information about the search.
 
-        Notes
-        -----
-        The scores have to be unique. The underlying implementation does
-        not sample queries of the same score unbiased.
+            Notes
+            -----
+            The scores have to be unique. The underlying implementation does
+            not sample queries of the same score unbiased.
 
-        """
-        raise NotImplementedError
+            """
+            return [], [], {}
 
     def get_model(self) -> Dict[str, Any]:
         """

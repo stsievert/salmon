@@ -66,7 +66,6 @@ class Adaptive(Sampler):
             Keyword arguments to pass to :class:`~salmon.triplets.samplers.adaptive.Embedding`.
         """
         super().__init__(ident=ident)
-        self.run_get_queries_ = True
 
         self.n = n
         self.d = d
@@ -421,10 +420,9 @@ class SARR(ARR):
         """
         super().__init__(*args, **kwargs)
         self.n_search = n_search
-        self.run_get_queries_ = False
 
     def get_queries(self, *args, **kwargs):
-        raise NotImplementedError
+        return [], [], {}
 
     def get_query(self):
         q, score = super().get_query()
