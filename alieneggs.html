@@ -8,16 +8,35 @@
   </div>
 
   <script>
-    var urls = ["http://44.242.170.57:8421/", "http://44.242.138.18:8421/"];
-    var p_first_url = 0.21;
-    var url = "";
-    if (Math.random() < p_first_url) {
-        url = urls[0];
-    } else {
-        url = urls[1];
-    }
-    document.getElementById("msg").innerHTML = "<p>Redirecting to " + url + "</p>";
+    var prob_m1 = 0.10526;
+    var prob_m2 = 0.05263;
+    var prob_m3 = 0.42763;
+    var prob_m4 = 0.10526;
+    var prob_m5 = 0.30921;
 
+    var urls = [1, 2, 3, 4, 5];
+
+    var r = Math.random();
+
+    if (r < prob_m1){
+      url = urls[0];
+    } else if (r < prob_m1 + prob_m2){
+      url = urls[1];
+    } else if (r < prob_m1 + prob_m2 + prob_m3){
+      url = urls[2];
+    } else if (r < prob_m1 + prob_m2 + prob_m3 + prob_m4){
+      url = urls[3];
+    } else {
+      url = urls[4];
+    }
+    console.log(url);
+
+//1    0.121   // 0.105
+//2    0.064  // 0.052
+//3    0.407  // 0.427
+//4    0.111   // 0.105
+//5    0.297  // 0.309
+    document.getElementById("msg").innerHTML = "<p>Redirecting to " + url + "</p>";
     window.open(url, '_self');
   </script>
   </body>
