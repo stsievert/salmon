@@ -31,6 +31,8 @@
       url = urls[4];
     }
     console.log(url);
+    document.getElementById("msg").innerHTML = "<p>Redirecting to " + url + "</p>";
+    window.open(url, '_self');
 
 //1    0.121   // 0.105
 //2    0.064  // 0.052
@@ -45,8 +47,6 @@
 //http://35.84.133.58:8421/      0.069
 
 
-    //document.getElementById("msg").innerHTML = "<p>Redirecting to " + url + "</p>";
-    //window.open(url, '_self');
   </script>
   </body>
 </html>
