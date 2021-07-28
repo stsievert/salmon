@@ -196,7 +196,12 @@ class OfflineEmbedding(BaseEstimator):
                 test_score, loss_test = self._score(X_test)
                 datum["score_test"] = test_score
                 datum["loss_test"] = loss_test
-                keys = ["ident", "score_test", "train_data", "max_epochs", "_epochs", "_elapsed_time"]
+                # fmt: off
+                keys = [
+                    "ident", "score_test", "train_data",
+                    "max_epochs", "_epochs", "_elapsed_time",
+                ]
+                # fmt: on
                 datum["_elapsed_time"] = int(time() - _start)
                 show = {k: _print_fmt(datum[k]) for k in keys}
                 self._history_.append(datum)
