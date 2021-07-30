@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>salmon.triplets.offline.OfflineEmbedding &mdash; Salmon v0.6.1rc8+9.gd2a4db0 documentation</title>
+  <title>salmon.triplets.offline.OfflineEmbedding &mdash; Salmon v0.7.0rc2+9.gbfa29c4 documentation</title>
   
 
   
@@ -42,7 +42,7 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="salmon.backend.sampler.Runner" href="salmon.backend.sampler.Runner.html" />
+    <link rel="next" title="salmon.triplets.samplers.Random" href="salmon.triplets.samplers.Random.html" />
     <link rel="prev" title="API" href="../api.html" /> 
 </head>
 
@@ -239,7 +239,7 @@ Only used when <code class="docutils literal notranslate"><span class="pre">opt<
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code>([deep])</p></td>
 <td><p>Get parameters for this estimator.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#salmon.triplets.offline.OfflineEmbedding.initialize" title="salmon.triplets.offline.OfflineEmbedding.initialize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialize</span></code></a>(X_train)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#salmon.triplets.offline.OfflineEmbedding.initialize" title="salmon.triplets.offline.OfflineEmbedding.initialize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialize</span></code></a>(X_train[, embedding])</p></td>
 <td><p>Initialize this optimizer.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#salmon.triplets.offline.OfflineEmbedding.partial_fit" title="salmon.triplets.offline.OfflineEmbedding.partial_fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">partial_fit</span></code></a>(X_train)</p></td>
@@ -289,12 +289,29 @@ Each question is organized as <code class="docutils literal notranslate"><span c
 
 <dl class="py method">
 <dt class="sig sig-object py" id="salmon.triplets.offline.OfflineEmbedding.initialize">
-<span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_train</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.offline.OfflineEmbedding.initialize" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.offline.OfflineEmbedding.initialize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize this optimizer.</p>
-<dl class="field-list simple">
+<dl class="field-list">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
+<dd class="field-odd"><dl>
 <dt><strong>X_train</strong><span class="classifier">np.ndarray</span></dt><dd><p>Responses organized to be [head, winner, loser].</p>
+</dd>
+<dt><strong>embedding</strong><span class="classifier">nd.ndarray, optional</span></dt><dd><p>If specified, initialize the embedding with the given values.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This is particularly useful when <code class="docutils literal notranslate"><span class="pre">embedding</span></code> is the
+online embedding from the CSV:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="n">em</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;embedding.csv&quot;</span><span class="p">)</span>  <span class="c1"># from dashboard</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;responses.csv&quot;</span><span class="p">)</span>  <span class="c1"># from dashboard</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s2">&quot;head&quot;</span><span class="p">,</span> <span class="s2">&quot;winner&quot;</span><span class="p">,</span> <span class="s2">&quot;loser&quot;</span><span class="p">]]</span>
+
+<span class="kn">from</span> <span class="nn">salmon.triplets.offline</span> <span class="kn">import</span> <span class="n">OfflineEmbedding</span>
+<span class="n">est</span> <span class="o">=</span> <span class="n">OfflineEmbedding</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="n">est</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">embedding</span><span class="o">=</span><span class="n">em</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
 </dd>
 </dl>
 </dd>
@@ -349,7 +366,7 @@ Each question is organized as <code class="docutils literal notranslate"><span c
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="salmon.backend.sampler.Runner.html" class="btn btn-neutral float-right" title="salmon.backend.sampler.Runner" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="salmon.triplets.samplers.Random.html" class="btn btn-neutral float-right" title="salmon.triplets.samplers.Random" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
         <a href="../api.html" class="btn btn-neutral float-left" title="API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 

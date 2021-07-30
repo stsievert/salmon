@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Algorithm configuration &mdash; Salmon v0.6.1rc8+9.gd2a4db0 documentation</title>
+  <title>Algorithm configuration &mdash; Salmon v0.7.0rc2+9.gbfa29c4 documentation</title>
   
 
   
@@ -192,11 +192,11 @@ improve the embedding the most.</p>
 sampling.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">targets</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;obj1&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;obj2&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;foo&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;bar&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;foobar!&quot;</span><span class="p p-Indicator">]</span>
 <span class="nt">samplers</span><span class="p">:</span>
-  <span class="nt">RandomSampling</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
+  <span class="nt">Random</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
   <span class="nt">Validation</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="s">&quot;n_queries&quot;</span><span class="p p-Indicator">:</span> <span class="nv">10</span><span class="p p-Indicator">}</span>
 </pre></div>
 </div>
-<p>By default, <code class="docutils literal notranslate"><span class="pre">samplers</span></code> defaults to <code class="docutils literal notranslate"><span class="pre">RandomSampling:</span> <span class="pre">{}</span></code>. We have to customize the <code class="docutils literal notranslate"><span class="pre">samplers</span></code> key use adaptive sampling algorithms:</p>
+<p>By default, <code class="docutils literal notranslate"><span class="pre">samplers</span></code> defaults to <code class="docutils literal notranslate"><span class="pre">Random:</span> <span class="pre">{}</span></code>. We have to customize the <code class="docutils literal notranslate"><span class="pre">samplers</span></code> key use adaptive sampling algorithms:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">targets</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;obj1&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;obj2&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;foo&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;bar&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;foobar!&quot;</span><span class="p p-Indicator">]</span>
 <span class="nt">samplers</span><span class="p">:</span>
   <span class="nt">ARR</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
@@ -209,7 +209,7 @@ Customization is possible by passing different keyword arguments to
 configuration:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">targets</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;obj1&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;obj2&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;foo&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;bar&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;foobar!&quot;</span><span class="p p-Indicator">]</span>
 <span class="nt">samplers</span><span class="p">:</span>
-  <span class="nt">RandomSampling</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
+  <span class="nt">Random</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
   <span class="nt">ARR</span><span class="p">:</span>
     <span class="nt">module</span><span class="p">:</span> <span class="s">&quot;TSTE&quot;</span>
 </pre></div>
@@ -221,7 +221,7 @@ would compare two different instances of
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">targets</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;obj1&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;obj2&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;foo&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;bar&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;foobar!&quot;</span><span class="p p-Indicator">]</span>
 
 <span class="nt">samplers</span><span class="p">:</span>
-  <span class="nt">RandomSampling</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
+  <span class="nt">Random</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
   <span class="nt">arr_tste</span><span class="p">:</span>
     <span class="nt">class</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ARR</span>
     <span class="nt">module</span><span class="p">:</span> <span class="s">&quot;TSTE&quot;</span>
@@ -231,7 +231,7 @@ would compare two different instances of
     <span class="nt">module__mu</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.02</span>
 
 <span class="nt">sampling</span><span class="p">:</span>
-  <span class="nt">probs</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="s">&quot;RandomSampling&quot;</span><span class="p p-Indicator">:</span> <span class="nv">20</span><span class="p p-Indicator">,</span> <span class="s">&quot;arr_ckl&quot;</span><span class="p p-Indicator">:</span> <span class="nv">40</span><span class="p p-Indicator">,</span> <span class="s">&quot;arr_tste&quot;</span><span class="p p-Indicator">:</span> <span class="nv">40</span><span class="p p-Indicator">}</span>
+  <span class="nt">probs</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="s">&quot;Random&quot;</span><span class="p p-Indicator">:</span> <span class="nv">20</span><span class="p p-Indicator">,</span> <span class="s">&quot;arr_ckl&quot;</span><span class="p p-Indicator">:</span> <span class="nv">40</span><span class="p p-Indicator">,</span> <span class="s">&quot;arr_tste&quot;</span><span class="p p-Indicator">:</span> <span class="nv">40</span><span class="p p-Indicator">}</span>
 </pre></div>
 </div>
 <p>In this configuration, custom names are provided for two instances of

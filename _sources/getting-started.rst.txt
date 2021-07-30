@@ -89,9 +89,9 @@ Here's an example ``init.yaml`` YAML file for initialization:
    max_queries: 100
    samplers:
      ARR: {}
-     RandomSampling: {}
+     Random: {}
    sampling:
-     probs: {"ARR": 80, "RandomSampling": 20}
+     probs: {"ARR": 80, "Random": 20}
 
 The top-level elements like ``max_queries`` and ``targets`` are called "keys"
 in YAML jargon. Here's documentation for each key:
@@ -103,8 +103,15 @@ in YAML jargon. Here's documentation for each key:
 * ``max_queries``: int. The number of queries a participant should answer. Set
   ``max_queries: -1`` for unlimited queries.
 * ``samplers``. See :ref:`adaptive-config` for more detail.
-* ``sampling``. A dictionary with the key ``probs`` and percentage
-  probabilities for each algorithm.
+* ``sampling``. A dictionary with the following keys:
+
+    * ``probs``, a map between sampler names and the percentage that
+      each sampler is selected.
+
+    * ``samplers_per_user``: (optional int, default=0). Controls the
+      number of samplers each user sees. If ``samplers_per_user=0``, show
+      users a random sampler.
+
 * ``targets``, optional list. Choices:
 
     * YAML list. This ``targets: ["vonn", "miller", "ligety", "shiffrin"]`` is

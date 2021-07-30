@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Starting an experiment &mdash; Salmon v0.6.1rc8+9.gd2a4db0 documentation</title>
+  <title>Starting an experiment &mdash; Salmon v0.7.0rc2+9.gbfa29c4 documentation</title>
   
 
   
@@ -259,9 +259,9 @@ is valid, go to <a class="reference external" href="https://yamlchecker.com/">ht
 <span class="nt">max_queries</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">100</span>
 <span class="nt">samplers</span><span class="p">:</span>
   <span class="nt">ARR</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
-  <span class="nt">RandomSampling</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
+  <span class="nt">Random</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
 <span class="nt">sampling</span><span class="p">:</span>
-  <span class="nt">probs</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="s">&quot;ARR&quot;</span><span class="p p-Indicator">:</span> <span class="nv">80</span><span class="p p-Indicator">,</span> <span class="s">&quot;RandomSampling&quot;</span><span class="p p-Indicator">:</span> <span class="nv">20</span><span class="p p-Indicator">}</span>
+  <span class="nt">probs</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="s">&quot;ARR&quot;</span><span class="p p-Indicator">:</span> <span class="nv">80</span><span class="p p-Indicator">,</span> <span class="s">&quot;Random&quot;</span><span class="p p-Indicator">:</span> <span class="nv">20</span><span class="p p-Indicator">}</span>
 </pre></div>
 </div>
 <p>The top-level elements like <code class="docutils literal notranslate"><span class="pre">max_queries</span></code> and <code class="docutils literal notranslate"><span class="pre">targets</span></code> are called “keys”
@@ -274,8 +274,17 @@ through in the responses).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">max_queries</span></code>: int. The number of queries a participant should answer. Set
 <code class="docutils literal notranslate"><span class="pre">max_queries:</span> <span class="pre">-1</span></code> for unlimited queries.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">samplers</span></code>. See <a class="reference internal" href="algorithms.html#adaptive-config"><span class="std std-ref">Algorithm configuration</span></a> for more detail.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">sampling</span></code>. A dictionary with the key <code class="docutils literal notranslate"><span class="pre">probs</span></code> and percentage
-probabilities for each algorithm.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sampling</span></code>. A dictionary with the following keys:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">probs</span></code>, a map between sampler names and the percentage that
+each sampler is selected.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">samplers_per_user</span></code>: (optional int, default=0). Controls the
+number of samplers each user sees. If <code class="docutils literal notranslate"><span class="pre">samplers_per_user=0</span></code>, show
+users a random sampler.</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p><code class="docutils literal notranslate"><span class="pre">targets</span></code>, optional list. Choices:</p>
 <blockquote>
 <div><ul class="simple">
