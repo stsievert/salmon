@@ -109,7 +109,7 @@ class OfflineEmbedding(BaseEstimator):
         """
         return self.opt_.embedding_
 
-    def initialize(self, X_train):
+    def initialize(self, X_train, embedding=None):
         """
         Initialize this optimizer.
 
@@ -134,6 +134,7 @@ class OfflineEmbedding(BaseEstimator):
             opt = OGD(**kwargs)
         else:
             opt = self.opt
+        opt.initialize(embedding=embedding)
         opt.push(X_train)
         self._meta: Dict[str, Number] = {"pf_calls": 0}
 

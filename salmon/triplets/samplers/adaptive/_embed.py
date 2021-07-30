@@ -1,6 +1,6 @@
 import itertools
 from copy import deepcopy
-from typing import List, Tuple, Union
+from typing import List, Tuple, Union, Optional
 
 import numpy as np
 import torch
@@ -77,7 +77,7 @@ class Embedding(BaseEstimator):
         self.initial_batch_size = initial_batch_size
         self.kwargs = kwargs
 
-    def initialize(self):
+    def initialize(self, embedding: Optional[np.ndarray] = None):
         """
         Initialize this optimization algorithm.
         """
@@ -99,6 +99,14 @@ class Embedding(BaseEstimator):
             train_split=None,
             dataset=NumpyDataset,
         ).initialize()
+        if embedding is not None:
+            if not isinstance(embedding, np.ndarray):
+                raise ValueError(
+                    f"Specify embedding as a NumPy array, not a {type(embedding)}"
+                )
+            with torch.no_grad():
+                em = torch.from_numpy(embedding.astype("float32"))
+                self.net_.module_.embedding.data = em
         return self
 
     # def converged(self):

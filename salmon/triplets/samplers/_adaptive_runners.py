@@ -409,6 +409,7 @@ class SARR(ARR):
     A adaptive round robin scheme that runs a synchronous search,
     a modification of :class:`~salmon.triplets.samplers.ARR`.
     """
+
     def __init__(self, *args, n_search=400, **kwargs):
         """
         Parameters
@@ -432,7 +433,10 @@ class SARR(ARR):
         head = int(np.random.choice(self.n))
         _choices = list(set(range(self.n)) - {head})
         choices = np.array(_choices)
-        bottoms = [np.random.choice(choices, size=2, replace=False) for _ in range(self.n_search)]
+        bottoms = [
+            np.random.choice(choices, size=2, replace=False)
+            for _ in range(self.n_search)
+        ]
 
         _queries = [[head, l, r] for l, r in bottoms]
         queries, scores = self.search.score(queries=_queries)
