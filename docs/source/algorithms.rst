@@ -22,6 +22,7 @@ sampling.
    targets: ["obj1", "obj2", "foo", "bar", "foobar!"]
    samplers:
      RandomSampling: {}
+     Validation: {"n_queries": 10}
 
 By default, ``samplers`` defaults to ``RandomSampling: {}``. We have to customize the ``samplers`` key use adaptive sampling algorithms:
 
@@ -62,7 +63,7 @@ would compare two different instances of
      arr_ckl:
        class: ARR
        module: "CKL"
-       module__mu: 0.05
+       module__mu: 0.02
 
    sampling:
      probs: {"RandomSampling": 20, "arr_ckl": 40, "arr_tste": 40}

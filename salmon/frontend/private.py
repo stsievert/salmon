@@ -1,51 +1,42 @@
 import asyncio
 import hashlib
-import os
 import itertools
 import json
+import os
 import pathlib
 import pprint
-import sys
 import shutil
+import sys
 import traceback
 from copy import deepcopy
 from datetime import datetime, timedelta
 from io import StringIO
 from textwrap import dedent
 from time import sleep, time
-from typing import Any, Dict, Optional, List
+from typing import Any, Dict, List, Optional
 
+import numpy as np
 import pandas as pd
 import requests as httpx
-import numpy as np
 import yaml
 from bokeh.embed import json_item
-from fastapi import Depends, File, HTTPException, Form
-from fastapi.responses import (
-    HTMLResponse,
-    JSONResponse,
-    PlainTextResponse,
-    FileResponse,
-)
+from fastapi import Depends, File, Form, HTTPException
+from fastapi.responses import (FileResponse, HTMLResponse, JSONResponse,
+                               PlainTextResponse)
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
+from redis import ResponseError
 from rejson import Client, Path
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.requests import Request
 from starlette.status import HTTP_401_UNAUTHORIZED, HTTP_409_CONFLICT
-from redis import ResponseError
-
 
 import salmon
+
 from ..triplets import manager
 from . import plotting
 from .public import _ensure_initialized, app, templates
-from .utils import (
-    ServerException,
-    _extract_zipfile,
-    _format_target,
-    get_logger,
-    _format_targets,
-)
+from .utils import (ServerException, _extract_zipfile, _format_target,
+                    _format_targets, get_logger)
 
 security = HTTPBasic()
 
@@ -287,7 +278,9 @@ async def _get_config_endpoint(json: bool = True):
 
 
 async def _get_config(exp: bytes, targets: bytes) -> Dict[str, Any]:
-    config = yaml.load(exp, Loader=yaml.SafeLoader)
+    config = yaml.safe_load(exp)
+    logger.warning(f"exp = {exp}")
+    logger.warning(f"config = {config}")
     exp_config: Dict = {
         "instructions": "Default instructions (can include <i>arbitrary</i> HTML)",
         "max_queries": None,
@@ -404,15 +397,20 @@ async def process_form(
                 "\n3. Revisit /init and re-upload the experiment."
                 "\n\n(visiting /foo means visiting '[url]:8421/foo'",
             )
+            experiment_set = True
             raise HTTPException(status_code=403, detail=detail)
+        experiment_set = False
         ret = await _process_form(request, exp, targets, rdb)
+
         if rdb:
             return ret
+
         await _ensure_initialized()
         return ret
     except Exception as e:
         logger.error(e)
-        _reset(timeout=5)
+        if authorized and not experiment_set:
+            _reset(timeout=5)
         if isinstance(e, (ExpParsingError, HTTPException)):
             raise e
         msg = exception_to_string(e)
@@ -485,8 +483,11 @@ def reset_delete(
     tags=["private"],
     timeout: float = 10,
 ):
-    reset(force=force, authorized=authorized, timeout=timeout)
-    return {"success": True}
+    if authorized:
+        reset(force=force, authorized=authorized, timeout=timeout)
+        return {"success": True}
+    return {"success": False}
+
 
 @app.get("/reset", tags=["private"])
 def reset(
@@ -523,7 +524,7 @@ def reset(
         "The Salmon databasse has (largely) been cleared. "
         "To completely clear the database, the server needs to be restarted "
         "(likely via 'Actions > Instance state > Reboot' on Amazon EC2 "
-        "or `docker-compose down; docker-compose up`."
+        "or `docker-compose stop; docker-compose up`."
     )
 
 
@@ -533,21 +534,6 @@ def _reset(timeout: float = 5):
     except ResponseError as e:
         if "save already in progress" not in str(e):
             raise e
-
-    now = datetime.now().isoformat()[: 10 + 6]
-
-    save_dir = ROOT_DIR / "out"
-    files = [f.name for f in save_dir.glob("*")]
-    logger.warning(f"dump_rdb in files? {'dump.rdb' in files}")
-    logger.warning(f"files={files}")
-    if "dump.rdb" in files:
-        logger.error(f"Moving dump.rdb to dump-{now}.rdb")
-        shutil.move(str(save_dir / "dump.rdb"), str(save_dir / f"dump-{now}.rdb"))
-        files = [f.name for f in save_dir.glob("*")]
-        logger.warning(f"dump_rdb in files? {'dump.rdb' in files}")
-        logger.warning(f"files={files}")
-    files = [f.name for f in save_dir.glob("*")]
-    assert "dump.rdb" not in files
 
     # Stop background jobs (ie adaptive algs)
     rj.jsonset("reset", root, True)
@@ -570,9 +556,7 @@ def _reset(timeout: float = 5):
                 f" (rj.keys() == {rj.keys()}"
             )
             if timeout and time() >= __deadline:
-                logger.warning(
-                    f"Hit timeout={timeout} w/ stopped={stopped}. Breaking!"
-                )
+                logger.warning(f"Hit timeout={timeout} w/ stopped={stopped}. Breaking!")
                 break
 
         logger.warning("    starting with clearing queries...")
@@ -596,6 +580,19 @@ def _reset(timeout: float = 5):
         _rj.flushdb(asynchronous=False)
         sleep(1)
         _rj.flushall(asynchronous=False)
+
+    now = datetime.now().isoformat()[: 10 + 6]
+
+    save_dir = ROOT_DIR / "out"
+    files = [f.name for f in save_dir.glob("*")]
+    logger.warning(f"dump_rdb in files? {'dump.rdb' in files}")
+    if "dump.rdb" in files:
+        logger.error(f"Moving dump.rdb to dump-{now}.rdb")
+        shutil.move(str(save_dir / "dump.rdb"), str(save_dir / f"dump-{now}.rdb"))
+        files = [f.name for f in save_dir.glob("*")]
+        logger.warning(f"after moving, dump_rdb in files? {'dump.rdb' in files}")
+    files = [f.name for f in save_dir.glob("*")]
+    assert "dump.rdb" not in files
 
     logger.warning("After reset, rj.keys=%s", rj.keys())
     rj.jsonset("responses", root, {})
@@ -786,6 +783,18 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
             "response_times": response_times,
             "network_latency": network_latency,
         }
+
+    try:
+        x = df["time_received"]
+        rr_cdf, gaps_hist, response_meta = await plotting._get_response_rate_plots(x)
+        plots["response_rate_cdf"] = json.dumps(json_item(rr_cdf))
+        plots["gaps_histogram"] = json.dumps(json_item(gaps_hist))
+    except Exception as e:
+        logger.exception(e)
+        plots["response_rate_cdf"] = {"/": "exception"}
+        plots["gaps_histogram"] = {"/": "exception"}
+        response_meta = {}
+
     try:
         endpoint_timing = await plotting.get_endpoint_time_plots()
         plots["endpoint_timings"] = {
@@ -823,15 +832,20 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
             logger.exception(e)
             perfs[ident] = None
 
-    try:
-        _alg_perfs = {
-            alg: await plotting._get_alg_perf(pd.DataFrame(data))
-            for alg, data in perfs.items()
-            if data
-        }
-        alg_perfs = {k: json.dumps(json_item(v)) for k, v in _alg_perfs.items()}
-    except:
-        alg_perfs = {"/": "Error getting algorithm performance"}
+    _alg_perfs = {}
+    for alg, data in perfs.items():
+        if data:
+            try:
+                _alg_perfs[alg] = await plotting._get_alg_perf(pd.DataFrame(data))
+            except Exception as e:
+                logger.exception(e)
+                _alg_perfs[ident] = "Error getting performace"
+    alg_perfs = {
+        k: json.dumps(json_item(v)) if not isinstance(v, str) else v
+        for k, v in _alg_perfs.items()
+    }
+    if not len(alg_perfs):
+        alg_perfs = {"no sampler timings": "none"}
 
     try:
         _query_db = {
@@ -839,9 +853,12 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
             for alg, data in perfs.items()
             if data
         }
-        query_db = {k: json.dumps(json_item(v)) for k, v in _query_db.items()}
-    except:
+        query_db = {k: json.dumps(json_item(v)) for k, v in _query_db.items() if v}
+    except Exception as e:
+        logger.exception(e)
         query_db = {"/": "Error getting query database stats"}
+    if not len(query_db):
+        query_db = {"no queries in database": "none"}
 
     return templates.TemplateResponse(
         "dashboard.html",
@@ -861,6 +878,7 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
             "samplers": idents,
             "query_db_perfs": query_db,
             **plots,
+            **response_meta,
         },
     )
 

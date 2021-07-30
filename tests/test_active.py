@@ -2,19 +2,16 @@ import json
 import os
 import pickle
 import random
+from datetime import datetime, timedelta
 from pathlib import Path
 from time import sleep, time
 from typing import Tuple
-from datetime import datetime, timedelta
 
 import numpy as np
 import pandas as pd
-import requests
 import yaml
-from joblib import Parallel, delayed
-from requests.auth import HTTPBasicAuth, HTTPDigestAuth
 
-from .utils import server, logs
+from .utils import logs, server
 
 
 def test_active_wrong_proportion(server, logs):
@@ -39,7 +36,7 @@ def test_active_bad_keys(server, logs):
         "sampling": {"probs": {"a1": 50, "a2": 40}},
         "samplers": {"a1": {"class": "RandomSampling"}},
     }
-    r = server.post("/init_exp", data={"exp": json.dumps(exp)}, error=True)
+    r = server.post("/init_exp", data={"exp": exp}, error=True)
     assert r.status_code == 500
     assert all(
         x in r.text.lower()
@@ -51,7 +48,7 @@ def test_active_basics(server, logs):
     server.authorize()
     exp = Path(__file__).parent / "data" / "active.yaml"
     print("init'ing exp")
-    server.post("/init_exp", data={"exp": exp.read_bytes()})
+    server.post("/init_exp", data={"exp": exp.read_text()})
     print("done")
 
     with open(exp, "r") as f:
@@ -67,18 +64,20 @@ def test_active_basics(server, logs):
             q["alg_ident"] = samplers[k % len(samplers)]
 
             ans = {"winner": random.choice([q["left"], q["right"]]), "puid": "foo", **q}
-            server.post("/answer", data=ans)
+            server.post("/answer", json=ans)
 
         r = server.get("/responses")
-        df = pd.DataFrame(r.json())
+        d = r.json()
+        df = pd.DataFrame(d)
         assert (df["score"] <= 1).all()
-        assert set(df.alg_ident.unique()) == {"TSTE", "ARR", "CKL", "tste2", "GNMDS"}
+        algs = df.alg_ident.unique()
+        assert set(algs) == {"TSTE", "ARR", "CKL", "tste2", "GNMDS"}
 
 
 def test_round_robin(server, logs):
     server.authorize()
     exp = Path(__file__).parent / "data" / "round-robin.yaml"
-    server.post("/init_exp", data={"exp": exp.read_bytes()})
+    server.post("/init_exp", data={"exp": exp.read_text()})
 
     with open(exp, "r") as f:
         config = yaml.load(f, Loader=yaml.SafeLoader)
@@ -90,7 +89,7 @@ def test_round_robin(server, logs):
             q = server.get("/query").json()
 
             ans = {"winner": random.choice([q["left"], q["right"]]), "puid": "foo", **q}
-            server.post("/answer", data=ans)
+            server.post("/answer", json=ans)
             sleep(0.1)
 
         r = server.get("/responses")

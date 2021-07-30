@@ -1,10 +1,9 @@
-from sklearn.base import BaseEstimator
-from numba import jit, prange
 import numpy as np
-from joblib import Parallel, delayed
+from sklearn.base import BaseEstimator
+
+import salmon.utils as utils
 
 from .search import gram_utils, score
-import salmon.utils as utils
 
 logger = utils.get_logger(__name__)
 

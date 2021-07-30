@@ -1,12 +1,13 @@
+from pathlib import Path
+
 import numpy as np
 import numpy.linalg as LA
 import pandas as pd
-from sklearn.model_selection import train_test_split
-from pathlib import Path
 import pytest
+from sklearn.model_selection import train_test_split
 
-from salmon.triplets.samplers import TSTE
 from salmon.triplets.offline import OfflineEmbedding
+from salmon.triplets.samplers import TSTE
 
 
 def test_score_predict_basic():
@@ -65,8 +66,9 @@ def test_offline_embedding():
     assert isinstance(model.history_, list)
     assert all(isinstance(h, dict) for h in model.history_)
     epochs = model.history_[-1]["num_grad_comps"] / len(X_train)
-    assert max_epochs - 0.3 <= epochs <= max_epochs + 0.3
-    assert len(model.history_) in [max_epochs - 1, max_epochs]
+    eps = 0.75
+    assert max_epochs - eps <= epochs <= max_epochs + eps
+
 
 def test_offline_embedding_random_state():
     n, d = 85, 2
@@ -76,6 +78,10 @@ def test_offline_embedding_random_state():
     X = np.random.choice(n, size=(10_000, 3))
     X_train, X_test = train_test_split(X, random_state=0, test_size=0.2)
 
-    m1 = OfflineEmbedding(n=n, d=d, max_epochs=max_epochs, random_state=random_state).initialize(X_train)
-    m2 = OfflineEmbedding(n=n, d=d, max_epochs=max_epochs, random_state=random_state).initialize(X_train)
+    m1 = OfflineEmbedding(
+        n=n, d=d, max_epochs=max_epochs, random_state=random_state
+    ).initialize(X_train)
+    m2 = OfflineEmbedding(
+        n=n, d=d, max_epochs=max_epochs, random_state=random_state
+    ).initialize(X_train)
     assert np.allclose(m1.embedding_, m2.embedding_)

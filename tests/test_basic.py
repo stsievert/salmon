@@ -3,20 +3,17 @@ import json
 import os
 import pickle
 import random
+from datetime import datetime, timedelta
 from pathlib import Path
 from time import sleep, time
 from typing import Tuple
-from datetime import datetime, timedelta
 
 import numpy as np
 import pandas as pd
-import requests
 import pytest
 import yaml
-from joblib import Parallel, delayed
-from requests.auth import HTTPBasicAuth, HTTPDigestAuth
 
-from .utils import server, logs
+from .utils import logs, server
 
 
 def test_basics(server, logs):
@@ -33,7 +30,7 @@ def test_basics(server, logs):
     assert r.json() == {"success": True}
     server.get("/init")
     exp = Path(__file__).parent / "data" / "exp.yaml"
-    server.post("/init_exp", data={"exp": exp.read_bytes()})
+    server.post("/init_exp", data={"exp": exp.read_text()})
     exp_config = yaml.safe_load(exp.read_bytes())
     puid = "puid-foo"
     answers = []
@@ -113,7 +110,7 @@ def test_bad_file_upload(server):
     server.authorize()
     server.get("/init")
     exp = Path(__file__).parent / "data" / "bad_exp.yaml"
-    r = server.post("/init_exp", data={"exp": exp.read_bytes()}, error=True)
+    r = server.post("/init_exp", data={"exp": exp.read_text()}, error=True)
     assert r.status_code == 500
     assert "Error" in r.text
     assert "yaml" in r.text
@@ -123,7 +120,7 @@ def test_bad_file_upload(server):
 def test_no_repeats(server):
     server.authorize()
     exp = Path(__file__).parent / "data" / "exp.yaml"
-    server.post("/init_exp", data={"exp": exp.read_bytes()})
+    server.post("/init_exp", data={"exp": exp.read_text()})
     for k in range(50):
         q = server.get("/query").json()
         ans = {"winner": random.choice([q["left"], q["right"]]), "puid": "foo", **q}
@@ -142,7 +139,7 @@ def test_no_repeats(server):
 def test_meta(server):
     server.authorize()
     exp = Path(__file__).parent / "data" / "exp.yaml"
-    server.post("/init_exp", data={"exp": exp.read_bytes()})
+    server.post("/init_exp", data={"exp": exp.read_text()})
     num_ans = 10
     for k in range(num_ans):
         q = server.get("/query").json()
@@ -160,7 +157,7 @@ def test_saves_state(server):
     dump = Path(__file__).absolute().parent.parent / "out" / "dump.rdb"
     assert not dump.exists()
     exp = Path(__file__).parent / "data" / "exp.yaml"
-    server.post("/init_exp", data={"exp": exp.read_bytes()})
+    server.post("/init_exp", data={"exp": exp.read_text()})
     for k in range(10):
         q = server.get("/query").json()
         ans = {"winner": random.choice([q["left"], q["right"]]), "puid": str(k), **q}
@@ -194,7 +191,7 @@ def test_download_restore(server):
     dump = Path(__file__).absolute().parent.parent / "out" / "dump.rdb"
     assert not dump.exists()
     exp = Path(__file__).parent / "data" / "exp.yaml"
-    server.post("/init_exp", data={"exp": exp.read_bytes()})
+    server.post("/init_exp", data={"exp": exp.read_text()})
     data = []
     for k in range(10):
         q = server.get("/query").json()
@@ -218,7 +215,7 @@ def test_logs(server, logs):
     assert not dump.exists()
     exp = Path(__file__).parent / "data" / "exp.yaml"
     server.delete("/reset?force=1", timeout=20)
-    server.post("/init_exp", data={"exp": exp.read_bytes()})
+    server.post("/init_exp", data={"exp": exp.read_text()})
     data = []
     puid = "adsfjkl4awjklra"
     with logs:
@@ -247,17 +244,19 @@ def test_zip_upload(server):
     t = targets.read_bytes()
     assert len(t) > 0
     assert t[:4] == b"\x50\x4B\x03\x04"
-    server.post("/init_exp", data={"exp": exp.read_bytes()}, files={"targets": t})
+    server.post("/init_exp", data={"exp": exp.read_text()}, files={"targets": t})
 
 
 def test_get_config(server):
     server.authorize()
     exp = Path(__file__).parent / "data" / "exp.yaml"
-    server.post("/init_exp", data={"exp": exp.read_bytes()})
+    server.post("/init_exp", data={"exp": exp.read_text()})
     my_config = yaml.safe_load(exp.read_text())
     rendered_config = server.get("/config").json()
     assert set(my_config).issubset(rendered_config)
     for k, v in my_config.items():
+        if k == "targets":
+            v = [str(t) for t in v]
         assert rendered_config[k] == v
 
     yaml_config = server.get("/config?json=0").text
@@ -271,20 +270,18 @@ def test_no_init_twice(server, logs):
     """
     server.authorize()
     exp = Path(__file__).parent / "data" / "exp.yaml"
-    server.post("/init_exp", data={"exp": exp.read_bytes()}, timeout=20)
+    server.post("/init_exp", data={"exp": exp.read_text()}, timeout=20)
     query = server.get("/query")
     assert query
 
     # Make sure errors on re-initialization
-    server.post(
-        "/init_exp", data={"exp": exp.read_bytes()}, status_code=403, timeout=20
-    )
+    server.post("/init_exp", data={"exp": exp.read_text()}, status_code=403, timeout=20)
 
     # Make sure the prescribed method works (resetting, then re-init'ing)
     server.delete("/reset", status_code=403, timeout=20)
     server.delete("/reset?force=1", timeout=20)
 
-    server.post("/init_exp", data={"exp": exp.read_bytes()}, timeout=20)
+    server.post("/init_exp", data={"exp": exp.read_text()}, timeout=20)
     query = server.get("/query")
     assert query
 
@@ -296,3 +293,35 @@ def test_auth_repeated_entries(server):
     server._authorized = True
     r = server.post(f"/create_user/{name}/{pword}", status_code=403)
     assert "maximum number of users" in r.text.lower()
+
+
+def test_validation_sampling(server, logs):
+    server.authorize()
+    n_val = 5
+    exp = {
+        "targets": [0, 1, 2, 3, 4, 5],
+        "samplers": {"Validation": {"n_queries": n_val}},
+    }
+    server.post("/init_exp", data={"exp": exp})
+    data = []
+    puid = "adsfjkl4awjklra"
+    with logs:
+        for k in range(3 * n_val):
+            q = server.get("/query").json()
+            ans = {"winner": random.choice([q["left"], q["right"]]), "puid": k, **q}
+            server.post("/answer", data=ans)
+            data.append(ans)
+
+        sleep(1)
+        r = server.get("/responses")
+    queries = [(q["head"], (q["left"], q["right"])) for q in r.json()]
+    uniq_queries = [(h, (min(c), max(c))) for h, c in queries]
+    assert len(set(uniq_queries)) == n_val
+    order = [hash(q) for q in queries]
+    round_orders = [
+        order[k * n_val : (k + 1) * n_val]
+        for k in range(3)
+    ]
+    for round_order in round_orders:
+        assert len(set(round_order)) == n_val
+    assert all(round_orders[0] != order for order in round_orders[1:])

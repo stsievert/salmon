@@ -23,6 +23,14 @@ clean: FORCE
 	rm -f out/salmon*.log
 	rm -f out/redis.csv
 
+paper: FORCE
+	# from https://joss.readthedocs.io/en/latest/submitting.html#docker
+	docker run --rm \
+    --volume $(PWD)/paper:/data \
+    --user $(id -u):$(id -g) \
+    --env JOURNAL=joss \
+    openjournals/paperdraft
+
 up:
 	rsync --exclude '.mypy_cache' --exclude 'docs' -v -r . $(DNS):~/salmon/
 

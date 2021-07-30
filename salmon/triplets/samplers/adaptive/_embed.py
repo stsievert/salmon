@@ -5,15 +5,13 @@ from typing import List, Tuple, Union
 import numpy as np
 import torch
 import torch.optim as optim
-from numba import jit, prange
-from skorch.net import NeuralNet
+from scipy.special import binom
+from sklearn.base import BaseEstimator
 from skorch.dataset import Dataset as SkorchDataset
+from skorch.net import NeuralNet
+from skorch.utils import is_dataset
 from torch.nn.modules.loss import _Loss
 from torch.utils.data import TensorDataset
-
-from sklearn.base import BaseEstimator
-from scipy.special import binom
-from skorch.utils import is_dataset
 
 from salmon.utils import get_logger
 
@@ -37,6 +35,7 @@ class Embedding(BaseEstimator):
     An optimization algorithm that produces an embedding from human responses
     of the form ``[head, winner, loser]``.
     """
+
     def __init__(
         self,
         module,
@@ -66,7 +65,8 @@ class Embedding(BaseEstimator):
         initial_batch_size : int, optional (default: 512)
             The optimizer's (initial) batch size.
         kwargs : dict, optional
-            Additional keyword arguments to pass to Skorch's ``NeuralNet``.
+            Additional keyword arguments to pass the underlying noise model
+            (CKL, TSTE, etc).
         """
         self.module = module
         self.module__n = module__n
@@ -275,33 +275,16 @@ class GD(Embedding):
 
 
 class OGD(Embedding):
-    def __init__(self, shuffle=True, dwell=1, **kwargs):
-        self.shuffle = shuffle
+    def __init__(self, dwell=30, **kwargs):
         self.dwell = dwell
         super().__init__(**kwargs)
 
     def get_train_idx(self, n_ans):
         bs = self.initial_batch_size
         if self.dwell > 0 and self.meta_["model_updates"] % self.dwell == 0:
-            bs += int(self.meta_["model_updates"] / (5 * self.dwell))
+            bs += int(self.meta_["model_updates"] / (300 * self.dwell))
         n_idx = min(bs, n_ans)
-        rng = np.random.RandomState()
-
-        if self.shuffle:
-            return rng.choice(n_ans, size=n_idx, replace=True)
-
-        ## Assume answers are ordered by time stamp
-        limit = 10 * self.module__n
-        n_active_idx = max(0, n_idx - limit)
-
-        if n_ans <= limit:
-            return rng.choice(n_ans, size=n_idx, replace=True)
-
-        rand_idx = np.arange(limit)
-        active_idx = np.arange(limit, limit + n_active_idx)
-
-        ret = np.hstack((rand_idx, active_idx)).astype(int)
-        return ret[:n_idx]
+        return np.random.choice(n_ans, size=n_idx, replace=False)
 
 
 class Damper(Embedding):

@@ -1,15 +1,16 @@
 import itertools
 import random
 from pprint import pprint
-from time import time, sleep
-from typing import List, TypeVar, Tuple, Dict, Any, Optional
+from time import sleep, time
+from typing import Any, Dict, List, Optional, Tuple, TypeVar
 
 import cloudpickle
-import numpy as np
 import dask.distributed as distributed
-from redis.exceptions import ResponseError
-from rejson import Client as RedisClient, Path
+import numpy as np
 from dask.distributed import Client as DaskClient
+from redis.exceptions import ResponseError
+from rejson import Client as RedisClient
+from rejson import Path
 
 from ..utils import get_logger
 
@@ -37,6 +38,9 @@ class Runner:
         self.meta_ = []
 
     def redis_client(self, decode_responses=True) -> RedisClient:
+        """
+        Get the database (/Redis client)
+        """
         return RedisClient(host="redis", port=6379, decode_responses=decode_responses)
 
     def run(self, client: DaskClient):
@@ -73,10 +77,11 @@ class Runner:
         n_model_updates = 0
         rj.jsonset(f"alg-perf-{self.ident}", root, [])
         save_deadline = 0.0  # right away
+        data: List[Dict[str, Any]] = []
         for k in itertools.count():
             try:
                 loop_start = time()
-                datum = {"iteration": k, "ident": self.ident}
+                datum = {"iteration": k, "ident": self.ident, "time": time()}
 
                 answers = self.get_answers(rj, clear=True)
                 datum["num_answers"] = len(answers)
@@ -93,6 +98,8 @@ class Runner:
                     __start = time()
                     self.clear_queries(rj)
                     datum["time_clearing"] = time() - __start
+                else:
+                    datum["cleared_queries"] = False
                 done = distributed.Event(name="pa_finished")
                 done.clear()
 
@@ -163,30 +170,56 @@ class Runner:
                     datum["time_update"] = time() - _s
                     n_model_updates += 1
 
+                if time() > save_deadline + 1e-3:
+                    save_deadline = time() + 60
+                    _s = time()
+                    self.save()
+                    datum["time_save"] = time() - _s
+                datum["time_loop"] = time() - loop_start
+
+                data.append(datum)
+                logger.info(datum)
+                posting_deadline = data[0]["time"] + 2 * 60
+                if time() >= posting_deadline or k == 10 or k == 20:
+                    keys = data[-1].keys()
+                    to_post = {}
+                    for _k in keys:
+                        vals = [d.get(_k, None) for d in data]
+                        vals = [v for v in vals if v]
+                        if not len(vals):
+                            continue
+                        if isinstance(vals[0], (int, np.integer)):
+                            Type = int
+                        elif isinstance(vals[0], (float, np.floating)):
+                            Type = float
+                        else:
+                            continue
+                        _update = {
+                            f"{_k}_median": np.median(vals),
+                            f"{_k}_mean": np.mean(vals),
+                            f"{_k}_min": np.min(vals),
+                            f"{_k}_max": np.max(vals),
+                        }
+                        if _k == "time":
+                            _update = {"time": _update["time_median"]}
+                        to_post.update({k: Type(v) for k, v in _update.items()})
+
+                    rj.jsonarrappend(f"alg-perf-{self.ident}", root, to_post)
+                    data = []
+
+                if "reset" in rj.keys() and rj.jsonget("reset", root):
+                    logger.warning(f"Resetting {self.ident}")
+                    self.reset(client, rj)
+                    break
+
             except Exception as e:
                 logger.exception(e)
-
-            if time() > save_deadline + 1e-3:
-                save_deadline = time() + 60
-                _s = time()
-                self.save()
-                datum["time_save"] = time() - _s
-            datum["time_loop"] = time() - loop_start
-            rj.jsonarrappend(f"alg-perf-{self.ident}", root, datum)
-            logger.info(datum)
-            f_sleep = client.submit(lambda: sleep(self.sleep_))
-            done = f_sleep.result()
-            if "reset" in rj.keys() and rj.jsonget("reset", root):
-                logger.warning(f"Resetting {self.ident}")
-                self.reset(client, rj)
-                break
         return True
 
-    @property
-    def sleep_(self):
-        return 0
-
     def save(self) -> bool:
+        """
+        Save the runner's state and current embedding to the database.
+        """
         rj2 = self.redis_client(decode_responses=False)
 
         out = cloudpickle.dumps(self)
@@ -309,6 +342,9 @@ class Runner:
         raise NotImplementedError
 
     def clear_queries(self, rj: RedisClient) -> bool:
+        """
+        Clear all queries that this runner has posted from the database.
+        """
         rj.delete(f"alg-{self.ident}-queries")
         return True
 
@@ -319,6 +355,23 @@ class Runner:
         rj: Optional[RedisClient] = None,
         done=None,
     ) -> int:
+        """
+        Post scored queries to the database.
+
+        Parameters
+        ----------
+        queries : List[Query]
+            Queries to post to the database
+        scores : List[float]
+            The scores for each query
+        rj : RedisClient, optional
+            The databaase
+
+        Returns
+        -------
+        n_queries : int
+            The number of queries posted to the database.
+        """
         if rj is None:
             rj = self.redis_client()
 
@@ -363,11 +416,17 @@ class Runner:
         return n_queries
 
     def serialize_query(self, q: Query) -> str:
+        """
+        Serialize a query (so it can go in the database).
+        """
         # TODO: use ast.literal_eval or json.loads
         h, a, b = q
         return f"{h}-{a}-{b}"
 
     def get_answers(self, rj: RedisClient, clear: bool = True) -> List[Answer]:
+        """
+        Get all answers the frontend has received.
+        """
         if not clear:
             raise NotImplementedError
         key = f"alg-{self.ident}-answers"

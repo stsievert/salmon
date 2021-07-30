@@ -1,9 +1,9 @@
 import numpy as np
+import numpy.linalg as LA
 import pytest
 import scipy.spatial
-import numpy.linalg as LA
-from sklearn.utils import check_random_state
 import torch
+from sklearn.utils import check_random_state
 
 from .. import gram_utils
 

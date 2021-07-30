@@ -1,7 +1,7 @@
-import math
 import itertools
-from typing import Tuple, Union
+import math
 from time import time
+from typing import Tuple, Union
 
 import numpy as np
 import numpy.linalg as LA

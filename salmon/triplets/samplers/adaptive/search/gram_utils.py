@@ -1,11 +1,11 @@
-import numpy as np
-import scipy
-from scipy.linalg import eigh
-import numpy.linalg as LA
-from scipy.spatial import procrustes
-from scipy.linalg import eigh
-import torch
 from typing import Union
+
+import numpy as np
+import numpy.linalg as LA
+import scipy
+import torch
+from scipy.linalg import eigh
+from scipy.spatial import procrustes
 
 Array = Union[np.ndarray, torch.Tensor]
 

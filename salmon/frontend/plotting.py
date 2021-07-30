@@ -1,26 +1,18 @@
-from math import pi
-from datetime import timedelta, datetime
-from typing import List
 import json
-
-from bokeh.plotting import figure, show
-from bokeh.models import (
-    ColumnDataSource,
-    Grid,
-    LinearAxis,
-    Plot,
-    Text,
-    ImageURL,
-    Legend,
-)
-from bokeh.palettes import brewer, d3
-from bokeh.embed import json_item
+from datetime import datetime, timedelta
+from math import pi
+from typing import List
 
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import requests
+from bokeh.embed import json_item
+from bokeh.models import (ColumnDataSource, Grid, ImageURL, Legend, LinearAxis,
+                          NumeralTickFormatter, Plot, Text, tickers)
+from bokeh.palettes import brewer, d3
+from bokeh.plotting import figure, show
 
 from .utils import get_logger, image_url
 
@@ -60,7 +52,6 @@ def _make_hist(
     p.legend.background_fill_color = "#fefefe"
     p.xaxis.axis_label = xlabel
     p.yaxis.axis_label = "Frequency"
-    p.grid.grid_line_color = "white"
     return p
 
 
@@ -139,7 +130,7 @@ async def network_latency(df: pd.DataFrame):
     bins = await _get_nbins(x)
     bin_heights, edges = np.histogram(x, bins=bins)
     p = _make_hist(
-        f"Client side latency",
+        f"Time waiting for new query",
         "Time (s)",
         bin_heights,
         edges,
@@ -287,19 +278,26 @@ async def get_endpoint_time_plots():
         p.yaxis.axis_label = "Frequency"
         p.xaxis.axis_label = "Processing time (s)"
         p.yaxis.minor_tick_line_color = None  # turn off x-axis minor ticks
-        out[e] = p
+
+        hits = np.asarray(_data["between"])
+        hits = hits[~np.isnan(hits)]
+        if hits.sum() > 1:  # Only put plots in that have more than 1 hit
+            out[e] = p
     return out
 
 
-async def _get_alg_perf(df):
+async def _get_alg_perf(df, agg="median"):
     cols = [c for c in df.columns if "time_" == c[:5] and c != "time_loop"]
 
     s = df[cols + ["time"]].copy()
+    partial = df[list(cols)].copy().to_numpy()
     s["timedelta"] = pd.to_timedelta(s["time"] - s["time"].min(), unit="s")
-    s = s.rolling(window="30s", on="timedelta").mean()
+    s = s.sort_values(by="timedelta")
 
     source = ColumnDataSource(s)
 
+    names = {"_".join(v.split("_")[:-1]) for v in cols}
+    lims = (partial.min(), partial.max())
     p = figure(
         title="Algorithm timing",
         x_axis_label="Time since start",
@@ -310,12 +308,12 @@ async def _get_alg_perf(df):
         toolbar_location="above",
         background_fill_color="#fafafa",
     )
-    names = list(reversed(cols))
-    colors = d3["Category10"][len(names)]
+
+    colors = d3["Category10"][10]
     for name, color in zip(names, colors):
-        base = dict(x="timedelta", y=name, source=source, color=color,)
-        p.line(**base, legend_label=name, line_width=2)
-        p.circle(**base, size=5)
+        base = dict(x="timedelta", y=f"{name}_{agg}", source=source)
+        p.line(**base, legend_label=name, line_width=2, line_color=color)
+        p.circle(**base, size=5, color=color)
     p.legend.location = "top_left"
     return p
 
@@ -343,7 +341,7 @@ async def response_rate(df, n_sec=30):
         title="Responses per second",
         x_axis_type="datetime",
         x_axis_label="Time since start",
-        y_axis_label="(30s moving avg)",
+        y_axis_label=f"({n_sec}s moving avg)",
         width=600,
         height=200,
         toolbar_location="above",
@@ -353,7 +351,7 @@ async def response_rate(df, n_sec=30):
     return p
 
 
-async def _get_query_db(df):
+async def _get_query_db(df, agg="median"):
     d = df.copy()
     d["time_since_start"] = d["time"] - d["time"].min()
     d["datetime"] = d["time_since_start"].apply(
@@ -361,7 +359,7 @@ async def _get_query_db(df):
     )
     source = ColumnDataSource(d)
 
-    Y = [c for c in d.columns if "n_queries" in c]
+    Y = [c for c in d.columns if ("n_queries" in c) and (agg in c)]
     ratio = df[Y].max().max() / df[Y].min().min()
     kwargs = {} if ratio < 50 else dict(y_axis_type="log")
     p = figure(
@@ -376,6 +374,9 @@ async def _get_query_db(df):
         **kwargs,
     )
 
+    if not len(Y):
+        logger.warning(f"No columns to plot! Y = {Y} but d.columns = {d.columns}")
+        return None
     COLORS = d3["Category10"][len(Y)]
     lines = []
     for y, color in zip(Y, COLORS):
@@ -384,8 +385,73 @@ async def _get_query_db(df):
         p.circle(**base, size=5, color=color)
         lines.append([line])
 
-    names = [y.replace("n_queries_", "") for y in Y]
+    names = [y.replace("n_queries_", "").replace(f"_{agg}", "") for y in Y]
     items = list(zip(names, lines))
     legend = Legend(items=items, location="top_left")  # , label_width=130)
     p.add_layout(legend, "right")
     return p
+
+
+async def _get_response_rate_plots(timestamps: pd.Series):
+    """
+    Parameters
+    ----------
+    timestamps : pd.Series
+        Seconds responses received.
+    """
+    timestamps = timestamps.sort_values()
+    timestamps -= timestamps.min()
+
+    window = 1
+    _rates_per_sec = (timestamps.copy() / window).astype(int).value_counts()
+    rates_per_sec = _rates_per_sec.value_counts().sort_index()
+    rates = rates_per_sec.index
+    prob = rates_per_sec.to_numpy() / rates_per_sec.sum()
+    rates = rates[prob >= 0.01]
+    prob = prob[prob >= 0.01]
+
+    rates = np.array(rates.tolist() + [rates.max() + 1])
+    rates = rates - 1
+    rates = (rates * 1.0) / window
+
+    x = rates.copy()
+    p1 = _make_hist(
+        "Rate responses received",
+        f"Rate (responses/sec over {window}s)",
+        prob,
+        x,
+        width=300,
+        toolbar_location=None,
+        x_range=(x.min(), x.max()),
+    )
+    p1.xaxis.ticker = tickers.BasicTicker(min_interval=1)
+    p1.xaxis[0].formatter = NumeralTickFormatter(format="0,0")
+    p1.yaxis.axis_label = "Probability (empirical)"
+    p1.yaxis[0].formatter = NumeralTickFormatter(format="0%")
+
+    gaps = timestamps.diff().dropna()
+
+    _bins = [[1 * 10 ** i, 2 * 10 ** i, 5 * 10 ** i] for i in range(-5, 5)]
+    bins = [
+        b
+        for bins3 in _bins
+        for b in bins3
+        if np.percentile(gaps, 1) <= b <= np.percentile(gaps, 99)
+    ]
+    bin_heights, edges = np.histogram(gaps, bins=bins)
+    p2 = _make_hist(
+        f"Delay between responses",
+        "Time (s)",
+        bin_heights,
+        edges,
+        width=300,
+        toolbar_location=None,
+        x_axis_type="log",
+    )
+
+    meta = {
+        "median_response_delay": "{:0.2f}".format(np.median(gaps)),
+        "rate_mean": "{:0.2f}".format(_rates_per_sec.mean() / window),
+        "rate_window": window,
+    }
+    return p1, p2, meta

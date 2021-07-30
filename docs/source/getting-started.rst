@@ -3,20 +3,40 @@
 Starting an experiment
 ======================
 
-Initialization an experiment requires the following:
+Launching an experiment to crowdsourcing participants requires following this
+process:
 
 1. Visiting ``http://[url]:8421/init`` with the ``[url]`` from
-   :ref:`installation`,
+   :ref:`installation`.
 2. Creating a username/password
 3. Launching an experiment.
+4. Sending the URL ``http://[url]:8421/`` to crowdsourcing participants.
 
-.. note::
 
-   By default, Salmon does not support HTTPS. Make sure the URL begins with
-   ``http://``, not ``https://``.
+Initialization page
+-------------------
+
+By default, Salmon does not support HTTPS. Make sure the URL begins with
+``http://``, not ``https://``. For example, the URL you visit may look like:
+
+.. code::
+
+   http://ec2-52-204-122-132.compute-1.amazonaws.com:8421/init
+
+Username/password
+-----------------
 
 When visiting ``http://[url]:8421/init``, first, type a username/password and
-hit "create user." After a user has been successfully created, hit the back
+hit "create user."
+
+.. warning::
+
+   Do not lose this username/password! You need the username/password to view
+   the dashboard and download the received responses.
+
+Experiment initialization
+-------------------------
+After a user has been successfully created, hit the back
 button and launch an experiment. You have three options:
 
 1. Upload of a YAML file completely detailing the experiment.
@@ -48,7 +68,7 @@ page:
 Now, let's describe three methods on how to launch this experiment:
 
 Experiment initialization with YAML file
-----------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This section will specify the YAML file; including a ZIP file will only modify
 the ``targets`` key.
@@ -63,13 +83,15 @@ Here's an example ``init.yaml`` YAML file for initialization:
 .. code-block:: yaml
 
    # file: init.yaml
-   targets: [1, 2, 3, 4, 5]
+   targets: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
    instructions: Select the item on the bottom most similar to the item on the top.
    debrief: Thanks! Use the participant ID below in Mechnical Turk.
-   max_queries: 25
+   max_queries: 100
    samplers:
-     RandomSampling: {}
      ARR: {}
+     RandomSampling: {}
+   sampling:
+     probs: {"ARR": 80, "RandomSampling": 20}
 
 The top-level elements like ``max_queries`` and ``targets`` are called "keys"
 in YAML jargon. Here's documentation for each key:
@@ -106,7 +128,7 @@ Examples of these files are in `salmon/tests/data`_ and `salmon/examples`_.
 .. _salmon/examples: https://github.com/stsievert/salmon/tree/master/examples
 
 YAML file with ZIP file
------------------------
+^^^^^^^^^^^^^^^^^^^^^^^
 
 If you upload a ZIP file alongside the ``init.yaml`` YAML file, the ``targets``
 key above will be configured to represent each object in the ZIP file. Here are
@@ -150,7 +172,7 @@ One rendered target will be this image:
    <img width="300px" src="https://upload.wikimedia.org/wikipedia/commons/8/89/Miller_Bode_2008_002.jpg" />
 
 Database dump
--------------
+^^^^^^^^^^^^^
 
 The dashboard offers a link to download the experiment on the dashboard (that
 is, at ``http://[url]:8421/dashboard``). This will download a file called
@@ -158,3 +180,17 @@ is, at ``http://[url]:8421/dashboard``). This will download a file called
 
 Salmon supports the upload of this file to the same version of Salmon. The
 upload of this file will restore the state of your experiment.
+
+Send the URL to participants
+----------------------------
+
+The URL to send to the crowdsourcing participants is ``http://[url]:8421/``.
+For example, that may be
+
+.. code::
+
+   http://ec2-52-204-122-132.compute-1.amazonaws.com:8421/init
+
+Typically, paid services like Mechantical Turk are used to recruit
+crowdsourcing participants. Reddit and email have been used for unpaid
+recruitment.

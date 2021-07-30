@@ -1,9 +1,10 @@
-import numpy as np
-import gram_utils
-from gram_utils import dist2
 from time import time
-import search
+
+import gram_utils
+import numpy as np
 import numpy.linalg as LA
+import search
+from gram_utils import dist2
 
 
 def random_query(n):

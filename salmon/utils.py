@@ -2,10 +2,9 @@ import asyncio
 import logging
 import logging.handlers
 import os
-from logging.handlers import QueueHandler
 from logging import LogRecord
+from logging.handlers import QueueHandler
 from pathlib import Path
-
 # Python 3.7 and newer, fast reentrant implementation
 # without task tracking (not needed for that when logging)
 from queue import SimpleQueue as Queue
