@@ -118,6 +118,25 @@ class OfflineEmbedding(BaseEstimator):
         X_train : np.ndarray
             Responses organized to be [head, winner, loser].
 
+        embedding : nd.ndarray, optional
+            If specified, initialize the embedding with the given values.
+
+            .. note::
+
+               This is particularly useful when ``embedding`` is the
+               online embedding from the CSV:
+
+               .. code-block:: python
+
+                  import pandas as pd
+                  em = pd.read_csv("embedding.csv")  # from dashboard
+                  df = pd.read_csv("responses.csv")  # from dashboard
+                  X = df[["head", "winner", "loser"]]
+
+                  from salmon.triplets.offline import OfflineEmbedding
+                  est = OfflineEmbedding(...)
+                  est.initialize(X, embedding=em)
+
         """
         if self.opt is None:
             assert self.n is not None and self.d is not None, "Specify n and d"
