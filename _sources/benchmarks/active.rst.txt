@@ -76,7 +76,7 @@ sampling with these ``init.yaml`` configurations:
    d: 2
    samplers:
      ARR: {random_state: 42}  # active or adaptive sampling
-     Random: {}  # random sampling
+     RandomSampling: {}  # random sampling
 
 The "ARR" stands for "active round robin" and creates an instance of
 :class:`~salmon.triplets.samplers.ARR`. For this class, head rotates through
