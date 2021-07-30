@@ -708,7 +708,16 @@ async def get_embeddings(
     exp_config = deepcopy(exp_config)
     targets = exp_config.pop("targets")
     alg_idents = list(exp_config.pop("samplers").keys())
-    embeddings = {alg: await get_model(alg) for alg in alg_idents}
+    embeddings = {}
+    for alg in alg_idents:
+        try:
+            embeddings[alg] = await get_model(alg)
+        except:
+            pass
+    if len(embeddings) == 0:
+        raise ServerException(
+            f"No model has been created for any sampler in {alg_idents}"
+        )
     dfs = {
         alg: _fmt_embedding(model["embedding"], targets, alg=alg)
         for alg, model in embeddings.items()
