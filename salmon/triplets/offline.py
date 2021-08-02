@@ -121,22 +121,6 @@ class OfflineEmbedding(BaseEstimator):
         embedding : nd.ndarray, optional
             If specified, initialize the embedding with the given values.
 
-            .. note::
-
-               This is particularly useful when ``embedding`` is the
-               online embedding from the CSV:
-
-               .. code-block:: python
-
-                  import pandas as pd
-                  em = pd.read_csv("embedding.csv")  # from dashboard
-                  df = pd.read_csv("responses.csv")  # from dashboard
-                  X = df[["head", "winner", "loser"]]
-
-                  from salmon.triplets.offline import OfflineEmbedding
-                  est = OfflineEmbedding(...)
-                  est.initialize(X, embedding=em)
-
         """
         if self.opt is None:
             assert self.n is not None and self.d is not None, "Specify n and d"
@@ -179,7 +163,7 @@ class OfflineEmbedding(BaseEstimator):
         self._partial_fit(X_train)
         return self
 
-    def fit(self, X_train, X_test):
+    def fit(self, X_train, X_test, embedding=None):
         """
         Fit the embedding with train and validation data.
 
@@ -196,21 +180,38 @@ class OfflineEmbedding(BaseEstimator):
 
             The responses with shape ``(n_questions, 3)``.
             Each question is organized as ``[head, winner, loser]``.
+
+        embedding : np.ndarray, optional
+            The embedding to initialize with.
+
+            .. note::
+
+               This is particularly useful when ``embedding`` is the
+               online embedding from the CSV:
+
+               .. code-block:: python
+
+                  import pandas as pd
+                  em = pd.read_csv("embedding.csv")  # from dashboard
+                  df = pd.read_csv("responses.csv")  # from dashboard
+                  X = df[["head", "winner", "loser"]]
+
+                  from salmon.triplets.offline import OfflineEmbedding
+                  est = OfflineEmbedding(...)
+                  est.initialize(X, embedding=em)
+
         """
-        self.initialize(X_train)
+        self.initialize(X_train, embedding=embedding)
         self._meta["pf_calls"] = 0
         _start = time()
         for k in itertools.count():
             self._partial_fit(X_train)
             if self.verbose and k == 0:
                 print(self.opt_.optimizer, self.opt_.get_params())
-            if self.opt_.meta_["num_grad_comps"] >= self.max_epochs * len(X_train):
-                break
 
-            if self.verbose and (
-                k % self.verbose == 0 or abs(self.max_epochs - k) <= 3
-            ):
-
+            if (self.verbose and k % self.verbose == 0) or abs(
+                self.max_epochs - k
+            ) <= 3:
                 datum = deepcopy(self._meta)
                 datum.update(self.opt_.meta_)
                 test_score, loss_test = self._score(X_test)
@@ -227,7 +228,8 @@ class OfflineEmbedding(BaseEstimator):
                 self._history_.append(datum)
             if self.verbose and k % self.verbose == 0:
                 print(show)
-
+            if self.opt_.meta_["num_grad_comps"] >= self.max_epochs * len(X_train):
+                break
         test_score, loss_test = self._score(X_test)
         self._history_[-1]["score_test"] = test_score
         self._history_[-1]["loss_test"] = loss_test
