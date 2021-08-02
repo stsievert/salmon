@@ -5,4 +5,5 @@
   <img src="https://github.com/stsievert/salmon/actions/workflows/docs.yml/badge.svg" alt="Documentation status badge" />
 </a>
 
+
 See the documentation for more detail: https://docs.stsievert.com/salmon/
