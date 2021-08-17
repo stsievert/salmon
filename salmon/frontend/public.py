@@ -19,7 +19,7 @@ from starlette_prometheus import PrometheusMiddleware, metrics
 
 from ..triplets import manager
 from ..utils import get_logger
-from .utils import ServerException, sha256
+from .utils import ServerException, sha256, image_url
 
 logger = get_logger(__name__)
 
@@ -108,6 +108,10 @@ async def get_query_page(request: Request, puid: str=""):
     if puid == "":
         uid = "salmon-{}".format(np.random.randint(2 ** 32 - 1))
         puid = sha256(uid)[:16]
+    try:
+        urls = [image_url(t) for t in exp_config["targets"]]
+    except:
+        urls = []
     items = {
         "puid": puid,
         "instructions": exp_config["instructions"],
@@ -117,6 +121,7 @@ async def get_query_page(request: Request, puid: str=""):
         "skip_button": exp_config["skip_button"],
         "css": exp_config["css"],
         "samplers_per_user": exp_config["sampling"]["samplers_per_user"],
+        "urls": urls,
     }
     items.update(request=request)
     return templates.TemplateResponse("query_page.html", items)

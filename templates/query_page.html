@@ -13,6 +13,10 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
 <title>Salmon</title>
+
+{% for url in urls %}
+<link rel="preload" href={{url}}>
+{% endfor %}
 <style>
 * {
   max-width: inherit;
@@ -118,9 +122,6 @@
   </div>
 </div>
 
-<div id="preloadingtargets">
-</div>
-
 <script>
 // Enable every tool tip on the page
 $(function () {
@@ -130,11 +131,28 @@ $(function () {
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+function preload(imgs) {
+  // Image Preloader version 1.0
+  // Copyright 2009 Bontrager Connection, LLC
+  // https://www.willmaster.com/
+  var loadedimages = new Array();
+  for(var i=0; i<imgs.length; i++) {
+    loadedimages[i] = new Image();
+    loadedimages[i].src = imgs[i];
+  }
+  return loadedimages;
+}
 var head = -1;
 var left = -1;
 var right = -1;
 var puid = $("#puid").html();
 var targets = {{ targets | safe }};
+{% if (urls|length) == (targets|length) %}
+targets = preload({{urls | safe}})
+{% endif %}
+//var targets = preload(_targets);
+
 var prev_queries = [];
 function getTime(){
   var d = new Date();
@@ -231,16 +249,6 @@ function getquery(){
       score = data["score"];
       ident = data["alg_ident"];
       query = [head, left, right].join("-");
-      if (num_queries <= targets.length - 10) {
-        $("#preloadingtargets").hide();
-        var toload = [];
-        var num = Math.min(10, 2 * (num_queries + 1));
-        for (var i=0; i < num; i++){
-          toload.push(targets[num_queries + i]);
-        }
-        var html = $("#preloadingtargets").html();
-        $("#preloadingtargets").html(html + toload.join());
-      }
       if (prev_queries.includes(query)) {
         getquery();
       } else {
