@@ -8,48 +8,14 @@
   </div>
 
   <script>
-    var prob_m1 = 0.11026;
-    var prob_m2 = 0.05863;
-    var prob_m3 = 0.42763;
-    var prob_m4 = 0.11026;
-    var prob_m5 = 0.30921;
+    var urls = ["http://44.229.14.128:8421", "http://44.234.65.203:8421"]
 
-    var urls = ["http://34.222.189.214:8421/", "http://35.84.133.58:8421/", "http://35.80.6.172:8421/", "http://35.83.252.68:8421/", "http://44.233.116.46:8421/"];
+    var idx = Math.floor(Math.random() * urls.length);  // between [0, N). floor(r) == [0, 1, ..., N-1]
+    var url = urls[Math.floor(idx)]
 
-    var r = Math.random();
-
-    if (r < prob_m1){
-      url = urls[0];
-    } else if (r < prob_m1 + prob_m2){
-      url = urls[1];
-    } else if (r < prob_m1 + prob_m2 + prob_m3){
-      url = urls[2];
-    } else if (r < prob_m1 + prob_m2 + prob_m3 + prob_m4){
-      url = urls[3];
-    } else {
-      url = urls[4];
-    }
-    document.getElementById("msg").innerHTML = "<p>Redirecting to " + url + "</p>";
+    var link = "<a href='" + url + "'>"+url+"<\/a>";
+    document.getElementById("msg").innerHTML = "<p>Redirecting to " + link + " <\/p>";
     window.open(url, '_self');
-
-//1    0.121   // 0.105
-//2    0.064  // 0.052
-//3    0.407  // 0.427
-//4    0.111   // 0.105
-//5    0.297  // 0.309
-
-//http://35.80.6.172:8421/       0.429
-//http://44.233.116.46:8421/     0.285
-//http://35.83.252.68:8421/      0.123
-//http://34.222.189.214:8421/    0.094
-//http://35.84.133.58:8421/      0.069
-
-//http://35.80.6.172:8421/       17
-//http://44.233.116.46:8421/     17
-//http://35.83.252.68:8421/      5
-//http://34.222.189.214:8421/    5
-//http://35.84.133.58:8421/      2
-
   </script>
   </body>
 </html>
