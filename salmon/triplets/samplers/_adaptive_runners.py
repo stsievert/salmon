@@ -365,7 +365,7 @@ class ARR(Adaptive):
         Parameters
         ----------
         R: int (optional, default ``1``)
-            Adaptive sampling starts are ``R * n`` response have been received.
+            Adaptive sampling starts after ``R * n`` responses have been received.
         module : str, optional (default ``"TSTE"``).
             The noise model to use.
         n_top : int (optional, default ``3``)
