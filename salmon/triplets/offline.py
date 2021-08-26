@@ -163,7 +163,7 @@ class OfflineEmbedding(BaseEstimator):
         self._partial_fit(X_train)
         return self
 
-    def fit(self, X_train, X_test, embedding=None):
+    def fit(self, X_train, X_test, embedding=None, get_stats=None, **stats_kwargs):
         """
         Fit the embedding with train and validation data.
 
@@ -200,6 +200,8 @@ class OfflineEmbedding(BaseEstimator):
                   est = OfflineEmbedding(...)
                   est.initialize(X, embedding=em)
 
+        get_stats : Callable
+
         """
         self.initialize(X_train, embedding=embedding)
         self._meta["pf_calls"] = 0
@@ -217,16 +219,24 @@ class OfflineEmbedding(BaseEstimator):
                 test_score, loss_test = self._score(X_test)
                 datum["score_test"] = test_score
                 datum["loss_test"] = loss_test
+                datum["_elapsed_time"] = int(time() - _start)
+
+                if get_stats:
+                    em = deepcopy(self.embedding_)
+                    datum2 = get_stats(embedding=em, X_test=X_test, **stats_kwargs)
+                    datum.update({f"stats__{k}": v for k, v in datum2.items()})
+
+
+                self._history_.append(datum)
+            if self.verbose and k % self.verbose == 0:
                 # fmt: off
                 keys = [
                     "ident", "score_test", "train_data",
                     "max_epochs", "_epochs", "_elapsed_time",
+                    "stats__nn_diff_mean",
                 ]
+                show = {k: _print_fmt(datum.get(k, "")) for k in keys}
                 # fmt: on
-                datum["_elapsed_time"] = int(time() - _start)
-                show = {k: _print_fmt(datum[k]) for k in keys}
-                self._history_.append(datum)
-            if self.verbose and k % self.verbose == 0:
                 print(show)
             if self.opt_.meta_["num_grad_comps"] >= self.max_epochs * len(X_train):
                 break
