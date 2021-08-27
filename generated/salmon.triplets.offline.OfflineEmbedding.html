@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>salmon.triplets.offline.OfflineEmbedding &mdash; Salmon v0.7.0rc4+3.g6183b1b documentation</title>
+  <title>salmon.triplets.offline.OfflineEmbedding &mdash; Salmon v0.7.0rc4+4.g589d7af documentation</title>
   
 
   
@@ -233,7 +233,7 @@ Only used when <code class="docutils literal notranslate"><span class="pre">opt<
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#salmon.triplets.offline.OfflineEmbedding.fit" title="salmon.triplets.offline.OfflineEmbedding.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X_train, X_test[, embedding])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#salmon.triplets.offline.OfflineEmbedding.fit" title="salmon.triplets.offline.OfflineEmbedding.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X_train, X_test[, embedding, get_stats])</p></td>
 <td><p>Fit the embedding with train and validation data.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code>([deep])</p></td>
@@ -262,7 +262,7 @@ Only used when <code class="docutils literal notranslate"><span class="pre">opt<
 
 <dl class="py method">
 <dt class="sig sig-object py" id="salmon.triplets.offline.OfflineEmbedding.fit">
-<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_test</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.offline.OfflineEmbedding.fit" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_test</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_stats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">stats_kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.offline.OfflineEmbedding.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit the embedding with train and validation data.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -292,6 +292,7 @@ online embedding from the CSV:</p>
 </div>
 </div>
 </dd>
+<dt><strong>get_stats</strong><span class="classifier">Callable</span></dt><dd></dd>
 </dl>
 </dd>
 </dl>
