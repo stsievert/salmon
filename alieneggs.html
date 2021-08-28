@@ -8,10 +8,19 @@
   </div>
 
   <script>
-    var urls = ["http://54.214.215.88:8421", "http://35.166.2.243:8421"];
+    var ips = ["54.202.97.191",
+    "54.201.167.214",
+    "52.10.84.104",
+    "34.219.20.87",
+    "52.12.133.144",
+    "54.202.169.29",
+    "34.221.135.14",
+    "18.237.123.168",
+];
 
-    var idx = Math.floor(Math.random() * urls.length);  // between [0, N). floor(r) == [0, 1, ..., N-1]
-    var url = urls[Math.floor(idx)]
+    var idx = Math.floor(Math.random() * ips.length);  // between [0, N). floor(r) == [0, 1, ..., N-1]
+    var ip = ips[Math.floor(idx)]
+    var url = "http://" + ip + ":8421/"
 
     var link = "<a href='" + url + "'>"+url+"<\/a>";
     document.getElementById("msg").innerHTML = "<p>Redirecting to " + link + " <\/p>";
