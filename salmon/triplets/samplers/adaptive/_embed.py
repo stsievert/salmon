@@ -293,7 +293,7 @@ class OGD(Embedding):
 
     def get_train_idx(self, n_ans):
         bs = int(self.initial_batch_size)
-        if self.dwell > 0 and self.meta_["num_grad_comps"] % self.dwell == 0:
+        if self.dwell > 0:
 
             n_increases = self.meta_["num_grad_comps"] // self.dwell
             n_increases = min(n_increases, 100)
