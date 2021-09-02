@@ -213,6 +213,7 @@ class Embedding(BaseEstimator):
 
             self.meta_["num_grad_comps"] += len(train_ans)
             self.meta_["model_updates"] += 1
+            self.meta_["batch_size"] = len(idx_train)
             logger.info("%s", self.meta_)
             if self.meta_["num_grad_comps"] >= eg_deadline:
                 del loss, losses
@@ -236,13 +237,15 @@ class Embedding(BaseEstimator):
     def score(self, answers, y=None) -> float:
         if not (hasattr(self, "initialized_") and self.initialized_):
             self.initialize()
-        score = self._score(answers)
+        with torch.no_grad():
+            score = self._score(answers)
         self.meta_["last_score"] = score
         return score
 
     def _score(self, answers, y=None):
-        win2, lose2 = self.module_._get_dists(answers)
-        acc = (win2 < lose2).numpy().astype("float32").mean().item()
+        with torch.no_grad():
+            win2, lose2 = self.module_._get_dists(answers)
+            acc = (win2 < lose2).numpy().astype("float32").mean().item()
         return acc
 
     def fit(self, X, y=None):

@@ -216,9 +216,11 @@ class OfflineEmbedding(BaseEstimator):
             ) <= 3:
                 datum = deepcopy(self._meta)
                 datum.update(self.opt_.meta_)
-                test_score, loss_test = self._score(X_test)
-                datum["score_test"] = test_score
-                datum["loss_test"] = loss_test
+                for prefix, __X in [("train", X_train), ("test", X_test)]:
+                    __score, __loss = self._score(__X)
+                    datum[f"score_{prefix}"] = __score
+                    datum[f"loss_{prefix}"] = __loss
+
                 datum["_elapsed_time"] = int(time() - _start)
 
                 if get_stats:
@@ -226,17 +228,16 @@ class OfflineEmbedding(BaseEstimator):
                     datum2 = get_stats(embedding=em, X_test=X_test, **stats_kwargs)
                     datum.update({f"stats__{k}": v for k, v in datum2.items()})
 
-
                 self._history_.append(datum)
             if self.verbose and k % self.verbose == 0:
                 # fmt: off
                 keys = [
                     "ident", "score_test", "train_data",
                     "max_epochs", "_epochs", "_elapsed_time",
-                    "stats__nn_diff_mean",
+                    "stats__nn_diff_mean", "batch_size",
                 ]
-                show = {k: _print_fmt(datum.get(k, "")) for k in keys}
                 # fmt: on
+                show = {k: _print_fmt(datum.get(k, "")) for k in keys}
                 print(show)
             if self.opt_.meta_["num_grad_comps"] >= self.max_epochs * len(X_train):
                 break
@@ -261,17 +262,17 @@ class OfflineEmbedding(BaseEstimator):
         self._meta["pf_calls"] += 1
         self._meta.update(deepcopy(self.opt_.meta_))
 
-        train_score = self.opt_.score(X_train)
-        module_ = self.opt_.module_
-        loss_train = module_.losses(*module_._get_dists(X_train)).mean().item()
+        # train_score = self.opt_.score(X_train)
+        # module_ = self.opt_.module_
+        # loss_train = module_.losses(*module_._get_dists(X_train)).mean().item()
 
         prev_time = 0
         if len(self._history_):
             prev_time = self._history_[-1]["elapsed_time"]
 
         datum = {
-            "score_train": train_score,
-            "loss_train": loss_train,
+            # "score_train": train_score,
+            # "loss_train": loss_train,
             "k": k,
             "elapsed_time": time() - _start + prev_time,
             "train_data": len(X_train),
