@@ -283,15 +283,21 @@ class GD(Embedding):
 
 
 class OGD(Embedding):
-    def __init__(self, dwell=30, **kwargs):
+    def __init__(self, dwell=3_000_000, initial_batch_size=32, factor=5.0, **kwargs):
         self.dwell = dwell
-        super().__init__(**kwargs)
+        self.factor = factor
+        super().__init__(initial_batch_size=initial_batch_size, **kwargs)
 
     def get_train_idx(self, n_ans):
-        bs = self.initial_batch_size
-        if self.dwell > 0 and self.meta_["model_updates"] % self.dwell == 0:
-            bs += int(self.meta_["model_updates"] / (30 * self.dwell))
-        n_idx = min(bs, n_ans)
+        bs = int(self.initial_batch_size)
+        if self.dwell > 0 and self.meta_["num_grad_comps"] % self.dwell == 0:
+
+            n_increases = self.meta_["num_grad_comps"] // self.dwell
+            n_increases = min(n_increases, 100)
+            increase_factor = int(self.factor ** n_increases)
+            bs = int(bs * increase_factor)
+
+        n_idx = min(bs, int(n_ans / 10))
         return np.random.choice(n_ans, size=n_idx, replace=False)
 
 
