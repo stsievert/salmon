@@ -290,7 +290,7 @@ class OGD(Embedding):
     def get_train_idx(self, n_ans):
         bs = self.initial_batch_size
         if self.dwell > 0 and self.meta_["model_updates"] % self.dwell == 0:
-            bs += int(self.meta_["model_updates"] / (300 * self.dwell))
+            bs += int(self.meta_["model_updates"] / (30 * self.dwell))
         n_idx = min(bs, n_ans)
         return np.random.choice(n_ans, size=n_idx, replace=False)
 
