@@ -286,7 +286,7 @@ class GD(Embedding):
 
 
 class OGD(Embedding):
-    def __init__(self, dwell=3_000_000, initial_batch_size=32, factor=5.0, **kwargs):
+    def __init__(self, dwell=6_000_000, initial_batch_size=32, factor=5.0, **kwargs):
         self.dwell = dwell
         self.factor = factor
         super().__init__(initial_batch_size=initial_batch_size, **kwargs)
