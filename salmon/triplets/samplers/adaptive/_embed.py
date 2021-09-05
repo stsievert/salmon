@@ -299,7 +299,7 @@ class OGD(Embedding):
             increase_factor = int(self.factor ** n_increases)
             bs = int(bs * increase_factor)
 
-        n_idx = min(bs, int(n_ans / 10))
+        n_idx = min(bs, int(n_ans / 5))
         return np.random.choice(n_ans, size=n_idx, replace=False)
 
 
