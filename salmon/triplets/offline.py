@@ -206,6 +206,13 @@ class OfflineEmbedding(BaseEstimator):
         self.initialize(X_train, embedding=embedding)
         self._meta["pf_calls"] = 0
         _start = time()
+        if self.verbose:
+            __score, __loss = self._score(X_test)
+            print("initial score: ", __score)
+            if get_stats:
+                em = deepcopy(self.embedding_)
+                datum2 = get_stats(embedding=em, X_test=X_test, **stats_kwargs)
+                print("initial nn_diff_mean", datum2.get("nn_diff_mean", ""))
         for k in itertools.count():
             self._partial_fit(X_train)
             if self.verbose and k == 0:

@@ -286,21 +286,22 @@ class GD(Embedding):
 
 
 class OGD(Embedding):
-    def __init__(self, dwell=1_000_000, initial_batch_size=32, factor=2.0, **kwargs):
+    def __init__(self, dwell=None, initial_batch_size=128, factor=2.0, **kwargs):
         self.dwell = dwell
         self.factor = factor
         super().__init__(initial_batch_size=initial_batch_size, **kwargs)
 
     def get_train_idx(self, n_ans):
         bs = int(self.initial_batch_size)
-        if self.dwell > 0:
+        if self.dwell and self.dwell > 0:
             epochs = self.meta_["num_grad_comps"] / n_ans
             n_increases = min(epochs // self.dwell, 100)
             increase_factor = int(self.factor ** n_increases)
             bs = int(bs * increase_factor)
 
-        n_idx = min(bs, int(n_ans / 10))
-        return np.random.choice(n_ans, size=n_idx, replace=False)
+        max_bs = max(5 * self.module__n, n_ans)
+        n_idx = min(bs, max_bs)
+        return np.random.choice(n_ans, size=min(n_idx, n_ans), replace=False)
 
 
 class Damper(Embedding):
