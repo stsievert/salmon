@@ -1,78 +1,37 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <title>Active sampling &mdash; Salmon v0.7.0rc4+6.g0c06c9e documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+  <title>Active sampling &mdash; Salmon v0.7.0rc4+19.g36f071d documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
         <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-
-    
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Adaptive algorithms" href="../adaptive.html" />
     <link rel="prev" title="Concurrent Users" href="server.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search"  style="background: #494646" >
-          
-
-          
             <a href="../index.html">
-          
-
-          
-            
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
-          
           </a>
-
-          
-            
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -80,18 +39,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Usage</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
@@ -125,75 +73,32 @@
 <li class="toctree-l1"><a class="reference internal" href="../developers.html">Developing algorithms</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #494646" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">Salmon</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-        
       <li>Active sampling</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-          
-            
               <a href="https://github.com/stsievert/salmon/blob/master/source/benchmarks/active.rst" class="fa fa-github"> Edit on GitHub</a>
-            
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="section" id="active-sampling">
-<span id="experiments"></span><h1>Active sampling<a class="headerlink" href="#active-sampling" title="Permalink to this headline">¶</a></h1>
+             
+  <section id="active-sampling">
+<span id="experiments"></span><h1>Active sampling<a class="headerlink" href="#active-sampling" title="Permalink to this headline"></a></h1>
 <p>Experimentalists often ask <strong>“how many responses should I collect with
 Mechanical Turk?”</strong> It’d be nice to obtain high quality embeddings with few
 human responses, both to reduce expenses and to ask informative questions for
@@ -231,8 +136,8 @@ are more moderate than the results here.</p>
 quality scales like <span class="math notranslate nohighlight">\(nd\log_2(n)\)</span>.  <a class="footnote-reference brackets" href="#id17" id="id3">3</a> <a class="footnote-reference brackets" href="#id18" id="id4">4</a>
 For more detail, see the FAQ “<a class="reference internal" href="../faq.html#faq-n-responses"><span class="std std-ref">How many responses will be needed?</span></a>.”</p>
 </div>
-<div class="section" id="setup">
-<h2>Setup<a class="headerlink" href="#setup" title="Permalink to this headline">¶</a></h2>
+<section id="setup">
+<h2>Setup<a class="headerlink" href="#setup" title="Permalink to this headline"></a></h2>
 <p>To illustrate the difference between random and active sampling, let’s run some
 experiments with the “alien eggs” dataset.  For <span class="math notranslate nohighlight">\(n=30\)</span> objects, that
 dataset looks like the following:</p>
@@ -267,9 +172,9 @@ chosen (by some measure with information gain).</p>
 <p>This page shows results of experiments run with Salmon.
 For complete details, see <a class="reference external" href="https://github.com/stsievert/salmon-experiments">https://github.com/stsievert/salmon-experiments</a></p>
 </div>
-</div>
-<div class="section" id="baseline">
-<span id="exp-baseline"></span><h2>Baseline<a class="headerlink" href="#baseline" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="baseline">
+<span id="exp-baseline"></span><h2>Baseline<a class="headerlink" href="#baseline" title="Permalink to this headline"></a></h2>
 <p>First, let’s run a basic experiment, one that will very closely mirror prior
 work: <a class="footnote-reference brackets" href="#id16" id="id8">2</a> let’s take the <span class="math notranslate nohighlight">\(n= 30\)</span> objects above and embed them into
 <span class="math notranslate nohighlight">\(d=2\)</span> dimensions. To mirror their setup, let’s develop a noise model from
@@ -280,8 +185,8 @@ responses are required to reach a particular accuracy:</p>
 <p>This graph uses the same test set as the NEXT paper, which (mis)defines
 “nearest neighbor accuracy” as “is the true nearest neighbor one of the three
 closest objects?” <a class="footnote-reference brackets" href="#id16" id="id9">2</a> (the reason for the <code class="docutils literal notranslate"><span class="pre">*</span></code> in the title). <a class="footnote-reference brackets" href="#accuracy" id="id10">7</a></p>
-<div class="section" id="embedding-quality">
-<h3>Embedding quality<a class="headerlink" href="#embedding-quality" title="Permalink to this headline">¶</a></h3>
+<section id="embedding-quality">
+<h3>Embedding quality<a class="headerlink" href="#embedding-quality" title="Permalink to this headline"></a></h3>
 <p>Experimentalist often cares about the underlying structure more than the
 accuracy. To start, let’s assume that there’s no clear relationship between
 items. Then, this visualization is most appropriate for the embeddings of
@@ -296,10 +201,10 @@ on:</p>
 <p>Only relative distances matter in these embeddings. It doesn’t matter how
 the embedding is rotated, or how the axes are scaled.</p>
 </div>
-</div>
-</div>
-<div class="section" id="number-of-targets">
-<h2>Number of targets<a class="headerlink" href="#number-of-targets" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="number-of-targets">
+<h2>Number of targets<a class="headerlink" href="#number-of-targets" title="Permalink to this headline"></a></h2>
 <p>Users of Salmon frequently have a variable number of target items. For example,
 they might be asking about colors – a continuous space, so they can easily
 change the “number of targets.” So, <strong>how does the number of targets influence
@@ -307,15 +212,17 @@ embedding quality?</strong></p>
 <p>To examine that, let’s run the same experiment above, but with 30, 90, 180 and
 300 “alien eggs.” Here’s the number of responses required to reach a particular
 accuracy to <em>simulated</em> human responses:</p>
-<div class="figure align-center" id="id20">
+<figure class="align-center" id="id20">
 <a class="reference internal image-reference" href="../_images/N-accuracy.png"><img alt="../_images/N-accuracy.png" src="../_images/N-accuracy.png" style="width: 100%;" /></a>
-<p class="caption"><span class="caption-text">The accuracy of simulated human responses for various number of responses.
+<figcaption>
+<p><span class="caption-text">The accuracy of simulated human responses for various number of responses.
 The shaded region represents the 25–75% percentile among 10 runs, and the
 solid line represents the median. The y-axis labels are shared with all
-plots.</span><a class="headerlink" href="#id20" title="Permalink to this image">¶</a></p>
-</div>
-<div class="section" id="id11">
-<h3>Embedding quality<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
+plots.</span><a class="headerlink" href="#id20" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<section id="id11">
+<h3>Embedding quality<a class="headerlink" href="#id11" title="Permalink to this headline"></a></h3>
 <p>Here’s the underlying embeddings for <span class="math notranslate nohighlight">\(n = 180\)</span> for various accuracy
 levels on <em>simulated</em> human responses:</p>
 <a class="reference internal image-reference" href="../_images/embeddings-n=180.svg"><img alt="../_images/embeddings-n=180.svg" class="align-center" src="../_images/embeddings-n=180.svg" width="100%" /></a>
@@ -324,22 +231,24 @@ for training.” The local accuracy gets much better as accuracy increases. To
 visualize the structure of the underlying embedding, let’s look at the
 <strong>average items closer than the true nearest neighbor</strong>. The smaller this value
 is, the smoother the color gradient is above.</p>
-<div class="figure align-center" id="id21">
+<figure class="align-center" id="id21">
 <a class="reference internal image-reference" href="../_images/N-true-NN-dist.png"><img alt="../_images/N-true-NN-dist.png" src="../_images/N-true-NN-dist.png" style="width: 100%;" /></a>
-<p class="caption"><span class="caption-text">The average number of items closer than the true nearest neighbor. The upper
+<figcaption>
+<p><span class="caption-text">The average number of items closer than the true nearest neighbor. The upper
 limit on the y-axis represents a very moderately accurate embedding,
 slightly worse than the 80% accurate embedding above. The shaded
 region/solid line has the same meaning as above, the interquartile range and
-median.</span><a class="headerlink" href="#id21" title="Permalink to this image">¶</a></p>
-</div>
+median.</span><a class="headerlink" href="#id21" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
 <p>If the embedding were a 1D manifold but not quite perfect, <a class="footnote-reference brackets" href="#perfect" id="id12">9</a> the
 value on this plot would be 0.5. As with accuracy, there’s a clear advantage to
 active sampling – active sampling requires a lot fewer responses to obtain a
 high quality embedding in this simulation.</p>
-</div>
-</div>
-<div class="section" id="response-rate">
-<h2>Response rate<a class="headerlink" href="#response-rate" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="response-rate">
+<h2>Response rate<a class="headerlink" href="#response-rate" title="Permalink to this headline"></a></h2>
 <p>One detail has been swept under the rug: the rate at which Salmon received
 responses. There would be no gain from adaptive algorithms if all 10,000
 responses were received in 1 second. In fact, the response rate above is
@@ -423,55 +332,38 @@ to the nearest neighbor: an embedding with coordinates <code class="docutils lit
 <span class="pre">[2,</span> <span class="pre">0],</span> <span class="pre">[3,</span> <span class="pre">0],</span> <span class="pre">...,</span> <span class="pre">[n</span> <span class="pre">-</span> <span class="pre">1,</span> <span class="pre">0]]</span></code>.</p>
 </dd>
 </dl>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="../adaptive.html" class="btn btn-neutral float-right" title="Adaptive algorithms" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="server.html" class="btn btn-neutral float-left" title="Concurrent Users" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../adaptive.html" class="btn btn-neutral float-right" title="Adaptive algorithms" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2019, Scott Sievert.
-
-    </p>
+    <p>&#169; Copyright 2019, Scott Sievert.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>
