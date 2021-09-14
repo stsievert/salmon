@@ -177,6 +177,7 @@ async def process_answer(ans: manager.Answer):
     ident = d["alg_ident"]
     logger.warning(f"answer received: {d}")
     rj.jsonarrappend(f"alg-{ident}-answers", root, d)
+        # on backend,  key = f"alg-{self.ident}-answers"
     rj.jsonarrappend("all-responses", root, d)
     last_save = rj.lastsave()
 

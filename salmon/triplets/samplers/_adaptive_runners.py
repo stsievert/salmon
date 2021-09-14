@@ -338,10 +338,11 @@ class TSTE(Adaptive):
 
 
 class ARR(Adaptive):
-    """A randomized round robin algorithm.
+    """An asynchronous round robin algorithm.
 
     In practice, this sampling algorithm randomly asks about high scoring
-    queries for each head.
+    queries for each head. Becaues it's asynchronous, it randomly selects a head
+    (instead of doing it a round-robin fashion).
 
     Notes
     -----
@@ -404,10 +405,16 @@ class ARR(Adaptive):
         return new_self, True
 
 
-class SARR(ARR):
+class SRR(ARR):
     """
-    A adaptive round robin scheme that runs a synchronous search,
+
+    A synchronous round robin scheme,
     a modification of :class:`~salmon.triplets.samplers.ARR`.
+
+    .. note::
+
+       "Round robin" is misnomer; this class actually selects a random head to mirr ARR.
+
     """
 
     def __init__(self, *args, n_search=400, **kwargs):
