@@ -239,9 +239,8 @@ class OfflineEmbedding(BaseEstimator):
             if self.verbose and k % self.verbose == 0:
                 # fmt: off
                 keys = [
-                    "ident", "score_test", "train_data",
-                    "max_epochs", "_epochs", "_elapsed_time",
-                    "batch_size",
+                    "ident", "score_test", "train_data", "max_epochs",
+                    "_epochs", "_elapsed_time", "batch_size",
                 ]
                 # fmt: on
                 show = {k: _print_fmt(datum.get(k, "")) for k in keys}

@@ -39,6 +39,9 @@ class Server:
         assert r.status_code == status_code, (r.status_code, status_code, r.text)
         return r
 
+    def reset(self):
+        self.delete("/reset?force=1", auth=self.creds, timeout=TIMEOUT)
+
     def post(self, endpoint, data=None, status_code=200, error=False, **kwargs):
         if "auth" not in kwargs and self._authorized:
             kwargs.update(auth=self.creds)
