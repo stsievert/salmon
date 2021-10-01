@@ -23,6 +23,7 @@ dependencies:
   - pyyaml
   - ipykernel  # to run this environ in jupyter (required for viz)
   - nb_conda_kernels
+  - altair
   - pip:
     - seaborn
     - fastapi[all]
