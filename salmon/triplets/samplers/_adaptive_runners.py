@@ -340,19 +340,19 @@ class TSTE(Adaptive):
 class ARR(Adaptive):
     """An asynchronous round robin algorithm.
 
-    In practice, this sampling algorithm randomly asks about high scoring
-    queries for each head. Becaues it's asynchronous, it randomly selects a head
-    (instead of doing it a round-robin fashion).
-
     Notes
     -----
     This algorithms asks about "high scoring queries" uniformly at random. For
     each head, the top ``n_top`` queries are selected. The query shown to the
     user is a query selected uniformly at random from this set.
 
-    This algorithm is proposed because "scoring every triplet is prohibitvely
-    expensive." It's perhaps more useful with Salmon's complete search
-    because adds some randomness to the query shown to the user.
+    If ``n_top > 1``, then in practice, this sampling algorithm randomly asks
+    about high scoring queries for each head. Becaues it's asynchronous, it
+    randomly selects a head (instead of doing it a round-robin fashion).
+
+    .. note::
+
+       We found this class to perform well in our experiments, some of which are detailed at https://docs.stsievert.com/salmon/benchmarks/active.html
 
     References
     ----------
@@ -361,15 +361,15 @@ class ARR(Adaptive):
 
     """
 
-    def __init__(self, R: int = 1, n_top=3, module="TSTE", **kwargs):
+    def __init__(self, R: int = 1, n_top=1, module="TSTE", **kwargs):
         """
         Parameters
         ----------
-        R: int (optional, default ``1``)
+        R : int (optional, default ``1``)
             Adaptive sampling starts after ``R * n`` responses have been received.
         module : str, optional (default ``"TSTE"``).
             The noise model to use.
-        n_top : int (optional, default ``3``)
+        n_top : int (optional, default ``1``)
             For each head, the number of top-scoring queries to ask about.
         kwargs : dict
             Keyword arguments to pass to :class:`~salmon.triplets.samplers.Adaptive`.
