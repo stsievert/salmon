@@ -78,11 +78,10 @@ sampling with these ``init.yaml`` configurations:
      ARR: {random_state: 42}  # active or adaptive sampling
      Random: {}  # random sampling
 
-The "ARR" stands for "active round robin" and creates an instance of
-:class:`~salmon.triplets.samplers.ARR`. For this class, head rotates through
-available choices ("round robin") and for each head, the best comparisons are
-chosen (by some measure with information gain).
-
+The "ARR" stands for "asynchronous round robin" and creates an instance of
+:class:`~salmon.triplets.samplers.ARR`. For this class, the query head is
+randomly chosen, and then for each head, the best comparison items are ranked
+by some measure (information gain by default).
 
 .. note::
 
