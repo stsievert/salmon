@@ -21,8 +21,12 @@ import requests as httpx
 import yaml
 from bokeh.embed import json_item
 from fastapi import Depends, File, Form, HTTPException
-from fastapi.responses import (FileResponse, HTMLResponse, JSONResponse,
-                               PlainTextResponse)
+from fastapi.responses import (
+    FileResponse,
+    HTMLResponse,
+    JSONResponse,
+    PlainTextResponse,
+)
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from redis import ResponseError
 from rejson import Client, Path
@@ -35,8 +39,13 @@ import salmon
 from ..triplets import manager
 from . import plotting
 from .public import _ensure_initialized, app, templates
-from .utils import (ServerException, _extract_zipfile, _format_target,
-                    _format_targets, get_logger)
+from .utils import (
+    ServerException,
+    _extract_zipfile,
+    _format_target,
+    _format_targets,
+    get_logger,
+)
 
 security = HTTPBasic()
 
@@ -285,7 +294,7 @@ async def _get_config(exp: bytes, targets: bytes) -> Dict[str, Any]:
         "instructions": "Default instructions (can include <i>arbitrary</i> HTML)",
         "max_queries": None,
         "debrief": "Thanks!",
-        "samplers": {"random": {"class": "RandomSampling"}},
+        "samplers": {"random": {"class": "Random"}},
         "max_queries": -1,
         "d": 2,
         "skip_button": False,
@@ -293,11 +302,26 @@ async def _get_config(exp: bytes, targets: bytes) -> Dict[str, Any]:
     }
     exp_config.update(config)
     if "sampling" not in exp_config:
+        exp_config["sampling"] = {}
+
+    if "probs" not in exp_config["sampling"]:
         n = len(exp_config["samplers"])
         freqs = [100 // n] * n
         freqs[0] += 100 % n
         sampling_percent = {k: f for k, f in zip(exp_config["samplers"], freqs)}
-        exp_config["sampling"] = {"probs": sampling_percent}
+        exp_config["sampling"]["probs"] = sampling_percent
+
+    if "samplers_per_user" not in exp_config["sampling"]:
+        exp_config["sampling"]["samplers_per_user"] = 0
+
+    if exp_config["sampling"]["samplers_per_user"] not in {0, 1}:
+        s = exp_config["sampling"]["samplers_per_user"]
+        raise NotImplementedError(
+            "Only samplers_per_user in {0, 1} is implemented, not "
+            f"samplers_per_user={s}"
+        )
+    if "RandomSampling" in exp_config["samplers"]:
+        raise ValueError("The sampler `RandomSampling` has been renamed to `Random`.")
 
     if set(exp_config["sampling"]["probs"]) != set(exp_config["samplers"]):
         sf = set(exp_config["sampling"]["probs"])
@@ -684,7 +708,16 @@ async def get_embeddings(
     exp_config = deepcopy(exp_config)
     targets = exp_config.pop("targets")
     alg_idents = list(exp_config.pop("samplers").keys())
-    embeddings = {alg: await get_model(alg) for alg in alg_idents}
+    embeddings = {}
+    for alg in alg_idents:
+        try:
+            embeddings[alg] = await get_model(alg)
+        except:
+            pass
+    if len(embeddings) == 0:
+        raise ServerException(
+            f"No model has been created for any sampler in {alg_idents}"
+        )
     dfs = {
         alg: _fmt_embedding(model["embedding"], targets, alg=alg)
         for alg, model in embeddings.items()

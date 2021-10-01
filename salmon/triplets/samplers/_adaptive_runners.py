@@ -11,7 +11,7 @@ import pandas as pd
 import torch.optim
 
 import salmon.triplets.samplers.adaptive as adaptive
-from ...backend.sampler import Runner
+from ...backend.sampler import Sampler
 from salmon.triplets.samplers._random_sampling import _get_query as _random_query
 from salmon.triplets.samplers.adaptive import InfoGainScorer, UncertaintyScorer
 from salmon.utils import get_logger
@@ -22,9 +22,9 @@ Query = TypeVar("Query")
 Answer = TypeVar("Answer")
 
 
-class Adaptive(Runner):
+class Adaptive(Sampler):
     """
-    The runner that runs adaptive algorithms.
+    The sampler that runs adaptive algorithms.
     """
 
     def __init__(
@@ -338,10 +338,7 @@ class TSTE(Adaptive):
 
 
 class ARR(Adaptive):
-    """A randomized round robin algorithm.
-
-    In practice, this sampling algorithm randomly asks about high scoring
-    queries for each head.
+    """An asynchronous round robin algorithm.
 
     Notes
     -----
@@ -349,9 +346,13 @@ class ARR(Adaptive):
     each head, the top ``n_top`` queries are selected. The query shown to the
     user is a query selected uniformly at random from this set.
 
-    This algorithm is proposed because "scoring every triplet is prohibitvely
-    expensive." It's perhaps more useful with Salmon's complete search
-    because adds some randomness to the query shown to the user.
+    If ``n_top > 1``, then in practice, this sampling algorithm randomly asks
+    about high scoring queries for each head. Becaues it's asynchronous, it
+    randomly selects a head (instead of doing it a round-robin fashion).
+
+    .. note::
+
+       We found this class to perform well in our experiments, some of which are detailed at https://docs.stsievert.com/salmon/benchmarks/active.html
 
     References
     ----------
@@ -360,15 +361,15 @@ class ARR(Adaptive):
 
     """
 
-    def __init__(self, R: int = 1, n_top=3, module="TSTE", **kwargs):
+    def __init__(self, R: int = 1, n_top=1, module="TSTE", **kwargs):
         """
         Parameters
         ----------
-        R: int (optional, default ``1``)
-            Adaptive sampling starts are ``R * n`` response have been received.
+        R : int (optional, default ``1``)
+            Adaptive sampling starts after ``R * n`` responses have been received.
         module : str, optional (default ``"TSTE"``).
             The noise model to use.
-        n_top : int (optional, default ``3``)
+        n_top : int (optional, default ``1``)
             For each head, the number of top-scoring queries to ask about.
         kwargs : dict
             Keyword arguments to pass to :class:`~salmon.triplets.samplers.Adaptive`.
@@ -402,6 +403,54 @@ class ARR(Adaptive):
         # Always return True to clear queries from the database (limits
         # randomness)
         return new_self, True
+
+
+class SRR(ARR):
+    """
+
+    A synchronous round robin sampling strategy; it performs a search of
+    ``n_search`` queries with a randomly selected head.
+
+    .. note::
+
+       "Round robin" is misnomer; this class actually selects a random head to mirror ARR.
+
+    """
+
+    def __init__(self, *args, n_search=400, **kwargs):
+        """
+        Parameters
+        ----------
+        n_search: int (optional, default ``400``)
+            How many queries should be searched per user?
+        kwargs : dict
+            Keyword arguments to pass to :class:`~salmon.triplets.samplers.ARR`.
+        """
+        super().__init__(*args, **kwargs)
+        self.n_search = n_search
+
+    def get_queries(self, *args, **kwargs):
+        return [], [], {}
+
+    def get_query(self):
+        q, score = super().get_query()
+        if q is not None:
+            return q, score
+
+        head = int(np.random.choice(self.n))
+        _choices = list(set(range(self.n)) - {head})
+        choices = np.array(_choices)
+        bottoms = [
+            np.random.choice(choices, size=2, replace=False)
+            for _ in range(self.n_search)
+        ]
+
+        _queries = [[head, l, r] for l, r in bottoms]
+        queries, scores = self.search.score(queries=_queries)
+
+        top_idx = np.argmax(scores)
+        (h, l, r), score = queries[top_idx], float(scores[top_idx])
+        return {"head": int(h), "left": int(l), "right": int(r)}, score
 
 
 class STE(Adaptive):

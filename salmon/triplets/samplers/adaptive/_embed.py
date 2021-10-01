@@ -1,6 +1,6 @@
 import itertools
 from copy import deepcopy
-from typing import List, Tuple, Union
+from typing import List, Tuple, Union, Optional
 
 import numpy as np
 import torch
@@ -77,7 +77,7 @@ class Embedding(BaseEstimator):
         self.initial_batch_size = initial_batch_size
         self.kwargs = kwargs
 
-    def initialize(self):
+    def initialize(self, embedding: Optional[np.ndarray] = None):
         """
         Initialize this optimization algorithm.
         """
@@ -99,6 +99,14 @@ class Embedding(BaseEstimator):
             train_split=None,
             dataset=NumpyDataset,
         ).initialize()
+        if embedding is not None:
+            if not isinstance(embedding, np.ndarray):
+                raise ValueError(
+                    f"Specify embedding as a NumPy array, not a {type(embedding)}"
+                )
+            with torch.no_grad():
+                em = torch.from_numpy(embedding.astype("float32"))
+                self.net_.module_.embedding.data = em
         return self
 
     # def converged(self):
@@ -205,6 +213,7 @@ class Embedding(BaseEstimator):
 
             self.meta_["num_grad_comps"] += len(train_ans)
             self.meta_["model_updates"] += 1
+            self.meta_["batch_size"] = len(idx_train)
             logger.info("%s", self.meta_)
             if self.meta_["num_grad_comps"] >= eg_deadline:
                 del loss, losses
@@ -228,13 +237,15 @@ class Embedding(BaseEstimator):
     def score(self, answers, y=None) -> float:
         if not (hasattr(self, "initialized_") and self.initialized_):
             self.initialize()
-        score = self._score(answers)
+        with torch.no_grad():
+            score = self._score(answers)
         self.meta_["last_score"] = score
         return score
 
     def _score(self, answers, y=None):
-        win2, lose2 = self.module_._get_dists(answers)
-        acc = (win2 < lose2).numpy().astype("float32").mean().item()
+        with torch.no_grad():
+            win2, lose2 = self.module_._get_dists(answers)
+            acc = (win2 < lose2).numpy().astype("float32").mean().item()
         return acc
 
     def fit(self, X, y=None):
@@ -275,16 +286,22 @@ class GD(Embedding):
 
 
 class OGD(Embedding):
-    def __init__(self, dwell=30, **kwargs):
+    def __init__(self, dwell=None, initial_batch_size=128, factor=2.0, **kwargs):
         self.dwell = dwell
-        super().__init__(**kwargs)
+        self.factor = factor
+        super().__init__(initial_batch_size=initial_batch_size, **kwargs)
 
     def get_train_idx(self, n_ans):
-        bs = self.initial_batch_size
-        if self.dwell > 0 and self.meta_["model_updates"] % self.dwell == 0:
-            bs += int(self.meta_["model_updates"] / (300 * self.dwell))
-        n_idx = min(bs, n_ans)
-        return np.random.choice(n_ans, size=n_idx, replace=False)
+        bs = int(self.initial_batch_size)
+        if self.dwell and self.dwell > 0:
+            epochs = self.meta_["num_grad_comps"] / n_ans
+            n_increases = min(epochs // self.dwell, 100)
+            increase_factor = int(self.factor ** n_increases)
+            bs = int(bs * increase_factor)
+
+        max_bs = max(5 * self.module__n, n_ans)
+        n_idx = min(bs, max_bs)
+        return np.random.choice(n_ans, size=min(n_idx, n_ans), replace=False)
 
 
 class Damper(Embedding):

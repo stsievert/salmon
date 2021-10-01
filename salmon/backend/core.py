@@ -84,9 +84,9 @@ async def init(ident: str, background_tasks: BackgroundTasks) -> bool:
          - 3
          - 4
        samplers:
-         - RandomSampling
+         - Random
          - random2
-           - class: RandomSampling
+           - class: Random
            - foo: bar
 
     """

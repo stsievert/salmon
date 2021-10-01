@@ -47,7 +47,7 @@ Passive Algorithms
    :toctree: generated/
    :template: only-init.rst
 
-   salmon.triplets.samplers.RandomSampling
+   salmon.triplets.samplers.Random
    salmon.triplets.samplers.RoundRobin
    salmon.triplets.samplers.Validation
 

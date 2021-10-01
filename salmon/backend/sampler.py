@@ -21,7 +21,7 @@ Answer = TypeVar("Answer")
 root = Path.rootPath()
 
 
-class Runner:
+class Sampler:
     """
     Run a sampling algorithm. Provides hooks to connect with the database and
     the Dask cluster.
@@ -117,12 +117,9 @@ class Runner:
                     "process_answers", self_future, answers, workers=workers[1],
                 )
 
-                if hasattr(self, "get_queries"):
-                    f_search = submit(
-                        "get_queries", self_future, stop=done, workers=workers[2],
-                    )
-                else:
-                    f_search = client.submit(lambda x: ([], [], {}), 0)
+                f_search = submit(
+                    "get_queries", self_future, stop=done, workers=workers[2],
+                )
 
                 time_model = 0.0
                 time_post = 0.0
@@ -218,7 +215,7 @@ class Runner:
 
     def save(self) -> bool:
         """
-        Save the runner's state and current embedding to the database.
+        Save the sampler's state and current embedding to the database.
         """
         rj2 = self.redis_client(decode_responses=False)
 
@@ -309,25 +306,27 @@ class Runner:
         """
         raise NotImplementedError
 
-        #  def get_queries(self) -> Tuple[List[Query], List[float]]:
-        """
-        Get queries.
+        def get_queries(self) -> Tuple[List[Query], List[float]]:
+            """
+            Get queries.
 
-        Returns
-        -------
-        queries : List[Query]
-            The list of queries
-        scores : List[float]
-            The scores for each query. Higher scores are sampled more
-            often.
+            Returns
+            -------
+            queries : List[Query]
+                The list of queries
+            scores : List[float]
+                The scores for each query. Higher scores are sampled more
+                often.
+            meta : Dict[str, Any]
+                Information about the search.
 
-        Notes
-        -----
-        The scores have to be unique. The underlying implementation does
-        not sample queries of the same score unbiased.
+            Notes
+            -----
+            The scores have to be unique. The underlying implementation does
+            not sample queries of the same score unbiased.
 
-        """
-        raise NotImplementedError
+            """
+            return [], [], {}
 
     def get_model(self) -> Dict[str, Any]:
         """
@@ -343,7 +342,7 @@ class Runner:
 
     def clear_queries(self, rj: RedisClient) -> bool:
         """
-        Clear all queries that this runner has posted from the database.
+        Clear all queries that this sampler has posted from the database.
         """
         rj.delete(f"alg-{self.ident}-queries")
         return True

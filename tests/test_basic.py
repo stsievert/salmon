@@ -325,3 +325,13 @@ def test_validation_sampling(server, logs):
     for round_order in round_orders:
         assert len(set(round_order)) == n_val
     assert all(round_orders[0] != order for order in round_orders[1:])
+
+def test_random_error(server, logs):
+    server.authorize()
+    n_val = 5
+    exp = {
+        "targets": [0, 1, 2, 3, 4, 5],
+        "samplers": {"RandomSampling": {}, "ARR": {}}
+    }
+    r = server.post("/init_exp", data={"exp": exp}, status_code=500)
+    assert "The sampler `RandomSampling` has been renamed to `Random`" in r.text

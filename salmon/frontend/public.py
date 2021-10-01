@@ -19,7 +19,7 @@ from starlette_prometheus import PrometheusMiddleware, metrics
 
 from ..triplets import manager
 from ..utils import get_logger
-from .utils import ServerException, sha256
+from .utils import ServerException, sha256, image_url
 
 logger = get_logger(__name__)
 
@@ -100,13 +100,18 @@ async def _ensure_initialized():
 
 
 @app.get("/", tags=["public"])
-async def get_query_page(request: Request):
+async def get_query_page(request: Request, puid: str=""):
     """
     Load the query page and present a "triplet query".
     """
     exp_config = await _ensure_initialized()
-    uid = "salmon-{}".format(np.random.randint(2 ** 32 - 1))
-    puid = sha256(uid)[:16]
+    if puid == "":
+        uid = "salmon-{}".format(np.random.randint(2 ** 32 - 1))
+        puid = sha256(uid)[:16]
+    try:
+        urls = [image_url(t) for t in exp_config["targets"]]
+    except:
+        urls = []
     items = {
         "puid": puid,
         "instructions": exp_config["instructions"],
@@ -115,18 +120,21 @@ async def get_query_page(request: Request):
         "debrief": exp_config["debrief"],
         "skip_button": exp_config["skip_button"],
         "css": exp_config["css"],
+        "samplers_per_user": exp_config["sampling"]["samplers_per_user"],
+        "urls": urls,
     }
     items.update(request=request)
     return templates.TemplateResponse("query_page.html", items)
 
 
 @app.get("/query", tags=["public"])
-async def get_query() -> Dict[str, Union[int, str, float]]:
-    idents = rj.jsonget("samplers")
-    probs = rj.jsonget("sampling_probs")
+async def get_query(ident="") -> Dict[str, Union[int, str, float]]:
+    if ident == "":
+        idents = rj.jsonget("samplers")
+        probs = rj.jsonget("sampling_probs")
 
-    idx = np.random.choice(len(idents), p=probs)
-    ident = idents[idx]
+        idx = np.random.choice(len(idents), p=probs)
+        ident = idents[idx]
 
     r = httpx.get(f"http://localhost:8400/query-{ident}")
     if r.status_code == 200:
@@ -169,6 +177,7 @@ async def process_answer(ans: manager.Answer):
     ident = d["alg_ident"]
     logger.warning(f"answer received: {d}")
     rj.jsonarrappend(f"alg-{ident}-answers", root, d)
+        # on backend,  key = f"alg-{self.ident}-answers"
     rj.jsonarrappend("all-responses", root, d)
     last_save = rj.lastsave()
 
