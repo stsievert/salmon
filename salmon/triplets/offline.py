@@ -241,7 +241,7 @@ class OfflineEmbedding(BaseEstimator):
                 keys = [
                     "ident", "score_test", "train_data",
                     "max_epochs", "_epochs", "_elapsed_time",
-                    "stats__nn_diff_mean", "batch_size",
+                    "batch_size",
                 ]
                 # fmt: on
                 show = {k: _print_fmt(datum.get(k, "")) for k in keys}
