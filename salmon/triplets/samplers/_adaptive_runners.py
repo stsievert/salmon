@@ -408,12 +408,9 @@ class ARR(Adaptive):
 class SRR(ARR):
     """
 
-    A synchronous round robin sampling strategy; it performs a search of
-    ``n_search`` queries with a randomly selected head.
-
-    .. note::
-
-       "Round robin" is misnomer; this class actually selects a random head to mirror ARR.
+    An adaptive round robin sampling strategy that performs a straighforward
+    search; it performs a search of ``n_search`` queries with a randomly
+    selected head.
 
     """
 
