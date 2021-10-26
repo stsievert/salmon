@@ -66,6 +66,12 @@ If desired, it is possible to open port 8787 on the Amazon EC2 machine. If that
 action is taken, it is recommended to only allow a specific IP to view that
 port.
 
+How do I customize the participant unique identifier aka "puid"?
+----------------------------------------------------------------
+
+Visiting `http://[url]:8421/?puid=foobar` will set that the participant UID to
+be `foobar`.
+
 .. [1] "Low-dimensional embedding using adaptively selected ordinal data."
    Jamieson and Nowak. 2011. Allerton Conference on Communication, Control, and
    Computing. https://homes.cs.washington.edu/~jamieson/resources/activeMDS.pdf
