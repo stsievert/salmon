@@ -96,13 +96,28 @@ Here's an example ``init.yaml`` YAML file for initialization:
 The top-level elements like ``max_queries`` and ``targets`` are called "keys"
 in YAML jargon. Here's documentation for each key:
 
-* ``instructions``: text. The instructions for the participant.
-* ``debrief``: text. The message to show at the end of the experiment. This
-  debrief will show alongside the participant ID (which will be available
-  through in the responses).
-* ``max_queries``: int. The number of queries a participant should answer. Set
-  ``max_queries: -1`` for unlimited queries.
+
+* ``html``. Style options for the crowdsourcing user's query page:
+
+    * ``instructions``: text. The instructions for the participant, shown above
+      each query.
+
+    * ``debrief``: text. The message to show at the end of the experiment. This
+      debrief will show alongside the participant ID (aka "puid", which will be
+      available through in the responses).
+
+    * ``max_queries``: int. The number of queries a participant should answer. Set
+      ``max_queries: -1`` for unlimited queries.
+
+    * ``skip_button``, optional boolean. Default ``false``. If ``true``, show a
+      button that says "new query."
+
+    * ``css``, optional string. Defaults to ``""``. This CSS is inserted in the
+      ``<style>`` tag in the HTML query page. This allows customization of
+      colors/borders/etc.
+
 * ``samplers``. See :ref:`adaptive-config` for more detail.
+
 * ``sampling``. A dictionary with the following keys:
 
     * ``probs``, a map between sampler names and the percentage that
@@ -123,11 +138,6 @@ in YAML jargon. Here's documentation for each key:
       will completely replace ``targets`` with the default renderings of the
       contents of the ZIP file (detailed in the next section).
 
-* ``skip_button``, optional boolean. Default ``false``. If ``true``, show a
-  button that says "new query."
-* ``css``, optional string. Defaults to ``""``. This CSS is inserted in the
-  ``<style>`` tag in the HTML query page. This allows customization of
-  colors/borders/etc.
 
 Examples of these files are in `salmon/tests/data`_ and `salmon/examples`_.
 

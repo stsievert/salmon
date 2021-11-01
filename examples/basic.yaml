@@ -1,6 +1,7 @@
+html:
+  max_queries: 100
 targets: 10
 d: 2
-max_queries: 100
 samplers:
   ARR: {}
   Random: {}

@@ -6,7 +6,8 @@ targets:
   - "<i>GoldenEye 007</i>"
   - Super Mario
   - Mario Kart
-instructions: These are <b>instructions</b>!
-max_queries: 10
-debrief: Thanks for participating!
-skip_button: true
+html:
+  instructions: These are <b>instructions</b>!
+  max_queries: 10
+  debrief: Thanks for participating!
+  skip_button: true

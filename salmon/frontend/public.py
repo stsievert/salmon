@@ -93,7 +93,7 @@ async def _ensure_initialized():
         err = True
         extra = set(exp_config) - set(expected_keys)
         missing = set(expected_keys) - set(exp_config)
-    if "html" in exp_config and not set(exp_config["html"]).issubset(set(html_keys)):
+    if "html" in exp_config and not set(html_keys).issubset(set(exp_config["html"])):
         err = True
         extra = set()#exp_config["html"]) - set(expected_keys)
         missing = set(expected_keys) - set(exp_config["html"])

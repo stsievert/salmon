@@ -20,6 +20,8 @@ Query = TypeVar("Query")
 Answer = TypeVar("Answer")
 root = Path.rootPath()
 
+class StopRunning(Exception):
+    pass
 
 class Sampler:
     """
@@ -211,6 +213,8 @@ class Sampler:
 
             except Exception as e:
                 logger.exception(e)
+                if isinstance(e, StopRunning):
+                    break
         return True
 
     def save(self) -> bool:
