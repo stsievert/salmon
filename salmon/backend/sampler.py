@@ -12,7 +12,7 @@ from redis.exceptions import ResponseError
 from rejson import Client as RedisClient
 from rejson import Path
 
-from ..utils import get_logger
+from ..utils import get_logger, flush_logger
 
 logger = get_logger(__name__)
 
@@ -180,7 +180,7 @@ class Sampler:
                 logger.info(datum)
                 posting_deadline = data[0]["time"] + 2 * 60
                 if time() >= posting_deadline or k == 10 or k == 20:
-                    logger.flush()
+                    flush_logger(logger)
                     keys = data[-1].keys()
                     to_post = {}
                     for _k in keys:
@@ -214,10 +214,10 @@ class Sampler:
 
             except Exception as e:
                 logger.exception(e)
-                logger.flush()
+                flush_logger(logger)
                 if isinstance(e, StopRunning):
                     logger.exception(e)
-                    logger.flush()
+                    flush_logger(logger)
                     sleep(4)
                     break
         return True

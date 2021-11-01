@@ -64,3 +64,9 @@ def background_logger(logger, *handlers):
     )
     listener.start()
     return logger
+
+
+def flush_logger(logger):
+    for handler in logger.handlers:
+        if hasattr(handler, "flush"):
+            handler.flush()
