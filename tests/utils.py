@@ -122,7 +122,7 @@ class Logs:
         msg =f"files for checking logs = {files}"
         logger.warning(msg)
         print(msg)
-        for log in :
+        for log in files:
             lines = log.read_text().split("\n")
             for line in lines:
                 if self.catch and ("error" in line or "except" in line):
