@@ -98,10 +98,11 @@ Here's an example ``init.yaml`` YAML file for initialization:
 .. code-block:: yaml
 
    # file: init.yaml
-   targets: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-   instructions: Select the item on the bottom most similar to the item on the top.
-   debrief: Thanks! Use the participant ID below in Mechnical Turk.
-   max_queries: 100
+   targets: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+   html:
+     instructions: Select the item on the bottom most similar to the item on the top.
+     debrief: Thanks! Use the participant ID below in Mechnical Turk.
+     max_queries: 100
    samplers:
      ARR: {}
      Random: {}

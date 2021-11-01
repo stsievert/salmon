@@ -1,5 +1,10 @@
+.. _faq:
+
 FAQ
 ===
+
+Also relevant is the :ref:`troubleshooting`, which goes over some (blocking)
+difficulties while launching.
 
 .. _faq-n_responses:
 

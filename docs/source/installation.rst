@@ -127,8 +127,12 @@ build, up}``.
 If you run the command ``export SALMON_NO_AUTH=1``, the Salmon server will
 not require a username/password.
 
+.. _troubleshooting:
+
 Troubleshooting
 ---------------
+
+See :ref:`faq` for more general questions.
 
 I can't access Salmon's URL
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
