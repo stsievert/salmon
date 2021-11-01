@@ -57,13 +57,14 @@ def test_run_errors_logged(server, logs):
     r = server.post("/init_exp", data={"exp": config})
     with pytest.raises(LogError, match="Test error"):
         with logs:
-            for k in range(10):
+            for k in range(30):
                 q = server.get("/query").json()
                 winner = random.choice([q["left"], q["right"]])
                 ans = {"winner": winner, "puid": "", **q}
-                ans["left"] = 12
                 sleep(1)
                 server.post("/answer", data=ans)
+        _ = 1
+    _ = 2
     server.reset()
 
 
