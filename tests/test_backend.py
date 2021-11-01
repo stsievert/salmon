@@ -51,6 +51,9 @@ def test_init_errors_propogate(server):
 
 
 def test_run_errors_logged(server, logs):
+    # This test is only designed to make sure errors are raised during pytest
+    # it's not designed to make sure errors have much detail; the docker logs
+    # will reflect more of that.
     server.authorize()
     server.get("/init")
     config = {"targets": list(range(10)), "d": 1, "samplers": {"ARR": {}}}

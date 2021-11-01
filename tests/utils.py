@@ -121,18 +121,19 @@ class Logs:
         files = list(self.log_dir.glob("*.log"))
         msg = f"files for checking logs = {files}"
         logger.warning(msg)
+        _errors = []
+        _warnings = []
         for log in files:
             lines = log.read_text().split("\n")
-            Lines = []
             for line in lines:
-                if any(x in line.lower() for x in ["error", "except", "warn"]):
-                    Lines.append(line)
-            msg = " (newline) ".join(Lines)
-            msg2 ="{}: {}".format(log, msg)
-            if self.catch:
-                raise LogError(msg2)
-            if self.warn:
-                warn(msg2)
+                if any(x in line.lower() for x in ["error", "except"]):
+                    _errors.append(line)
+                if "warn" in line.lower():
+                    _warnings.append(line)
+        if self.warn and len(_warnings):
+            warn("\n".join(_warnings))
+        if self.catch and len(_errors):
+            raise LogError("\n".join(_errors))
         _clear_logs()
 
 
