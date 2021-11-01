@@ -5,7 +5,8 @@ targets:
   - 2
   - 3
   - 4
-max_queries: 20
+html:
+  max_queries: 20
 samplers:
   foobar:
     class: FooBar

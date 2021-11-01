@@ -34,6 +34,21 @@ hit "create user."
    Do not lose this username/password! You need the username/password to view
    the dashboard and download the received responses.
 
+.. warning::
+
+   Once a username/password are set, they can not be changed. The
+   username/password will remain the same when Salmon is reset and when the
+   machine Salmon is running on is restarted.
+
+It is technically possible to recover the username/password with the key file
+``key.pem`` that Amazon AWS provides and the URL above:
+
+.. code-block:: shell
+
+   (personal) $ ssh -i key.pem ubuntu@[url]
+   (ec2) $ cat /home/ubuntu/salmon/creds.json
+
+
 Experiment initialization
 -------------------------
 After a user has been successfully created, hit the back
@@ -83,10 +98,11 @@ Here's an example ``init.yaml`` YAML file for initialization:
 .. code-block:: yaml
 
    # file: init.yaml
-   targets: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-   instructions: Select the item on the bottom most similar to the item on the top.
-   debrief: Thanks! Use the participant ID below in Mechnical Turk.
-   max_queries: 100
+   targets: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+   html:
+     instructions: Select the item on the bottom most similar to the item on the top.
+     debrief: Thanks! Use the participant ID below in Mechnical Turk.
+     max_queries: 100
    samplers:
      ARR: {}
      Random: {}
@@ -96,17 +112,37 @@ Here's an example ``init.yaml`` YAML file for initialization:
 The top-level elements like ``max_queries`` and ``targets`` are called "keys"
 in YAML jargon. Here's documentation for each key:
 
-* ``instructions``: text. The instructions for the participant.
-* ``debrief``: text. The message to show at the end of the experiment. This
-  debrief will show alongside the participant ID (which will be available
-  through in the responses).
-* ``max_queries``: int. The number of queries a participant should answer. Set
-  ``max_queries: -1`` for unlimited queries.
+
+* ``html``. Style options for the crowdsourcing user's query page:
+
+    * ``instructions``: text. The instructions for the participant, shown above
+      each query.
+
+    * ``debrief``: text. The message to show at the end of the experiment. This
+      debrief will show alongside the participant ID (aka "puid", which will be
+      available through in the responses).
+
+    * ``max_queries``: int. The number of queries a participant should answer. Set
+      ``max_queries: -1`` for unlimited queries.
+
+    * ``skip_button``, optional boolean. Default ``false``. If ``true``, show a
+      button that says "new query."
+
+    * ``css``, optional string. Defaults to ``""``. This CSS is inserted in the
+      ``<style>`` tag in the HTML query page. This allows customization of
+      colors/borders/etc.
+
+    * ``arrow_keys`` optional boolean, default True. If True, allow users to
+      answer queries with the arrow keys.
+
 * ``samplers``. See :ref:`adaptive-config` for more detail.
-* ``sampling``. A dictionary with the following keys:
+
+* ``d``, optional int (default=2). The embedding the samplers should embed into.
+
+* ``sampling``, optional. A dictionary with the following keys:
 
     * ``probs``, a map between sampler names and the percentage that
-      each sampler is selected.
+      each sampler is selected. By default, all samplers are sampled equally.
 
     * ``samplers_per_user``: (optional int, default=0). Controls the
       number of samplers each user sees. If ``samplers_per_user=0``, show
@@ -114,25 +150,21 @@ in YAML jargon. Here's documentation for each key:
 
 * ``targets``, optional list. Choices:
 
-    * YAML list. This ``targets: ["vonn", "miller", "ligety", "shiffrin"]`` is
-      specified, the user will see plain text. If this text includes HTML, it
-      will be rendered. For example if one target is ``"<i>kildow</i>"`` the
-      user will see italic text when that target is displayed.
+    * Upload a ZIP file.  This will replace the ``targets`` key with the HTML
+      rendering of the contents of the ZIP file.
 
-    * Don't include the ``targets`` keyword and upload a ZIP file instead. This
-      will completely replace ``targets`` with the default renderings of the
-      contents of the ZIP file (detailed in the next section).
+    * list of HTML targets. Specifying
+      ``targets: ["vonn", "miller", "ligety", "shiffrin"]``
+      will show text to the user. If this text includes HTML, it will be
+      rendered. For example if one target is ``"<i>kildow</i>"`` the user will
+      see italic text when that target is displayed.
 
-* ``skip_button``, optional boolean. Default ``false``. If ``true``, show a
-  button that says "new query."
-* ``css``, optional string. Defaults to ``""``. This CSS is inserted in the
-  ``<style>`` tag in the HTML query page. This allows customization of
-  colors/borders/etc.
-
-Examples of these files are in `salmon/tests/data`_ and `salmon/examples`_.
+Examples of these files are in `salmon/examples`_. A complete example is
+available at `salmon/examples/complete.yaml`_.
 
 .. _salmon/tests/data: https://github.com/stsievert/salmon/tree/master/tests/data
 .. _salmon/examples: https://github.com/stsievert/salmon/tree/master/examples
+.. _salmon/examples/complete.yaml: https://github.com/stsievert/salmon/tree/master/examples/complete.yaml
 
 YAML file with ZIP file
 ^^^^^^^^^^^^^^^^^^^^^^^

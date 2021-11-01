@@ -91,11 +91,13 @@ def server():
     server.authorize()
     r = server.delete("/reset?force=1", auth=server.creds, timeout=TIMEOUT)
     assert r.json() == {"success": True}
+    server.reset()
     _clear_logs()
     yield server
     dump = Path(__file__).absolute().parent.parent / "out" / "dump.rdb"
     if dump.exists():
         dump.unlink()
+    server.reset()
 
 
 class LogError(Exception):
@@ -118,13 +120,22 @@ class Logs:
         if exc_type is not None:
             raise exc_type(exc_value)
         sleep(1)
-        for log in self.log_dir.glob("*.log"):
+        files = list(self.log_dir.glob("*.log"))
+        msg = f"files for checking logs = {files}"
+        logger.warning(msg)
+        _errors = []
+        _warnings = []
+        for log in files:
             lines = log.read_text().split("\n")
             for line in lines:
-                if self.catch and ("error" in line or "except" in line):
-                    raise LogError("{}\n{}".format(log, line))
-                if self.warn and "warn" in line:
-                    warn("{}\n{}".format(log, line))
+                if any(x in line.lower() for x in ["error", "except"]):
+                    _errors.append(line)
+                if "warn" in line.lower() and "answer received:" not in line.lower():
+                    _warnings.append(line)
+        if self.warn and len(_warnings):
+            warn("\n".join(_warnings))
+        if self.catch and len(_errors):
+            raise LogError("\n".join(_errors))
         _clear_logs()
 
 

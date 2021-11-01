@@ -12,7 +12,7 @@ from redis.exceptions import ResponseError
 from rejson import Client as RedisClient
 from rejson import Path
 
-from ..utils import get_logger
+from ..utils import get_logger, flush_logger
 
 logger = get_logger(__name__)
 
@@ -20,6 +20,8 @@ Query = TypeVar("Query")
 Answer = TypeVar("Answer")
 root = Path.rootPath()
 
+class StopRunning(Exception):
+    pass
 
 class Sampler:
     """
@@ -78,6 +80,8 @@ class Sampler:
         rj.jsonset(f"alg-perf-{self.ident}", root, [])
         save_deadline = 0.0  # right away
         data: List[Dict[str, Any]] = []
+
+        error_raised = []
         for k in itertools.count():
             try:
                 loop_start = time()
@@ -178,6 +182,7 @@ class Sampler:
                 logger.info(datum)
                 posting_deadline = data[0]["time"] + 2 * 60
                 if time() >= posting_deadline or k == 10 or k == 20:
+                    flush_logger(logger)
                     keys = data[-1].keys()
                     to_post = {}
                     for _k in keys:
@@ -199,7 +204,7 @@ class Sampler:
                         }
                         if _k == "time":
                             _update = {"time": _update["time_median"]}
-                        to_post.update({k: Type(v) for k, v in _update.items()})
+                        to_post.update({_k: Type(v) for _k, v in _update.items()})
 
                     rj.jsonarrappend(f"alg-perf-{self.ident}", root, to_post)
                     data = []
@@ -211,6 +216,14 @@ class Sampler:
 
             except Exception as e:
                 logger.exception(e)
+                flush_logger(logger)
+                error_raised.append(k)
+
+                n = 5
+                if np.diff(error_raised[-n:]).tolist() == [1] * (n - 1):
+                    logger.exception(e)
+                    flush_logger(logger)
+                    raise e
         return True
 
     def save(self) -> bool:

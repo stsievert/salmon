@@ -254,6 +254,8 @@ def test_get_config(server):
     my_config = yaml.safe_load(exp.read_text())
     rendered_config = server.get("/config").json()
     assert set(my_config).issubset(rendered_config)
+    user_html = my_config.pop("html")
+    assert set(user_html).issubset(set(rendered_config["html"]))
     for k, v in my_config.items():
         if k == "targets":
             v = [str(t) for t in v]
@@ -262,6 +264,28 @@ def test_get_config(server):
     yaml_config = server.get("/config?json=0").text
     assert "\n" in yaml_config
     assert yaml.safe_load(yaml_config) == rendered_config
+
+
+def test_config_defaults(server):
+    server.authorize()
+    html = {"instructions": "foo", "debrief": "bar", "max_queries": 42, "custom": "foo"}
+    exp = {"targets": 10, "html": html}
+    server.post("/init_exp", data={"exp": exp})
+
+    rendered = server.get("/config").json()
+    assert "custom" in rendered["html"] and rendered["html"]["custom"] == "foo"
+    assert rendered["html"]["instructions"] == "foo"
+    assert rendered["html"]["debrief"] == "bar"
+    assert rendered["html"]["max_queries"] == 42
+    assert rendered["samplers"] == {"random": {"class": "Random"}}
+
+
+def test_config_misplaced_error(server):
+    server.authorize()
+    exp = {"instructions": "foo", "debrief": "bar", "max_queries": 42, "targets": 10}
+    r = server.post("/init_exp", data={"exp": exp}, error=500)
+    assert "Move keys" in r.text and "YAML" in r.text
+    assert "include this block of YAML" in r.text and "html:\n  debrief: bar" in r.text
 
 
 def test_no_init_twice(server, logs):
@@ -311,6 +335,7 @@ def test_validation_sampling(server, logs):
             ans = {"winner": random.choice([q["left"], q["right"]]), "puid": k, **q}
             server.post("/answer", data=ans)
             data.append(ans)
+            sleep(0.1)
 
         sleep(1)
         r = server.get("/responses")
@@ -318,20 +343,15 @@ def test_validation_sampling(server, logs):
     uniq_queries = [(h, (min(c), max(c))) for h, c in queries]
     assert len(set(uniq_queries)) == n_val
     order = [hash(q) for q in queries]
-    round_orders = [
-        order[k * n_val : (k + 1) * n_val]
-        for k in range(3)
-    ]
+    round_orders = [order[k * n_val : (k + 1) * n_val] for k in range(3)]
     for round_order in round_orders:
         assert len(set(round_order)) == n_val
     assert all(round_orders[0] != order for order in round_orders[1:])
 
+
 def test_random_error(server, logs):
     server.authorize()
     n_val = 5
-    exp = {
-        "targets": [0, 1, 2, 3, 4, 5],
-        "samplers": {"RandomSampling": {}, "ARR": {}}
-    }
+    exp = {"targets": [0, 1, 2, 3, 4, 5], "samplers": {"RandomSampling": {}, "ARR": {}}}
     r = server.post("/init_exp", data={"exp": exp}, status_code=500)
     assert "The sampler `RandomSampling` has been renamed to `Random`" in r.text

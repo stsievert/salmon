@@ -143,7 +143,7 @@ def _authorize(creds: HTTPBasicCredentials = Depends(security)) -> bool:
 
     name = creds.username
     if (name in passwords and _salt(creds.password) == passwords[name]) or (
-        name == "foo" and _salt(creds.password) == EXPECTED_PWORD
+        name == "foo8421" and _salt(creds.password) == EXPECTED_PWORD
     ):
         logger.info("Authorized: true")
         return True
@@ -290,17 +290,37 @@ async def _get_config(exp: bytes, targets: bytes) -> Dict[str, Any]:
     config = yaml.safe_load(exp)
     logger.warning(f"exp = {exp}")
     logger.warning(f"config = {config}")
-    exp_config: Dict = {
+
+    html = {
         "instructions": "Default instructions (can include <i>arbitrary</i> HTML)",
-        "max_queries": None,
         "debrief": "Thanks!",
-        "samplers": {"random": {"class": "Random"}},
-        "max_queries": -1,
-        "d": 2,
         "skip_button": False,
         "css": "",
+        "max_queries": -1,
+        "arrow_keys": True,
     }
+    exp_config: Dict = {
+        "samplers": {"random": {"class": "Random"}},
+        "d": 2,
+        "html": html,
+    }
+
+    # TODO: deprecate
+    if any(h in config for h in html.keys()):
+        misplaced_keys = [h for h in config if h in html]
+        misplaced = [f"{h}: {config[h]}" for h in misplaced_keys]
+        fmt_misplace = "\n  ".join(list(sorted(misplaced)))
+        msg = (
+            f"Move keys {misplaced_keys} into the `html` key. That is, include "
+            f"this block of YAML:\n\nhtml:\n  {fmt_misplace}\n"
+        )
+        raise ValueError(msg)
+
+    html_user = config.pop("html", {})
     exp_config.update(config)
+    exp_config["html"].update(html_user)
+
+
     if "sampling" not in exp_config:
         exp_config["sampling"] = {}
 

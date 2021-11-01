@@ -42,6 +42,12 @@ class Validation(RoundRobin):
         self.n_queries = n_queries
         if queries is None:
             queries = [np.random.choice(n, size=3, replace=False) for _ in range(n_queries)]
+        idx = [i for query in queries for i in query]
+        if n - 1 < max(idx):
+            raise ValueError(
+                f"The index {max(idx)} is included as an index for validation "
+                f"sampling, which is too large for the n={n} targets."
+            )
         self._val_queries = queries
         super().__init__(n=n, d=d, ident=ident)
 

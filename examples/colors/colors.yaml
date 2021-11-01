@@ -1,6 +1,24 @@
-instructions: Which of the comparison colors is most similar to the target color?
-debrief: Thanks! Please enter this participant ID in the assignment.
-max_queries: 100  # about 2.94 minutes for 100 queries
+html:
+  instructions: Which of the comparison colors is most similar to the target color?
+  debrief: Thanks! Please enter this participant ID in the assignment.
+  max_queries: 100  # about 2.94 minutes for 100 queries
+  arrow_keys: True
+  css: >
+    body {
+      background-color: #414141;
+      color: #ddd;
+    }
+    .answer {
+      background-color: #595959;
+      border-color: #bbb;
+    }
+    .head {
+      background-color: #505050;
+      border-color: #000;
+    }
+    .debrief {
+      color: #000;
+    }
 d: 2
 samplers:
   ARR:
@@ -8,19 +26,3 @@ samplers:
   Random: {}
 sampling:
   probs: {"Random": 38, "ARR": 62}
-css: >
-  body {
-    background-color: #414141;
-    color: #ddd;
-  }
-  .answer {
-    background-color: #595959;
-    border-color: #bbb;
-  }
-  .head {
-    background-color: #505050;
-    border-color: #000;
-  }
-  .debrief {
-    color: #000;
-  }
