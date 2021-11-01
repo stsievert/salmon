@@ -69,8 +69,8 @@ port.
 How do I customize the participant unique identifier aka "puid"?
 ----------------------------------------------------------------
 
-Visiting `http://[url]:8421/?puid=foobar` will set that the participant UID to
-be `foobar`.
+Visiting ``http://[url]:8421/?puid=foobar`` will set that the participant UID
+to be ``foobar``.
 
 How do I use HTTPS with Salmon?
 -------------------------------
