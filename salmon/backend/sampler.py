@@ -213,7 +213,11 @@ class Sampler:
 
             except Exception as e:
                 logger.exception(e)
+                logger.propagate()
                 if isinstance(e, StopRunning):
+                    logger.exception(e)
+                    logger.propagate()
+                    sleep(4)
                     break
         return True
 
