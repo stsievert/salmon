@@ -122,6 +122,12 @@ class Logs:
         msg = f"files for checking logs = {files}"
         logger.warning(msg)
         print(msg)
+        try:
+            sampler_log = [f for f in files if "salmon.backend.sampler.log" in f.name][0]
+            print(sampler_log.read_text())
+        except Exception as e:
+            print("Couldn't read salmon.backend.sampler.log. Exception:\n\n")
+            print(e)
         for log in files:
             lines = log.read_text().split("\n")
             for line in lines:
