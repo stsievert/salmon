@@ -116,6 +116,9 @@ in YAML jargon. Here's documentation for each key:
       ``<style>`` tag in the HTML query page. This allows customization of
       colors/borders/etc.
 
+    * ``arrow_keys`` optional boolean, default True. If True, allow users to
+      answer queries with the arrow keys.
+
 * ``samplers``. See :ref:`adaptive-config` for more detail.
 
 * ``sampling``, optional. A dictionary with the following keys:

@@ -297,6 +297,7 @@ async def _get_config(exp: bytes, targets: bytes) -> Dict[str, Any]:
         "skip_button": False,
         "css": "",
         "max_queries": -1,
+        "arrow_keys": True,
     }
     exp_config: Dict = {
         "samplers": {"random": {"class": "Random"}},

@@ -87,6 +87,7 @@ async def _ensure_initialized():
         "debrief",
         "skip_button",
         "css",
+        "arrow_keys",
     ]
     err = False
     if not set(exp_config) == set(expected_keys):
