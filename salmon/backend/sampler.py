@@ -80,6 +80,8 @@ class Sampler:
         rj.jsonset(f"alg-perf-{self.ident}", root, [])
         save_deadline = 0.0  # right away
         data: List[Dict[str, Any]] = []
+
+        error_raised = []
         for k in itertools.count():
             try:
                 loop_start = time()
@@ -202,7 +204,7 @@ class Sampler:
                         }
                         if _k == "time":
                             _update = {"time": _update["time_median"]}
-                        to_post.update({k: Type(v) for k, v in _update.items()})
+                        to_post.update({_k: Type(v) for _k, v in _update.items()})
 
                     rj.jsonarrappend(f"alg-perf-{self.ident}", root, to_post)
                     data = []
@@ -215,11 +217,12 @@ class Sampler:
             except Exception as e:
                 logger.exception(e)
                 flush_logger(logger)
-                if isinstance(e, StopRunning):
+                error_raised.append(k)
+
+                if np.diff(error_raised[-10:]).tolist() == [1] * 9
                     logger.exception(e)
                     flush_logger(logger)
-                    sleep(4)
-                    break
+                    raise e
         return True
 
     def save(self) -> bool:
