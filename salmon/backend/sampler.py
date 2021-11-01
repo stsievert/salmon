@@ -219,7 +219,8 @@ class Sampler:
                 flush_logger(logger)
                 error_raised.append(k)
 
-                if np.diff(error_raised[-10:]).tolist() == [1] * 9:
+                n = 5
+                if np.diff(error_raised[-n:]).tolist() == [1] * (n - 1):
                     logger.exception(e)
                     flush_logger(logger)
                     raise e
