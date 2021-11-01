@@ -123,7 +123,9 @@ class Logs:
         logger.warning(msg)
         print(msg)
         try:
-            sampler_log = [f for f in files if "salmon.backend.sampler.log" in f.name][0]
+            sampler_log = [f for f in files if "salmon.backend.sampler.log" in f.name][
+                0
+            ]
             print(sampler_log.read_text())
         except Exception as e:
             print("Couldn't read salmon.backend.sampler.log. Exception:\n\n")
@@ -131,7 +133,7 @@ class Logs:
         for log in files:
             lines = log.read_text().split("\n")
             for line in lines:
-                if self.catch and ("error" in line or "except" in line):
+                if self.catch and ("error" in line.lower() or "except" in line.lower()):
                     raise LogError("{}\n{}".format(log, line))
                 if self.warn and "warn" in line:
                     warn("{}\n{}".format(log, line))
