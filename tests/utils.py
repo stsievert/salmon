@@ -118,7 +118,11 @@ class Logs:
         if exc_type is not None:
             raise exc_type(exc_value)
         sleep(1)
-        for log in self.log_dir.glob("*.log"):
+        files = list(self.log_dir.glob("*.log"))
+        msg =f"files for checking logs = {files}"
+        logger.warning(msg)
+        print(msg)
+        for log in :
             lines = log.read_text().split("\n")
             for line in lines:
                 if self.catch and ("error" in line or "except" in line):
