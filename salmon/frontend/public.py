@@ -76,23 +76,33 @@ async def _ensure_initialized():
     expected_keys = [
         "targets",
         "samplers",
-        "instructions",
         "n",
         "d",
+        "sampling",
+        "html"
+    ]
+    html_keys = [
+        "instructions",
         "max_queries",
         "debrief",
         "skip_button",
-        "sampling",
         "css",
     ]
+    err = False
     if not set(exp_config) == set(expected_keys):
+        err = True
+        extra = set(exp_config) - set(expected_keys)
+        missing = set(expected_keys) - set(exp_config)
+    if "html" in exp_config and not set(exp_config["html"]).issubset(set(html_keys)):
+        err = True
+        extra = set()#exp_config["html"]) - set(expected_keys)
+        missing = set(expected_keys) - set(exp_config["html"])
+    if err:
         msg = (
             "Experiment keys are not correct. Expected {}, got {}.\n\n"
             "Extra keys: {}\n"
             "Missing keys: {}"
         )
-        extra = set(exp_config) - set(expected_keys)
-        missing = set(expected_keys) - set(exp_config)
         raise ServerException(
             msg.format(expected_keys, list(exp_config.keys()), extra, missing)
         )
@@ -114,14 +124,15 @@ async def get_query_page(request: Request, puid: str=""):
         urls = []
     items = {
         "puid": puid,
-        "instructions": exp_config["instructions"],
         "targets": exp_config["targets"],
-        "max_queries": exp_config["max_queries"],
-        "debrief": exp_config["debrief"],
-        "skip_button": exp_config["skip_button"],
-        "css": exp_config["css"],
         "samplers_per_user": exp_config["sampling"]["samplers_per_user"],
         "urls": urls,
+        "html": exp_config["html"],
+        #  "instructions": exp_config["instructions"],
+        #  "max_queries": exp_config["max_queries"],
+        #  "debrief": exp_config["debrief"],
+        #  "skip_button": exp_config["skip_button"],
+        #  "css": exp_config["css"],
     }
     items.update(request=request)
     return templates.TemplateResponse("query_page.html", items)

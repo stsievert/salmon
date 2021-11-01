@@ -290,17 +290,24 @@ async def _get_config(exp: bytes, targets: bytes) -> Dict[str, Any]:
     config = yaml.safe_load(exp)
     logger.warning(f"exp = {exp}")
     logger.warning(f"config = {config}")
-    exp_config: Dict = {
+
+    html = {
         "instructions": "Default instructions (can include <i>arbitrary</i> HTML)",
-        "max_queries": None,
         "debrief": "Thanks!",
-        "samplers": {"random": {"class": "Random"}},
-        "max_queries": -1,
-        "d": 2,
         "skip_button": False,
         "css": "",
+        "max_queries": -1,
     }
+    exp_config: Dict = {
+        "samplers": {"random": {"class": "Random"}},
+        "d": 2,
+        "html": html,
+    }
+
+    html_user = config.pop("html", {})
     exp_config.update(config)
+    exp_config["html"].update(html_user)
+
     if "sampling" not in exp_config:
         exp_config["sampling"] = {}
 

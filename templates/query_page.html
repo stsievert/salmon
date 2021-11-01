@@ -58,7 +58,7 @@
   border-style: solid;
   border-width: 2px;
 }
-{{css}}
+{{html['css']}}
 </style>
 </head>
 <body>
@@ -66,7 +66,7 @@
   <div class="outline justify-content-center">
     <div class="row justify-content-center">
         <br>
-    <p> {{instructions | safe}} </p>
+    <p> {{html['instructions'] | safe}} </p>
     </div>
     <!-- <hr> -->
     <div class="row justify-content-center" id="target-text">
@@ -102,7 +102,7 @@
   <div class="outline justify-content-center">
     <div class="fixed-bottom">
       <div style="padding: 5px; margin: 5px; color: #888;">
-          <span id="num-queries">0</span>{% if max_queries > 0 %}/{{ max_queries }} {% endif %}
+          <span id="num-queries">0</span>{% if html['max_queries'] > 0 %}/{{ html['max_queries'] }} {% endif %}
       </div>
     </div>
   </div>
@@ -113,7 +113,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content debrief">
        <div class="modal-body">
-         {{ debrief | safe }}
+         {{ html['debrief'] | safe }}
        </div>
        <div class="modal-body">
          Participant ID: <span id="puid">{{ puid }}</span>
@@ -151,7 +151,7 @@ var start_latency = -1;
 var response_start = -1;
 var end_latency = -1;
 var latency = -1;
-var max_queries = {{ max_queries }};
+var max_queries = {{ html['max_queries'] }};
 var num_queries = 0;  // queries submitted
 var show_queries = getTime();
 var samplers_per_user = {{ samplers_per_user }};
