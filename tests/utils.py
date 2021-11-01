@@ -91,11 +91,13 @@ def server():
     server.authorize()
     r = server.delete("/reset?force=1", auth=server.creds, timeout=TIMEOUT)
     assert r.json() == {"success": True}
+    server.reset()
     _clear_logs()
     yield server
     dump = Path(__file__).absolute().parent.parent / "out" / "dump.rdb"
     if dump.exists():
         dump.unlink()
+    server.reset()
 
 
 class LogError(Exception):
