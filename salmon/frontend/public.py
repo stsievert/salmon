@@ -129,11 +129,6 @@ async def get_query_page(request: Request, puid: str=""):
         "samplers_per_user": exp_config["sampling"]["samplers_per_user"],
         "urls": urls,
         "html": exp_config["html"],
-        #  "instructions": exp_config["instructions"],
-        #  "max_queries": exp_config["max_queries"],
-        #  "debrief": exp_config["debrief"],
-        #  "skip_button": exp_config["skip_button"],
-        #  "css": exp_config["css"],
     }
     items.update(request=request)
     return templates.TemplateResponse("query_page.html", items)

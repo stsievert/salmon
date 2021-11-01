@@ -137,6 +137,8 @@ in YAML jargon. Here's documentation for each key:
 
 * ``samplers``. See :ref:`adaptive-config` for more detail.
 
+* ``d``, optional int (default=2). The embedding the samplers should embed into.
+
 * ``sampling``, optional. A dictionary with the following keys:
 
     * ``probs``, a map between sampler names and the percentage that
@@ -157,10 +159,12 @@ in YAML jargon. Here's documentation for each key:
       rendered. For example if one target is ``"<i>kildow</i>"`` the user will
       see italic text when that target is displayed.
 
-Examples of these files are in `salmon/tests/data`_ and `salmon/examples`_.
+Examples of these files are in `salmon/examples`_. A complete example is
+available at `salmon/examples/complete.yaml`_.
 
 .. _salmon/tests/data: https://github.com/stsievert/salmon/tree/master/tests/data
 .. _salmon/examples: https://github.com/stsievert/salmon/tree/master/examples
+.. _salmon/examples/complete.yaml: https://github.com/stsievert/salmon/tree/master/examples/complete.yaml
 
 YAML file with ZIP file
 ^^^^^^^^^^^^^^^^^^^^^^^
