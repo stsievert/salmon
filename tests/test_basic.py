@@ -335,6 +335,7 @@ def test_validation_sampling(server, logs):
             ans = {"winner": random.choice([q["left"], q["right"]]), "puid": k, **q}
             server.post("/answer", data=ans)
             data.append(ans)
+            sleep(0.1)
 
         sleep(1)
         r = server.get("/responses")
