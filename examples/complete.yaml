@@ -1,0 +1,33 @@
+targets:
+  - "A yaml list example for targets"
+  - "<b>Bode Miller</b> (bold)"
+  - "<i>Ted Ligety</i> (italic)"
+  - Why?
+  - 42. Or...
+  - '<img src="https://www.powderbeds.com/uploads/bode-miller.jpg" width="400px"/>'
+  - <img src="https://skiracing.com/wp-content/uploads/2019/10/ted_wpst_story.jpg" />
+  - "<img src=\"https://northiowatoday.com/wp-content/uploads/2014/02/Ligety-693X520.jpg\" />"
+  - "<img src='https://seatosummit.net/wp-content/uploads/2014/05/2354763_ml.jpg' />"
+  - <img src='https://cdn.getyourguide.com/img/location/5c88dc48eef33.jpeg/88.jpg' />
+d: 2
+samplers:
+  Random: {}
+  testing:
+    class: Random
+  ARR: {}
+  Validation:
+    queries: [[0, 1, 2], [1, 2, 3], [2, 3, 4]]
+sampling:
+  probs: {"ARR": 40, "Validation": 20, "Random": 20, "testing": 20}
+  samplers_per_user: 0
+html:
+  instructions: Click buttons, <b>or else.</b>
+  debrief: "Thanks! Use the participant ID below:"
+  max_queries: 42
+  skip_button: true
+  arrow_keys: false
+  css: >  # multiline string in YAML
+    body {
+      background-color: #cce;
+      color: #220;
+    }
