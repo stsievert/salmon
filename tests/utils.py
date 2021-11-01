@@ -121,22 +121,18 @@ class Logs:
         files = list(self.log_dir.glob("*.log"))
         msg = f"files for checking logs = {files}"
         logger.warning(msg)
-        print(msg)
-        try:
-            sampler_log = [f for f in files if "salmon.backend.sampler.log" in f.name][
-                0
-            ]
-            print(sampler_log.read_text())
-        except Exception as e:
-            print("Couldn't read salmon.backend.sampler.log. Exception:\n\n")
-            print(e)
         for log in files:
             lines = log.read_text().split("\n")
+            Lines = []
             for line in lines:
-                if self.catch and ("error" in line.lower() or "except" in line.lower()):
-                    raise LogError("{}\n{}".format(log, line))
-                if self.warn and "warn" in line:
-                    warn("{}\n{}".format(log, line))
+                if any(x in line.lower() for x in ["error", "except", "warn"]):
+                    Lines.append(line)
+            msg = " (newline) ".join(Lines)
+            msg2 ="{}: {}".format(log, msg)
+            if self.catch:
+                raise LogError(msg2)
+            if self.warn:
+                warn(msg2)
         _clear_logs()
 
 

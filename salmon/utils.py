@@ -68,5 +68,7 @@ def background_logger(logger, *handlers):
 
 def flush_logger(logger):
     for handler in logger.handlers:
-        if hasattr(handler, "flush"):
+        try:
             handler.flush()
+        except:
+            pass

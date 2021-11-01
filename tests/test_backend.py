@@ -53,18 +53,18 @@ def test_init_errors_propogate(server):
 def test_run_errors_logged(server, logs):
     server.authorize()
     server.get("/init")
-    config = {"targets": list(range(10)), "d": 1, "samplers": {"Test": {}}}
+    config = {"targets": list(range(10)), "d": 1, "samplers": {"ARR": {}}}
     r = server.post("/init_exp", data={"exp": config})
-    with pytest.raises(LogError, match="Test error"):
+    with pytest.raises(LogError):
         with logs:
-            for k in range(30):
+            for k in range(10):
                 q = server.get("/query").json()
                 winner = random.choice([q["left"], q["right"]])
                 ans = {"winner": winner, "puid": "", **q}
+                ans["left"] = 12
                 sleep(1)
                 server.post("/answer", data=ans)
-        _ = 1
-    _ = 2
+
     server.reset()
 
 
