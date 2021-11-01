@@ -119,7 +119,7 @@ class Logs:
             raise exc_type(exc_value)
         sleep(1)
         files = list(self.log_dir.glob("*.log"))
-        msg =f"files for checking logs = {files}"
+        msg = f"files for checking logs = {files}"
         logger.warning(msg)
         print(msg)
         for log in files:
