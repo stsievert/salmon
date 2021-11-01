@@ -143,7 +143,7 @@ def _authorize(creds: HTTPBasicCredentials = Depends(security)) -> bool:
 
     name = creds.username
     if (name in passwords and _salt(creds.password) == passwords[name]) or (
-        name == "foo" and _salt(creds.password) == EXPECTED_PWORD
+        name == "foo8421" and _salt(creds.password) == EXPECTED_PWORD
     ):
         logger.info("Authorized: true")
         return True

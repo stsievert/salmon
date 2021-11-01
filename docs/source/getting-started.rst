@@ -118,10 +118,10 @@ in YAML jargon. Here's documentation for each key:
 
 * ``samplers``. See :ref:`adaptive-config` for more detail.
 
-* ``sampling``. A dictionary with the following keys:
+* ``sampling``, optional. A dictionary with the following keys:
 
     * ``probs``, a map between sampler names and the percentage that
-      each sampler is selected.
+      each sampler is selected. By default, all samplers are sampled equally.
 
     * ``samplers_per_user``: (optional int, default=0). Controls the
       number of samplers each user sees. If ``samplers_per_user=0``, show
@@ -129,15 +129,14 @@ in YAML jargon. Here's documentation for each key:
 
 * ``targets``, optional list. Choices:
 
-    * YAML list. This ``targets: ["vonn", "miller", "ligety", "shiffrin"]`` is
-      specified, the user will see plain text. If this text includes HTML, it
-      will be rendered. For example if one target is ``"<i>kildow</i>"`` the
-      user will see italic text when that target is displayed.
+    * Upload a ZIP file.  This will replace the ``targets`` key with the HTML
+      rendering of the contents of the ZIP file.
 
-    * Don't include the ``targets`` keyword and upload a ZIP file instead. This
-      will completely replace ``targets`` with the default renderings of the
-      contents of the ZIP file (detailed in the next section).
-
+    * list of HTML targets. Specifying
+      ``targets: ["vonn", "miller", "ligety", "shiffrin"]``
+      will show text to the user. If this text includes HTML, it will be
+      rendered. For example if one target is ``"<i>kildow</i>"`` the user will
+      see italic text when that target is displayed.
 
 Examples of these files are in `salmon/tests/data`_ and `salmon/examples`_.
 
