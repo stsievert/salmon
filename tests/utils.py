@@ -130,7 +130,7 @@ class Logs:
             for line in lines:
                 if any(x in line.lower() for x in ["error", "except"]):
                     _errors.append(line)
-                if "warn" in line.lower():
+                if "warn" in line.lower() and "answer received:" not in line.lower():
                     _warnings.append(line)
         if self.warn and len(_warnings):
             warn("\n".join(_warnings))
