@@ -280,6 +280,14 @@ def test_config_defaults(server):
     assert rendered["samplers"] == {"random": {"class": "Random"}}
 
 
+def test_config_misplaced_error(server):
+    server.authorize()
+    exp = {"instructions": "foo", "debrief": "bar", "max_queries": 42, "targets": 10}
+    r = server.post("/init_exp", data={"exp": exp}, error=500)
+    assert "Move keys" in r.text and "YAML" in r.text
+    assert "include this block of YAML" in r.text and "html:\n  debrief: bar" in r.text
+
+
 def test_no_init_twice(server, logs):
     """
     Requires `docker-compose up` in salmon directory

@@ -304,9 +304,21 @@ async def _get_config(exp: bytes, targets: bytes) -> Dict[str, Any]:
         "html": html,
     }
 
+    # TODO: deprecate
+    if any(h in config for h in html.keys()):
+        misplaced_keys = [h for h in config if h in html]
+        misplaced = [f"{h}: {config[h]}" for h in misplaced_keys]
+        fmt_misplace = "\n  ".join(list(sorted(misplaced)))
+        msg = (
+            f"Move keys {misplaced_keys} into the `html` key. That is, include "
+            f"this block of YAML:\n\nhtml:\n  {fmt_misplace}\n"
+        )
+        raise ValueError(msg)
+
     html_user = config.pop("html", {})
     exp_config.update(config)
     exp_config["html"].update(html_user)
+
 
     if "sampling" not in exp_config:
         exp_config["sampling"] = {}

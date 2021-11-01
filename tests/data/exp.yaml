@@ -1,5 +1,4 @@
 targets: [0, 1, 2, 3, 4, 5]
-html:
-  instructions: These are <b>instructions</b>!
-  max_queries: 10
-  debrief: Thanks for participating!
+instructions: These are <b>instructions</b>!
+max_queries: 10
+debrief: Thanks for participating!
