@@ -254,21 +254,26 @@ def upload_form():
         </form>
         {warning}
         </div>
-        <h3 style="text-align: center;">Option 2: restore from old experiment.</h3>
+        <h3 style="text-align: center;">Option 2: restore an old experiment.</h3>
         <div style="text-align: center; padding: 10px;">
         <p>Instructions:
         <ol style="text-align: left;">
         <li>Upload database dump from Salmon. The name should look like
-          <code>exp-2020-03-12.rdb</code> if downloaded on March 12th, 2020.</li>
+          <code>exp-2020-03-12-v0.3.1.rdb</code> if downloaded on March 12th, 2020.</li>
         <li>Restart the server. On Amazon EC2, this means choosing the EC2 instance state "reboot".</li>
         </ol>
         </p>
         <form action="/init_exp" enctype="multipart/form-data" method="post">
-        <ul>
-          <li>Database file : <input name="rdb" type="file"></li>
-        </ul>
-        <input type="submit" value="Create experiment">
+          <ul>
+            <li>Database file : <input name="rdb" type="file"></li>
+          </ul>
+          <input type="submit" value="Create experiment">
         </form>
+        <p>
+          This may fail. See the documentation FAQs for
+          more detail and tips to resolve it:
+          <a href="https://docs.stsievert.com/salmon/installation#troubleshooting">https://docs.stsievert.com/salmon/installation#troubleshooting</a>.
+        </p>
         </div>
         </div>
         </body>
