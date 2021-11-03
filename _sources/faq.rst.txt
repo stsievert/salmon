@@ -1,5 +1,10 @@
+.. _faq:
+
 FAQ
 ===
+
+Also relevant is the :ref:`troubleshooting`, which goes over some (blocking)
+difficulties while launching.
 
 .. _faq-n_responses:
 
@@ -66,9 +71,46 @@ If desired, it is possible to open port 8787 on the Amazon EC2 machine. If that
 action is taken, it is recommended to only allow a specific IP to view that
 port.
 
+How do I customize the participant unique identifier aka "puid"?
+----------------------------------------------------------------
+
+Visiting ``http://[url]:8421/?puid=foobar`` will set that the participant UID
+to be ``foobar``.
+
+How do I use HTTPS with Salmon?
+-------------------------------
+
+HTTP is how web servers communicate; HTTPS protects that communication from
+third parties.
+
+Some crowdsourcing services require HTTPS. There are to ways to provide these
+crowdsourcing services an HTTPS URL:
+
+1. Redirect to Salmon from an HTTPS page.
+2. Set up a `TLS termination proxy`_.
+
+Option (1) is a lot easier because various hosting services support HTTPS
+(e.g., `GitHub Pages`_ and `GitLab Pages`_ support HTTPS for custom domains).
+Hosting a `redirect HTML page`_ at one of these services with HTTPS will likely
+satisfy any requirements you may have.
+
+Option (2) is more complex. A good overview is at FastAPI's page "`About
+HTTPS`_," available at https://fastapi.tiangolo.com/deployment/https/. This
+process is beyond scope for this project. [#f]_
+
+.. _mkcert: https://github.com/FiloSottile/mkcert
+.. _About HTTPS: https://fastapi.tiangolo.com/deployment/https/
+.. _redirect HTML page: https://www.w3docs.com/snippets/html/how-to-redirect-a-web-page-in-html.html
+.. _GitHub Pages: https://docs.github.com/en/pages/getting-started-with-github-pages/securing-your-github-pages-site-with-https
+.. _GitLab Pages: https://docs.gitlab.com/ee/user/project/pages/custom_domains_ssl_tls_certification/
+.. _TLS termination proxy: https://en.wikipedia.org/wiki/TLS_termination_proxy
+
 .. [1] "Low-dimensional embedding using adaptively selected ordinal data."
    Jamieson and Nowak. 2011. Allerton Conference on Communication, Control, and
    Computing. https://homes.cs.washington.edu/~jamieson/resources/activeMDS.pdf
 .. [2] "Finite sample prediction and recovery bounds for ordinal embedding."
    Jain, Jamieson and Nowak. 2016. NeurIPS.
    https://nowak.ece.wisc.edu/ordinal_embedding.pdf
+
+.. [#f] though the package `mkcert`_ might help.
+

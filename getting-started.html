@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Starting an experiment &mdash; Salmon v0.7.0 documentation</title>
+  <title>Starting an experiment &mdash; Salmon v0.7.0+4.gafe2cd9 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/basic.css" type="text/css" />
@@ -123,6 +123,18 @@ hit “create user.”</p>
 <p>Do not lose this username/password! You need the username/password to view
 the dashboard and download the received responses.</p>
 </div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Once a username/password are set, they can not be changed. The
+username/password will remain the same when Salmon is reset and when the
+machine Salmon is running on is restarted.</p>
+</div>
+<p>It is technically possible to recover the username/password with the key file
+<code class="docutils literal notranslate"><span class="pre">key.pem</span></code> that Amazon AWS provides and the URL above:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>personal<span class="o">)</span> $ ssh -i key.pem ubuntu@<span class="o">[</span>url<span class="o">]</span>
+<span class="o">(</span>ec2<span class="o">)</span> $ cat /home/ubuntu/salmon/creds.json
+</pre></div>
+</div>
 </section>
 <section id="experiment-initialization">
 <h2>Experiment initialization<a class="headerlink" href="#experiment-initialization" title="Permalink to this headline"></a></h2>
@@ -158,10 +170,11 @@ the specification <a class="reference external" href="https://learnxinyminutes.c
 is valid, go to <a class="reference external" href="https://yamlchecker.com/">https://yamlchecker.com/</a>.</p>
 <p>Here’s an example <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code> YAML file for initialization:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: init.yaml</span>
-<span class="nt">targets</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">1</span><span class="p p-Indicator">,</span> <span class="nv">2</span><span class="p p-Indicator">,</span> <span class="nv">3</span><span class="p p-Indicator">,</span> <span class="nv">4</span><span class="p p-Indicator">,</span> <span class="nv">5</span><span class="p p-Indicator">,</span> <span class="nv">6</span><span class="p p-Indicator">,</span> <span class="nv">7</span><span class="p p-Indicator">,</span> <span class="nv">8</span><span class="p p-Indicator">,</span> <span class="nv">9</span><span class="p p-Indicator">,</span> <span class="nv">10</span><span class="p p-Indicator">]</span>
-<span class="nt">instructions</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Select the item on the bottom most similar to the item on the top.</span>
-<span class="nt">debrief</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Thanks! Use the participant ID below in Mechnical Turk.</span>
-<span class="nt">max_queries</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">100</span>
+<span class="nt">targets</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">0</span><span class="p p-Indicator">,</span> <span class="nv">1</span><span class="p p-Indicator">,</span> <span class="nv">2</span><span class="p p-Indicator">,</span> <span class="nv">3</span><span class="p p-Indicator">,</span> <span class="nv">4</span><span class="p p-Indicator">,</span> <span class="nv">5</span><span class="p p-Indicator">,</span> <span class="nv">6</span><span class="p p-Indicator">,</span> <span class="nv">7</span><span class="p p-Indicator">,</span> <span class="nv">8</span><span class="p p-Indicator">,</span> <span class="nv">9</span><span class="p p-Indicator">,</span> <span class="nv">10</span><span class="p p-Indicator">]</span>
+<span class="nt">html</span><span class="p">:</span>
+  <span class="nt">instructions</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Select the item on the bottom most similar to the item on the top.</span>
+  <span class="nt">debrief</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Thanks! Use the participant ID below in Mechnical Turk.</span>
+  <span class="nt">max_queries</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">100</span>
 <span class="nt">samplers</span><span class="p">:</span>
   <span class="nt">ARR</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
   <span class="nt">Random</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
@@ -172,18 +185,33 @@ is valid, go to <a class="reference external" href="https://yamlchecker.com/">ht
 <p>The top-level elements like <code class="docutils literal notranslate"><span class="pre">max_queries</span></code> and <code class="docutils literal notranslate"><span class="pre">targets</span></code> are called “keys”
 in YAML jargon. Here’s documentation for each key:</p>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">instructions</span></code>: text. The instructions for the participant.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">html</span></code>. Style options for the crowdsourcing user’s query page:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">instructions</span></code>: text. The instructions for the participant, shown above
+each query.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">debrief</span></code>: text. The message to show at the end of the experiment. This
-debrief will show alongside the participant ID (which will be available
-through in the responses).</p></li>
+debrief will show alongside the participant ID (aka “puid”, which will be
+available through in the responses).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">max_queries</span></code>: int. The number of queries a participant should answer. Set
 <code class="docutils literal notranslate"><span class="pre">max_queries:</span> <span class="pre">-1</span></code> for unlimited queries.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">skip_button</span></code>, optional boolean. Default <code class="docutils literal notranslate"><span class="pre">false</span></code>. If <code class="docutils literal notranslate"><span class="pre">true</span></code>, show a
+button that says “new query.”</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">css</span></code>, optional string. Defaults to <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code>. This CSS is inserted in the
+<code class="docutils literal notranslate"><span class="pre">&lt;style&gt;</span></code> tag in the HTML query page. This allows customization of
+colors/borders/etc.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">arrow_keys</span></code> optional boolean, default True. If True, allow users to
+answer queries with the arrow keys.</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p><code class="docutils literal notranslate"><span class="pre">samplers</span></code>. See <a class="reference internal" href="algorithms.html#adaptive-config"><span class="std std-ref">Algorithm configuration</span></a> for more detail.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">sampling</span></code>. A dictionary with the following keys:</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">d</span></code>, optional int (default=2). The embedding the samplers should embed into.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sampling</span></code>, optional. A dictionary with the following keys:</p>
 <blockquote>
 <div><ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">probs</span></code>, a map between sampler names and the percentage that
-each sampler is selected.</p></li>
+each sampler is selected. By default, all samplers are sampled equally.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">samplers_per_user</span></code>: (optional int, default=0). Controls the
 number of samplers each user sees. If <code class="docutils literal notranslate"><span class="pre">samplers_per_user=0</span></code>, show
 users a random sampler.</p></li>
@@ -193,23 +221,19 @@ users a random sampler.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">targets</span></code>, optional list. Choices:</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>YAML list. This <code class="docutils literal notranslate"><span class="pre">targets:</span> <span class="pre">[&quot;vonn&quot;,</span> <span class="pre">&quot;miller&quot;,</span> <span class="pre">&quot;ligety&quot;,</span> <span class="pre">&quot;shiffrin&quot;]</span></code> is
-specified, the user will see plain text. If this text includes HTML, it
-will be rendered. For example if one target is <code class="docutils literal notranslate"><span class="pre">&quot;&lt;i&gt;kildow&lt;/i&gt;&quot;</span></code> the
-user will see italic text when that target is displayed.</p></li>
-<li><p>Don’t include the <code class="docutils literal notranslate"><span class="pre">targets</span></code> keyword and upload a ZIP file instead. This
-will completely replace <code class="docutils literal notranslate"><span class="pre">targets</span></code> with the default renderings of the
-contents of the ZIP file (detailed in the next section).</p></li>
+<li><p>Upload a ZIP file.  This will replace the <code class="docutils literal notranslate"><span class="pre">targets</span></code> key with the HTML
+rendering of the contents of the ZIP file.</p></li>
+<li><p>list of HTML targets. Specifying
+<code class="docutils literal notranslate"><span class="pre">targets:</span> <span class="pre">[&quot;vonn&quot;,</span> <span class="pre">&quot;miller&quot;,</span> <span class="pre">&quot;ligety&quot;,</span> <span class="pre">&quot;shiffrin&quot;]</span></code>
+will show text to the user. If this text includes HTML, it will be
+rendered. For example if one target is <code class="docutils literal notranslate"><span class="pre">&quot;&lt;i&gt;kildow&lt;/i&gt;&quot;</span></code> the user will
+see italic text when that target is displayed.</p></li>
 </ul>
 </div></blockquote>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">skip_button</span></code>, optional boolean. Default <code class="docutils literal notranslate"><span class="pre">false</span></code>. If <code class="docutils literal notranslate"><span class="pre">true</span></code>, show a
-button that says “new query.”</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">css</span></code>, optional string. Defaults to <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code>. This CSS is inserted in the
-<code class="docutils literal notranslate"><span class="pre">&lt;style&gt;</span></code> tag in the HTML query page. This allows customization of
-colors/borders/etc.</p></li>
 </ul>
-<p>Examples of these files are in <a class="reference external" href="https://github.com/stsievert/salmon/tree/master/tests/data">salmon/tests/data</a> and <a class="reference external" href="https://github.com/stsievert/salmon/tree/master/examples">salmon/examples</a>.</p>
+<p>Examples of these files are in <a class="reference external" href="https://github.com/stsievert/salmon/tree/master/examples">salmon/examples</a>. A complete example is
+available at <a class="reference external" href="https://github.com/stsievert/salmon/tree/master/examples/complete.yaml">salmon/examples/complete.yaml</a>.</p>
 </section>
 <section id="yaml-file-with-zip-file">
 <h3>YAML file with ZIP file<a class="headerlink" href="#yaml-file-with-zip-file" title="Permalink to this headline"></a></h3>

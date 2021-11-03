@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FAQ &mdash; Salmon v0.7.0 documentation</title>
+  <title>FAQ &mdash; Salmon v0.7.0+4.gafe2cd9 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/basic.css" type="text/css" />
@@ -53,6 +53,8 @@
 <li class="toctree-l2"><a class="reference internal" href="#what-adaptive-algorithms-are-recommended">What adaptive algorithms are recommended?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#can-i-choose-a-different-machine">Can I choose a different machine?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#how-do-i-see-the-dask-dashboard">How do I see the Dask dashboard?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-do-i-customize-the-participant-unique-identifier-aka-puid">How do I customize the participant unique identifier aka “puid”?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-do-i-use-https-with-salmon">How do I use HTTPS with Salmon?</a></li>
 </ul>
 </li>
 </ul>
@@ -92,7 +94,9 @@
            <div itemprop="articleBody">
              
   <section id="faq">
-<h1>FAQ<a class="headerlink" href="#faq" title="Permalink to this headline"></a></h1>
+<span id="id1"></span><h1>FAQ<a class="headerlink" href="#faq" title="Permalink to this headline"></a></h1>
+<p>Also relevant is the <a class="reference internal" href="installation.html#troubleshooting"><span class="std std-ref">Troubleshooting</span></a>, which goes over some (blocking)
+difficulties while launching.</p>
 <section id="how-many-responses-will-be-needed">
 <span id="faq-n-responses"></span><h2>How many responses will be needed?<a class="headerlink" href="#how-many-responses-will-be-needed" title="Permalink to this headline"></a></h2>
 <p>Depends on the targets used, and how humans respond. Let’s say there are
@@ -102,10 +106,10 @@ we can provide bounds on how many responses you’ll need:</p>
 <li><p><strong>Lower bound:</strong> at least <span class="math notranslate nohighlight">\(nd\log_2(n)\)</span> responses are needed for a
 <cite>perfect</cite> embedding with noiseless responses. Active triplet algorithms
 require <span class="math notranslate nohighlight">\(\Omega(nd\log_2(n))\)</span> responses (so a constant number of
-responses more/less). <a class="footnote-reference brackets" href="#id3" id="id1">1</a></p></li>
+responses more/less). <a class="footnote-reference brackets" href="#id5" id="id2">1</a></p></li>
 <li><p><strong>Upper bound:</strong> if random responses are collected, a high quality embedding
 will likely be generated with <span class="math notranslate nohighlight">\(O(nd\log_2(n))\)</span> responses, likely
-<span class="math notranslate nohighlight">\(20 nd \log_2(n)\)</span> responses (or possibly <span class="math notranslate nohighlight">\(10 nd \log_2(n)\)</span>). <a class="footnote-reference brackets" href="#id4" id="id2">2</a></p></li>
+<span class="math notranslate nohighlight">\(20 nd \log_2(n)\)</span> responses (or possibly <span class="math notranslate nohighlight">\(10 nd \log_2(n)\)</span>). <a class="footnote-reference brackets" href="#id6" id="id3">2</a></p></li>
 </ul>
 <p>This suggests that the number of responses required when <span class="math notranslate nohighlight">\(n\)</span> and
 <span class="math notranslate nohighlight">\(d\)</span> are changed scaled like <span class="math notranslate nohighlight">\(nd\log_2(n)\)</span>.  i.e, if an embedding
@@ -148,16 +152,42 @@ EC2, this will require some port forwarding to your own machine:</p>
 <p>If desired, it is possible to open port 8787 on the Amazon EC2 machine. If that
 action is taken, it is recommended to only allow a specific IP to view that
 port.</p>
+</section>
+<section id="how-do-i-customize-the-participant-unique-identifier-aka-puid">
+<h2>How do I customize the participant unique identifier aka “puid”?<a class="headerlink" href="#how-do-i-customize-the-participant-unique-identifier-aka-puid" title="Permalink to this headline"></a></h2>
+<p>Visiting <code class="docutils literal notranslate"><span class="pre">http://[url]:8421/?puid=foobar</span></code> will set that the participant UID
+to be <code class="docutils literal notranslate"><span class="pre">foobar</span></code>.</p>
+</section>
+<section id="how-do-i-use-https-with-salmon">
+<h2>How do I use HTTPS with Salmon?<a class="headerlink" href="#how-do-i-use-https-with-salmon" title="Permalink to this headline"></a></h2>
+<p>HTTP is how web servers communicate; HTTPS protects that communication from
+third parties.</p>
+<p>Some crowdsourcing services require HTTPS. There are to ways to provide these
+crowdsourcing services an HTTPS URL:</p>
+<ol class="arabic simple">
+<li><p>Redirect to Salmon from an HTTPS page.</p></li>
+<li><p>Set up a <a class="reference external" href="https://en.wikipedia.org/wiki/TLS_termination_proxy">TLS termination proxy</a>.</p></li>
+</ol>
+<p>Option (1) is a lot easier because various hosting services support HTTPS
+(e.g., <a class="reference external" href="https://docs.github.com/en/pages/getting-started-with-github-pages/securing-your-github-pages-site-with-https">GitHub Pages</a> and <a class="reference external" href="https://docs.gitlab.com/ee/user/project/pages/custom_domains_ssl_tls_certification/">GitLab Pages</a> support HTTPS for custom domains).
+Hosting a <a class="reference external" href="https://www.w3docs.com/snippets/html/how-to-redirect-a-web-page-in-html.html">redirect HTML page</a> at one of these services with HTTPS will likely
+satisfy any requirements you may have.</p>
+<p>Option (2) is more complex. A good overview is at FastAPI’s page “<a class="reference external" href="https://fastapi.tiangolo.com/deployment/https/">About
+HTTPS</a>,” available at <a class="reference external" href="https://fastapi.tiangolo.com/deployment/https/">https://fastapi.tiangolo.com/deployment/https/</a>. This
+process is beyond scope for this project. <a class="footnote-reference brackets" href="#f" id="id4">3</a></p>
 <dl class="footnote brackets">
-<dt class="label" id="id3"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dt class="label" id="id5"><span class="brackets"><a class="fn-backref" href="#id2">1</a></span></dt>
 <dd><p>“Low-dimensional embedding using adaptively selected ordinal data.”
 Jamieson and Nowak. 2011. Allerton Conference on Communication, Control, and
 Computing. <a class="reference external" href="https://homes.cs.washington.edu/~jamieson/resources/activeMDS.pdf">https://homes.cs.washington.edu/~jamieson/resources/activeMDS.pdf</a></p>
 </dd>
-<dt class="label" id="id4"><span class="brackets"><a class="fn-backref" href="#id2">2</a></span></dt>
+<dt class="label" id="id6"><span class="brackets"><a class="fn-backref" href="#id3">2</a></span></dt>
 <dd><p>“Finite sample prediction and recovery bounds for ordinal embedding.”
 Jain, Jamieson and Nowak. 2016. NeurIPS.
 <a class="reference external" href="https://nowak.ece.wisc.edu/ordinal_embedding.pdf">https://nowak.ece.wisc.edu/ordinal_embedding.pdf</a></p>
+</dd>
+<dt class="label" id="f"><span class="brackets"><a class="fn-backref" href="#id4">3</a></span></dt>
+<dd><p>though the package <a class="reference external" href="https://github.com/FiloSottile/mkcert">mkcert</a> might help.</p>
 </dd>
 </dl>
 </section>
