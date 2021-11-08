@@ -385,8 +385,8 @@ class ARR(Adaptive):
             Keyword arguments to pass to :class:`~salmon.triplets.samplers.Adaptive`.
         """
         self.n_top = n_top
-        if scores not in ["original", "random"]:
-            raise ValueError(f"scores={scores} not in ['random', 'original']")
+        if scores not in ["original", "random", "approx"]:
+            raise ValueError(f"scores={scores} not in ['random', 'original', 'approx']")
         self.scores = scores
         super().__init__(R=R, module=module, **kwargs)
 
@@ -410,6 +410,11 @@ class ARR(Adaptive):
             r_scores = np.random.uniform(low=10, high=11, size=len(posted))
         elif self.scores == "original":
             r_scores = top_queries["score"].to_numpy()
+        elif self.scores == "approx":
+            r_scores = top_queries["score"].to_numpy()
+            diff = r_scores.max() - r_scores.min()
+            eps = diff / 10
+            r_scores += np.random.uniform(100, 100 + eps, size=r_scores.size)
         else:
             msg = f"scores={self.scores} not in ['random', 'original']"
             raise ValueError(msg)
