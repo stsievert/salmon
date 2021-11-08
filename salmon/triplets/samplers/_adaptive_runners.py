@@ -361,7 +361,8 @@ class ARR(Adaptive):
 
     """
 
-    def __init__(self, R: int = 1, n_top=1, module="TSTE", **kwargs):
+    def __init__(self, R: int = 1, n_top=1, module="TSTE", scores="random", **kwargs):
+
         """
         Parameters
         ----------
@@ -371,10 +372,22 @@ class ARR(Adaptive):
             The noise model to use.
         n_top : int (optional, default ``1``)
             For each head, the number of top-scoring queries to ask about.
+        scores : str, optional (default ``"random"``)
+            Determines how queries should be ordered. Setting
+            ``scores="random"`` will randomly shuffle queries; setting
+            ``scores="original"`` will perserve the original scores.
+
+            Regardless of the ``scores`` value, ``n_top`` queries per
+            head will be perserved. It is likely most relevant when
+            ``n_top==1``.
+
         kwargs : dict
             Keyword arguments to pass to :class:`~salmon.triplets.samplers.Adaptive`.
         """
         self.n_top = n_top
+        if scores in ["original", "random"]:
+            raise ValueError(f"scores={scores} not in ['random', 'original']")
+        self.scores = scores
         super().__init__(R=R, module=module, **kwargs)
 
     def get_queries(self, *args, **kwargs):
@@ -393,7 +406,13 @@ class ARR(Adaptive):
         top_queries = top_queries.sample(frac=1, replace=False)
 
         posted = top_queries[["h", "l", "r"]].to_numpy().astype("int64")
-        r_scores = np.random.uniform(low=10, high=11, size=len(posted))
+        if self.scores == "random":
+            r_scores = np.random.uniform(low=10, high=11, size=len(posted))
+        elif self.scores == "original":
+            r_scores = top_queries["score"].to_numpy()
+        else:
+            msg = f"scores={self.scores} not in ['random', 'original']"
+            raise ValueError(msg)
 
         meta.update({"n_queries_scored_(complete)": len(df)})
         return posted, r_scores, meta
