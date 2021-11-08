@@ -385,7 +385,7 @@ class ARR(Adaptive):
             Keyword arguments to pass to :class:`~salmon.triplets.samplers.Adaptive`.
         """
         self.n_top = n_top
-        if scores in ["original", "random"]:
+        if scores not in ["original", "random"]:
             raise ValueError(f"scores={scores} not in ['random', 'original']")
         self.scores = scores
         super().__init__(R=R, module=module, **kwargs)
