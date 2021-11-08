@@ -411,10 +411,10 @@ class ARR(Adaptive):
         elif self.scores == "original":
             r_scores = top_queries["score"].to_numpy()
         elif self.scores == "approx":
-            r_scores = top_queries["score"].to_numpy()
-            diff = r_scores.max() - r_scores.min()
-            eps = diff / 10
-            r_scores += np.random.uniform(100, 100 + eps, size=r_scores.size)
+            # ascending=True -> lowest to highest scores
+            top_queries = top_queries.sort_values(by="score", ascending=True)
+            r_scores = np.linspace(0, 1, num=len(top_queries))
+            r_scores += 100 + np.random.uniform(0, 0.1, size=len(top_queries))
         else:
             msg = f"scores={self.scores} not in ['random', 'original']"
             raise ValueError(msg)
