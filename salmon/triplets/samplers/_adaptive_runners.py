@@ -354,16 +354,28 @@ class ARR(Adaptive):
 
        We found this class to perform well in our experiments, some of which are detailed at https://docs.stsievert.com/salmon/benchmarks/active.html
 
+       Please carefully consider any changes to the default parameters.
+       The experiments above have helped inform the defaults for this class.
+
     References
     ----------
     .. [1] Heim, Eric, et al. "Active perceptual similarity modeling with
-           auxiliary information." arXiv preprint arXiv:1511.02254 (2015). https://arxiv.org/abs/1511.02254
+           auxiliary information." `arXiv preprint arXiv:1511.02254
+           <https://arxiv.org/abs/1511.02254>`_ (2015).
 
     """
 
-    def __init__(self, R: int = 1, n_top=1, module="TSTE", scores="random", **kwargs):
+    def __init__(
+        self,
+        R: int = 1,
+        n_top: int = 1,
+        module: str = "TSTE",
+        priority: str = "random",
+        **kwargs,
+    ):
 
         """
+
         Parameters
         ----------
         R : int (optional, default ``1``)
@@ -372,10 +384,10 @@ class ARR(Adaptive):
             The noise model to use.
         n_top : int (optional, default ``1``)
             For each head, the number of top-scoring queries to ask about.
-        scores : str, optional (default ``"random"``)
+        priority : str, optional (default ``"random"``)
             Determines how queries should be ordered. Setting
-            ``scores="random"`` will randomly shuffle queries; setting
-            ``scores="original"`` will perserve the original scores.
+            ``priority="random"`` will randomly shuffle queries; setting
+            ``priority="original"`` will perserve the original scores.
 
             Regardless of the ``scores`` value, ``n_top`` queries per
             head will be perserved. It is likely most relevant when
@@ -383,11 +395,13 @@ class ARR(Adaptive):
 
         kwargs : dict
             Keyword arguments to pass to :class:`~salmon.triplets.samplers.Adaptive`.
+
         """
         self.n_top = n_top
-        if scores not in ["original", "random", "approx"]:
-            raise ValueError(f"scores={scores} not in ['random', 'original', 'approx']")
-        self.scores = scores
+        if priority not in ["scores", "random", "approx"]:
+            msg = f"priority={priority} not in ['random', 'original', 'approx']"
+            raise ValueError(msg)
+        self.priority = priority
         super().__init__(R=R, module=module, **kwargs)
 
     def get_queries(self, *args, **kwargs):
@@ -406,17 +420,17 @@ class ARR(Adaptive):
         top_queries = top_queries.sample(frac=1, replace=False)
 
         posted = top_queries[["h", "l", "r"]].to_numpy().astype("int64")
-        if self.scores == "random":
+        if self.priority == "random":
             r_scores = np.random.uniform(low=10, high=11, size=len(posted))
-        elif self.scores == "original":
+        elif self.priority == "scores":
             r_scores = top_queries["score"].to_numpy()
-        elif self.scores == "approx":
+        elif self.priority == "approx":
             # ascending=True -> lowest to highest scores
             top_queries = top_queries.sort_values(by="score", ascending=True)
             r_scores = np.linspace(0, 1, num=len(top_queries))
             r_scores += 100 + np.random.uniform(0, 0.1, size=len(top_queries))
         else:
-            msg = f"scores={self.scores} not in ['random', 'original']"
+            msg = f"priority={self.priority} not in ['random', 'scores', 'approx']"
             raise ValueError(msg)
 
         meta.update({"n_queries_scored_(complete)": len(df)})
