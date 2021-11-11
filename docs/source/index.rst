@@ -31,9 +31,10 @@ responses. More detail is in the :ref:`benchmarks on active sampling
 Users
 =====
 
-Salmon is currently being actively used by several  psychologists at the
-University of Wisconsin--Madison, and has seen serious interest from the Air
-Force Research Lab and a psychologist at Louisiana State University.
+Salmon is currently being actively used by several psychologists at the
+University of Wisconsin--Madison. It has seen serious interest from the Air
+Force Research Lab, and a psychologist at Louisiana State University and
+Canada's Western University.
 
 .. toctree::
    :maxdepth: 2
