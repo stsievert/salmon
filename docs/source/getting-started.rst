@@ -101,11 +101,28 @@ Here's an example ``init.yaml`` YAML file for initialization:
      debrief: Thanks! Use the participant ID below in Mechnical Turk.
      max_queries: 100
 
-The top-level elements like ``max_queries`` and ``targets`` are called "keys"
-in YAML jargon. Here's documentation for each key:
+This file will initialize a basic experiment. To do anything fancier,
+additional configuration is required. Here's some documentation on each
+top-level element like ``html``, a "key" in YAML-jargon:
 
 
-* ``html``. Style options for the crowdsourcing user's query page:
+* ``targets``, optional list. Choices:
+
+    * Upload a ZIP file, detailed at :ref:`yaml_plus_zip`.  This will replace
+      the ``targets`` key with the HTML rendering of the contents of the ZIP
+      file.
+
+    * list of HTML targets. Specifying
+      ``targets: ["vonn", "miller", "ligety", "shiffrin"]``
+      will show text to the user. If this text includes HTML, it will be
+      rendered. For example if one target is ``"<i>kildow</i>"`` the user will
+      see italic text when that target is displayed.
+
+* ``samplers``, optional.  **Customizing this key is likely of interest and can
+  generate better embeddings.** See ":ref:`adaptive-config`" for more detail, and
+  ":ref:`experiments`" for examples/benchmarks.
+
+* ``html``, optional. Style options for the crowdsourcing user's query page:
 
     * ``instructions``: text. The instructions for the participant, shown above
       each query.
@@ -127,8 +144,6 @@ in YAML jargon. Here's documentation for each key:
     * ``arrow_keys`` optional boolean, default True. If True, allow users to
       answer queries with the arrow keys.
 
-* ``samplers``. See :ref:`adaptive-config` for more detail.
-
 * ``d``, optional int (default=2). The embedding the samplers should embed into.
 
 * ``sampling``, optional. A dictionary with the following keys:
@@ -140,23 +155,15 @@ in YAML jargon. Here's documentation for each key:
       number of samplers each user sees. If ``samplers_per_user=0``, show
       users a random sampler.
 
-* ``targets``, optional list. Choices:
-
-    * Upload a ZIP file.  This will replace the ``targets`` key with the HTML
-      rendering of the contents of the ZIP file.
-
-    * list of HTML targets. Specifying
-      ``targets: ["vonn", "miller", "ligety", "shiffrin"]``
-      will show text to the user. If this text includes HTML, it will be
-      rendered. For example if one target is ``"<i>kildow</i>"`` the user will
-      see italic text when that target is displayed.
-
 Examples of these files are in `salmon/examples`_. A complete example is
 available at `salmon/examples/complete.yaml`_.
+
 
 .. _salmon/tests/data: https://github.com/stsievert/salmon/tree/master/tests/data
 .. _salmon/examples: https://github.com/stsievert/salmon/tree/master/examples
 .. _salmon/examples/complete.yaml: https://github.com/stsievert/salmon/tree/master/examples/complete.yaml
+
+.. _yaml_plus_zip:
 
 YAML file with ZIP file
 ^^^^^^^^^^^^^^^^^^^^^^^

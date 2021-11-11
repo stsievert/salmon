@@ -43,7 +43,7 @@ Force Research Lab and a psychologist at Louisiana State University.
    getting-started
    monitoring
    offline
-   algorithms
+   samplers
    api
    faq
 
