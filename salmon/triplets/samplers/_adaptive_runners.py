@@ -387,7 +387,9 @@ class ARR(Adaptive):
         priority : str, optional (default ``"random"``)
             Determines how queries should be ordered. Setting
             ``priority="random"`` will randomly shuffle queries; setting
-            ``priority="original"`` will perserve the original scores.
+            ``priority="original"`` will perserve the original scores. Setting
+            ``priority="approx"`` will add some noise to the original score
+            ranks.
 
             Regardless of the ``scores`` value, ``n_top`` queries per
             head will be perserved. It is likely most relevant when
