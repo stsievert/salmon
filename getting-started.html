@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Starting an experiment &mdash; Salmon v0.8.1rc5+1.g87c8f83 documentation</title>
+  <title>Starting an experiment &mdash; Salmon v0.8.1rc5+4.g74918b2 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/basic.css" type="text/css" />
@@ -47,7 +47,11 @@
 <li class="toctree-l2"><a class="reference internal" href="#username-password">Username/password</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#experiment-initialization">Experiment initialization</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#experiment-initialization-with-yaml-file">Experiment initialization with YAML file</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#yaml-file-with-zip-file">YAML file with ZIP file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#yaml-file-with-zip-file">YAML file with ZIP file</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#images-videos">Images/videos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#text-targets">Text targets</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#database-dump">Database dump</a></li>
 </ul>
 </li>
@@ -56,7 +60,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="monitoring.html">Experiment monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="offline.html">Generating embeddings offline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="algorithms.html">Algorithm configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="samplers.html">Sampler configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
 </ul>
@@ -163,8 +167,6 @@ something like <code class="docutils literal notranslate"><span class="pre">v0.4
 <p>Now, let’s describe three methods on how to launch this experiment:</p>
 <section id="experiment-initialization-with-yaml-file">
 <h3>Experiment initialization with YAML file<a class="headerlink" href="#experiment-initialization-with-yaml-file" title="Permalink to this headline"></a></h3>
-<p>This section will specify the YAML file; including a ZIP file will only modify
-the <code class="docutils literal notranslate"><span class="pre">targets</span></code> key.</p>
 <p>“YAML files” must obey a standard; see for a (human-readable) description of
 the specification <a class="reference external" href="https://learnxinyminutes.com/docs/yaml/">https://learnxinyminutes.com/docs/yaml/</a>. To see if your YAML
 is valid, go to <a class="reference external" href="https://yamlchecker.com/">https://yamlchecker.com/</a>.</p>
@@ -175,17 +177,30 @@ is valid, go to <a class="reference external" href="https://yamlchecker.com/">ht
   <span class="nt">instructions</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Select the item on the bottom most similar to the item on the top.</span>
   <span class="nt">debrief</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Thanks! Use the participant ID below in Mechnical Turk.</span>
   <span class="nt">max_queries</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">100</span>
-<span class="nt">samplers</span><span class="p">:</span>
-  <span class="nt">ARR</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
-  <span class="nt">Random</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
-<span class="nt">sampling</span><span class="p">:</span>
-  <span class="nt">probs</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="s">&quot;ARR&quot;</span><span class="p p-Indicator">:</span> <span class="nv">80</span><span class="p p-Indicator">,</span> <span class="s">&quot;Random&quot;</span><span class="p p-Indicator">:</span> <span class="nv">20</span><span class="p p-Indicator">}</span>
 </pre></div>
 </div>
-<p>The top-level elements like <code class="docutils literal notranslate"><span class="pre">max_queries</span></code> and <code class="docutils literal notranslate"><span class="pre">targets</span></code> are called “keys”
-in YAML jargon. Here’s documentation for each key:</p>
+<p>This file will initialize a basic experiment. To do anything fancier,
+additional configuration is required. Here’s some documentation on each
+top-level element like <code class="docutils literal notranslate"><span class="pre">html</span></code>, a “key” in YAML-jargon:</p>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">html</span></code>. Style options for the crowdsourcing user’s query page:</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">targets</span></code>, optional list. Choices:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Upload a ZIP file, detailed at <a class="reference internal" href="#yaml-plus-zip"><span class="std std-ref">YAML file with ZIP file</span></a>.  This will replace
+the <code class="docutils literal notranslate"><span class="pre">targets</span></code> key with the HTML rendering of the contents of the ZIP
+file.</p></li>
+<li><p>list of HTML targets. Specifying
+<code class="docutils literal notranslate"><span class="pre">targets:</span> <span class="pre">[&quot;vonn&quot;,</span> <span class="pre">&quot;miller&quot;,</span> <span class="pre">&quot;ligety&quot;,</span> <span class="pre">&quot;shiffrin&quot;]</span></code>
+will show text to the user. If this text includes HTML, it will be
+rendered. For example if one target is <code class="docutils literal notranslate"><span class="pre">&quot;&lt;i&gt;kildow&lt;/i&gt;&quot;</span></code> the user will
+see italic text when that target is displayed.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">samplers</span></code>, optional.  <strong>Customizing this key is likely of interest and can
+generate better embeddings.</strong> See “<a class="reference internal" href="samplers.html#adaptive-config"><span class="std std-ref">Sampler configuration</span></a>” for more detail, and
+“<a class="reference internal" href="benchmarks/active.html#experiments"><span class="std std-ref">Active sampling</span></a>” for examples/benchmarks.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">html</span></code>, optional. Style options for the crowdsourcing user’s query page:</p>
 <blockquote>
 <div><ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">instructions</span></code>: text. The instructions for the participant, shown above
@@ -205,7 +220,6 @@ answer queries with the arrow keys.</p></li>
 </ul>
 </div></blockquote>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">samplers</span></code>. See <a class="reference internal" href="algorithms.html#adaptive-config"><span class="std std-ref">Algorithm configuration</span></a> for more detail.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">d</span></code>, optional int (default=2). The embedding the samplers should embed into.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">sampling</span></code>, optional. A dictionary with the following keys:</p>
 <blockquote>
@@ -218,30 +232,19 @@ users a random sampler.</p></li>
 </ul>
 </div></blockquote>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">targets</span></code>, optional list. Choices:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>Upload a ZIP file.  This will replace the <code class="docutils literal notranslate"><span class="pre">targets</span></code> key with the HTML
-rendering of the contents of the ZIP file.</p></li>
-<li><p>list of HTML targets. Specifying
-<code class="docutils literal notranslate"><span class="pre">targets:</span> <span class="pre">[&quot;vonn&quot;,</span> <span class="pre">&quot;miller&quot;,</span> <span class="pre">&quot;ligety&quot;,</span> <span class="pre">&quot;shiffrin&quot;]</span></code>
-will show text to the user. If this text includes HTML, it will be
-rendered. For example if one target is <code class="docutils literal notranslate"><span class="pre">&quot;&lt;i&gt;kildow&lt;/i&gt;&quot;</span></code> the user will
-see italic text when that target is displayed.</p></li>
-</ul>
-</div></blockquote>
-</li>
 </ul>
 <p>Examples of these files are in <a class="reference external" href="https://github.com/stsievert/salmon/tree/master/examples">salmon/examples</a>. A complete example is
 available at <a class="reference external" href="https://github.com/stsievert/salmon/tree/master/examples/complete.yaml">salmon/examples/complete.yaml</a>.</p>
 </section>
 <section id="yaml-file-with-zip-file">
-<h3>YAML file with ZIP file<a class="headerlink" href="#yaml-file-with-zip-file" title="Permalink to this headline"></a></h3>
-<p>If you upload a ZIP file alongside the <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code> YAML file, the <code class="docutils literal notranslate"><span class="pre">targets</span></code>
-key above will be configured to represent each object in the ZIP file. Here are
-the choices for different files to include in the ZIP file:</p>
+<span id="yaml-plus-zip"></span><h3>YAML file with ZIP file<a class="headerlink" href="#yaml-file-with-zip-file" title="Permalink to this headline"></a></h3>
+<p>Uploading a ZIP file will completely replace the <code class="docutils literal notranslate"><span class="pre">targets</span></code> key. It’s
+recommended not to specify it. However, it doesn’t matter if you have specified
+it because it will be overwritten.</p>
+<p>Here are the choices for different files to include in the ZIP file:</p>
 <ul>
-<li><p>A bunch of images/videos. Support extensions</p>
+<li><p>A single CSV file. Each textual target should be on a new line.</p></li>
+<li><p>A bunch of images/videos. Support extensions:</p>
 <blockquote>
 <div><ul class="simple">
 <li><p>Videos: <code class="docutils literal notranslate"><span class="pre">mp4</span></code>, <code class="docutils literal notranslate"><span class="pre">mov</span></code></p></li>
@@ -249,9 +252,34 @@ the choices for different files to include in the ZIP file:</p>
 </ul>
 </div></blockquote>
 </li>
-<li><p>A single CSV file. Each textual target should be on a new line.</p></li>
 </ul>
-<p>For example, this is a valid CSV file that will render textual targets:</p>
+<p>Let’s walk through two examples, both with uploading a bunch of images with
+skiers. Both cases will use this <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code> file:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: init.yaml</span>
+<span class="nt">html</span><span class="p">:</span>
+  <span class="nt">instructions</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Select the item on the bottom most similar to the item on the top.</span>
+  <span class="nt">debrief</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Thanks! Use the participant ID below in Mechanical Turk.</span>
+  <span class="nt">max_queries</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">100</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Uploading a ZIP file completely replaces any specification of the
+<code class="docutils literal notranslate"><span class="pre">targets</span></code> key above. This means that it is not necessary to specify the
+<code class="docutils literal notranslate"><span class="pre">targets</span></code> key when a ZIP file is uploaded because it will be specified
+automatically.</p>
+</div>
+<section id="images-videos">
+<h4>Images/videos<a class="headerlink" href="#images-videos" title="Permalink to this headline"></a></h4>
+<p>If I had all these images in a ZIP file (say <code class="docutils literal notranslate"><span class="pre">skiers.zip</span></code>), I would gather
+all the images into a ZIP file. On macOS, that’s possible by selecting all the
+images then control-clicking and selecting “Compress items.” On the command
+line, the command <code class="docutils literal notranslate"><span class="pre">zip</span> <span class="pre">targets.zip</span> <span class="pre">*.jpg</span> <span class="pre">*.png</span></code> will collect all JPG/PNG
+images into <code class="docutils literal notranslate"><span class="pre">targets.zip</span></code>.</p>
+</section>
+<section id="text-targets">
+<h4>Text targets<a class="headerlink" href="#text-targets" title="Permalink to this headline"></a></h4>
+<p>This is a valid CSV file that will render textual targets:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: targets.csv. Zipped into targets.csv.zip and uploaded.</span>
 <span class="n">Bode</span> <span class="n">Miller</span>
 <span class="n">Lindsey</span> <span class="n">Kildow</span>
@@ -273,6 +301,7 @@ bolded text for “<strong>Ted Ligety</strong>.” That means we can also render
 </div>
 <p>One rendered target will be this image:</p>
 <img width="300px" src="https://upload.wikimedia.org/wikipedia/commons/8/89/Miller_Bode_2008_002.jpg" /></section>
+</section>
 <section id="database-dump">
 <h3>Database dump<a class="headerlink" href="#database-dump" title="Permalink to this headline"></a></h3>
 <p>The dashboard offers a link to download the experiment on the dashboard (that

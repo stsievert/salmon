@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Algorithm configuration &mdash; Salmon v0.8.1rc5+1.g87c8f83 documentation</title>
+  <title>Sampler configuration &mdash; Salmon v0.8.1rc5+4.g74918b2 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/basic.css" type="text/css" />
@@ -45,7 +45,7 @@
 <li class="toctree-l1"><a class="reference internal" href="getting-started.html">Starting an experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="monitoring.html">Experiment monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="offline.html">Generating embeddings offline</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Algorithm configuration</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Sampler configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
 </ul>
@@ -74,9 +74,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Algorithm configuration</li>
+      <li>Sampler configuration</li>
       <li class="wy-breadcrumbs-aside">
-              <a href="https://github.com/stsievert/salmon/blob/master/source/algorithms.rst" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/stsievert/salmon/blob/master/source/samplers.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
   </ul>
   <hr/>
@@ -84,8 +84,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="algorithm-configuration">
-<span id="alg-config"></span><span id="adaptive-config"></span><h1>Algorithm configuration<a class="headerlink" href="#algorithm-configuration" title="Permalink to this headline"></a></h1>
+  <section id="sampler-configuration">
+<span id="alg-config"></span><span id="adaptive-config"></span><h1>Sampler configuration<a class="headerlink" href="#sampler-configuration" title="Permalink to this headline"></a></h1>
 <p>There are many queries to ask about in triplet embedding tasks. Most of these
 queries aren’t useful; chances are most queries will have obvious answers and
 won’t improve the embedding much.</p>
@@ -105,7 +105,23 @@ sampling.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">targets</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;obj1&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;obj2&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;foo&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;bar&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;foobar!&quot;</span><span class="p p-Indicator">]</span>
 <span class="nt">samplers</span><span class="p">:</span>
   <span class="nt">ARR</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
+  <span class="nt">Random</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
+  <span class="nt">Validation</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="s">&quot;n_queries&quot;</span><span class="p p-Indicator">:</span> <span class="nv">10</span><span class="p p-Indicator">}</span>
+<span class="nt">sampling</span><span class="p">:</span>
+  <span class="nt">probs</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="s">&quot;ARR&quot;</span><span class="p p-Indicator">:</span> <span class="nv">70</span><span class="p p-Indicator">,</span> <span class="s">&quot;Random&quot;</span><span class="p p-Indicator">:</span> <span class="nv">20</span><span class="p p-Indicator">,</span> <span class="s">&quot;Validation&quot;</span><span class="p p-Indicator">:</span> <span class="nv">10</span><span class="p p-Indicator">}</span>
 </pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Want an unbiased estimate of what the crowd thinks? Don’t specify
+<code class="docutils literal notranslate"><span class="pre">samplers</span></code>, or use the default <code class="docutils literal notranslate"><span class="pre">Random:</span> <span class="pre">{}</span></code>, which will rely on
+<a class="reference internal" href="generated/salmon.triplets.samplers.Random.html#salmon.triplets.samplers.Random" title="salmon.triplets.samplers.Random"><code class="xref py py-class docutils literal notranslate"><span class="pre">Random</span></code></a></p>
+<p>Want to generate a better embedding? Worried about the cost of collecting
+responses? Use <code class="docutils literal notranslate"><span class="pre">ARR:</span> <span class="pre">{}</span></code>, which will rely on
+<a class="reference internal" href="generated/salmon.triplets.samplers.ARR.html#salmon.triplets.samplers.ARR" title="salmon.triplets.samplers.ARR"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARR</span></code></a>.</p>
+<p>Want to measure how well the crowd agrees with one another? Use
+<code class="docutils literal notranslate"><span class="pre">Validation:</span> <span class="pre">{}</span></code>, which will rely on
+<a class="reference internal" href="generated/salmon.triplets.samplers.Validation.html#salmon.triplets.samplers.Validation" title="salmon.triplets.samplers.Validation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Validation</span></code></a>,</p>
 </div>
 <p>When <code class="docutils literal notranslate"><span class="pre">ARR</span></code> is specified as a key for <code class="docutils literal notranslate"><span class="pre">samplers</span></code>,
 <a class="reference internal" href="generated/salmon.triplets.samplers.ARR.html#salmon.triplets.samplers.ARR" title="salmon.triplets.samplers.ARR"><code class="xref py py-class docutils literal notranslate"><span class="pre">salmon.triplets.samplers.ARR</span></code></a> is used for the sampling method.
