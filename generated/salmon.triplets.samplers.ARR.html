@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>salmon.triplets.samplers.ARR &mdash; Salmon v0.8.1rc5+5.gbe3b6fb documentation</title>
+  <title>salmon.triplets.samplers.ARR &mdash; Salmon v0.8.1rc5+6.g0068c81 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
@@ -108,7 +108,14 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="salmon.triplets.samplers.ARR">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">salmon.triplets.samplers.</span></span><span class="sig-name descname"><span class="pre">ARR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_top</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'TSTE'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">priority</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'random'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.samplers.ARR" title="Permalink to this definition"></a></dt>
-<dd><p>An asynchronous round robin algorithm.</p>
+<dd><p>An adaptive “round robin” sampler.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This class is usable in it’s default configuration. Most of the
+<a class="reference internal" href="../benchmarks/active.html#experiments"><span class="std std-ref">active sampling benchmarks</span></a> have been run under
+the default configuration of this class. Please carefully consider
+any changes to the default parameters.</p>
+</div>
 <p class="rubric">Notes</p>
 <p>This algorithms asks about “high scoring queries” uniformly at random. For
 each head, the top <code class="docutils literal notranslate"><span class="pre">n_top</span></code> queries are selected. The query shown to the
@@ -116,12 +123,6 @@ user is a query selected uniformly at random from this set.</p>
 <p>If <code class="docutils literal notranslate"><span class="pre">n_top</span> <span class="pre">&gt;</span> <span class="pre">1</span></code>, then in practice, this sampling algorithm randomly asks
 about high scoring queries for each head. Becaues it’s asynchronous, it
 randomly selects a head (instead of doing it a round-robin fashion).</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>We found this class to perform well in our experiments, some of which are detailed at <a class="reference external" href="https://docs.stsievert.com/salmon/benchmarks/active.html">https://docs.stsievert.com/salmon/benchmarks/active.html</a></p>
-<p>Please carefully consider any changes to the default parameters.
-The experiments above have helped inform the defaults for this class.</p>
-</div>
 <p class="rubric">References</p>
 <dl class="citation">
 <dt class="label" id="ra8579be366ab-1"><span class="brackets">1</span></dt>
