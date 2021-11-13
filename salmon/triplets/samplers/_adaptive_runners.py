@@ -338,7 +338,14 @@ class TSTE(Adaptive):
 
 
 class ARR(Adaptive):
-    """An asynchronous round robin algorithm.
+    """An adaptive "round robin" sampler.
+
+    .. note::
+
+       This class is usable in it's default configuration. Most of the
+       :ref:`active sampling benchmarks <experiments>` have been run under
+       the default configuration of this class. Please carefully consider
+       any changes to the default parameters.
 
     Notes
     -----
@@ -349,13 +356,6 @@ class ARR(Adaptive):
     If ``n_top > 1``, then in practice, this sampling algorithm randomly asks
     about high scoring queries for each head. Becaues it's asynchronous, it
     randomly selects a head (instead of doing it a round-robin fashion).
-
-    .. note::
-
-       We found this class to perform well in our experiments, some of which are detailed at https://docs.stsievert.com/salmon/benchmarks/active.html
-
-       Please carefully consider any changes to the default parameters.
-       The experiments above have helped inform the defaults for this class.
 
     References
     ----------
