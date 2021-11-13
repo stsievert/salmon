@@ -23,6 +23,7 @@ we can provide bounds on how many responses you'll need:
   will likely be generated with :math:`O(nd\log_2(n))` responses, likely
   :math:`20 nd \log_2(n)` responses (or possibly :math:`10 nd \log_2(n)`). [2]_
 
+
 This suggests that the number of responses required when :math:`n` and
 :math:`d` are changed scaled like :math:`nd\log_2(n)`.  i.e, if an embedding
 below requires 5,000 responses for :math:`n=30`, scaling to :math:`n=40` with
@@ -31,14 +32,36 @@ below requires 5,000 responses for :math:`n=30`, scaling to :math:`n=40` with
 
 See the :ref:`benchmarks on active sampling <experiments>` for some
 benchmarks/landmarks on the specific number of responses required for a
-particular dataset.
+particular dataset. **If you think your dataset will require too many
+responses,** see :ref:`our recommendations on active samplers
+<adaptiveconfig>`. Active samplers might be able to generate better embeddings
+with a fixed number of responses.
 
-What adaptive algorithms are recommended?
------------------------------------------
+.. _adaptiveconfig:
+
+What active samplers are recommended?
+-------------------------------------
 
 Use of :class:`~salmon.triplets.samplers.ARR` is most recommended.  See the
-:ref:`benchmarks on active sampling <experiments>` for an example
-configuration and the number of responses required for that usage.
+:ref:`benchmarks on active sampling <experiments>` for an example configuration
+and the number of responses required for that usage.  The defaults of
+:class:`~salmon.triplets.samplers.ARR` have been explored pretty throughly. In
+the :ref:`benchmarks on active sampling <experiments>`, we used the default
+parameters for :class:`~salmon.triplets.samplers.ARR` (or changed them to
+figure out what the default should be).
+
+Monitoring performance is difficult with active/adaptive algorithm; random
+sampling is a lot better. Typically, between 10% and 20% of the sampling is
+used to monitor and report performance. That means I'd recommend this partial
+configuration:
+
+.. code-block:: yaml
+
+   samplers:
+     ARR: {}
+     Random: {}
+   sampling:
+     probs: {"ARR": 85, "Random": 15}
 
 Can I choose a different machine?
 ---------------------------------
@@ -64,7 +87,7 @@ EC2, this will require some port forwarding to your own machine:
 
 .. code:: shell
 
-   ssh -i key.pem -L 7787:localhost:8787 ubuntu@34.222.199.114
+   ssh -i key.pem -L 7787:localhost:8787 ubuntu@[EC2 public DNS or IP]
    # visit http://localhost:7787 in the browser to see Salmon's Dask dashboard
 
 If desired, it is possible to open port 8787 on the Amazon EC2 machine. If that
