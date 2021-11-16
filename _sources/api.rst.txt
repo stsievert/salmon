@@ -5,6 +5,22 @@
 API
 ===
 
+Configuration
+-------------
+
+.. autosummary::
+   :toctree: generated/
+
+   salmon.triplets.manager.Config
+
+This configuration has two optional components:
+
+.. autosummary::
+   :toctree: generated/
+
+   salmon.triplets.manager.HTML
+   salmon.triplets.manager.Sampling
+
 Offline embeddings
 ------------------
 

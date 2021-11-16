@@ -4,9 +4,10 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Starting an experiment &mdash; Salmon v0.8.1rc5+7.g31a3eab documentation</title>
+  <title>Starting an experiment &mdash; Salmon v0.8.0+3.g099f94a documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/autodoc_pydantic.css" type="text/css" />
       <link rel="stylesheet" href="_static/basic.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
@@ -16,6 +17,7 @@
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -166,75 +168,48 @@ something like <code class="docutils literal notranslate"><span class="pre">v0.4
 </div>
 <p>Now, let’s describe three methods on how to launch this experiment:</p>
 <section id="experiment-initialization-with-yaml-file">
-<h3>Experiment initialization with YAML file<a class="headerlink" href="#experiment-initialization-with-yaml-file" title="Permalink to this headline"></a></h3>
+<span id="yamlinitialization"></span><h3>Experiment initialization with YAML file<a class="headerlink" href="#experiment-initialization-with-yaml-file" title="Permalink to this headline"></a></h3>
 <p>“YAML files” must obey a standard; see for a (human-readable) description of
 the specification <a class="reference external" href="https://learnxinyminutes.com/docs/yaml/">https://learnxinyminutes.com/docs/yaml/</a>. To see if your YAML
 is valid, go to <a class="reference external" href="https://yamlchecker.com/">https://yamlchecker.com/</a>.</p>
 <p>Here’s an example <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code> YAML file for initialization:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: init.yaml</span>
-<span class="nt">targets</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">0</span><span class="p p-Indicator">,</span> <span class="nv">1</span><span class="p p-Indicator">,</span> <span class="nv">2</span><span class="p p-Indicator">,</span> <span class="nv">3</span><span class="p p-Indicator">,</span> <span class="nv">4</span><span class="p p-Indicator">,</span> <span class="nv">5</span><span class="p p-Indicator">,</span> <span class="nv">6</span><span class="p p-Indicator">,</span> <span class="nv">7</span><span class="p p-Indicator">,</span> <span class="nv">8</span><span class="p p-Indicator">,</span> <span class="nv">9</span><span class="p p-Indicator">,</span> <span class="nv">10</span><span class="p p-Indicator">]</span>
+<span class="nt">targets</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;l&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;&lt;i&gt;kildow&lt;/i&gt;&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;t&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;&lt;i&gt;ligety&lt;/i&gt;&quot;</span><span class="p p-Indicator">]</span>  <span class="c1"># or uploaded via ZIP file</span>
 <span class="nt">html</span><span class="p">:</span>
   <span class="nt">instructions</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Select the item on the bottom most similar to the item on the top.</span>
   <span class="nt">debrief</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Thanks! Use the participant ID below in Mechnical Turk.</span>
   <span class="nt">max_queries</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">100</span>
 </pre></div>
 </div>
-<p>This file will initialize a basic experiment. To do anything fancier,
-additional configuration is required. Here’s some documentation on each
-top-level element like <code class="docutils literal notranslate"><span class="pre">html</span></code>, a “key” in YAML-jargon:</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">targets</span></code>, optional list. Choices:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>Upload a ZIP file, detailed at <a class="reference internal" href="#yaml-plus-zip"><span class="std std-ref">YAML file with ZIP file</span></a>.  This will replace
-the <code class="docutils literal notranslate"><span class="pre">targets</span></code> key with the HTML rendering of the contents of the ZIP
-file.</p></li>
-<li><p>list of HTML targets. Specifying
-<code class="docutils literal notranslate"><span class="pre">targets:</span> <span class="pre">[&quot;vonn&quot;,</span> <span class="pre">&quot;miller&quot;,</span> <span class="pre">&quot;ligety&quot;,</span> <span class="pre">&quot;shiffrin&quot;]</span></code>
-will show text to the user. If this text includes HTML, it will be
-rendered. For example if one target is <code class="docutils literal notranslate"><span class="pre">&quot;&lt;i&gt;kildow&lt;/i&gt;&quot;</span></code> the user will
-see italic text when that target is displayed.</p></li>
+<p>This file will initialize a basic experiment. By default, Salmon will do the
+following:</p>
+<ul class="simple">
+<li><p><strong>Use random sampling.</strong> This may not be what you want (though it is very
+simple). See the FAQ <a class="reference internal" href="faq.html#random-vs-active"><span class="std std-ref">When should I use random/active sampling?</span></a> for more detail.</p></li>
+<li><p>Ask 50 questions before showing the participant ID.</p></li>
+<li><p>Embed into <span class="math notranslate nohighlight">\(d=2\)</span> dimensions if active samplers are specified.</p></li>
 </ul>
-</div></blockquote>
-</li>
-<li><p><code class="docutils literal notranslate"><span class="pre">samplers</span></code>, optional.  <strong>Customizing this key is likely of interest and can
-generate better embeddings.</strong> See “<a class="reference internal" href="samplers.html#adaptive-config"><span class="std std-ref">Sampler configuration</span></a>” for more detail, and
-“<a class="reference internal" href="benchmarks/active.html#experiments"><span class="std std-ref">Active sampling</span></a>” for examples/benchmarks.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">html</span></code>, optional. Style options for the crowdsourcing user’s query page:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">instructions</span></code>: text. The instructions for the participant, shown above
-each query.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">debrief</span></code>: text. The message to show at the end of the experiment. This
-debrief will show alongside the participant ID (aka “puid”, which will be
-available through in the responses).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">max_queries</span></code>: int. The number of queries a participant should answer. Set
-<code class="docutils literal notranslate"><span class="pre">max_queries:</span> <span class="pre">-1</span></code> for unlimited queries.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">skip_button</span></code>, optional boolean. Default <code class="docutils literal notranslate"><span class="pre">false</span></code>. If <code class="docutils literal notranslate"><span class="pre">true</span></code>, show a
-button that says “new query.”</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">css</span></code>, optional string. Defaults to <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code>. This CSS is inserted in the
-<code class="docutils literal notranslate"><span class="pre">&lt;style&gt;</span></code> tag in the HTML query page. This allows customization of
-colors/borders/etc.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">arrow_keys</span></code> optional boolean, default True. If True, allow users to
-answer queries with the arrow keys.</p></li>
-</ul>
-</div></blockquote>
-</li>
-<li><p><code class="docutils literal notranslate"><span class="pre">d</span></code>, optional int (default=2). The embedding the samplers should embed into.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">sampling</span></code>, optional. A dictionary with the following keys:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">probs</span></code>, a map between sampler names and the percentage that
-each sampler is selected. By default, all samplers are sampled equally.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">samplers_per_user</span></code>: (optional int, default=0). Controls the
-number of samplers each user sees. If <code class="docutils literal notranslate"><span class="pre">samplers_per_user=0</span></code>, show
-users a random sampler.</p></li>
-</ul>
-</div></blockquote>
-</li>
-</ul>
-<p>Examples of these files are in <a class="reference external" href="https://github.com/stsievert/salmon/tree/master/examples">salmon/examples</a>. A complete example is
-available at <a class="reference external" href="https://github.com/stsievert/salmon/tree/master/examples/complete.yaml">salmon/examples/complete.yaml</a>.</p>
+<p>The defaults for instructions/debrief can be found in
+<a class="reference internal" href="generated/salmon.triplets.manager.HTML.html#salmon.triplets.manager.HTML" title="salmon.triplets.manager.HTML"><code class="xref py py-class docutils literal notranslate"><span class="pre">HTML</span></code></a>. To do anything fancier, additional
+configuration is required. Here’s a basic example:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: init.yaml</span>
+<span class="nt">targets</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;l&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;&lt;i&gt;kildow&lt;/i&gt;&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;t&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;&lt;i&gt;ligety&lt;/i&gt;&quot;</span><span class="p p-Indicator">]</span>  <span class="c1"># or uploaded via ZIP file</span>
+<span class="nt">html</span><span class="p">:</span>
+  <span class="nt">max_queries</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">100</span>
+<span class="nt">samplers</span><span class="p">:</span>
+  <span class="nt">ARR</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="s">&quot;random_state&quot;</span><span class="p p-Indicator">:</span> <span class="nv">42</span><span class="p p-Indicator">}</span>
+  <span class="nt">testing</span><span class="p">:</span>
+    <span class="nt">class</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Random</span>
+<span class="nt">sampling</span><span class="p">:</span>
+  <span class="nt">probs</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="s">&quot;ARR&quot;</span><span class="p p-Indicator">:</span> <span class="nv">85</span><span class="p p-Indicator">,</span> <span class="s">&quot;testing&quot;</span><span class="p p-Indicator">:</span> <span class="nv">15</span><span class="p p-Indicator">}</span>
+  <span class="nt">common</span><span class="p">:</span>
+    <span class="nt">d</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">3</span>  <span class="c1"># embed into 3 dimensions for all active samplers</span>
+</pre></div>
+</div>
+<p>Configuration documentation can be found at
+<a class="reference internal" href="generated/salmon.triplets.manager.Config.html#salmon.triplets.manager.Config" title="salmon.triplets.manager.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a>. Examples of these files are in
+<a class="reference external" href="https://github.com/stsievert/salmon/tree/master/examples">salmon/examples</a>. A complete example is available at
+<a class="reference external" href="https://github.com/stsievert/salmon/tree/master/examples/complete.yaml">salmon/examples/complete.yaml</a>.</p>
 </section>
 <section id="yaml-file-with-zip-file">
 <span id="yaml-plus-zip"></span><h3>YAML file with ZIP file<a class="headerlink" href="#yaml-file-with-zip-file" title="Permalink to this headline"></a></h3>
@@ -257,8 +232,10 @@ it because it will be overwritten.</p>
 skiers. Both cases will use this <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code> file:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: init.yaml</span>
 <span class="nt">html</span><span class="p">:</span>
-  <span class="nt">instructions</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Select the item on the bottom most similar to the item on the top.</span>
-  <span class="nt">debrief</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Thanks! Use the participant ID below in Mechanical Turk.</span>
+  <span class="nt">instructions</span><span class="p">:</span> <span class="p p-Indicator">&gt;</span>
+      <span class="no">Select the &lt;i&gt;comparison&lt;/i&gt; item on the bottom that</span>
+      <span class="no">is most similar to the &lt;i&gt;target&lt;/i&gt; item on the top.</span>
+  <span class="nt">debrief</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;b&gt;Thanks!&lt;/b&gt; Use the participant ID below in Mechanical Turk.</span>
   <span class="nt">max_queries</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">100</span>
 </pre></div>
 </div>

@@ -2,18 +2,19 @@ Welcome to Salmon's documentation!
 ==================================
 
 Salmon is a tool to easily allow collection of "triplet queries." These queries
-are of the form "is object :math:`a` more similar to object :math:`b` or
-:math:`b`?" An example is shown below with facial similarities:
+are relative similarity judgments of the form "is object :math:`a` or :math:`b`
+closer to object :math:`h`?" An example is shown below with facial
+similarities:
 
 .. image:: imgs/query.png
    :width: 300px
    :align: center
 
 These queries are interesting because they provide some relative similarity
-structure: a response might indicate that object :math:`a` is closer to object
-:math:`b` than object :math:`c` as determined by humans and the instructions
-they are given. For example, these triplet queries have been used by
-psychologists to determine what facial emotions human find similar:
+structure: a response might indicate that objects :math:`h` and :math:`a` are
+more similar than objects :math:`h` and :math:`b` as determined by humans and
+the instructions they are given. For example, these triplet queries have been
+used by psychologists to determine what facial emotions human find similar:
 
 .. image:: imgs/face-embedding.png
    :width: 500px

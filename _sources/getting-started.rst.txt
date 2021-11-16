@@ -82,6 +82,8 @@ page:
 
 Now, let's describe three methods on how to launch this experiment:
 
+.. _yamlinitialization:
+
 Experiment initialization with YAML file
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -95,69 +97,43 @@ Here's an example ``init.yaml`` YAML file for initialization:
 .. code-block:: yaml
 
    # file: init.yaml
-   targets: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+   targets: ["l", "<i>kildow</i>", "t", "<i>ligety</i>"]  # or uploaded via ZIP file
    html:
      instructions: Select the item on the bottom most similar to the item on the top.
      debrief: Thanks! Use the participant ID below in Mechnical Turk.
      max_queries: 100
 
-This file will initialize a basic experiment. To do anything fancier,
-additional configuration is required. Here's some documentation on each
-top-level element like ``html``, a "key" in YAML-jargon:
+This file will initialize a basic experiment. By default, Salmon will do the
+following:
 
+* **Use random sampling.** This may not be what you want (though it is very
+  simple). See the FAQ :ref:`random_vs_active` for more detail.
+* Ask 50 questions before showing the participant ID.
+* Embed into :math:`d=2` dimensions if active samplers are specified.
 
-* ``targets``, optional list. Choices:
+The defaults for instructions/debrief can be found in
+:class:`~salmon.triplets.manager.HTML`. To do anything fancier, additional
+configuration is required. Here's a basic example:
 
-    * Upload a ZIP file, detailed at :ref:`yaml_plus_zip`.  This will replace
-      the ``targets`` key with the HTML rendering of the contents of the ZIP
-      file.
+.. code-block:: yaml
 
-    * list of HTML targets. Specifying
-      ``targets: ["vonn", "miller", "ligety", "shiffrin"]``
-      will show text to the user. If this text includes HTML, it will be
-      rendered. For example if one target is ``"<i>kildow</i>"`` the user will
-      see italic text when that target is displayed.
+   # file: init.yaml
+   targets: ["l", "<i>kildow</i>", "t", "<i>ligety</i>"]  # or uploaded via ZIP file
+   html:
+     max_queries: 100
+   samplers:
+     ARR: {"random_state": 42}
+     testing:
+       class: Random
+   sampling:
+     probs: {"ARR": 85, "testing": 15}
+     common:
+       d: 3  # embed into 3 dimensions for all active samplers
 
-* ``samplers``, optional.  **Customizing this key is likely of interest and can
-  generate better embeddings.** See ":ref:`adaptive-config`" for more detail, and
-  ":ref:`experiments`" for examples/benchmarks.
-
-* ``html``, optional. Style options for the crowdsourcing user's query page:
-
-    * ``instructions``: text. The instructions for the participant, shown above
-      each query.
-
-    * ``debrief``: text. The message to show at the end of the experiment. This
-      debrief will show alongside the participant ID (aka "puid", which will be
-      available through in the responses).
-
-    * ``max_queries``: int. The number of queries a participant should answer. Set
-      ``max_queries: -1`` for unlimited queries.
-
-    * ``skip_button``, optional boolean. Default ``false``. If ``true``, show a
-      button that says "new query."
-
-    * ``css``, optional string. Defaults to ``""``. This CSS is inserted in the
-      ``<style>`` tag in the HTML query page. This allows customization of
-      colors/borders/etc.
-
-    * ``arrow_keys`` optional boolean, default True. If True, allow users to
-      answer queries with the arrow keys.
-
-* ``d``, optional int (default=2). The embedding the samplers should embed into.
-
-* ``sampling``, optional. A dictionary with the following keys:
-
-    * ``probs``, a map between sampler names and the percentage that
-      each sampler is selected. By default, all samplers are sampled equally.
-
-    * ``samplers_per_user``: (optional int, default=0). Controls the
-      number of samplers each user sees. If ``samplers_per_user=0``, show
-      users a random sampler.
-
-Examples of these files are in `salmon/examples`_. A complete example is
-available at `salmon/examples/complete.yaml`_.
-
+Configuration documentation can be found at
+:class:`~salmon.triplets.manager.Config`. Examples of these files are in
+`salmon/examples`_. A complete example is available at
+`salmon/examples/complete.yaml`_.
 
 .. _salmon/tests/data: https://github.com/stsievert/salmon/tree/master/tests/data
 .. _salmon/examples: https://github.com/stsievert/salmon/tree/master/examples
@@ -188,8 +164,10 @@ skiers. Both cases will use this ``init.yaml`` file:
 
   # file: init.yaml
   html:
-    instructions: Select the item on the bottom most similar to the item on the top.
-    debrief: Thanks! Use the participant ID below in Mechanical Turk.
+    instructions: >
+        Select the <i>comparison</i> item on the bottom that
+        is most similar to the <i>target</i> item on the top.
+    debrief: <b>Thanks!</b> Use the participant ID below in Mechanical Turk.
     max_queries: 100
 
 .. note::

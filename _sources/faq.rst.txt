@@ -6,6 +6,28 @@ FAQ
 Also relevant is the :ref:`troubleshooting`, which goes over some (blocking)
 difficulties while launching.
 
+.. _random_vs_active:
+
+When should I use random/active sampling?
+-----------------------------------------
+
+Rule of thumb:
+
+* Use random sampling for simple problems when not many responses are required
+  (small number of targets and clean responses).
+* Use active sampling for anything more complicated (large number of targets or
+  noisy responses) when the crowdsourcing budget and/or embedding quality are
+  relevant.
+
+Specifics are :ref:`faq-n_responses` and :ref:`adaptiveconfig`. Random sampling
+can produce good embeddings, but will require about 3× the number of responses
+that active sampling requires.
+
+By default, Salmon will produce random embeddings. This is the simplest
+sampler, and doesn't require any user configuration. Tips on how to use active
+samplers are in :ref:`adaptiveconfig`.
+
+
 .. _faq-n_responses:
 
 How many responses will be needed?
@@ -47,8 +69,8 @@ Use of :class:`~salmon.triplets.samplers.ARR` is most recommended.  See the
 and the number of responses required for that usage.  The defaults of
 :class:`~salmon.triplets.samplers.ARR` have been explored pretty throughly. In
 the :ref:`benchmarks on active sampling <experiments>`, we used the default
-parameters for :class:`~salmon.triplets.samplers.ARR` (or changed them to
-figure out what the default should be).
+parameters for :class:`~salmon.triplets.samplers.ARR` after exploring the
+possible values.
 
 Monitoring performance is difficult with active/adaptive algorithm; random
 sampling is a lot better. Typically, between 10% and 20% of the sampling is
