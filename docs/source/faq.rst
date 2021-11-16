@@ -6,6 +6,8 @@ FAQ
 Also relevant is the :ref:`troubleshooting`, which goes over some (blocking)
 difficulties while launching.
 
+.. _random_vs_active:
+
 When should I use random/active sampling?
 -----------------------------------------
 

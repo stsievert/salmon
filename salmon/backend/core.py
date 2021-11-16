@@ -3,6 +3,7 @@ import os
 import random
 import threading
 import traceback
+from copy import deepcopy
 from typing import Dict, Union
 
 import cloudpickle
@@ -109,7 +110,10 @@ async def init(ident: str, background_tasks: BackgroundTasks) -> bool:
             params = {k: _fmt_params(k, v) for k, v in params.items()}
             logger.warning("Sampler for %s = %s", ident, Sampler)
             logger.warning("params = %s", params)
-            alg = Sampler(ident=ident, n=config["n"], d=config["d"], **params)
+            common = config["sampling"]["common"]
+            p = deepcopy(common)
+            p.update(params)
+            alg = Sampler(ident=ident, n=config["n"], **p)
     except Exception as e:
         msg = exception_to_string(e)
         logger.error(f"Error on alg={ident} init: {msg}")

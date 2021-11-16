@@ -77,7 +77,6 @@ async def _ensure_initialized():
         "targets",
         "samplers",
         "n",
-        "d",
         "sampling",
         "html"
     ]

@@ -1,0 +1,19 @@
+html:
+  arrow_keys: true
+  css: ''
+  debrief: <b>Thanks!</b> Please use the participant ID below.
+  instructions: Please select the <i>comparison</i> item that is most similar to the
+    <i>target</i> item.
+  max_queries: 50
+  skip_button: false
+n: 10
+samplers:
+  random:
+    class: Random
+sampling:
+  common:
+    d: 2
+  probs:
+    random: 100
+  samplers_per_user: 1
+targets: 10  # for completness; actually required

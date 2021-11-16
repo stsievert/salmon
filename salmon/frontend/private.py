@@ -46,6 +46,7 @@ from .utils import (
     _format_targets,
     get_logger,
 )
+from salmon.triplets.manager import Config
 
 security = HTTPBasic()
 
@@ -292,25 +293,30 @@ async def _get_config_endpoint(json: bool = True):
 
 
 async def _get_config(exp: bytes, targets: bytes) -> Dict[str, Any]:
-    config = yaml.safe_load(exp)
+    user_config = yaml.safe_load(exp)
     logger.warning(f"exp = {exp}")
-    logger.warning(f"config = {config}")
+    logger.warning(f"user_config = {user_config}")
 
-    html = {
-        "instructions": "Please select the <i>comparison</i> item that is most similar to the <i>target</i> item.",
-        "debrief": "<b>Thanks!</b> Please use the participant ID below.",
-        "skip_button": False,
-        "css": "",
-        "max_queries": 50,
-        "arrow_keys": True,
-    }
-    exp_config: Dict = {
-        "samplers": {"random": {"class": "Random"}},
-        "d": 2,
-        "html": html,
-    }
+    _config = Config()  # defaults already encoded
+
+    # Update user_config so when updated below, changes reflected.
+    # (it's a plain dict, so it needs some help)
+    if "sampling" in user_config and "common" in user_config["sampling"]:
+        user_config["sampling"]["common"].update(_config.dict()["sampling"]["common"])
+
+    _config = _config.parse_obj(user_config)
+    config = _config.dict()
+
+    if config["sampling"]["probs"] is None:
+        # Sample each sampler equally
+        n = len(config["samplers"])
+        freqs = [100 // n, ] * n
+        freqs[0] += 100 % n  # because integer division might be off by one
+        sampling_percent = {k: f for k, f in zip(config["samplers"], freqs)}
+        config["sampling"]["probs"] = sampling_percent
 
     # TODO: deprecate
+    html = deepcopy(config["html"])
     if any(h in config for h in html.keys()):
         misplaced_keys = [h for h in config if h in html]
         misplaced = [f"{h}: {config[h]}" for h in misplaced_keys]
@@ -321,66 +327,50 @@ async def _get_config(exp: bytes, targets: bytes) -> Dict[str, Any]:
         )
         raise ValueError(msg)
 
-    html_user = config.pop("html", {})
-    exp_config.update(config)
-    exp_config["html"].update(html_user)
-
-
-    if "sampling" not in exp_config:
-        exp_config["sampling"] = {}
-
-    if "probs" not in exp_config["sampling"]:
-        n = len(exp_config["samplers"])
-        freqs = [100 // n] * n
-        freqs[0] += 100 % n
-        sampling_percent = {k: f for k, f in zip(exp_config["samplers"], freqs)}
-        exp_config["sampling"]["probs"] = sampling_percent
-
-    if "samplers_per_user" not in exp_config["sampling"]:
-        exp_config["sampling"]["samplers_per_user"] = 0
-
-    if exp_config["sampling"]["samplers_per_user"] not in {0, 1}:
-        s = exp_config["sampling"]["samplers_per_user"]
+    if config["sampling"]["samplers_per_user"] not in {0, 1}:
+        s = config["sampling"]["samplers_per_user"]
         raise NotImplementedError(
             "Only samplers_per_user in {0, 1} is implemented, not "
             f"samplers_per_user={s}"
         )
-    if "RandomSampling" in exp_config["samplers"]:
+    if "RandomSampling" in config["samplers"]:
         raise ValueError("The sampler `RandomSampling` has been renamed to `Random`.")
 
-    if set(exp_config["sampling"]["probs"]) != set(exp_config["samplers"]):
-        sf = set(exp_config["sampling"]["probs"])
-        s = set(exp_config["samplers"])
+    logger.warning(config["sampling"]["probs"])
+    logger.warning(config["samplers"])
+    if set(config["sampling"]["probs"].keys()) != set(config["samplers"].keys()):
+        sf = set(config["sampling"]["probs"])
+        s = set(config["samplers"])
         msg = (
             "sampling.probs keys={} are not the same as samplers keys={}.\n\n"
             "Keys in sampling.probs but not in samplers: {}\n"
             "Keys in samplers but but in sampling.probs: {}\n\n"
         )
         raise ValueError(msg.format(sf, s, sf - s, s - sf))
-    if sum(exp_config["sampling"]["probs"].values()) != 100:
+    if sum(config["sampling"]["probs"].values()) != 100:
         msg = (
             "The values in sampling.probs should add up to 100; however, "
             "the passed sampling.probs={} adds up to {}"
         )
-        s = exp_config["sampling"]["probs"]
+        s = config["sampling"]["probs"]
         raise ValueError(msg.format(s, sum(s.values())))
 
     if targets:
         fnames = _extract_zipfile(targets)
         logger.info("fnames = %s", fnames)
         if len(fnames) == 1 and ".csv" in fnames[0].suffixes:
-            exp_config["targets"] = _format_targets(fnames[0])
+            config["targets"] = _format_targets(fnames[0])
         else:
             targets = [_format_target(f) for f in fnames]
-            exp_config["targets"] = targets
+            config["targets"] = targets
     elif isinstance(config["targets"], int):
-        exp_config["targets"] = [str(x) for x in range(config["targets"])]
+        config["targets"] = [str(x) for x in range(config["targets"])]
     else:
-        exp_config["targets"] = [str(x) for x in exp_config["targets"]]
+        config["targets"] = [str(x) for x in config["targets"]]
 
-    exp_config["n"] = len(exp_config["targets"])
-    logger.info("initializing experinment with %s", exp_config)
-    return exp_config
+    config["n"] = len(config["targets"])
+    logger.info("initializing experinment with %s", config)
+    return config
 
 
 def exception_to_string(excp):
