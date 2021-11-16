@@ -85,9 +85,6 @@ Now, let's describe three methods on how to launch this experiment:
 Experiment initialization with YAML file
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-This section will specify the YAML file; including a ZIP file will only modify
-the ``targets`` key.
-
 "YAML files" must obey a standard; see for a (human-readable) description of
 the specification https://learnxinyminutes.com/docs/yaml/. To see if your YAML
 is valid, go to https://yamlchecker.com/.
@@ -103,17 +100,29 @@ Here's an example ``init.yaml`` YAML file for initialization:
      instructions: Select the item on the bottom most similar to the item on the top.
      debrief: Thanks! Use the participant ID below in Mechnical Turk.
      max_queries: 100
-   samplers:
-     ARR: {}
-     Random: {}
-   sampling:
-     probs: {"ARR": 80, "Random": 20}
 
-The top-level elements like ``max_queries`` and ``targets`` are called "keys"
-in YAML jargon. Here's documentation for each key:
+This file will initialize a basic experiment. To do anything fancier,
+additional configuration is required. Here's some documentation on each
+top-level element like ``html``, a "key" in YAML-jargon:
 
 
-* ``html``. Style options for the crowdsourcing user's query page:
+* ``targets``, optional list. Choices:
+
+    * Upload a ZIP file, detailed at :ref:`yaml_plus_zip`.  This will replace
+      the ``targets`` key with the HTML rendering of the contents of the ZIP
+      file.
+
+    * list of HTML targets. Specifying
+      ``targets: ["vonn", "miller", "ligety", "shiffrin"]``
+      will show text to the user. If this text includes HTML, it will be
+      rendered. For example if one target is ``"<i>kildow</i>"`` the user will
+      see italic text when that target is displayed.
+
+* ``samplers``, optional.  **Customizing this key is likely of interest and can
+  generate better embeddings.** See ":ref:`adaptive-config`" for more detail, and
+  ":ref:`experiments`" for examples/benchmarks.
+
+* ``html``, optional. Style options for the crowdsourcing user's query page:
 
     * ``instructions``: text. The instructions for the participant, shown above
       each query.
@@ -135,8 +144,6 @@ in YAML jargon. Here's documentation for each key:
     * ``arrow_keys`` optional boolean, default True. If True, allow users to
       answer queries with the arrow keys.
 
-* ``samplers``. See :ref:`adaptive-config` for more detail.
-
 * ``d``, optional int (default=2). The embedding the samplers should embed into.
 
 * ``sampling``, optional. A dictionary with the following keys:
@@ -148,39 +155,63 @@ in YAML jargon. Here's documentation for each key:
       number of samplers each user sees. If ``samplers_per_user=0``, show
       users a random sampler.
 
-* ``targets``, optional list. Choices:
-
-    * Upload a ZIP file.  This will replace the ``targets`` key with the HTML
-      rendering of the contents of the ZIP file.
-
-    * list of HTML targets. Specifying
-      ``targets: ["vonn", "miller", "ligety", "shiffrin"]``
-      will show text to the user. If this text includes HTML, it will be
-      rendered. For example if one target is ``"<i>kildow</i>"`` the user will
-      see italic text when that target is displayed.
-
 Examples of these files are in `salmon/examples`_. A complete example is
 available at `salmon/examples/complete.yaml`_.
+
 
 .. _salmon/tests/data: https://github.com/stsievert/salmon/tree/master/tests/data
 .. _salmon/examples: https://github.com/stsievert/salmon/tree/master/examples
 .. _salmon/examples/complete.yaml: https://github.com/stsievert/salmon/tree/master/examples/complete.yaml
 
+.. _yaml_plus_zip:
+
 YAML file with ZIP file
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-If you upload a ZIP file alongside the ``init.yaml`` YAML file, the ``targets``
-key above will be configured to represent each object in the ZIP file. Here are
-the choices for different files to include in the ZIP file:
+Uploading a ZIP file will completely replace the ``targets`` key. It's
+recommended not to specify it. However, it doesn't matter if you have specified
+it because it will be overwritten.
 
-- A bunch of images/videos. Support extensions
+Here are the choices for different files to include in the ZIP file:
+
+- A single CSV file. Each textual target should be on a new line.
+- A bunch of images/videos. Support extensions:
 
     - Videos: ``mp4``, ``mov``
     - Images: ``png``, ``gif``, ``jpg``, ``jpeg``
 
-- A single CSV file. Each textual target should be on a new line.
 
-For example, this is a valid CSV file that will render textual targets:
+Let's walk through two examples, both with uploading a bunch of images with
+skiers. Both cases will use this ``init.yaml`` file:
+
+.. code-block:: yaml
+
+  # file: init.yaml
+  html:
+    instructions: Select the item on the bottom most similar to the item on the top.
+    debrief: Thanks! Use the participant ID below in Mechanical Turk.
+    max_queries: 100
+
+.. note::
+
+   Uploading a ZIP file completely replaces any specification of the
+   ``targets`` key above. This means that it is not necessary to specify the
+   ``targets`` key when a ZIP file is uploaded because it will be specified
+   automatically.
+
+Images/videos
+"""""""""""""
+
+If I had all these images in a ZIP file (say ``skiers.zip``), I would gather
+all the images into a ZIP file. On macOS, that's possible by selecting all the
+images then control-clicking and selecting "Compress items." On the command
+line, the command ``zip targets.zip *.jpg *.png`` will collect all JPG/PNG
+images into ``targets.zip``.
+
+Text targets
+""""""""""""
+
+This is a valid CSV file that will render textual targets:
 
 .. code-block::
 
@@ -209,6 +240,8 @@ One rendered target will be this image:
 .. raw:: html
 
    <img width="300px" src="https://upload.wikimedia.org/wikipedia/commons/8/89/Miller_Bode_2008_002.jpg" />
+
+
 
 Database dump
 ^^^^^^^^^^^^^

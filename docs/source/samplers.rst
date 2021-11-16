@@ -2,8 +2,8 @@
 
 .. _alg-config:
 
-Algorithm configuration
-=======================
+Sampler configuration
+=====================
 
 There are many queries to ask about in triplet embedding tasks. Most of these
 queries aren't useful; chances are most queries will have obvious answers and
@@ -31,6 +31,25 @@ By default, ``samplers`` defaults to ``Random: {}``. We have to customize the ``
    targets: ["obj1", "obj2", "foo", "bar", "foobar!"]
    samplers:
      ARR: {}
+     Random: {}
+     Validation: {"n_queries": 10}
+   sampling:
+     probs: {"ARR": 70, "Random": 20, "Validation": 10}
+
+
+.. note::
+
+   Want an unbiased estimate of what the crowd thinks? Don't specify
+   ``samplers``, or use the default ``Random: {}``, which will rely on
+   :class:`~salmon.triplets.samplers.Random`
+
+   Want to generate a better embedding? Worried about the cost of collecting
+   responses? Use ``ARR: {}``, which will rely on
+   :class:`~salmon.triplets.samplers.ARR`.
+
+   Want to measure how well the crowd agrees with one another? Use
+   ``Validation: {}``, which will rely on
+   :class:`~salmon.triplets.samplers.Validation`,
 
 When ``ARR`` is specified as a key for ``samplers``,
 :class:`salmon.triplets.samplers.ARR` is used for the sampling method.
