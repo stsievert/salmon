@@ -297,11 +297,11 @@ async def _get_config(exp: bytes, targets: bytes) -> Dict[str, Any]:
     logger.warning(f"config = {config}")
 
     html = {
-        "instructions": "Default instructions (can include <i>arbitrary</i> HTML)",
-        "debrief": "Thanks!",
+        "instructions": "Please select the <i>comparison</i> item that is most similar to the <i>target</i> item.",
+        "debrief": "<b>Thanks!</b> Please use the participant ID below.",
         "skip_button": False,
         "css": "",
-        "max_queries": -1,
+        "max_queries": 50,
         "arrow_keys": True,
     }
     exp_config: Dict = {
