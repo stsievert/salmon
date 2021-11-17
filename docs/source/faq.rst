@@ -27,7 +27,6 @@ By default, Salmon will produce random embeddings. This is the simplest
 sampler, and doesn't require any user configuration. Tips on how to use active
 samplers are in :ref:`adaptiveconfig`.
 
-
 .. _faq-n_responses:
 
 How many responses will be needed?
@@ -84,6 +83,7 @@ configuration:
      Random: {}
    sampling:
      probs: {"ARR": 85, "Random": 15}
+
 
 Can I choose a different machine?
 ---------------------------------

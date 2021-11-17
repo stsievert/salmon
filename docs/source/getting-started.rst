@@ -106,8 +106,12 @@ Here's an example ``init.yaml`` YAML file for initialization:
 This file will initialize a basic experiment. By default, Salmon will do the
 following:
 
-* **Use random sampling.** This may not be what you want (though it is very
-  simple). See the FAQ :ref:`random_vs_active` for more detail.
+* **Use random sampling.** This is a very simple configuration -- but it may
+  not be what you want. Relevant FAQs:
+
+  * ":ref:`random_vs_active`"
+  * ":ref:`adaptiveconfig`"
+
 * Ask 50 questions before showing the participant ID.
 * Embed into :math:`d=2` dimensions if active samplers are specified.
 
