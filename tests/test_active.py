@@ -15,14 +15,41 @@ import yaml
 from .utils import logs, server, LogError
 
 
+def test_samplers_per_user(server, logs):
+    exp = Path(__file__).parent / "data" / "active.yaml"
+    print("init'ing exp")
+    exp2 = yaml.safe_load(exp.read_bytes())
+    exp2["sampling"] = {"samplers_per_user": 1}
+
+    print("done")
+
+    with open(exp, "r") as f:
+        config = yaml.load(f, Loader=yaml.SafeLoader)
+    samplers = list(config["samplers"].keys())
+
+    ident = random.choice(samplers)
+    with logs:
+        server.authorize()
+        server.post("/init_exp", data={"exp": str(exp2)})
+        for k in range(len(samplers) * 2):
+            q = server.get(f"/query?ident={ident}").json()
+            ans = {"winner": random.choice([q["left"], q["right"]]), "puid": "foo", **q}
+            server.post("/answer", json=ans)
+            sleep(0.1)
+
+        r = server.get("/responses")
+        d = r.json()
+        df = pd.DataFrame(d)
+        algs = df.alg_ident.unique()
+        assert len(set(algs)) == 1
+        _ = len(set(algs))
+
+
 def test_active_wrong_proportion(server, logs):
     exp = {
         "targets": 16,
         "sampling": {"probs": {"a1": 50, "a2": 40}},
-        "samplers": {
-            "a1": {"class": "Random"},
-            "a2": {"class": "Random"},
-        },
+        "samplers": {"a1": {"class": "Random"}, "a2": {"class": "Random"},},
     }
     with pytest.raises(LogError):
         with logs:
@@ -78,36 +105,6 @@ def test_active_basics(server, logs):
         assert (df["score"] <= 1).all()
         algs = df.alg_ident.unique()
         assert set(algs) == {"TSTE", "ARR", "CKL", "tste2", "GNMDS"}
-
-
-def test_samplers_per_user(server, logs):
-    exp = Path(__file__).parent / "data" / "active.yaml"
-    print("init'ing exp")
-    exp2 = yaml.safe_load(exp.read_bytes())
-    exp2["sampling"] = {"samplers_per_user": 1}
-
-    print("done")
-
-    with open(exp, "r") as f:
-        config = yaml.load(f, Loader=yaml.SafeLoader)
-    samplers = list(config["samplers"].keys())
-
-    ident = random.choice(samplers)
-    with logs:
-        server.authorize()
-        server.post("/init_exp", data={"exp": str(exp2)})
-        for k in range(len(samplers) * 2):
-            q = server.get(f"/query?ident={ident}").json()
-            ans = {"winner": random.choice([q["left"], q["right"]]), "puid": "foo", **q}
-            server.post("/answer", json=ans)
-            sleep(0.1)
-
-        r = server.get("/responses")
-        d = r.json()
-        df = pd.DataFrame(d)
-        algs = df.alg_ident.unique()
-        assert len(set(algs)) == 1
-        _ = len(set(algs))
 
 
 def test_round_robin(server, logs):

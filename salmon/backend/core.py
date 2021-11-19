@@ -17,7 +17,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from salmon.frontend.utils import ServerException
 
 from ..triplets import samplers
-from ..utils import get_logger
+from ..utils import get_logger, flush_logger
 
 DEBUG = os.environ.get("SALMON_DEBUG", 0)
 
@@ -31,6 +31,7 @@ threads = []
 
 
 def exception_to_string(excp):
+    flush_logger(logger)
     stack = traceback.extract_stack() + traceback.extract_tb(
         excp.__traceback__
     )  # add limit=??
@@ -46,6 +47,7 @@ class ExpParsingError(StarletteHTTPException):
 
 @app.exception_handler(ExpParsingError)
 async def http_exception_handler(request, exc):
+    flush_logger(logger)
     return PlainTextResponse(exc.detail, status_code=exc.status_code)
 
 
@@ -117,6 +119,7 @@ async def init(ident: str, background_tasks: BackgroundTasks) -> bool:
     except Exception as e:
         msg = exception_to_string(e)
         logger.error(f"Error on alg={ident} init: {msg}")
+        flush_logger(logger)
         raise ExpParsingError(status_code=500, detail=msg)
 
     logger.info(f"alg={ident} initialized; now, does it have get_quer")
@@ -131,8 +134,10 @@ async def init(ident: str, background_tasks: BackgroundTasks) -> bool:
                 logger.debug("q, score = %s, %s", q, score)
             except Exception as e:
                 logger.exception(e)
+                flush_logger(logger)
                 raise HTTPException(status_code=500, detail=str(e))
             if q is None:
+                flush_logger(logger)
                 raise HTTPException(status_code=404)
             return {"alg_ident": ident, "score": score, **q}
 
@@ -161,6 +166,7 @@ async def get_model(alg_ident: str):
         )
     if f"model-{alg_ident}" not in rj.keys():
         logger.warning("rj.keys() = %s", rj.keys())
+        flush_logger(logger)
         raise ServerException(f"Model has not been created for alg_ident='{alg_ident}'")
     rj2 = Client(host="redis", port=6379, decode_responses=False)
     ir = rj2.get(f"model-{alg_ident}")

@@ -13,7 +13,7 @@ import pandas as pd
 import pytest
 import yaml
 
-from .utils import logs, server
+from .utils import logs, server, LogError
 
 
 def test_basics(server, logs):
@@ -360,8 +360,10 @@ def test_validation_sampling(server, logs):
 
 
 def test_random_error(server, logs):
-    server.authorize()
     n_val = 5
     exp = {"targets": [0, 1, 2, 3, 4, 5], "samplers": {"RandomSampling": {}, "ARR": {}}}
-    r = server.post("/init_exp", data={"exp": exp}, status_code=500)
-    assert "The sampler `RandomSampling` has been renamed to `Random`" in r.text
+
+    with pytest.raises(LogError), logs:
+        server.authorize()
+        r = server.post("/init_exp", data={"exp": exp}, status_code=500)
+        assert "The sampler `RandomSampling` has been renamed to `Random`" in r.text

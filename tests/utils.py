@@ -76,13 +76,15 @@ class Server:
 
 def _clear_logs(log=None):
     if log:
-        log.write_text("")
+        with log.open(mode="w") as f:
+            print("", file=f)
     else:
         this_dir = Path(__file__).absolute().parent
         root_dir = this_dir.parent
         log_dir = root_dir / "out"
         for log in log_dir.glob("*.log"):
-            log.write_text("")
+            _clear_logs(log=log)
+        sleep(5)
 
 
 @pytest.fixture()
@@ -98,6 +100,8 @@ def server():
     if dump.exists():
         dump.unlink()
     server.reset()
+    _clear_logs()
+    _clear_logs()
 
 
 class LogError(Exception):

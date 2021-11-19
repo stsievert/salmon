@@ -17,14 +17,14 @@ from .utils import LogError, logs, server
 
 def test_backend_basics(server, logs):
     exp = Path(__file__).parent / "data" / "round-robin.yaml"
-    server.authorize()
-    server.post("/init_exp", data={"exp": exp.read_text()})
     exp_config = yaml.safe_load(exp.read_text())
 
     # ran into a bug that happened with len(samplers) > 1
     assert len(exp_config["samplers"]) == 1
     puid = "puid-foo"
     with logs:
+        server.authorize()
+        server.post("/init_exp", data={"exp": exp.read_text()})
         for k in range(30):
             _start = time()
             q = server.get("/query").json()
@@ -41,29 +41,32 @@ def test_backend_basics(server, logs):
     assert len(df) == 30
 
 
-def test_init_errors_propogate(server):
-    server.authorize()
-    server.get("/init")
+def test_init_errors_propogate(server, logs):
     exp = Path(__file__).parent / "data" / "exp-active-bad.yaml"
-    r = server.post("/init_exp", data={"exp": exp.read_text()}, error=True)
-    assert r.status_code == 500
-    assert "module 'salmon.triplets.samplers' has no attribute 'FooBar'" in r.text
+
+    with pytest.raises(LogError):
+        with logs:
+            server.authorize()
+            server.get("/init")
+            r = server.post("/init_exp", data={"exp": exp.read_text()}, error=True)
+            assert r.status_code == 500
+            assert "module 'salmon.triplets.samplers' has no attribute 'FooBar'" in r.text
 
 
 def test_run_errors_logged(server, logs):
     # This test is only designed to make sure errors are raised during pytest
     # it's not designed to make sure errors have much detail; the docker logs
     # will reflect more of that.
-    server.authorize()
-    server.get("/init")
     config = {
         "targets": list(range(10)),
         "sampling": {"common": {"d": 1}},
         "samplers": {"ARR": {}},
     }
-    r = server.post("/init_exp", data={"exp": config})
     with pytest.raises(LogError):
         with logs:
+            server.authorize()
+            server.get("/init")
+            r = server.post("/init_exp", data={"exp": config})
             for k in range(10):
                 q = server.get("/query").json()
                 winner = random.choice([q["left"], q["right"]])
@@ -71,9 +74,10 @@ def test_run_errors_logged(server, logs):
                 ans["left"] = 12
                 sleep(1)
                 server.post("/answer", data=ans)
+            server.reset()
         server.reset()
     server.reset()
-    sleep(5)
+    sleep(2)
 
 
 def test_backend_random_state():
