@@ -47,8 +47,8 @@ Canada's Western University.
    samplers
    monitoring
    offline
-   api
    faq
+   api
 
 .. toctree::
    :maxdepth: 2
