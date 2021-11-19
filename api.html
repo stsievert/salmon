@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>API &mdash; Salmon v0.8.0+5.ga6a4286 documentation</title>
+  <title>API &mdash; Salmon v0.8.0+8.gf0cb6c6 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/autodoc_pydantic.css" type="text/css" />
@@ -60,6 +60,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#samplers">Samplers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/salmon.backend.sampler.Sampler.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.backend.sampler</span></code>.Sampler</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#passive-algorithms">Passive Algorithms</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="generated/salmon.triplets.samplers.Random.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.samplers</span></code>.Random</a></li>
 <li class="toctree-l4"><a class="reference internal" href="generated/salmon.triplets.samplers.RoundRobin.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.samplers</span></code>.RoundRobin</a></li>
@@ -176,13 +177,16 @@ following API:</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/salmon.backend.sampler.Sampler.html#salmon.backend.sampler.Sampler" title="salmon.backend.sampler.Sampler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.backend.sampler.Sampler</span></code></a>([ident])</p></td>
+<td><p>Run a sampling algorithm.</p></td>
+</tr>
 </tbody>
 </table>
 <p>This class enables running a triplet embedding algorithm on Salmon: it provides
 convenient hooks to the database like <code class="docutils literal notranslate"><span class="pre">get_queries</span></code> and <code class="docutils literal notranslate"><span class="pre">post_answers</span></code> if
 you want to customize the running of the algorithm. By default, the algorithm
-uses <code class="docutils literal notranslate"><span class="pre">Runner.run</span></code> to run the algorithm.</p>
-<p>Every class below inherits from <code class="xref py py-class docutils literal notranslate"><span class="pre">Runner</span></code>.</p>
+uses <code class="docutils literal notranslate"><span class="pre">Sampler.run</span></code> to run the algorithm.</p>
+<p>Every class below inherits from <a class="reference internal" href="generated/salmon.backend.sampler.Sampler.html#salmon.backend.sampler.Sampler" title="salmon.backend.sampler.Sampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sampler</span></code></a>.</p>
 <section id="passive-algorithms">
 <h3>Passive Algorithms<a class="headerlink" href="#passive-algorithms" title="Permalink to this headline"></a></h3>
 <table class="longtable docutils align-default">

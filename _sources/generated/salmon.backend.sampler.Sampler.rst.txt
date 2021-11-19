@@ -1,0 +1,14 @@
+﻿:mod:`salmon.backend.sampler`.Sampler
+============================================
+
+.. currentmodule:: salmon.backend.sampler
+
+.. autoclass:: Sampler
+   :members:
+
+
+.. include:: salmon.backend.sampler.Sampler.examples
+
+.. raw:: html
+
+    <div class="clearer"></div>

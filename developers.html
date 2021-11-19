@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Developing algorithms &mdash; Salmon v0.8.0+5.ga6a4286 documentation</title>
+  <title>Developing algorithms &mdash; Salmon v0.8.0+8.gf0cb6c6 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/autodoc_pydantic.css" type="text/css" />
@@ -116,7 +116,7 @@ be a class that implement <code class="docutils literal notranslate"><span class
 to figure out inheritance details. In short, the following details are
 important:</p>
 <ul class="simple">
-<li><p><strong>Inheriting from</strong> <code class="xref py py-class docutils literal notranslate"><span class="pre">Runner</span></code>, which enables Salmon
+<li><p><strong>Inheriting from</strong> <code class="xref py py-class docutils literal notranslate"><span class="pre">Sampler</span></code>, which enables Salmon
 to work with custom algorithms.</p></li>
 <li><p><strong>Accepting an</strong> <code class="docutils literal notranslate"><span class="pre">ident:</span> <span class="pre">str</span></code> keyword argument in <code class="docutils literal notranslate"><span class="pre">__init__</span></code> <strong>and
 passing that argument to</strong> <code class="docutils literal notranslate"><span class="pre">super().__init__</span></code>. (<code class="docutils literal notranslate"><span class="pre">ident</span></code> is passed to all
@@ -137,7 +137,7 @@ and <code class="docutils literal notranslate"><span class="pre">get_queries</sp
 <section id="debugging">
 <h2>Debugging<a class="headerlink" href="#debugging" title="Permalink to this headline"></a></h2>
 <p>Let’s say you’ve integrated most of your algorithm into
-<code class="xref py py-class docutils literal notranslate"><span class="pre">Runner</span></code>. Now, you’d like to make sure everything is
+<a class="reference internal" href="generated/salmon.backend.sampler.Sampler.html#salmon.backend.sampler.Sampler" title="salmon.backend.sampler.Sampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sampler</span></code></a>. Now, you’d like to make sure everything is
 working properly.</p>
 <p>This script will help:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">salmon.triplets.samplers</span> <span class="kn">import</span> <span class="n">STE</span>
