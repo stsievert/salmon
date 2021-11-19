@@ -56,15 +56,21 @@ generated from ``ARR`` 85% of the time and from ``Random`` the rest of the
 time. Generally, the keys in ``samplers`` and ``sampling`` follow these general
 rules:
 
-* ``samplers``: creating class instances. The class is specified each key, and
-  any arguments are passed to the class instance.
-* ``sampling``: controls the interactions between samplers. For example:
+* ``samplers``: controls how one specific sampler behaves (i.e., class
+  initialization). The class is specified each key, and any arguments are
+  passed to the class instance.
+* ``sampling``: controls samplers interact. For example:
 
-  * the ``probs`` key controls how frequently each class instance in ``samplers`` is used
-  * the ``common`` key controls sending initialization arguments to `every` class instances.
+  * the ``probs`` key controls how frequently each class instance in
+    ``samplers`` is used
+  * the ``common`` key controls sending initialization arguments to `every`
+    class instances.
+  * the ``samplers_per_user`` key controls how many samplers are seen by any
+    one user who visits Salmon.
 
-A good default configuration is mentioned in :ref:`adaptiveconfig`, and
-complete details are in :class:`~salmon.triplets.manager.Config`.
+A good default configuration is mentioned in the FAQ ":ref:`adaptiveconfig`"
+The defaults and complete details are in
+:class:`~salmon.triplets.manager.Config`.
 
 Multiple classes of the same name
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -88,7 +94,7 @@ This will generate queries from these two samplers with equal probability:
    Random()
    Random()
 
-Initialization Arguments
+Initialization arguments
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 Arguments inside each key are passed to the sampler. For example,
@@ -103,12 +109,18 @@ Arguments inside each key are passed to the sampler. For example,
        d: 3
        scorer: "uncertainty"
 
-would create this class:
+would create an instance of :class:`~salmon.triplets.samplers.ARR`:
 
 .. code-block:: python
 
    from salmon.triplets.samplers import ARR
    ARR(random_state=42, module="CKL", d=3, scorer="uncertainty")
+
+Note that the argument are documented in
+:class:`~salmon.triplets.samplers.ARR`. Some argument are arguments that
+:class:`~salmon.triplets.samplers.ARR` directly uses (like ``module``), and
+other are passed to :class:`~salmon.triplets.samplers.Adaptive` as mentioned in
+the docstring of :class:`~salmon.triplets.samplers.ARR`.
 
 If you have multiple arguments for *every* class, you can specify that with the
 ``common`` key:

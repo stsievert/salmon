@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Experiment initialization &mdash; Salmon v0.8.0+10.g3aebd22 documentation</title>
+  <title>Experiment initialization &mdash; Salmon v0.8.0+11.gd098cdf documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/autodoc_pydantic.css" type="text/css" />
@@ -58,8 +58,8 @@
 <li class="toctree-l1"><a class="reference internal" href="samplers.html">Sampler configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="monitoring.html">Experiment monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="offline.html">Generating embeddings offline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Benchmarks</span></p>
 <ul>
@@ -164,22 +164,20 @@ Some more details can be found at <a class="reference internal" href="samplers.h
 recommended not to specify it. However, it doesn’t matter if you have specified
 it because it will be overwritten.</p>
 <p>Here are the choices for different files to include in the ZIP file:</p>
-<ul>
+<ul class="simple">
 <li><p>A single CSV file. Each textual target should be on a new line.</p></li>
 <li><p>A bunch of images/videos. Support extensions:</p>
-<blockquote>
-<div><ul class="simple">
+<ul>
 <li><p>Videos: <code class="docutils literal notranslate"><span class="pre">mp4</span></code>, <code class="docutils literal notranslate"><span class="pre">mov</span></code></p></li>
 <li><p>Images: <code class="docutils literal notranslate"><span class="pre">png</span></code>, <code class="docutils literal notranslate"><span class="pre">gif</span></code>, <code class="docutils literal notranslate"><span class="pre">jpg</span></code>, <code class="docutils literal notranslate"><span class="pre">jpeg</span></code></p></li>
 </ul>
-</div></blockquote>
 </li>
 </ul>
 <p>Let’s walk through two examples, both with uploading a bunch of images with
 skiers. Both cases will use this <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code> file:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: init.yaml</span>
 <span class="nt">html</span><span class="p">:</span>
-  <span class="nt">instructions</span><span class="p">:</span> <span class="p p-Indicator">&gt;</span>
+  <span class="nt">instructions</span><span class="p">:</span> <span class="p p-Indicator">&gt;</span>  <span class="c1"># multi-line YAML string</span>
       <span class="no">Select the &lt;i&gt;comparison&lt;/i&gt; item on the bottom that</span>
       <span class="no">is most similar to the &lt;i&gt;target&lt;/i&gt; item on the top.</span>
   <span class="nt">debrief</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;b&gt;Thanks!&lt;/b&gt; Use the participant ID below in Mechanical Turk.</span>

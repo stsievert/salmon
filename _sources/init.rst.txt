@@ -92,8 +92,8 @@ Here are the choices for different files to include in the ZIP file:
 - A single CSV file. Each textual target should be on a new line.
 - A bunch of images/videos. Support extensions:
 
-    - Videos: ``mp4``, ``mov``
-    - Images: ``png``, ``gif``, ``jpg``, ``jpeg``
+  - Videos: ``mp4``, ``mov``
+  - Images: ``png``, ``gif``, ``jpg``, ``jpeg``
 
 
 Let's walk through two examples, both with uploading a bunch of images with
@@ -103,7 +103,7 @@ skiers. Both cases will use this ``init.yaml`` file:
 
   # file: init.yaml
   html:
-    instructions: >
+    instructions: >  # multi-line YAML string
         Select the <i>comparison</i> item on the bottom that
         is most similar to the <i>target</i> item on the top.
     debrief: <b>Thanks!</b> Use the participant ID below in Mechanical Turk.
