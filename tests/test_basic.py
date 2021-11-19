@@ -325,18 +325,18 @@ def test_auth_repeated_entries(server):
 
 
 def test_validation_sampling(server, logs):
-    server.authorize()
     n_val = 3
     exp = {
         "targets": list(range(10)),
         "samplers": {"Validation": {"n_queries": n_val}},
     }
-    server.post("/init_exp", data={"exp": exp})
     data = []
     puid = "adsfjkl4awjklra"
 
     n_repeat = 4
     with logs:
+        server.authorize()
+        server.post("/init_exp", data={"exp": exp})
         for k in range(n_repeat * n_val):
             q = server.get("/query").json()
             _ans = random.choice([q["left"], q["right"]])

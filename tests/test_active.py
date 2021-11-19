@@ -100,12 +100,14 @@ def test_samplers_per_user(server, logs):
             q = server.get(f"/query?ident={ident}").json()
             ans = {"winner": random.choice([q["left"], q["right"]]), "puid": "foo", **q}
             server.post("/answer", json=ans)
+            sleep(0.1)
 
         r = server.get("/responses")
         d = r.json()
         df = pd.DataFrame(d)
         algs = df.alg_ident.unique()
         assert len(set(algs)) == 1
+        _ = len(set(algs))
 
 
 def test_round_robin(server, logs):
