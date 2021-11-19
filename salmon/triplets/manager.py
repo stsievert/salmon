@@ -89,7 +89,12 @@ class HTML(BaseSettings):
          css: ""
          max_queries: 50
          arrow_keys: true
+
+    Arbitrary keys are allowed in this class
+    (which might allow for customization on the HTML page).
     """
+    class Config:
+        extra = "allow"
 
     instructions: str = Field(
         "Please select the <i>comparison</i> item that is most similar to the <i>target</i> item.",
@@ -219,8 +224,9 @@ class Config(BaseSettings):
         # Update user_config so when updated below, changes reflected.
         # (it's a plain dict, so it needs some help)
         if "sampling" in user_config and "common" in user_config["sampling"]:
-            s = self.dict()["sampling"]["common"]
-            user_config["sampling"]["common"].update(self.dict()["sampling"]["common"])
+            default_common = self.dict()["sampling"]["common"]
+            default_common.update(user_config["sampling"]["common"])
+            user_config["sampling"]["common"] = default_common
 
         self._warn(user_config)
 
@@ -315,15 +321,8 @@ def get_responses(answers: List[Dict[str, Any]], targets, start_time=0):
 
 def random_query(n: int) -> Dict[str, int]:
     rng = np.random.RandomState()
-    while True:
-        a, b, c = rng.choice(n, size=3)
-        if a != b and b != c and c != a:
-            break
-    return {
-        "head": int(a),
-        "left": int(b),
-        "right": int(c),
-    }
+    a, b, c = rng.choice(n, size=3, replace=False)
+    return {"head": int(a), "left": int(b), "right": int(c)}
 
 
 def _get_filename(html):

@@ -6,7 +6,6 @@ html:
     <i>target</i> item.
   max_queries: 50
   skip_button: false
-n: 10
 samplers:
   random:
     class: Random

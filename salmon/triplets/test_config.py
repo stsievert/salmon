@@ -5,7 +5,7 @@ html_keys = ["debrief", "instructions", "max_queries", "skip_button"]
 
 
 @pytest.mark.parametrize("key", html_keys)
-def test_old_html_keys(key):
+def test_old_html_keys_warns(key):
     c = Config()
     with pytest.raises(ValueError, match="Move.*into the `html` key"):
         c.parse({key: "foo"})
@@ -95,3 +95,25 @@ def test_d_default_in_common_params():
     }
     c = Config().parse(user_config)
     assert c.sampling.common == {"d": 2, "foo": "bar"}
+
+
+def test_d_default_updates():
+    user_config = {
+        "samplers": {"ARR": {}, "TSTE": {}},
+        "sampling": {"common": {"d": 3}}
+    }
+    c = Config().parse(user_config)
+    assert c.sampling.common == {"d": 3}
+
+    user_config = {
+        "samplers": {"ARR": {}, "TSTE": {}},
+        "sampling": {"common": {"d": 3, "foo": "bar"}},
+    }
+    c = Config().parse(user_config)
+    assert c.sampling.common == {"d": 3, "foo": "bar"}
+
+
+def test_probs_default():
+    user_config = {"samplers": {"ARR": {}, "TSTE": {}}}
+    c = Config().parse(user_config)
+    assert c.sampling.probs == {"ARR": 50, "TSTE": 50}

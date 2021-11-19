@@ -268,12 +268,12 @@ def test_get_config(server):
 
 def test_config_defaults(server):
     server.authorize()
-    html = {"instructions": "foo", "debrief": "bar", "max_queries": 42, "custom": "foo"}
+    html = {"instructions": "foo", "debrief": "bar", "max_queries": 42, "custom_tag": "foo"}
     exp = {"targets": 10, "html": html}
     server.post("/init_exp", data={"exp": exp})
 
     rendered = server.get("/config").json()
-    assert "custom" in rendered["html"] and rendered["html"]["custom"] == "foo"
+    assert "custom_tag" in rendered["html"] and rendered["html"]["custom_tag"] == "foo"
     assert rendered["html"]["instructions"] == "foo"
     assert rendered["html"]["debrief"] == "bar"
     assert rendered["html"]["max_queries"] == 42

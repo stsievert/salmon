@@ -56,7 +56,11 @@ def test_run_errors_logged(server, logs):
     # will reflect more of that.
     server.authorize()
     server.get("/init")
-    config = {"targets": list(range(10)), "d": 1, "samplers": {"ARR": {}}}
+    config = {
+        "targets": list(range(10)),
+        "sampling": {"common": {"d": 1}},
+        "samplers": {"ARR": {}},
+    }
     r = server.post("/init_exp", data={"exp": config})
     with pytest.raises(LogError):
         with logs:
