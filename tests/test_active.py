@@ -27,6 +27,7 @@ def test_active_wrong_proportion(server, logs):
     r = server.post("/init_exp", data={"exp": json.dumps(exp)}, error=True)
     assert r.status_code == 500
     assert "values in sampling.probs should add up to 100" in r.text
+    sleep(5)
 
 
 def test_active_bad_keys(server, logs):
@@ -42,6 +43,7 @@ def test_active_bad_keys(server, logs):
         x in r.text.lower()
         for x in ["sampling.probs keys", "are not the same as samplers keys"]
     )
+    sleep(5)
 
 
 def test_active_basics(server, logs):
@@ -73,6 +75,7 @@ def test_active_basics(server, logs):
         assert (df["score"] <= 1).all()
         algs = df.alg_ident.unique()
         assert set(algs) == {"TSTE", "ARR", "CKL", "tste2", "GNMDS"}
+    sleep(5)
 
 
 def test_samplers_per_user(server, logs):
