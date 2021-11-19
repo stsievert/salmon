@@ -1,5 +1,4 @@
 targets: 10
-d: 2
 samplers:
   ARR: {}
   Random: {}
@@ -7,3 +6,5 @@ samplers:
     queries: [[0, 1, 2], [3, 4, 5], [6, 7, 8]]
 sampling:
   probs: {"ARR": 40, "Validation": 40, "Random": 20}
+  common:
+    d: 2
