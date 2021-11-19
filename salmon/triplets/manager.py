@@ -67,8 +67,8 @@ class Sampling(BaseSettings):
     samplers_per_user: int = Field(
         1,
         description="""The number of samplers to assign to each user. Setting
-        ``samplers_per_user==1`` means any user only sees queries generated
-        from one sampler, and ``sampler_per_user==0`` means the user sees a
+        ``samplers_per_user=1`` means any user only sees queries generated
+        from one sampler, and ``sampler_per_user=0`` means the user sees a
         new sampler every query"""
     )
 
@@ -117,7 +117,7 @@ class HTML(BaseSettings):
         50,
         description="""The number of queries that the user will answer before
         seeing the ``debrief`` message). Set ``max_queries=0`` or
-        ``max_queries=-1` to ask unlimited queries.""",
+        ``max_queries=-1`` to ask unlimited queries.""",
     )
     arrow_keys: bool = Field(
         True,
