@@ -8,7 +8,7 @@ html_keys = ["debrief", "instructions", "max_queries", "skip_button"]
 def test_old_html_keys(key):
     c = Config()
     with pytest.raises(ValueError, match="Move.*into the `html` key"):
-        c.update({key: "foo"})
+        c.parse({key: "foo"})
 
 
 @pytest.mark.parametrize("key", html_keys)
@@ -20,9 +20,7 @@ def test_html_propogates(key):
 
     user_config = {"html": {key: v}}
 
-    c.update(user_config)
-    c = c.parse_obj(user_config)
-    c.validate()
+    c = c.parse(user_config)
 
     assert c.html.dict()[key] == v
 
@@ -32,9 +30,7 @@ def test_defaults():
 
     user_config = {"targets": [0, 1, 2, 3]}
 
-    c.update(user_config)
-    c = c.parse_obj(user_config)
-    c.validate()
+    c = c.parse(user_config)
 
     assert c.dict() == {
         "targets": ["0", "1", "2", "3"],
@@ -59,7 +55,7 @@ def test_random_old_name_warns():
     c = Config()
     user_config = {"samplers": {"RandomSampling": {}}}
     with pytest.raises(ValueError, match="renamed to `Random`"):
-        c.update(user_config)
+        c.parse(user_config)
 
 
 def test_wrong_probs():
@@ -68,10 +64,8 @@ def test_wrong_probs():
         "samplers": {"Random": {}, "ARR": {}},
         "sampling": {"probs": {"Random": 50, "ARR": 40}},
     }
-    c.update(user_config)
-    c = c.parse_obj(user_config)
     with pytest.raises(ValueError, match="sampling.probs should add up to 100"):
-        c.validate()
+        c.parse(user_config)
 
 
 def test_wrong_keys():
@@ -80,10 +74,8 @@ def test_wrong_keys():
         "samplers": {"Random": {}, "ARR_v1": {}},
         "sampling": {"probs": {"Random": 50, "ARR_v2": 50}},
     }
-    c.update(user_config)
-    c = c.parse_obj(user_config)
     with pytest.raises(ValueError, match="Keys in sampling.probs but not in samplers"):
-        c.validate()
+        c.parse(user_config)
 
 
 @pytest.mark.parametrize("v", [2, 3])
@@ -93,10 +85,8 @@ def test_bad_samplers_per_keys(v):
         "samplers": {"Random": {}, "ARR": {}},
         "sampling": {"samplers_per_user": v},
     }
-    c.update(user_config)
-    c = c.parse_obj(user_config)
     with pytest.raises(NotImplementedError, match="Only samplers_per_user in {0, 1}"):
-        c.validate()
+        c.parse(user_config)
 
 
 def test_d_in_common_params():
@@ -105,6 +95,5 @@ def test_d_in_common_params():
         "samplers": {"ARR": {}},
         "sampling": {"common": {"foo": "bar"}},
     }
-    c.update(user_config)
-    c = c.parse_obj(user_config)
+    c = c.parse(user_config)
     assert "d" in c.sampling.common and c.sampling.common["d"] == 2

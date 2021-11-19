@@ -209,7 +209,13 @@ class Config(BaseSettings):
     )
 
 
-    def update(self, user_config):
+    def parse(self, user_config):
+        self._update(user_config)
+        self = self.parse_obj(user_config)
+        self._validate()
+        return self
+
+    def _update(self, user_config):
         # Update user_config so when updated below, changes reflected.
         # (it's a plain dict, so it needs some help)
         if "sampling" in user_config and "common" in user_config["sampling"]:
@@ -217,9 +223,8 @@ class Config(BaseSettings):
             user_config["sampling"]["common"].update(self.dict()["sampling"]["common"])
 
         self._warn(user_config)
-        return self
 
-    def validate(self):
+    def _validate(self):
         if self.sampling.probs is None:
             # Sample each sampler equally
             n = len(self.samplers)

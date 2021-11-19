@@ -298,9 +298,7 @@ async def _get_config(exp: bytes, targets: bytes) -> Dict[str, Any]:
     logger.warning(f"user_config = {user_config}")
 
     c = Config()  # defaults already encoded
-    c.update(user_config)
-    c = c.parse_obj(user_config)
-    c.validate()
+    c = c.parse(user_config)
     config = c.dict()
 
     logger.warning(config["sampling"]["probs"])
