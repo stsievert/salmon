@@ -297,63 +297,14 @@ async def _get_config(exp: bytes, targets: bytes) -> Dict[str, Any]:
     logger.warning(f"exp = {exp}")
     logger.warning(f"user_config = {user_config}")
 
-    _config = Config()  # defaults already encoded
-
-    # Update user_config so when updated below, changes reflected.
-    # (it's a plain dict, so it needs some help)
-    if "sampling" in user_config and "common" in user_config["sampling"]:
-        user_config["sampling"]["common"].update(_config.dict()["sampling"]["common"])
-
-    _config = _config.parse_obj(user_config)
-    config = _config.dict()
-
-    if config["sampling"]["probs"] is None:
-        # Sample each sampler equally
-        n = len(config["samplers"])
-        freqs = [100 // n, ] * n
-        freqs[0] += 100 % n  # because integer division might be off by one
-        sampling_percent = {k: f for k, f in zip(config["samplers"], freqs)}
-        config["sampling"]["probs"] = sampling_percent
-
-    # TODO: deprecate
-    html = deepcopy(config["html"])
-    if any(h in config for h in html.keys()):
-        misplaced_keys = [h for h in config if h in html]
-        misplaced = [f"{h}: {config[h]}" for h in misplaced_keys]
-        fmt_misplace = "\n  ".join(list(sorted(misplaced)))
-        msg = (
-            f"Move keys {misplaced_keys} into the `html` key. That is, include "
-            f"this block of YAML:\n\nhtml:\n  {fmt_misplace}\n"
-        )
-        raise ValueError(msg)
-
-    if config["sampling"]["samplers_per_user"] not in {0, 1}:
-        s = config["sampling"]["samplers_per_user"]
-        raise NotImplementedError(
-            "Only samplers_per_user in {0, 1} is implemented, not "
-            f"samplers_per_user={s}"
-        )
-    if "RandomSampling" in config["samplers"]:
-        raise ValueError("The sampler `RandomSampling` has been renamed to `Random`.")
+    c = Config()  # defaults already encoded
+    c.update(user_config)
+    c = c.parse_obj(user_config)
+    c.validate()
+    config = c.dict()
 
     logger.warning(config["sampling"]["probs"])
     logger.warning(config["samplers"])
-    if set(config["sampling"]["probs"].keys()) != set(config["samplers"].keys()):
-        sf = set(config["sampling"]["probs"])
-        s = set(config["samplers"])
-        msg = (
-            "sampling.probs keys={} are not the same as samplers keys={}.\n\n"
-            "Keys in sampling.probs but not in samplers: {}\n"
-            "Keys in samplers but but in sampling.probs: {}\n\n"
-        )
-        raise ValueError(msg.format(sf, s, sf - s, s - sf))
-    if sum(config["sampling"]["probs"].values()) != 100:
-        msg = (
-            "The values in sampling.probs should add up to 100; however, "
-            "the passed sampling.probs={} adds up to {}"
-        )
-        s = config["sampling"]["probs"]
-        raise ValueError(msg.format(s, sum(s.values())))
 
     if targets:
         fnames = _extract_zipfile(targets)

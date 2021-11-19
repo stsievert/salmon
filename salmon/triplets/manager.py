@@ -1,10 +1,11 @@
+from copy import deepcopy
 from textwrap import dedent
 import random
 from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
-from pydantic import BaseModel, BaseSettings, Field
+from pydantic import BaseModel, BaseSettings, Field, validator
 
 
 class Answer(BaseModel):
@@ -54,7 +55,7 @@ class Sampling(BaseSettings):
         values for :class:`~salmon.triplets.samplers.Adaptive`; note that
         values for ``n`` and ``ident`` are already specified). Any
         values specified in this field will be overwritten by
-        sampler-specific arguments."""
+        sampler-specific arguments.""",
     )
     probs: Optional[Dict[str, int]] = Field(
         None,
@@ -62,14 +63,14 @@ class Sampling(BaseSettings):
         opportunity (which depends on ``samplers_per_user``). The percentages
         in this sampler must add up to 100.
         If not specified (default), choose each sampler with equal
-        probability."""
+        probability.""",
     )
     samplers_per_user: int = Field(
         1,
         description="""The number of samplers to assign to each user. Setting
         ``samplers_per_user=1`` means any user only sees queries generated
         from one sampler, and ``sampler_per_user=0`` means the user sees a
-        new sampler every query"""
+        new sampler every query""",
     )
 
 
@@ -106,7 +107,7 @@ class HTML(BaseSettings):
         False,
         description="""Wheter to show a button to skip queries. Most
         useful when participants are instructed to skip queries only when the
-        know nothing about any object."""
+        know nothing about any object.""",
     )
     css: str = Field(
         "",
@@ -123,7 +124,7 @@ class HTML(BaseSettings):
         True,
         description="""Wheter to allow using the arrow keys as input.  Specifying
         ``arrow_keys=True`` might allow bad input (though there is a delay of
-        200ms between queries)."""
+        200ms between queries).""",
     )
 
 
@@ -206,6 +207,68 @@ class Config(BaseSettings):
         description="""Settings to configure how more than two samplers are
         used. See :class:`~salmon.triplets.manager.Sampling` for more detail.""",
     )
+
+
+    def update(self, user_config):
+        # Update user_config so when updated below, changes reflected.
+        # (it's a plain dict, so it needs some help)
+        if "sampling" in user_config and "common" in user_config["sampling"]:
+            s = self.dict()["sampling"]["common"]
+            user_config["sampling"]["common"].update(self.dict()["sampling"]["common"])
+
+        self._warn(user_config)
+        return self
+
+    def validate(self):
+        if self.sampling.probs is None:
+            # Sample each sampler equally
+            n = len(self.samplers)
+            freqs = [100 // n,] * n
+            freqs[0] += 100 % n  # because integer division might be off by one
+            sampling_percent = {k: f for k, f in zip(self.samplers, freqs)}
+            self.sampling.probs = sampling_percent
+
+        if set(self.sampling.probs.keys()) != set(self.samplers.keys()):
+            sf = set(self.sampling.probs)
+            s = set(self.samplers)
+            msg = (
+                "sampling.probs keys={} are not the same as samplers keys={}.\n\n"
+                "Keys in sampling.probs but not in samplers: {}\n"
+                "Keys in samplers but but in sampling.probs: {}\n\n"
+            )
+            raise ValueError(msg.format(sf, s, sf - s, s - sf))
+
+        if (v := self.sampling.samplers_per_user) not in {0, 1}:
+            raise NotImplementedError(
+                "Only samplers_per_user in {0, 1} is implemented, not "
+                f"samplers_per_user={v}"
+            )
+
+        if sum(self.sampling.probs.values()) != 100:
+            msg = (
+                "The values in sampling.probs should add up to 100; however, "
+                "the passed sampling.probs={} adds up to {}"
+            )
+            s2 = self.sampling.probs
+            raise ValueError(msg.format(s2, sum(s2.values())))
+
+    def _warn(self, config):
+        # TODO: deprecate
+        html = self.html.dict()
+        if any(h in config for h in html.keys()):
+            misplaced_keys = [h for h in config if h in html]
+            misplaced = [f"{h}: {config[h]}" for h in misplaced_keys]
+            fmt_misplace = "\n  ".join(list(sorted(misplaced)))
+            msg = (
+                f"Move keys {misplaced_keys} into the `html` key. That is, include "
+                f"this block of YAML:\n\nhtml:\n  {fmt_misplace}\n"
+            )
+            raise ValueError(msg)
+
+        if "RandomSampling" in config.get("samplers", ""):
+            raise ValueError(
+                "The sampler `RandomSampling` has been renamed to `Random`."
+            )
 
 
 def deserialize_query(serialized_query: str) -> Dict[str, int]:
