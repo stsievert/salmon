@@ -268,7 +268,12 @@ def test_get_config(server):
 
 def test_config_defaults(server):
     server.authorize()
-    html = {"instructions": "foo", "debrief": "bar", "max_queries": 42, "custom_tag": "foo"}
+    html = {
+        "instructions": "foo",
+        "debrief": "bar",
+        "max_queries": 42,
+        "custom_tag": "foo",
+    }
     exp = {"targets": 10, "html": html}
     server.post("/init_exp", data={"exp": exp})
 
@@ -321,29 +326,34 @@ def test_auth_repeated_entries(server):
 
 def test_validation_sampling(server, logs):
     server.authorize()
-    n_val = 5
+    n_val = 3
     exp = {
-        "targets": [0, 1, 2, 3, 4, 5],
+        "targets": list(range(10)),
         "samplers": {"Validation": {"n_queries": n_val}},
     }
     server.post("/init_exp", data={"exp": exp})
     data = []
     puid = "adsfjkl4awjklra"
+
+    n_repeat = 4
     with logs:
-        for k in range(3 * n_val):
+        for k in range(n_repeat * n_val):
             q = server.get("/query").json()
-            ans = {"winner": random.choice([q["left"], q["right"]]), "puid": k, **q}
+            _ans = random.choice([q["left"], q["right"]])
+            ans = {"winner": _ans, "puid": k, **q}
             server.post("/answer", data=ans)
             data.append(ans)
             sleep(0.1)
 
         sleep(1)
         r = server.get("/responses")
+
     queries = [(q["head"], (q["left"], q["right"])) for q in r.json()]
-    uniq_queries = [(h, (min(c), max(c))) for h, c in queries]
+    uniq_queries = [((h, min(c), max(c))) for h, c in queries]
     assert len(set(uniq_queries)) == n_val
+
     order = [hash(q) for q in queries]
-    round_orders = [order[k * n_val : (k + 1) * n_val] for k in range(3)]
+    round_orders = [order[k * n_val : (k + 1) * n_val] for k in range(n_repeat)]
     for round_order in round_orders:
         assert len(set(round_order)) == n_val
     assert all(round_orders[0] != order for order in round_orders[1:])
