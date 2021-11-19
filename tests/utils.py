@@ -113,7 +113,6 @@ class Logs:
         self.warn = True
 
     def __enter__(self):
-        # Clear logs
         _clear_logs()
 
     def __exit__(self, exc_type, exc_value, traceback):

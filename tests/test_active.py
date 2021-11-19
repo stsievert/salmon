@@ -9,13 +9,13 @@ from typing import Tuple
 
 import numpy as np
 import pandas as pd
+import pytest
 import yaml
 
-from .utils import logs, server
+from .utils import logs, server, LogError
 
 
 def test_active_wrong_proportion(server, logs):
-    server.authorize()
     exp = {
         "targets": 16,
         "sampling": {"probs": {"a1": 50, "a2": 40}},
@@ -24,33 +24,34 @@ def test_active_wrong_proportion(server, logs):
             "a2": {"class": "Random"},
         },
     }
-    r = server.post("/init_exp", data={"exp": json.dumps(exp)}, error=True)
-    assert r.status_code == 500
-    assert "values in sampling.probs should add up to 100" in r.text
-    sleep(5)
+    with pytest.raises(LogError):
+        with logs:
+            server.authorize()
+            r = server.post("/init_exp", data={"exp": json.dumps(exp)}, error=True)
+            assert r.status_code == 500
+            assert "values in sampling.probs should add up to 100" in r.text
 
 
 def test_active_bad_keys(server, logs):
-    server.authorize()
     exp = {
         "targets": 16,
         "sampling": {"probs": {"a1": 50, "a2": 40}},
         "samplers": {"a1": {"class": "Random"}},
     }
-    r = server.post("/init_exp", data={"exp": exp}, error=True)
-    assert r.status_code == 500
-    assert all(
-        x in r.text.lower()
-        for x in ["sampling.probs keys", "are not the same as samplers keys"]
-    )
-    sleep(5)
+    with pytest.raises(LogError):
+        with logs:
+            server.authorize()
+            r = server.post("/init_exp", data={"exp": exp}, error=True)
+            assert r.status_code == 500
+            assert all(
+                x in r.text.lower()
+                for x in ["sampling.probs keys", "are not the same as samplers keys"]
+            )
 
 
 def test_active_basics(server, logs):
-    server.authorize()
     exp = Path(__file__).parent / "data" / "active.yaml"
     print("init'ing exp")
-    server.post("/init_exp", data={"exp": exp.read_text()})
     print("done")
 
     with open(exp, "r") as f:
@@ -58,6 +59,8 @@ def test_active_basics(server, logs):
     samplers = list(config["samplers"].keys())
 
     with logs:
+        server.authorize()
+        server.post("/init_exp", data={"exp": exp.read_text()})
         for k in range(len(samplers) * 2):
             print(k)
             q = server.get("/query").json()
@@ -75,16 +78,14 @@ def test_active_basics(server, logs):
         assert (df["score"] <= 1).all()
         algs = df.alg_ident.unique()
         assert set(algs) == {"TSTE", "ARR", "CKL", "tste2", "GNMDS"}
-    sleep(5)
 
 
 def test_samplers_per_user(server, logs):
-    server.authorize()
     exp = Path(__file__).parent / "data" / "active.yaml"
     print("init'ing exp")
     exp2 = yaml.safe_load(exp.read_bytes())
     exp2["sampling"] = {"samplers_per_user": 1}
-    server.post("/init_exp", data={"exp": str(exp2)})
+
     print("done")
 
     with open(exp, "r") as f:
@@ -93,6 +94,8 @@ def test_samplers_per_user(server, logs):
 
     ident = random.choice(samplers)
     with logs:
+        server.authorize()
+        server.post("/init_exp", data={"exp": str(exp2)})
         for k in range(len(samplers) * 2):
             q = server.get(f"/query?ident={ident}").json()
             ans = {"winner": random.choice([q["left"], q["right"]]), "puid": "foo", **q}
@@ -106,15 +109,15 @@ def test_samplers_per_user(server, logs):
 
 
 def test_round_robin(server, logs):
-    server.authorize()
     exp = Path(__file__).parent / "data" / "round-robin.yaml"
-    server.post("/init_exp", data={"exp": exp.read_text()})
 
     with open(exp, "r") as f:
         config = yaml.load(f, Loader=yaml.SafeLoader)
     n = len(config["targets"])
 
     with logs:
+        server.authorize()
+        server.post("/init_exp", data={"exp": exp.read_text()})
         for k in range(2 * n):
             print(k)
             q = server.get("/query").json()
