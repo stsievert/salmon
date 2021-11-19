@@ -21,9 +21,10 @@ After users respond, the dashboard will show the following information:
 
 .. raw:: html
 
-   <p><b>A live example is visible at
-   <a href="./dashboard.html">dashboard.html</a>.</b> This example doesn't
-   render the images, but they're shown in the static images below. Here are some screenshots from that example:</p>
+   <p><b>A static dashboard is visible at <a
+   href="./dashboard.html">dashboard.html</a>.</b> This example doesn't render
+   the images, but they're shown in the static images below. Here are some
+   screenshots from that example:</p>
 
 Basic information
 -----------------

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>salmon.triplets.manager.HTML &mdash; Salmon v0.8.0+11.gd098cdf documentation</title>
+  <title>salmon.triplets.manager.HTML &mdash; Salmon v0.8.0+12.g72152a2 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/autodoc_pydantic.css" type="text/css" />
@@ -113,10 +113,12 @@
   <span class="nt">arrow_keys</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
 </pre></div>
 </div>
+<p>Arbitrary keys are allowed in this class
+(which might allow for customization on the HTML page).</p>
 <p><details  class="autodoc_pydantic_collapsable_json">
 <summary>Show JSON schema</summary><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
    <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;HTML&quot;</span><span class="p">,</span>
-   <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Stylistic settings to configure the HTML page.\n\nThe default configuration in YAML:\n\n.. code-block:: yaml\n\n   html:\n     instructions: Please select the &lt;i&gt;comparison&lt;/i&gt; item that is most similar to the &lt;i&gt;target&lt;/i&gt; item.\n     debrief: \&quot;&lt;b&gt;Thanks!&lt;/b&gt; Please use the participant ID below.\&quot;\n     skip_button: false\n     css: \&quot;\&quot;\n     max_queries: 50\n     arrow_keys: true&quot;</span><span class="p">,</span>
+   <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Stylistic settings to configure the HTML page.\n\nThe default configuration in YAML:\n\n.. code-block:: yaml\n\n   html:\n     instructions: Please select the &lt;i&gt;comparison&lt;/i&gt; item that is most similar to the &lt;i&gt;target&lt;/i&gt; item.\n     debrief: \&quot;&lt;b&gt;Thanks!&lt;/b&gt; Please use the participant ID below.\&quot;\n     skip_button: false\n     css: \&quot;\&quot;\n     max_queries: 50\n     arrow_keys: true\n\nArbitrary keys are allowed in this class\n(which might allow for customization on the HTML page).&quot;</span><span class="p">,</span>
    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
    <span class="nt">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
       <span class="nt">&quot;instructions&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -161,14 +163,18 @@
          <span class="nt">&quot;env_names&quot;</span><span class="p">:</span> <span class="s2">&quot;{&#39;arrow_keys&#39;}&quot;</span><span class="p">,</span>
          <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;boolean&quot;</span>
       <span class="p">}</span>
-   <span class="p">},</span>
-   <span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span> <span class="kc">false</span>
+   <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 </details></p><dl class="field-list simple">
-<dt class="field-odd">Fields</dt>
+<dt class="field-odd">Config</dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>extra</strong>: <em>str = allow</em></p></li>
+</ul>
+</dd>
+<dt class="field-even">Fields</dt>
+<dd class="field-even"><ul class="simple">
 <li><p><a class="reference internal" href="#salmon.triplets.manager.HTML.arrow_keys" title="salmon.triplets.manager.HTML.arrow_keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arrow_keys</span> <span class="pre">(bool)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#salmon.triplets.manager.HTML.css" title="salmon.triplets.manager.HTML.css"><code class="xref py py-obj docutils literal notranslate"><span class="pre">css</span> <span class="pre">(str)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#salmon.triplets.manager.HTML.debrief" title="salmon.triplets.manager.HTML.debrief"><code class="xref py py-obj docutils literal notranslate"><span class="pre">debrief</span> <span class="pre">(str)</span></code></a></p></li>
