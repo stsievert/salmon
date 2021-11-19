@@ -71,8 +71,9 @@ def test_run_errors_logged(server, logs):
                 ans["left"] = 12
                 sleep(1)
                 server.post("/answer", data=ans)
-
+    sleep(5)
     server.reset()
+    sleep(5)
 
 
 def test_backend_random_state():

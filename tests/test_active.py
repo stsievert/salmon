@@ -17,7 +17,7 @@ from .utils import logs, server
 def test_active_wrong_proportion(server, logs):
     server.authorize()
     exp = {
-        "targets": 10,
+        "targets": 16,
         "sampling": {"probs": {"a1": 50, "a2": 40}},
         "samplers": {
             "a1": {"class": "Random"},
@@ -32,7 +32,7 @@ def test_active_wrong_proportion(server, logs):
 def test_active_bad_keys(server, logs):
     server.authorize()
     exp = {
-        "targets": 10,
+        "targets": 16,
         "sampling": {"probs": {"a1": 50, "a2": 40}},
         "samplers": {"a1": {"class": "Random"}},
     }
@@ -62,8 +62,9 @@ def test_active_basics(server, logs):
 
             # Jerry rig this so this test isn't random (an algorithm is chosen at random)
             q["alg_ident"] = samplers[k % len(samplers)]
+            ans = random.choice([q["left"], q["right"]])
 
-            ans = {"winner": random.choice([q["left"], q["right"]]), "puid": "foo", **q}
+            ans = {"winner": ans, "puid": "foo", **q}
             server.post("/answer", json=ans)
 
         r = server.get("/responses")
