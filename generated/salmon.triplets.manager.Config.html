@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>salmon.triplets.manager.Config &mdash; Salmon v0.8.0+3.g099f94a documentation</title>
+  <title>salmon.triplets.manager.Config &mdash; Salmon v0.8.0+5.ga6a4286 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/autodoc_pydantic.css" type="text/css" />
@@ -43,10 +43,11 @@
               <p class="caption" role="heading"><span class="caption-text">Usage</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../getting-started.html">Starting an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../init.html">Experiment initialization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../samplers.html">Sampler configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../monitoring.html">Experiment monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../offline.html">Generating embeddings offline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../samplers.html">Sampler configuration</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">API</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="../api.html#configuration">Configuration</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">salmon.triplets.manager.Config</a></li>
@@ -103,7 +104,7 @@
 <em class="property"><span class="pre">pydantic</span> <span class="pre">settings</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">salmon.triplets.manager.</span></span><span class="sig-name descname"><span class="pre">Config</span></span><a class="headerlink" href="#salmon.triplets.manager.Config" title="Permalink to this definition"></a></dt>
 <dd><p>Customization of Salmon sampling and HTML.</p>
 <p>This class is often specified through uploading an <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code> file as
-described in <a class="reference internal" href="../getting-started.html#yamlinitialization"><span class="std std-ref">Experiment initialization with YAML file</span></a>. The default config is given below:</p>
+described in <a class="reference internal" href="../init.html#yamlinitialization"><span class="std std-ref">Experiment initialization with YAML file</span></a>. The default config is given below:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">samplers</span><span class="p">:</span>
   <span class="nt">random</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt">class</span><span class="p">:</span> <span class="nv">Random</span><span class="p p-Indicator">}</span>
 <span class="nt">sampling</span><span class="p">:</span>
@@ -126,7 +127,7 @@ described in <a class="reference internal" href="../getting-started.html#yamlini
 <blockquote>
 <div><ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">targets</span></code> is often specified with the upload of a ZIP file. See
-<a class="reference internal" href="../getting-started.html#yaml-plus-zip"><span class="std std-ref">YAML file with ZIP file</span></a> for more detail. If not, specify a list of strings (which
+<a class="reference internal" href="../init.html#yaml-plus-zip"><span class="std std-ref">YAML file with ZIP file</span></a> for more detail. If not, specify a list of strings (which
 will be rendered as HTML).</p></li>
 </ul>
 </div></blockquote>
@@ -257,7 +258,7 @@ a YAML file:</p>
             <span class="p">},</span>
             <span class="nt">&quot;max_queries&quot;</span><span class="p">:</span> <span class="p">{</span>
                <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Max Queries&quot;</span><span class="p">,</span>
-               <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;The number of queries that the user will answer before\n        seeing the ``debrief`` message). Set ``max_queries=0`` or\n        ``max_queries=-1` to ask unlimited queries.&quot;</span><span class="p">,</span>
+               <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;The number of queries that the user will answer before\n        seeing the ``debrief`` message). Set ``max_queries=0`` or\n        ``max_queries=-1`` to ask unlimited queries.&quot;</span><span class="p">,</span>
                <span class="nt">&quot;default&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
                <span class="nt">&quot;env_names&quot;</span><span class="p">:</span> <span class="s2">&quot;{&#39;max_queries&#39;}&quot;</span><span class="p">,</span>
                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span>
@@ -297,7 +298,7 @@ a YAML file:</p>
             <span class="p">},</span>
             <span class="nt">&quot;samplers_per_user&quot;</span><span class="p">:</span> <span class="p">{</span>
                <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Samplers Per User&quot;</span><span class="p">,</span>
-               <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;The number of samplers to assign to each user. Setting\n        ``samplers_per_user==1`` means any user only sees queries generated\n        from one sampler, and ``sampler_per_user==0`` means the user sees a\n        new sampler every query&quot;</span><span class="p">,</span>
+               <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;The number of samplers to assign to each user. Setting\n        ``samplers_per_user=1`` means any user only sees queries generated\n        from one sampler, and ``sampler_per_user=0`` means the user sees a\n        new sampler every query&quot;</span><span class="p">,</span>
                <span class="nt">&quot;default&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
                <span class="nt">&quot;env_names&quot;</span><span class="p">:</span> <span class="s2">&quot;{&#39;samplers_per_user&#39;}&quot;</span><span class="p">,</span>
                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span>
@@ -346,7 +347,7 @@ a YAML file:</p>
 <em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">targets</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#salmon.triplets.manager.Config.targets" title="Permalink to this definition"></a></dt>
 <dd><p>A list of targets that will be rendered as HTML. If a ZIP file is
             uploaded, this field is populated automatically.
-            See <a class="reference internal" href="../getting-started.html#yaml-plus-zip"><span class="std std-ref">YAML file with ZIP file</span></a> for more detail.</p>
+            See <a class="reference internal" href="../init.html#yaml-plus-zip"><span class="std std-ref">YAML file with ZIP file</span></a> for more detail.</p>
 </dd></dl>
 
 </dd></dl>

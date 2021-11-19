@@ -43,9 +43,10 @@ Canada's Western University.
 
    installation
    getting-started
+   init
+   samplers
    monitoring
    offline
-   samplers
    api
    faq
 
