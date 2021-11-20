@@ -553,20 +553,14 @@ def _reset(timeout: float = 5):
 
     logger.warning("Trying to completely flush database...")
 
-    rj.flushall(asynchronous=True)
-    rj2.flushall(asynchronous=True)
-    rj.flushdb(asynchronous=True)
-    rj2.flushdb(asynchronous=True)
     for _rj in [rj, rj2]:
         _rj.memory_purge()
-        sleep(1)
-        for k in _rj.keys():
-            _rj.delete(k)
         _rj.flushall(asynchronous=True)
         _rj.flushdb(asynchronous=True)
-        sleep(1)
+        _rj.memory_purge()
+        for k in _rj.keys():
+            _rj.delete(k)
         _rj.flushdb(asynchronous=False)
-        sleep(1)
         _rj.flushall(asynchronous=False)
 
     now = datetime.now().isoformat()[: 10 + 6]
@@ -642,12 +636,11 @@ def _fmt_embedding(
     for k, v in kwargs.items():
         df[k] = v
 
-    embedding = np.asarray(embedding)
-    if embedding.ndim == 1:
-        embedding = embedding.reshape(1, -1)
-    for k, col in enumerate(range(embedding.shape[1])):
-        df[k] = embedding[:, col]
-
+    em = np.asarray(embedding)
+    if em.ndim == 1:
+        em = em.reshape(1, -1)
+    for k2, col in enumerate(range(em.shape[1])):
+        df[k2] = em[:, col]
     return df
 
 

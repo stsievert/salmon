@@ -1,7 +1,6 @@
 import json
 from logging import getLogger
 from pathlib import Path
-from time import sleep
 from typing import Tuple
 from warnings import warn
 
@@ -40,7 +39,8 @@ class Server:
         return r
 
     def reset(self):
-        self.delete("/reset?force=1", auth=self.creds, timeout=TIMEOUT)
+        r = self.delete("/reset?force=1", auth=self.creds, timeout=TIMEOUT)
+        assert r.json() == {"success": True}
 
     def post(self, endpoint, data=None, status_code=200, error=False, **kwargs):
         if "auth" not in kwargs and self._authorized:
@@ -84,15 +84,13 @@ def _clear_logs(log=None):
         log_dir = root_dir / "out"
         for log in log_dir.glob("*.log"):
             _clear_logs(log=log)
-        sleep(5)
 
 
 @pytest.fixture()
 def server():
     server = Server("http://127.0.0.1:8421")
     server.authorize()
-    r = server.delete("/reset?force=1", auth=server.creds, timeout=TIMEOUT)
-    assert r.json() == {"success": True}
+
     server.reset()
     _clear_logs()
     yield server
@@ -100,7 +98,6 @@ def server():
     if dump.exists():
         dump.unlink()
     server.reset()
-    _clear_logs()
     _clear_logs()
 
 
@@ -122,7 +119,6 @@ class Logs:
     def __exit__(self, exc_type, exc_value, traceback):
         if exc_type is not None:
             raise exc_type(exc_value)
-        sleep(1)
         files = list(self.log_dir.glob("*.log"))
         msg = f"files for checking logs = {files}"
         logger.warning(msg)

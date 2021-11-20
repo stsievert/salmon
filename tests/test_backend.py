@@ -50,7 +50,9 @@ def test_init_errors_propogate(server, logs):
             server.get("/init")
             r = server.post("/init_exp", data={"exp": exp.read_text()}, error=True)
             assert r.status_code == 500
-            assert "module 'salmon.triplets.samplers' has no attribute 'FooBar'" in r.text
+            assert (
+                "module 'salmon.triplets.samplers' has no attribute 'FooBar'" in r.text
+            )
 
 
 def test_run_errors_logged(server, logs):
@@ -72,12 +74,9 @@ def test_run_errors_logged(server, logs):
                 winner = random.choice([q["left"], q["right"]])
                 ans = {"winner": winner, "puid": "", **q}
                 ans["left"] = 12
-                sleep(1)
+                sleep(0.1)
                 server.post("/answer", data=ans)
-            server.reset()
-        server.reset()
-    server.reset()
-    sleep(2)
+            sleep(7)
 
 
 def test_backend_random_state():

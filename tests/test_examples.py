@@ -1,6 +1,5 @@
 import random
 from pathlib import Path
-from time import sleep
 from zipfile import ZipFile
 
 import pytest
@@ -30,6 +29,7 @@ def _test_upload(exp: Path, target_zip: Path = None, server=None):
     r = server.post("/init_exp", data={"exp": exp.read_text()}, timeout=60, **kwargs)
     return r.status_code == 200
 
+
 def _test_example(exp, target_zip=None, server=None):
     assert server is not None
     success = _test_upload(exp, target_zip, server)
@@ -42,9 +42,9 @@ def _test_example(exp, target_zip=None, server=None):
         query["winner"] = random.choice([query["left"], query["right"]])
         r = server.post("/answer", data=query)
         assert r.status_code == 200
-    r = server.delete("/reset?force=1", timeout=20)
-    assert r.json() == {"success": True}
+    server.reset()
     return True
+
 
 @pytest.mark.parametrize("fname", YAMLS)
 def test_basic_examples(fname: str, server):
