@@ -9,6 +9,9 @@ from ._round_robin import _get_query, _score_query, RoundRobin
 logger = logging.getLogger(__name__)
 
 
+def _random_query(n: int):
+    return np.random.choice(n, size=3, replace=False).tolist()
+
 class Validation(RoundRobin):
     """Ask about the same queries repeatedly"""
     def __init__(self, n, d=2, n_queries=20, queries=None, ident=""):
@@ -41,7 +44,13 @@ class Validation(RoundRobin):
         """
         self.n_queries = n_queries
         if queries is None:
-            queries = [np.random.choice(n, size=3, replace=False) for _ in range(n_queries)]
+            queries = []
+            while True:
+                q = _random_query(n)
+                if q not in queries:
+                    queries.append(q)
+                if len(queries) == n_queries:
+                    break
         idx = [i for query in queries for i in query]
         if n - 1 < max(idx):
             raise ValueError(

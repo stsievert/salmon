@@ -33,6 +33,7 @@ def test_backend_basics(server, logs):
             ans = {"winner": random.choice([q["left"], q["right"]]), "puid": puid, **q}
             ans["response_time"] = time() - _start
             server.post("/answer", data=ans)
+        sleep(5)
 
     print("Getting responses...")
     r = server.get("/responses")
@@ -69,14 +70,14 @@ def test_run_errors_logged(server, logs):
             server.authorize()
             server.get("/init")
             r = server.post("/init_exp", data={"exp": config})
-            for k in range(15):
+            for k in range(2):
                 q = server.get("/query").json()
                 winner = random.choice([q["left"], q["right"]])
                 ans = {"winner": winner, "puid": "", **q}
                 ans["left"] = 12
                 server.post("/answer", data=ans)
-                sleep(0.2 if k > 0 else 3)
-            sleep(5)
+                sleep(1e-3)
+            logs.delay = 7
 
 
 def test_backend_random_state():

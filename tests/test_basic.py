@@ -35,13 +35,14 @@ def test_basics(server, logs):
     puid = "puid-foo"
     answers = []
     print("Starting loop...")
+    n_ans = 40
     with logs:
-        for k in range(70):
+        for k in range(n_ans):
             _start = time()
             q = server.get("/query").json()
             ans = {"winner": random.choice([q["left"], q["right"]]), "puid": puid, **q}
             answers.append(ans)
-            sleep(10e-3)
+            sleep(1e-3)
             ans["response_time"] = time() - _start
             server.post("/answer", data=ans)
 
@@ -100,7 +101,7 @@ def test_basics(server, logs):
     assert r.status_code == 200
     assert "exception" not in r.text
     df = pd.DataFrame(r.json())
-    assert len(df) == 70
+    assert len(df) == n_ans
 
     r = server.get("/dashboard")
     assert r.status_code == 200
@@ -325,7 +326,7 @@ def test_auth_repeated_entries(server):
 
 
 def test_validation_sampling(server, logs):
-    n_val = 3
+    n_val = 4
     exp = {
         "targets": list(range(10)),
         "samplers": {"Validation": {"n_queries": n_val}},
@@ -333,7 +334,7 @@ def test_validation_sampling(server, logs):
     data = []
     puid = "adsfjkl4awjklra"
 
-    n_repeat = 4
+    n_repeat = 3
     with logs:
         server.authorize()
         server.post("/init_exp", data={"exp": exp})
@@ -345,11 +346,11 @@ def test_validation_sampling(server, logs):
             data.append(ans)
             sleep(0.2)
 
-        sleep(2)
+        sleep(3)
         r = server.get("/responses")
 
     queries = [(q["head"], (q["left"], q["right"])) for q in r.json()]
-    uniq_queries = [((h, min(c), max(c))) for h, c in queries]
+    uniq_queries = [(h, min(c), max(c)) for h, c in queries]
     assert len(set(uniq_queries)) == n_val
 
     order = [hash(q) for q in queries]

@@ -3,6 +3,7 @@ from logging import getLogger
 from pathlib import Path
 from typing import Tuple
 from warnings import warn
+from time import sleep
 
 import httpx as requests
 import numpy as np
@@ -112,6 +113,7 @@ class Logs:
         self.log_dir = root_dir / "out"
         self.catch = True
         self.warn = True
+        self.delay = 2
 
     def __enter__(self):
         _clear_logs()
@@ -119,6 +121,7 @@ class Logs:
     def __exit__(self, exc_type, exc_value, traceback):
         if exc_type is not None:
             raise exc_type(exc_value)
+        sleep(self.delay)
         files = list(self.log_dir.glob("*.log"))
         msg = f"files for checking logs = {files}"
         logger.warning(msg)
