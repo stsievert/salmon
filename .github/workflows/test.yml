@@ -59,5 +59,5 @@ jobs:
           sudo docker ps
     - name: Run all tests
       run: |
-          sudo docker-compose logs -f &
+          # sudo docker-compose logs -f &  # if debugging; shows logs
           sudo /usr/share/miniconda/bin/pytest -s
