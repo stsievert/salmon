@@ -1,10 +1,11 @@
 import random
+from time import sleep
 from pathlib import Path
 from zipfile import ZipFile
 
 import pytest
 
-from .utils import server
+from .utils import server, logs
 
 EG_DIR = Path(__file__).parent.parent / "examples"
 SUBDIRS = [
@@ -47,17 +48,19 @@ def _test_example(exp, target_zip=None, server=None):
 
 
 @pytest.mark.parametrize("fname", YAMLS)
-def test_basic_examples(fname: str, server):
-    server.authorize()
-    success = _test_example(EG_DIR / fname, server=server)
+def test_basic_examples(fname: str, server, logs):
+    with logs:
+        server.authorize()
+        success = _test_example(EG_DIR / fname, server=server)
     assert success
 
 
 @pytest.mark.parametrize("eg_dir", SUBDIRS)
-def test_directory_examples(eg_dir: str, server):
-    server.authorize()
+def test_directory_examples(eg_dir: str, server, logs):
     _eg_dir = EG_DIR / eg_dir
-    for exp in _eg_dir.glob("*.yaml"):
-        for target_zip in _eg_dir.glob("*.zip"):
-            success = _test_example(exp, target_zip, server)
-            assert success
+    with logs:
+        server.authorize()
+        for exp in _eg_dir.glob("*.yaml"):
+            for target_zip in _eg_dir.glob("*.zip"):
+                success = _test_example(exp, target_zip, server)
+                assert success

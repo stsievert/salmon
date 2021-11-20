@@ -113,7 +113,7 @@ class Logs:
         self.log_dir = root_dir / "out"
         self.catch = True
         self.warn = True
-        self.delay = 2
+        self.delay = 0.5  # for files to finish flushing
 
     def __enter__(self):
         _clear_logs()

@@ -42,7 +42,7 @@ def test_basics(server, logs):
             q = server.get("/query").json()
             ans = {"winner": random.choice([q["left"], q["right"]]), "puid": puid, **q}
             answers.append(ans)
-            sleep(1e-3)
+            sleep(100e-3)
             ans["response_time"] = time() - _start
             server.post("/answer", data=ans)
 
@@ -126,6 +126,7 @@ def test_no_repeats(server):
         q = server.get("/query").json()
         ans = {"winner": random.choice([q["left"], q["right"]]), "puid": "foo", **q}
         server.post("/answer", data=ans)
+        sleep(10e-3)
 
     r = server.get("/responses")
     df = pd.DataFrame(r.json())

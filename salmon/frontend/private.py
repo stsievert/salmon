@@ -505,7 +505,7 @@ def reset(
         )
         raise ServerException(msg, status_code=403)
 
-    logger.error("Authorized reset, force=True. Removing data from database")
+    logger.warning("Authorized reset, force=True. Removing data from database")
     meta = _reset(timeout=timeout)
     assert meta["success"]
     return HTMLResponse(
@@ -576,7 +576,7 @@ def _reset(timeout: float = 5):
     files = [f.name for f in save_dir.glob("*")]
     logger.warning(f"dump_rdb in files? {'dump.rdb' in files}")
     if "dump.rdb" in files:
-        logger.error(f"Moving dump.rdb to dump-{now}.rdb")
+        logger.warning(f"Moving dump.rdb to dump-{now}.rdb")
         shutil.move(str(save_dir / "dump.rdb"), str(save_dir / f"dump-{now}.rdb"))
         files = [f.name for f in save_dir.glob("*")]
         logger.warning(f"after moving, dump_rdb in files? {'dump.rdb' in files}")
