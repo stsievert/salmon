@@ -3,7 +3,12 @@
 # Currently so don't have to rebuild docker machines; see
 # https://github.com/dask/dask-docker/pull/108
 
-export SALMON_NPROC=$(getconf _NPROCESSORS_ONLN)
+# TODO: _NPROCESSORS_ONLN==1 for github actions. Leads to index error on
+# backend, not enough workers.
+
+
+export NUM_PROCS=$(getconf _NPROCESSORS_ONLN)
+export SALMON_NPROC=$(python -c "print(max(4, $NUM_PROCS))")
 
 # chose nthreads=1 because best practice [1]
 # [1]: https://docs.dask.org/en/latest/array-best-practices.html#avoid-oversubscribing-threads
