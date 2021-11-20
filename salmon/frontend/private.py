@@ -937,7 +937,7 @@ async def download(request: Request, authorized: bool = Depends(_authorize)):
     This file can be used to restore the contents of the Redis
     database on a new machine.
     """
-    _save(rj, bg=True)
+    _save(rj, bg=False)
     fname = datetime.now().isoformat()[: 10 + 6]
     version = salmon.__version__
     headers = {
