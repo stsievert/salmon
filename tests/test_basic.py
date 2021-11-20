@@ -327,7 +327,7 @@ def test_auth_repeated_entries(server):
 
 
 def test_validation_sampling(server, logs):
-    n_val = 4
+    n_val = 3
     exp = {
         "targets": list(range(10)),
         "samplers": {"Validation": {"n_queries": n_val}},
@@ -350,10 +350,12 @@ def test_validation_sampling(server, logs):
         sleep(3)
         r = server.get("/responses")
 
+    # Test the number of unique queries is specified by n_val
     queries = [(q["head"], (q["left"], q["right"])) for q in r.json()]
     uniq_queries = [(h, min(c), max(c)) for h, c in queries]
     assert len(set(uniq_queries)) == n_val
 
+    # Test the order gets shuffled every iteration
     order = [hash(q) for q in queries]
     round_orders = [order[k * n_val : (k + 1) * n_val] for k in range(n_repeat)]
     for round_order in round_orders:
