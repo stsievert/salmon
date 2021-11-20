@@ -69,14 +69,13 @@ def test_run_errors_logged(server, logs):
             server.authorize()
             server.get("/init")
             r = server.post("/init_exp", data={"exp": config})
-            for k in range(10):
+            for k in range(15):
                 q = server.get("/query").json()
                 winner = random.choice([q["left"], q["right"]])
                 ans = {"winner": winner, "puid": "", **q}
                 ans["left"] = 12
-                sleep(0.1)
                 server.post("/answer", data=ans)
-            sleep(7)
+                sleep(0.2 if k > 0 else 3)
 
 
 def test_backend_random_state():

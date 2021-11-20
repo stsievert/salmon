@@ -444,7 +444,7 @@ async def _process_form(
     rj.jsonset("start_time", root, _time)
     rj.jsonset("start_datetime", root, datetime.now().isoformat())
     rj.jsonset("all-responses", root, [])
-    rj.bgsave()
+    _save(rj)
 
     nice_config = pprint.pformat(exp_config)
     logger.info("Experiment initialized with\nexp_config=%s", nice_config)
@@ -516,12 +516,19 @@ def reset(
     )
 
 
-def _reset(timeout: float = 5):
+def _save(rj, bg=False):
     try:
-        rj.save()
+        if bg:
+            rj.bgsave()
+        else:
+            rj.save()
     except ResponseError as e:
         if "save already in progress" not in str(e):
             raise e
+
+
+def _reset(timeout: float = 5):
+    _save(rj)
 
     # Stop background jobs (ie adaptive algs)
     rj.jsonset("reset", root, True)
@@ -740,7 +747,7 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
       query page?"
     """
     logger.info("Getting dashboard")
-    rj.bgsave()
+    _save(rj, bg=True)
     exp_config = await _ensure_initialized()
     exp_config = deepcopy(exp_config)
     targets = exp_config.pop("targets")
@@ -930,7 +937,7 @@ async def download(request: Request, authorized: bool = Depends(_authorize)):
     This file can be used to restore the contents of the Redis
     database on a new machine.
     """
-    rj.save()
+    _save(rj, bg=True)
     fname = datetime.now().isoformat()[: 10 + 6]
     version = salmon.__version__
     headers = {
