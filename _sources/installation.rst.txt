@@ -12,6 +12,16 @@ machine. After you get Salmon running, detail on how to launch experiments in
    See the `Troubleshooting`_ section if you're having difficulties with either
    of the processes below.
 
+.. note::
+
+   Please include the version in any bug reports or feature requests.  The
+   version number should look something like ``v0.4.1``. It can be found at
+   ``http://[url]:8421/docs`` or in the downloaded experiment file (found at
+   ``http://[url]:8421/download`` which has a filename like
+   ``exp-2021-05-20T07:31-salmon-v0.4.1.rdb``).
+
+.. _Salmon's issue tracker: https://github.com/stsievert/salmon/issues
+
 Experimentalist
 ---------------
 
@@ -150,6 +160,9 @@ right of the Amazon EC2 interface.
 
 The Salmon AMI has been created in the ``us-west-2`` region, and EC2 AMIs are
 only available in the regions they're created in.
+
+
+.. _restorefrombackupfaq:
 
 Restoring from a backup didn't work
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

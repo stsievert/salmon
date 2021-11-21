@@ -14,10 +14,13 @@ Choosing the most useful queries to improve the embedding is the task of
 use all previous responses collected to determine the next query that will help
 improve the embedding the most.
 
-This may not always be of interest: sometimes, the goal is not to generate a
-good embedding, but rather to see how well the crowd agrees with each other, or
-to make sure participants don't influence each other (and each response is
-independent of other responses). Here's a rule of thumb:
+If quality embeddings are desired, the benchmarks at ":ref:`experiments`" are
+likely of interest, as are the FAQs on ":ref:`random_vs_active`" and
+":ref:`adaptiveconfig`" However, quality embeddings may not always be of
+interest: sometimes, the goal is not to generate a good embedding, but rather
+to see how well the crowd agrees with each other, or to make sure participants
+don't influence each other (and each response is independent of other
+responses). Here's a rule of thumb:
 
 .. note::
 
@@ -25,8 +28,8 @@ independent of other responses). Here's a rule of thumb:
    ``samplers``, or use the default ``Random: {}``, which will rely on
    :class:`~salmon.triplets.samplers.Random`
 
-   **Want to generate a better embedding?** Worried about the cost of collecting
-   responses? Use ``ARR: {}``, which will rely on
+   **Want to generate a better embedding? Worried about the cost of
+   collecting responses?** Use ``ARR: {}``, which will rely on
    :class:`~salmon.triplets.samplers.ARR`.
 
    **Want to measure how well the crowd agrees with one another?** Use

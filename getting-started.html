@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Getting started &mdash; Salmon v0.8.0+40.gfffb00b documentation</title>
+  <title>Getting started &mdash; Salmon v0.8.0+41.g38d76b6 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/autodoc_pydantic.css" type="text/css" />
@@ -135,26 +135,24 @@ machine Salmon is running on is restarted.</p>
 </section>
 <section id="experiment-initialization">
 <h2>Experiment initialization<a class="headerlink" href="#experiment-initialization" title="Permalink to this headline"></a></h2>
-<p>After a user has been successfully created, hit the back
-button and launch an experiment. You have three options:</p>
+<p>Hit the back button to visit <code class="docutils literal notranslate"><span class="pre">http://[url]:8421/init</span></code> again after after a
+user has been successfully created. Now, let’s launch an experiment! There are
+three options:</p>
 <ol class="arabic simple">
 <li><p>Upload of a YAML file completely detailing the experiment.</p></li>
 <li><p>Upload of a YAML file describing experiment, and ZIP file for the targets.</p></li>
 <li><p>Upload of a database dump from Salmon.</p></li>
 </ol>
-<p>These options are detailed at “<a class="reference internal" href="init.html#init"><span class="std std-ref">Experiment initialization</span></a>.” After you launch your experiment
-and vist <code class="docutils literal notranslate"><span class="pre">http://[url]:8421</span></code>, you will see a query page:</p>
+<p>These options are detailed at “<a class="reference internal" href="init.html#init"><span class="std std-ref">Experiment initialization</span></a>.” If an experiment is incorrectly
+specified, (hopefully helpful) errors will be raised. After the experiment is
+finished launching, you will see a couple links:</p>
+<ul class="simple">
+<li><p>A link to the dashboard (<code class="docutils literal notranslate"><span class="pre">http://[url]:8421/dashboard</span></code>), an example of
+which is at “<a class="reference internal" href="monitoring.html#exp-monitoring"><span class="std std-ref">Experiment monitoring</span></a>.”</p></li>
+<li><p>A link to the query page to send to crowdsourcing users
+(<code class="docutils literal notranslate"><span class="pre">http://[url]:8421/</span></code>). An (out-of-date) example:</p></li>
+</ul>
 <a class="reference internal image-reference" href="_images/query_page.png"><img alt="_images/query_page.png" class="align-center" src="_images/query_page.png" style="width: 500px;" /></a>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>This image is almost certainly out of date.</p>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Please include the version in any bug reports or feature requests.
-The version number is available at <code class="docutils literal notranslate"><span class="pre">http://[url]:8421/docs</span></code> and should look
-something like <code class="docutils literal notranslate"><span class="pre">v0.4.1</span></code>, typically shown right next to “Salmon.”</p>
-</div>
 </section>
 <section id="send-the-url-to-participants">
 <h2>Send the URL to participants<a class="headerlink" href="#send-the-url-to-participants" title="Permalink to this headline"></a></h2>

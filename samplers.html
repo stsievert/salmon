@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sampler configuration &mdash; Salmon v0.8.0+40.gfffb00b documentation</title>
+  <title>Sampler configuration &mdash; Salmon v0.8.0+41.g38d76b6 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/autodoc_pydantic.css" type="text/css" />
@@ -103,17 +103,20 @@ won’t improve the embedding much.</p>
 “active machine learning” aka “adaptive sampling algorithms.” These algorithms
 use all previous responses collected to determine the next query that will help
 improve the embedding the most.</p>
-<p>This may not always be of interest: sometimes, the goal is not to generate a
-good embedding, but rather to see how well the crowd agrees with each other, or
-to make sure participants don’t influence each other (and each response is
-independent of other responses). Here’s a rule of thumb:</p>
+<p>If quality embeddings are desired, the benchmarks at “<a class="reference internal" href="benchmarks/active.html#experiments"><span class="std std-ref">Active sampling</span></a>” are
+likely of interest, as are the FAQs on “<a class="reference internal" href="faq.html#random-vs-active"><span class="std std-ref">When should I use random/active sampling?</span></a>” and
+“<a class="reference internal" href="faq.html#adaptiveconfig"><span class="std std-ref">What active samplers are recommended?</span></a>” However, quality embeddings may not always be of
+interest: sometimes, the goal is not to generate a good embedding, but rather
+to see how well the crowd agrees with each other, or to make sure participants
+don’t influence each other (and each response is independent of other
+responses). Here’s a rule of thumb:</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p><strong>Want an unbiased estimate of what the crowd thinks?</strong> Don’t specify
 <code class="docutils literal notranslate"><span class="pre">samplers</span></code>, or use the default <code class="docutils literal notranslate"><span class="pre">Random:</span> <span class="pre">{}</span></code>, which will rely on
 <a class="reference internal" href="generated/salmon.triplets.samplers.Random.html#salmon.triplets.samplers.Random" title="salmon.triplets.samplers.Random"><code class="xref py py-class docutils literal notranslate"><span class="pre">Random</span></code></a></p>
-<p><strong>Want to generate a better embedding?</strong> Worried about the cost of collecting
-responses? Use <code class="docutils literal notranslate"><span class="pre">ARR:</span> <span class="pre">{}</span></code>, which will rely on
+<p><strong>Want to generate a better embedding? Worried about the cost of
+collecting responses?</strong> Use <code class="docutils literal notranslate"><span class="pre">ARR:</span> <span class="pre">{}</span></code>, which will rely on
 <a class="reference internal" href="generated/salmon.triplets.samplers.ARR.html#salmon.triplets.samplers.ARR" title="salmon.triplets.samplers.ARR"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARR</span></code></a>.</p>
 <p><strong>Want to measure how well the crowd agrees with one another?</strong> Use
 <code class="docutils literal notranslate"><span class="pre">Validation:</span> <span class="pre">{}</span></code>, which will rely on

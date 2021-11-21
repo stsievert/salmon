@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Experiment initialization &mdash; Salmon v0.8.0+40.gfffb00b documentation</title>
+  <title>Experiment initialization &mdash; Salmon v0.8.0+41.g38d76b6 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/autodoc_pydantic.css" type="text/css" />
@@ -160,9 +160,10 @@ Some more details can be found at <a class="reference internal" href="samplers.h
 </section>
 <section id="yaml-file-with-zip-file">
 <span id="yaml-plus-zip"></span><h2>YAML file with ZIP file<a class="headerlink" href="#yaml-file-with-zip-file" title="Permalink to this headline"></a></h2>
-<p>Uploading a ZIP file will completely replace the <code class="docutils literal notranslate"><span class="pre">targets</span></code> key. It’s
-recommended not to specify it. However, it doesn’t matter if you have specified
-it because it will be overwritten.</p>
+<p>Uploading a ZIP file for targets/stimuli is a small addition to
+“<a class="reference internal" href="#yamlinitialization"><span class="std std-ref">Experiment initialization with YAML file</span></a>.” The only difference is that uploading a ZIP file
+overwrites and configures the <code class="docutils literal notranslate"><span class="pre">targets</span></code> key for you (so it’s not necessary to
+specify the <code class="docutils literal notranslate"><span class="pre">targets</span></code> key when uploading a ZIP file).</p>
 <p>Here are the choices for different files to include in the ZIP file:</p>
 <ul class="simple">
 <li><p>A single CSV file. Each textual target should be on a new line.</p></li>
@@ -173,8 +174,10 @@ it because it will be overwritten.</p>
 </ul>
 </li>
 </ul>
-<p>Let’s walk through two examples, both with uploading a bunch of images with
-skiers. Both cases will use this <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code> file:</p>
+<p>A YAML file must be uploaded describing the experiment in addition to including
+the targets in the ZIP file.  Let’s walk through two examples, both with
+uploading a bunch of images with skiers. Both cases will use this <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code>
+file:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: init.yaml</span>
 <span class="nt">html</span><span class="p">:</span>
   <span class="nt">instructions</span><span class="p">:</span> <span class="p p-Indicator">&gt;</span>  <span class="c1"># multi-line YAML string</span>
@@ -230,7 +233,13 @@ bolded text for “<strong>Ted Ligety</strong>.” That means we can also render
 is, at <code class="docutils literal notranslate"><span class="pre">http://[url]:8421/dashboard</span></code>). This will download a file called
 <code class="docutils literal notranslate"><span class="pre">exp-[date]-vX.Y.Z.rdb</span></code>. Do not delete the numbers <code class="docutils literal notranslate"><span class="pre">X.Y.Z</span></code>!</p>
 <p>Salmon supports the upload of this file to the same version of Salmon. The
-upload of this file will restore the state of your experiment.</p>
+upload of this file will restore the state of your experiment. After this file
+is uploaded, the two machines will become indistinguishable from each other
+(which allows you to download the entire experiment onto your own machine then
+upload it to a completely new machine a month later and start collecting
+responses again).</p>
+<p>If you run into errors, the FAQ “<a class="reference internal" href="installation.html#restorefrombackupfaq"><span class="std std-ref">Restoring from a backup didn’t work</span></a>” will likely be
+relevant.</p>
 </section>
 </section>
 
