@@ -941,7 +941,7 @@ async def download(request: Request, authorized: bool = Depends(_authorize)):
     fname = datetime.now().isoformat()[: 10 + 6]
     version = salmon.__version__
     headers = {
-        "Content-Disposition": f'attachment; filename="exp-{fname}-{version}.rdb"'
+        "Content-Disposition": f'attachment; filename="exp-{fname}-salmon-{version}.rdb"'
     }
     return FileResponse(str(ROOT_DIR / "out" / "dump.rdb"), headers=headers)
 

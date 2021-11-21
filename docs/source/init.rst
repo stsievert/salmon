@@ -83,9 +83,10 @@ Complete details on the YAML file are at at
 YAML file with ZIP file
 -----------------------
 
-Uploading a ZIP file will completely replace the ``targets`` key. It's
-recommended not to specify it. However, it doesn't matter if you have specified
-it because it will be overwritten.
+Uploading a ZIP file for targets/stimuli is a small addition to
+":ref:`yamlinitialization`." The only difference is that uploading a ZIP file
+overwrites and configures the ``targets`` key for you (so it's not necessary to
+specify the ``targets`` key when uploading a ZIP file).
 
 Here are the choices for different files to include in the ZIP file:
 
@@ -96,8 +97,10 @@ Here are the choices for different files to include in the ZIP file:
   - Images: ``png``, ``gif``, ``jpg``, ``jpeg``
 
 
-Let's walk through two examples, both with uploading a bunch of images with
-skiers. Both cases will use this ``init.yaml`` file:
+A YAML file must be uploaded describing the experiment in addition to including
+the targets in the ZIP file.  Let's walk through two examples, both with
+uploading a bunch of images with skiers. Both cases will use this ``init.yaml``
+file:
 
 .. code-block:: yaml
 
@@ -166,4 +169,11 @@ is, at ``http://[url]:8421/dashboard``). This will download a file called
 ``exp-[date]-vX.Y.Z.rdb``. Do not delete the numbers ``X.Y.Z``!
 
 Salmon supports the upload of this file to the same version of Salmon. The
-upload of this file will restore the state of your experiment.
+upload of this file will restore the state of your experiment. After this file
+is uploaded, the two machines will become indistinguishable from each other
+(which allows you to download the entire experiment onto your own machine then
+upload it to a completely new machine a month later and start collecting
+responses again).
+
+If you run into errors, the FAQ ":ref:`restorefrombackupfaq`" will likely be
+relevant.

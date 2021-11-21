@@ -33,7 +33,7 @@ html_context = {
     "github_user": "stsievert",  # Username
     "github_repo": "salmon",  # Repo name
     "github_version": "master",  # Version
-    "conf_py_path": "/source/",  # Path in the checkout to the docs root
+    "conf_py_path": "/docs/source/",  # Path in the checkout to the docs root
 }
 
 html_theme_options = {

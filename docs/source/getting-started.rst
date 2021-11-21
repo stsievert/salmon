@@ -52,31 +52,28 @@ It is technically possible to recover the username/password with the key file
 Experiment initialization
 -------------------------
 
-After a user has been successfully created, hit the back
-button and launch an experiment. You have three options:
+Hit the back button to visit ``http://[url]:8421/init`` again after after a
+user has been successfully created. Now, let's launch an experiment! There are
+three options:
 
 1. Upload of a YAML file completely detailing the experiment.
 2. Upload of a YAML file describing experiment, and ZIP file for the targets.
 3. Upload of a database dump from Salmon.
 
-These options are detailed at ":ref:`init`." After you launch your experiment
-and vist ``http://[url]:8421``, you will see a query page:
+These options are detailed at ":ref:`init`." If an experiment is incorrectly
+specified, (hopefully helpful) errors will be raised. After the experiment is
+finished launching, you will see a couple links:
+
+* A link to the dashboard (``http://[url]:8421/dashboard``), an example of
+  which is at ":ref:`exp-monitoring`."
+* A link to the query page to send to crowdsourcing users
+  (``http://[url]:8421/``). An (out-of-date) example:
 
 .. _YAML specification: https://yaml.org/
 
 .. image:: imgs/query_page.png
    :align: center
    :width: 500px
-
-.. note::
-
-   This image is almost certainly out of date.
-
-.. note::
-
-   Please include the version in any bug reports or feature requests.
-   The version number is available at ``http://[url]:8421/docs`` and should look
-   something like ``v0.4.1``, typically shown right next to "Salmon."
 
 Send the URL to participants
 ----------------------------
