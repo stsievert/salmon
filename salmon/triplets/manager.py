@@ -93,9 +93,14 @@ class HTML(BaseSettings):
     Arbitrary keys are allowed in this class
     (which might allow for customization on the HTML page).
     """
+
     class Config:
         extra = "allow"
 
+    title: str = Field(
+        "Similarity judgements",
+        description="The title of the HTML page (the text shown in the tab bar)",
+    )
     instructions: str = Field(
         "Please select the <i>comparison</i> item that is most similar to the <i>target</i> item.",
         description="The instructions the user sees above each query.",
@@ -212,7 +217,6 @@ class Config(BaseSettings):
         description="""Settings to configure how more than two samplers are
         used. See :class:`~salmon.triplets.manager.Sampling` for more detail.""",
     )
-
 
     def parse(self, user_config):
         self._update(user_config)

@@ -31,6 +31,7 @@ def test_defaults():
         "targets": ["0", "1", "2", "3"],
         "html": {
             "instructions": "Please select the <i>comparison</i> item that is most similar to the <i>target</i> item.",
+            "title": "Similarity judgements",
             "debrief": "<b>Thanks!</b> Please use the participant ID below.",
             "skip_button": False,
             "css": "",
@@ -101,7 +102,7 @@ def test_d_default_in_common_params():
 def test_d_default_updates():
     user_config = {
         "samplers": {"ARR": {}, "TSTE": {}},
-        "sampling": {"common": {"d": 3}}
+        "sampling": {"common": {"d": 3}},
     }
     c = Config().parse(user_config)
     assert c.sampling.common == {"d": 3}
