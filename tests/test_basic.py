@@ -13,6 +13,7 @@ import pandas as pd
 import pytest
 import yaml
 
+from salmon.triplets.manager import Config
 from .utils import LogError, logs, server
 
 
@@ -266,7 +267,7 @@ def test_get_config(server):
     assert yaml.safe_load(yaml_config) == rendered_config
 
 
-def test_config_defaults(server):
+def test_config_defaults_update(server):
     server.authorize()
     html = {
         "instructions": "foo",
@@ -368,3 +369,26 @@ def test_random_error(server, logs):
         server.authorize()
         r = server.post("/init_exp", data={"exp": exp}, status_code=500)
         assert "The sampler `RandomSampling` has been renamed to `Random`" in r.text
+
+
+def test_html_defaults_rendered(server):
+    server.authorize()
+    exp = {
+        "targets": 10,
+        "html": {"arrow_keys": True, "css": "/*css foo*/", "skip_button": True},
+    }
+    server.post("/init_exp", data={"exp": exp})
+    rendered = server.get("/").text
+
+    html = Config().html.dict()
+
+    assert f"<title>{html['title']}</title>" in rendered
+    assert f"<p id=\"instructions\">{html['instructions']}</p>" in rendered
+    assert f"id=\"debrief\">{html['debrief']}" in rendered
+    assert f"var max_queries = {html['max_queries']};" in rendered
+    assert 'id="skip-button"' in rendered and "Skip this question" in rendered
+    assert "/*css foo*/" in rendered
+    assert (
+        "document.onkeydown = function checkKey(e) {" in rendered
+        and "e.keyCode == '37') { // left arrow" in rendered
+    )

@@ -12,7 +12,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
-<title>html['title']</title>
+<title>{{html['title']}}</title>
 
 {% for url in urls %}
 <link rel="prefetch" href={{url}}>
@@ -66,7 +66,7 @@
   <div class="outline justify-content-center">
     <div class="row justify-content-center">
         <br>
-    <p> {{html['instructions'] | safe}} </p>
+        <p id="instructions">{{html['instructions'] | safe}}</p>
     </div>
     <!-- <hr> -->
     <div class="row justify-content-center" id="target-text">
@@ -83,7 +83,7 @@
       <div class="cell answer col col-lg-5 center cell answer" id="q-left"></div>
       <div class="cell answer col col-lg-5 center cell answer" id="q-right"></div>
     </div>
-    {% if skip_button %}
+    {% if html['skip_button'] %}
       <div class="d-flex align-items-end flex-column">
         <div id="skip-button" style="padding: 30px; padding-right: 60px;">
           <button type="button" class="btn btn-outline-secondary btn-sm" onclick="getquery()"
@@ -92,7 +92,6 @@
           >Skip this question</button>
         </div>
       </div>
-
     {% endif %}
 
   </div>
@@ -112,9 +111,7 @@
 <div class="modal fade" id="debriefModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content debrief">
-       <div class="modal-body">
-         {{ html['debrief'] | safe }}
-       </div>
+       <div class="modal-body" id="debrief">{{ html['debrief'] | safe }}</div>
        <div class="modal-body">
          Participant ID: <span id="puid">{{ puid }}</span>
       </div>
