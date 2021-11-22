@@ -19,7 +19,6 @@ def test_backend_basics(server, logs):
     exp = Path(__file__).parent / "data" / "round-robin.yaml"
     exp_config = yaml.safe_load(exp.read_text())
 
-    # ran into a bug that happened with len(samplers) > 1
     assert len(exp_config["samplers"]) == 1
     puid = "puid-foo"
     with logs:
@@ -42,16 +41,14 @@ def test_backend_basics(server, logs):
     assert len(df) == 30
 
 
-def test_init_errors_propogate(server, logs):
+def test_init_errors_propogate(server):
     exp = Path(__file__).parent / "data" / "exp-active-bad.yaml"
 
     server.authorize()
     server.get("/init")
     r = server.post("/init_exp", data={"exp": exp.read_text()}, error=True)
     assert r.status_code == 500
-    assert (
-        "module 'salmon.triplets.samplers' has no attribute 'FooBar'" in r.text
-    )
+    assert "module 'salmon.triplets.samplers' has no attribute 'FooBar'" in r.text
 
 
 def test_run_errors_logged(server, logs):

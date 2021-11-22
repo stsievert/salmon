@@ -12,7 +12,7 @@ import pandas as pd
 import pytest
 import yaml
 
-from .utils import logs, server, LogError
+from .utils import LogError, logs, server
 
 
 def test_samplers_per_user(server, logs):
@@ -74,6 +74,42 @@ def test_active_bad_keys(server, logs):
                 x in r.text.lower()
                 for x in ["sampling.probs keys", "are not the same as samplers keys"]
             )
+
+
+@pytest.mark.parametrize("sampler", ["ARR", "CKL", "TSTE", "STE", "GNMDS"])
+def test_active_chosen_queries_generated(server, sampler, logs):
+    # R=1 chosen because that determines when active sampling starts; this
+    # test is designed to make sure no unexpected errors are thrown in
+    # active portion (not that it generates a good embedding)
+
+    n = 7
+    config = {
+        "targets": n,
+        "samplers": {sampler: {}},
+        "sampling": {"common": {"d": 1, "R": 1}},
+    }
+    with logs:
+        server.authorize()
+        server.post("/init_exp", data={"exp": config})
+        for k in range(4 * n + 1):
+            q = server.get("/query").json()
+
+            ans = random.choice([q["left"], q["right"]])
+            ans = {"winner": ans, "puid": "foo", **q}
+            server.post("/answer", json=ans)
+            if k % n == 0:
+                sleep(1)
+            if k == n:
+                sleep(2)
+        d = server.get("/responses").json()
+
+    df = pd.DataFrame(d)
+    random_queries = df["score"] == -9999
+    active_queries = ~random_queries
+    assert active_queries.sum() and random_queries.sum()
+
+    samplers = set(df.alg_ident.unique())
+    assert samplers == {sampler}
 
 
 def test_active_basics(server, logs):
