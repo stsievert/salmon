@@ -45,15 +45,13 @@ def test_backend_basics(server, logs):
 def test_init_errors_propogate(server, logs):
     exp = Path(__file__).parent / "data" / "exp-active-bad.yaml"
 
-    with pytest.raises(LogError):
-        with logs:
-            server.authorize()
-            server.get("/init")
-            r = server.post("/init_exp", data={"exp": exp.read_text()}, error=True)
-            assert r.status_code == 500
-            assert (
-                "module 'salmon.triplets.samplers' has no attribute 'FooBar'" in r.text
-            )
+    server.authorize()
+    server.get("/init")
+    r = server.post("/init_exp", data={"exp": exp.read_text()}, error=True)
+    assert r.status_code == 500
+    assert (
+        "module 'salmon.triplets.samplers' has no attribute 'FooBar'" in r.text
+    )
 
 
 def test_run_errors_logged(server, logs):

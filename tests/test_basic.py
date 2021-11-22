@@ -36,15 +36,14 @@ def test_basics(server, logs):
     answers = []
     print("Starting loop...")
     n_ans = 40
-    with logs:
-        for k in range(n_ans):
-            _start = time()
-            q = server.get("/query").json()
-            ans = {"winner": random.choice([q["left"], q["right"]]), "puid": puid, **q}
-            answers.append(ans)
-            sleep(100e-3)
-            ans["response_time"] = time() - _start
-            server.post("/answer", data=ans)
+    for k in range(n_ans):
+        _start = time()
+        q = server.get("/query").json()
+        ans = {"winner": random.choice([q["left"], q["right"]]), "puid": puid, **q}
+        answers.append(ans)
+        sleep(100e-3)
+        ans["response_time"] = time() - _start
+        server.post("/answer", data=ans)
 
     r = server.get("/responses")
     for server_ans, actual_ans in zip(r.json(), answers):
@@ -220,22 +219,21 @@ def test_logs(server, logs):
     server.post("/init_exp", data={"exp": exp.read_text()})
     data = []
     puid = "adsfjkl4awjklra"
-    with logs:
-        for k in range(10):
-            q = server.get("/query").json()
-            ans = {"winner": random.choice([q["left"], q["right"]]), "puid": k, **q}
-            server.post("/answer", data=ans)
-            data.append(ans)
+    for k in range(10):
+        q = server.get("/query").json()
+        ans = {"winner": random.choice([q["left"], q["right"]]), "puid": k, **q}
+        server.post("/answer", data=ans)
+        data.append(ans)
 
-        r = server.get("/logs")
-        assert r.status_code == 200
-        logs = r.json()
-        query_logs = logs["salmon.frontend.public.log"]
+    r = server.get("/logs")
+    assert r.status_code == 200
+    logs = r.json()
+    query_logs = logs["salmon.frontend.public.log"]
 
-        str_answers = [q.strip("\n") for q in query_logs if "answer received" in q]
-        answers = [ast.literal_eval(q[q.find("{") :]) for q in str_answers]
-        puids = {ans["puid"] for ans in answers}
-        assert {str(i) for i in range(10)}.issubset(puids)
+    str_answers = [q.strip("\n") for q in query_logs if "answer received" in q]
+    answers = [ast.literal_eval(q[q.find("{") :]) for q in str_answers]
+    puids = {ans["puid"] for ans in answers}
+    assert {str(i) for i in range(10)}.issubset(puids)
 
 
 def test_zip_upload(server):
@@ -336,19 +334,18 @@ def test_validation_sampling(server, logs):
     puid = "adsfjkl4awjklra"
 
     n_repeat = 3
-    with logs:
-        server.authorize()
-        server.post("/init_exp", data={"exp": exp})
-        for k in range(n_repeat * n_val):
-            q = server.get("/query").json()
-            _ans = random.choice([q["left"], q["right"]])
-            ans = {"winner": _ans, "puid": k, **q}
-            server.post("/answer", data=ans)
-            data.append(ans)
-            sleep(0.2)
+    server.authorize()
+    server.post("/init_exp", data={"exp": exp})
+    for k in range(n_repeat * n_val):
+        q = server.get("/query").json()
+        _ans = random.choice([q["left"], q["right"]])
+        ans = {"winner": _ans, "puid": k, **q}
+        server.post("/answer", data=ans)
+        data.append(ans)
+        sleep(0.2)
 
-        sleep(3)
-        r = server.get("/responses")
+    sleep(3)
+    r = server.get("/responses")
 
     # Test the number of unique queries is specified by n_val
     queries = [(q["head"], (q["left"], q["right"])) for q in r.json()]
