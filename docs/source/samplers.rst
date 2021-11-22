@@ -36,7 +36,7 @@ responses). Here's a rule of thumb:
    ``Validation: {}``, which will rely on
    :class:`~salmon.triplets.samplers.Validation`,
 
-Now, let's go over how to configure those classes and an example.
+Now, let's go over how to configure different samplers and an example.
 
 File structure
 --------------
@@ -52,22 +52,26 @@ Part of a ``init.yaml`` configuration file might look like this:
    sampling:
      probs: {"ARR": 85, "Random": 15}
 
-This will create the a versions of :class:`~salmon.triplets.samplers.ARR` with
+This will create a versions of :class:`~salmon.triplets.samplers.ARR` with
 ``random_state=42`` would be created alongside the default version of
 :class:`~salmon.triplets.samplers.Random`. When a query is generated, it will be
 generated from ``ARR`` 85% of the time and from ``Random`` the rest of the
 time. Generally, the keys in ``samplers`` and ``sampling`` follow these general
 rules:
 
-* ``samplers``: controls how one specific sampler behaves (i.e., class
-  initialization). The class is specified each key, and any arguments are
-  passed to the class instance.
+* ``samplers``: controls how one specific sampler behaves (i.e., sampler
+  initialization).
+
+  * The type of sampler is specified by each key (e.g., key ``ARR`` corresponds
+    to :class:`~salmon.triplets.samplers.ARR`), and any arguments are
+    initialization parameters for that object.
+
 * ``sampling``: controls samplers interact. For example:
 
-  * the ``probs`` key controls how frequently each class instance in
+  * the ``probs`` key controls how frequently each sampler in
     ``samplers`` is used
   * the ``common`` key controls sending initialization arguments to `every`
-    class instances.
+    sampler.
   * the ``samplers_per_user`` key controls how many samplers are seen by any
     one user who visits Salmon.
 
@@ -75,10 +79,11 @@ A good default configuration is mentioned in the FAQ ":ref:`adaptiveconfig`"
 The defaults and complete details are in
 :class:`~salmon.triplets.manager.Config`.
 
-Multiple classes of the same name
+Multiple samplers of the same name
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-If two classes with different purposes want to be used, the key ``class`` is
-used:
+
+If two samplers with different purposes want to be used, the key ``class`` is
+used to specify which type of sampler should be used:
 
 .. code-block:: yaml
 
@@ -125,7 +130,7 @@ Note that the argument are documented in
 other are passed to :class:`~salmon.triplets.samplers.Adaptive` as mentioned in
 the docstring of :class:`~salmon.triplets.samplers.ARR`.
 
-If you have multiple arguments for *every* class, you can specify that with the
+If you have multiple arguments for *every* sampler, you can specify that with the
 ``common`` key:
 
 .. code-block:: yaml
@@ -141,7 +146,7 @@ If you have multiple arguments for *every* class, you can specify that with the
        d: 3
        random_state: 42
 
-This would initialize these classes:
+This would initialize these samplers:
 
 .. code-block:: python
 
@@ -149,6 +154,8 @@ This would initialize these classes:
    ARR(module="TSTE", d=3, random_state=42)
    ARR(module="CKL",  d=3, random_state=42)
 
+The documentation for ``ARR`` is available at
+:class:`~salmon.triplets.samplers.ARR`.
 
 Example
 -------

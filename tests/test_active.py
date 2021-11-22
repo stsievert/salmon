@@ -76,13 +76,13 @@ def test_active_bad_keys(server, logs):
             )
 
 
-@pytest.mark.parametrize("sampler", ["ARR", "CKL", "TSTE", "STE", "GNMDS"])
-def test_active_chosen_queries_generated(server, sampler, logs):
+@pytest.mark.parametrize("sampler", ["ARR", "CKL"])
+def test_active_queries_generated(server, sampler, logs):
     # R=1 chosen because that determines when active sampling starts; this
     # test is designed to make sure no unexpected errors are thrown in
     # active portion (not that it generates a good embedding)
 
-    n = 7
+    n = 6
     config = {
         "targets": n,
         "samplers": {sampler: {}},
@@ -91,16 +91,18 @@ def test_active_chosen_queries_generated(server, sampler, logs):
     with logs:
         server.authorize()
         server.post("/init_exp", data={"exp": config})
-        for k in range(4 * n + 1):
+        for k in range(6 * n + 1):
             q = server.get("/query").json()
 
             ans = random.choice([q["left"], q["right"]])
             ans = {"winner": ans, "puid": "foo", **q}
+            print(q)
             server.post("/answer", json=ans)
+            c = 2  # for github actions
             if k % n == 0:
-                sleep(1)
-            if k == n:
-                sleep(2)
+                sleep(1 * c)
+            if k == n + 1:
+                sleep(2 * c)
         d = server.get("/responses").json()
 
     df = pd.DataFrame(d)
