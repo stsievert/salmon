@@ -1,9 +1,9 @@
 import json
 from logging import getLogger
 from pathlib import Path
+from time import sleep
 from typing import Tuple
 from warnings import warn
-from time import sleep
 
 import httpx as requests
 import numpy as np

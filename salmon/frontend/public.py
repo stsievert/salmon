@@ -19,7 +19,7 @@ from starlette_prometheus import PrometheusMiddleware, metrics
 
 from ..triplets import manager
 from ..utils import get_logger
-from .utils import ServerException, sha256, image_url
+from .utils import ServerException, image_url, sha256
 
 logger = get_logger(__name__)
 

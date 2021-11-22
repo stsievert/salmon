@@ -21,12 +21,8 @@ import requests as httpx
 import yaml
 from bokeh.embed import json_item
 from fastapi import Depends, File, Form, HTTPException
-from fastapi.responses import (
-    FileResponse,
-    HTMLResponse,
-    JSONResponse,
-    PlainTextResponse,
-)
+from fastapi.responses import (FileResponse, HTMLResponse, JSONResponse,
+                               PlainTextResponse)
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from redis import ResponseError
 from rejson import Client, Path
@@ -35,18 +31,13 @@ from starlette.requests import Request
 from starlette.status import HTTP_401_UNAUTHORIZED, HTTP_409_CONFLICT
 
 import salmon
+from salmon.triplets.manager import Config
 
 from ..triplets import manager
 from . import plotting
 from .public import _ensure_initialized, app, templates
-from .utils import (
-    ServerException,
-    _extract_zipfile,
-    _format_target,
-    _format_targets,
-    get_logger,
-)
-from salmon.triplets.manager import Config
+from .utils import (ServerException, _extract_zipfile, _format_target,
+                    _format_targets, get_logger)
 
 security = HTTPBasic()
 

@@ -1,7 +1,7 @@
 from time import sleep
 
-from ._adaptive_runners import TSTE
 from ...backend.sampler import StopRunning
+from ._adaptive_runners import TSTE
 
 
 class Test(TSTE):

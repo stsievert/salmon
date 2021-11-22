@@ -1,5 +1,6 @@
-from salmon.triplets.manager import Config
 import pytest
+
+from salmon.triplets.manager import Config
 
 html_keys = ["debrief", "instructions", "max_queries", "skip_button"]
 

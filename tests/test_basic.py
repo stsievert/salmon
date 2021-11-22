@@ -13,7 +13,7 @@ import pandas as pd
 import pytest
 import yaml
 
-from .utils import logs, server, LogError
+from .utils import LogError, logs, server
 
 
 def test_basics(server, logs):

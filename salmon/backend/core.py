@@ -17,7 +17,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from salmon.frontend.utils import ServerException
 
 from ..triplets import samplers
-from ..utils import get_logger, flush_logger
+from ..utils import flush_logger, get_logger
 
 DEBUG = os.environ.get("SALMON_DEBUG", 0)
 

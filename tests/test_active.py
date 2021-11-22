@@ -168,19 +168,3 @@ def test_round_robin(server, logs):
         assert {int(d) for d in diffs if not np.isnan(d)}.issubset({0, 1, 10})
         diffs = diffs.astype(int)
         assert (diffs == 0).sum() <= 2  # make sure zeros don't happen too often
-
-    # A traceback I got in this test once. I think I've fixed but am not sure;
-    # my tests pass, but I'm not certain this error is deterministic.
-    #
-    #  Traceback (most recent call last):
-    #    File "./salmon/backend/alg.py", line 92, in run
-    #      answers = self.get_answers(rj, clear=True)
-    #    File "./salmon/backend/alg.py", line 210, in get_answers
-    #      answers, success = pipe.execute()
-    #    File "/opt/conda/lib/python3.7/site-packages/redis/client.py", line 4019, in execute
-    #      return execute(conn, stack, raise_on_error)
-    #    File "/opt/conda/lib/python3.7/site-packages/redis/client.py", line 3943, in _execute_transaction
-    #      r = self.response_callbacks[command_name](r, **options)
-    #    File "/opt/conda/lib/python3.7/json/decoder.py", line 337, in decode
-    #      obj, end = self.raw_decode(s, idx=_w(s, 0).end())
-    #  TypeError: expected string or bytes-like object
