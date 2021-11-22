@@ -84,13 +84,14 @@ def test_active_queries_generated(server, sampler, logs):
 
     n = 6
     config = {
-        "targets": n,
+        "targets": [_ for _ in range(n)],
         "samplers": {sampler: {}},
         "sampling": {"common": {"d": 1, "R": 1}},
     }
     with logs:
         server.authorize()
         server.post("/init_exp", data={"exp": config})
+        n_active_queries = 0
         for k in range(6 * n + 1):
             q = server.get("/query").json()
 
@@ -98,11 +99,21 @@ def test_active_queries_generated(server, sampler, logs):
             ans = {"winner": ans, "puid": "foo", **q}
             print(q)
             server.post("/answer", json=ans)
-            c = 2  # for github actions
+
+            if q["score"] != -9999:
+                # scored queries have been posted to the database
+                # now, only thing to test is popping off database
+                n_active_queries += 1
+            if n_active_queries == n:
+                sleep(1)
+                break
+
+            c = 1  # for github actions
             if k % n == 0:
                 sleep(1 * c)
             if k == n + 1:
                 sleep(2 * c)
+
         d = server.get("/responses").json()
 
     df = pd.DataFrame(d)
