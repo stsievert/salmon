@@ -36,7 +36,8 @@ class Server:
         logger.info(f"Getting {endpoint}")
         r = requests.get(self.url + endpoint, **kwargs)
         logger.info("done")
-        assert r.status_code == status_code, (r.status_code, status_code, r.text)
+        if status_code:
+            assert r.status_code == status_code, (r.status_code, status_code, r.text)
         return r
 
     def reset(self):
