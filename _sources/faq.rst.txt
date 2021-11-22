@@ -14,7 +14,6 @@ difficulties while launching.
    ``http://[url]:8421/download`` which has a filename like
    ``exp-2021-05-20T07:31-salmon-v0.4.1.rdb``).
 
-
 .. _random_vs_active:
 
 When should I use random/active sampling?
