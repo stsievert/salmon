@@ -325,40 +325,6 @@ def test_auth_repeated_entries(server):
     assert "maximum number of users" in r.text.lower()
 
 
-def test_validation_sampling(server, logs):
-    n_val = 3
-    exp = {
-        "targets": list(range(10)),
-        "samplers": {"Validation": {"n_queries": n_val}},
-    }
-    data = []
-    puid = "adsfjkl4awjklra"
-
-    n_repeat = 3
-    server.authorize()
-    server.post("/init_exp", data={"exp": exp})
-    for k in range(n_repeat * n_val):
-        q = server.get("/query").json()
-        _ans = random.choice([q["left"], q["right"]])
-        ans = {"winner": _ans, "puid": k, **q}
-        server.post("/answer", data=ans)
-        data.append(ans)
-        sleep(0.2)
-
-    sleep(3)
-    r = server.get("/responses")
-
-    # Test the number of unique queries is specified by n_val
-    queries = [(q["head"], (q["left"], q["right"])) for q in r.json()]
-    uniq_queries = [(h, min(c), max(c)) for h, c in queries]
-    assert len(set(uniq_queries)) == n_val
-
-    # Test the order gets shuffled every iteration
-    order = [hash(q) for q in queries]
-    round_orders = [order[k * n_val : (k + 1) * n_val] for k in range(n_repeat)]
-    for round_order in round_orders:
-        assert len(set(round_order)) == n_val
-    assert all(round_orders[0] != order for order in round_orders[1:])
 
 
 def test_random_error(server, logs):
