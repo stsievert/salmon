@@ -30,19 +30,18 @@ def test_validation_sampling(server, logs):
     n_repeat = 3
     server.authorize()
     server.post("/init_exp", data={"exp": exp})
+    Q = []
     for k in range(n_repeat * n_val):
         q = server.get("/query").json()
         _ans = random.choice([q["left"], q["right"]])
         ans = {"winner": _ans, "puid": k, **q}
+        Q.append(ans)
         server.post("/answer", data=ans)
         data.append(ans)
-        sleep(0.20)
-
-    sleep(1)
-    r = server.get("/responses")
+        sleep(0.10)
 
     # Test the number of unique queries is specified by n_val
-    queries = [(q["head"], (q["left"], q["right"])) for q in r.json()]
+    queries = [(q["head"], (q["left"], q["right"])) for q in Q]
     uniq_queries = [(h, min(c), max(c)) for h, c in queries]
     assert len(set(uniq_queries)) == n_val
 
