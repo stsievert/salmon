@@ -38,12 +38,12 @@ def test_validation_sampling(server, logs):
         Q.append(ans)
         server.post("/answer", data=ans)
         data.append(ans)
-        sleep(0.10)
+        sleep(0.20)
 
     # Test the number of unique queries is specified by n_val
     queries = [(q["head"], (q["left"], q["right"])) for q in Q]
     uniq_queries = [(h, min(c), max(c)) for h, c in queries]
-    assert len(set(uniq_queries)) == n_val
+    assert len(set(uniq_queries)) == n_val, set(uniq_queries)
 
     # Test the order gets shuffled every iteration
     order = [hash(q) for q in queries]
