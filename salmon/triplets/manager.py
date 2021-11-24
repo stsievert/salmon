@@ -22,7 +22,7 @@ class Answer(BaseModel):
     left: int
     right: int
     winner: int
-    alg_ident: str
+    sampler: str
     score: float = 0
     puid: str = ""
     response_time: float = -1

@@ -21,8 +21,12 @@ import requests as httpx
 import yaml
 from bokeh.embed import json_item
 from fastapi import Depends, File, Form, HTTPException
-from fastapi.responses import (FileResponse, HTMLResponse, JSONResponse,
-                               PlainTextResponse)
+from fastapi.responses import (
+    FileResponse,
+    HTMLResponse,
+    JSONResponse,
+    PlainTextResponse,
+)
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from redis import ResponseError
 from rejson import Client, Path
@@ -36,8 +40,13 @@ from salmon.triplets.manager import Config
 from ..triplets import manager
 from . import plotting
 from .public import _ensure_initialized, app, templates
-from .utils import (ServerException, _extract_zipfile, _format_target,
-                    _format_targets, get_logger)
+from .utils import (
+    ServerException,
+    _extract_zipfile,
+    _format_target,
+    _format_targets,
+    get_logger,
+)
 
 security = HTTPBasic()
 
@@ -645,7 +654,7 @@ def _fmt_embedding(
 
 @app.get("/embeddings", tags=["private"])
 async def get_embeddings(
-    authorized: bool = Depends(_authorize), alg: Optional[str] = None,
+    authorized: bool = Depends(_authorize), sampler: Optional[str] = None,
 ):
     """
     Get the embeddings for algorithms.
@@ -653,7 +662,7 @@ async def get_embeddings(
     Parameters
     ----------
 
-    * alg : str, optional. The algorithm to get the embedding for.
+    * sampler : str, optional. The algorithm to get the embedding for.
 
     Returns
     -------
@@ -663,24 +672,24 @@ async def get_embeddings(
     exp_config = await _ensure_initialized()
     exp_config = deepcopy(exp_config)
     targets = exp_config.pop("targets")
-    alg_idents = list(exp_config.pop("samplers").keys())
+    samplers = list(exp_config.pop("samplers").keys())
     embeddings = {}
-    for alg in alg_idents:
+    for s in samplers:
         try:
-            embeddings[alg] = await get_model(alg)
+            embeddings[s] = await get_model(s)
         except:
             pass
     if len(embeddings) == 0:
         raise ServerException(
-            f"No model has been created for any sampler in {alg_idents}"
+            f"No model has been created for any sampler in {samplers}"
         )
     dfs = {
         alg: _fmt_embedding(model["embedding"], targets, alg=alg)
         for alg, model in embeddings.items()
     }
 
-    if alg is not None:
-        df = dfs[alg]
+    if sampler is not None:
+        df = dfs[sampler]
     else:
         df = pd.concat(dfs)
 
@@ -688,7 +697,7 @@ async def get_embeddings(
         df.to_csv(f, index=False)
         out = f.getvalue()
 
-    fname = "embeddings.csv" if alg is None else f"embedding-{alg}.csv"
+    fname = "embeddings.csv" if sampler is None else f"embedding-{sampler}.csv"
     return PlainTextResponse(
         out, headers={"Content-Disposition": f'attachment; filename="{fname}"'}
     )
@@ -975,18 +984,18 @@ async def restore(
     return HTMLResponse(msg)
 
 
-@app.get("/model/{alg_ident}")
-async def get_model(alg_ident: str) -> Dict[str, Any]:
+@app.get("/model/{sampler}")
+async def get_model(sampler: str) -> Dict[str, Any]:
     logger.info("In public get_model with rj.keys() == %s", rj.keys())
-    r = httpx.get(f"http://localhost:8400/model/{alg_ident}")
+    r = httpx.get(f"http://localhost:8400/model/{sampler}")
     if r.status_code != 200:
         raise ServerException(r.json()["detail"])
     return r.json()
 
 
-async def _get_alg_perf(ident: str) -> Dict[str, Any]:
+async def _get_alg_perf(sampler: str) -> Dict[str, Any]:
     logger.info("In private _get_alg_perf with rj.keys() == %s", rj.keys())
-    r = httpx.get(f"http://localhost:8400/meta/perf/{ident}")
+    r = httpx.get(f"http://localhost:8400/meta/perf/{sampler}")
     if r.status_code != 200:
         raise ServerException(r.json()["detail"])
     return r.json()

@@ -156,7 +156,7 @@ def get_query(ident: str):
         if q is None:
             flush_logger(logger)
             raise HTTPException(status_code=404)
-        return {"alg_ident": ident, "score": score, **q}
+        return {"sampler": ident, "score": score, **q}
 
 
 def _fmt_params(k, v):
@@ -167,36 +167,36 @@ def _fmt_params(k, v):
     raise ValueError(f"Error formatting key={k} with value {v}")
 
 
-@app.get("/model/{alg_ident}")
-async def get_model(alg_ident: str):
+@app.get("/model/{sampler}")
+async def get_model(sampler: str):
     samplers = rj.jsonget("samplers")
-    if alg_ident not in samplers:
+    if sampler not in samplers:
         raise ServerException(
-            f"Can't find model for alg_ident='{alg_ident}'. "
-            f"Valid choices for alg_ident are {samplers}"
+            f"Can't find model for sampler='{sampler}'. "
+            f"Valid choices for sampler are {samplers}"
         )
-    if f"model-{alg_ident}" not in rj.keys():
+    if f"model-{sampler}" not in rj.keys():
         logger.warning("rj.keys() = %s", rj.keys())
         flush_logger(logger)
-        raise ServerException(f"Model has not been created for alg_ident='{alg_ident}'")
+        raise ServerException(f"Model has not been created for sampler='{sampler}'")
     rj2 = Client(host="redis", port=6379, decode_responses=False)
-    ir = rj2.get(f"model-{alg_ident}")
+    ir = rj2.get(f"model-{sampler}")
     model = cloudpickle.loads(ir)
     return model
 
 
-@app.get("/meta/perf/{alg_ident}")
-async def get_timings(alg_ident: str):
+@app.get("/meta/perf/{sampler}")
+async def get_timings(sampler: str):
     samplers = rj.jsonget("samplers")
-    if alg_ident not in samplers:
+    if sampler not in samplers:
         raise ServerException(
-            f"Can't find key for alg_ident='{alg_ident}'. "
-            f"Valid choices for alg_ident are {samplers}"
+            f"Can't find key for sampler='{sampler}'. "
+            f"Valid choices for sampler are {samplers}"
         )
     keys = list(sorted(rj.keys()))
-    if f"alg-perf-{alg_ident}" not in keys:
+    if f"alg-perf-{sampler}" not in keys:
         logger.warning("rj.keys() = %s", keys)
         raise ServerException(
-            f"Performance data has not been created for alg_ident='{alg_ident}'. Database has keys {keys}"
+            f"Performance data has not been created for sampler='{sampler}'. Database has keys {keys}"
         )
-    return rj.jsonget(f"alg-perf-{alg_ident}")
+    return rj.jsonget(f"alg-perf-{sampler}")

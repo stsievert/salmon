@@ -158,7 +158,7 @@ async def get_query(ident="") -> Dict[str, Union[int, str, float]]:
         q = manager.random_query(config["n"])
         score = -9999
 
-    return {"alg_ident": ident, "score": score, **q}
+    return {"sampler": ident, "score": score, **q}
 
 
 @app.post("/answer", tags=["public"])
@@ -180,7 +180,7 @@ async def process_answer(ans: manager.Answer):
         "loser": d["left"] if d["winner"] == d["right"] else d["right"],
     }
     d.update(_update)
-    ident = d["alg_ident"]
+    ident = d["sampler"]
     logger.warning(f"answer received: {d}")
     rj.jsonarrappend(f"alg-{ident}-answers", root, d)
         # on backend,  key = f"alg-{self.ident}-answers"

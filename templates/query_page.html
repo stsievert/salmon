@@ -180,7 +180,7 @@ async function send(winner, id) {
           "response_time": response_time,
           "network_latency": latency,
           "score": score,
-          "alg_ident": ident,
+          "sampler": ident,
     };
     $.ajax({
       "url": "/answer",
@@ -229,7 +229,7 @@ function getquery(){
       right = data["right"];
       left = data["left"];
       score = data["score"];
-      ident = data["alg_ident"];
+      ident = data["sampler"];
       query = [head, left, right].join("-");
       if (prev_queries.includes(query)) {
         getquery();
