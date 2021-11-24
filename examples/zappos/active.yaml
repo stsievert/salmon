@@ -2,6 +2,7 @@ html:
   instructions: Which of the comparison shoes is most similar to the target shoe?
   debrief: Thanks! Please enter this participant ID in the assignment.
   max_queries: 100
+  title: Zappos shoes
 samplers:
   Random: {}
   ARR: {random_state: 42}
