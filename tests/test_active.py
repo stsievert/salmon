@@ -77,15 +77,6 @@ def test_active_bad_keys(server, logs):
             )
 
 
-# TODO: fix this failing test on github actions. Is it not running because
-@pytest.mark.xfail(
-    bool(os.environ.get("GITHUB_ACTIONS")),
-    reason="""passes locally w/ no backend errors; fails on GitHub actions
-              Tried to fix and failed; apparently the backend doesn't run in
-              GitHub Actions?""",
-    strict=True,
-    #  raises=LogError,  # something with posterior not being sized correctly?!
-)
 @pytest.mark.parametrize("sampler", ["ARR", "CKL"])
 def test_active_queries_generated(server, sampler, logs):
     # R=1 chosen because that determines when active sampling starts; this
