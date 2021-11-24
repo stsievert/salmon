@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Developing algorithms &mdash; Salmon v0.8.0+46.g1e9a48d documentation</title>
+  <title>Developing algorithms &mdash; Salmon v0.8.0+48.gf5ac470 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/autodoc_pydantic.css" type="text/css" />
@@ -109,6 +109,10 @@ saved in the database, and popped when a user requests a query.</p></li>
 </div></blockquote>
 </li>
 </ol>
+<p>Use of <code class="docutils literal notranslate"><span class="pre">get_queries</span></code> is strongly recommended. Then Salmon’s backend relies on
+Dask, which allows for higher throughput (more concurrent users). <code class="docutils literal notranslate"><span class="pre">get_query</span></code>
+uses a single worker process, so it may get overloaded with a moderate number
+of concurrent users.</p>
 <p>For complete documentation, see <a class="reference internal" href="api.html#alg-api"><span class="std std-ref">API</span></a>. In short, your algorithm should
 be a class that implement <code class="docutils literal notranslate"><span class="pre">get_query</span></code> and <code class="docutils literal notranslate"><span class="pre">process_answers</span></code>.</p>
 <p>After you have developed these functions, look at other algorithms in
@@ -131,8 +135,6 @@ on a new machine.</p></li>
 <li><p><strong>Ensure query searches are fast enough.</strong> The user will be waiting if
 thousands of users come to Salmon and deplete all the searched queries.</p></li>
 </ul>
-<p>It’s not a strong requirement, but I would encourage both <code class="docutils literal notranslate"><span class="pre">process_answers</span></code>
-and <code class="docutils literal notranslate"><span class="pre">get_queries</span></code> to be quick and complete in about a second each.</p>
 </section>
 <section id="debugging">
 <h2>Debugging<a class="headerlink" href="#debugging" title="Permalink to this headline"></a></h2>

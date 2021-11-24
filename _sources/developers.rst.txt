@@ -17,6 +17,11 @@ expects two functions:
     * ``get_queries``, which returns a list of queries and scores. These are
       saved in the database, and popped when a user requests a query.
 
+Use of ``get_queries`` is strongly recommended. Then Salmon's backend relies on
+Dask, which allows for higher throughput (more concurrent users). ``get_query``
+uses a single worker process, so it may get overloaded with a moderate number
+of concurrent users.
+
 For complete documentation, see :ref:`alg-api`. In short, your algorithm should
 be a class that implement ``get_query`` and ``process_answers``.
 
@@ -39,9 +44,6 @@ necessary but are highly encouraged:
   on a new machine.
 * **Ensure query searches are fast enough.** The user will be waiting if
   thousands of users come to Salmon and deplete all the searched queries.
-
-It's not a strong requirement, but I would encourage both ``process_answers``
-and ``get_queries`` to be quick and complete in about a second each.
 
 Debugging
 ---------
