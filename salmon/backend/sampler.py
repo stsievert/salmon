@@ -23,10 +23,6 @@ Answer = TypeVar("Answer")
 root = Path.rootPath()
 
 
-class StopRunning(Exception):
-    pass
-
-
 class Sampler:
     """
     Run a sampling algorithm. Provides hooks to connect with the database and
