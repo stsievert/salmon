@@ -22,8 +22,10 @@ Query = TypeVar("Query")
 Answer = TypeVar("Answer")
 root = Path.rootPath()
 
+
 class StopRunning(Exception):
     pass
+
 
 class Sampler:
     """
@@ -83,7 +85,6 @@ class Sampler:
         save_deadline = 0.0  # right away
         data: List[Dict[str, Any]] = []
 
-        error_raised = []
         for k in itertools.count():
             try:
                 loop_start = time()
@@ -211,10 +212,12 @@ class Sampler:
                     try:
                         rj.jsonarrappend(f"alg-perf-{self.ident}", root, to_post)
                     except ResponseError as e:
-                        if "could not perform this operation on a key that doesn't exist" in str(e):
+                        if (
+                            "could not perform this operation on a key that doesn't exist"
+                            in str(e)
+                        ):
                             # I think this happens when the frontend deletes
-                            # the database after the endpoint /reset is
-                            # triggered
+                            # the database when /reset is triggered
                             pass
                         else:
                             raise e
@@ -229,13 +232,6 @@ class Sampler:
             except Exception as e:
                 logger.exception(e)
                 flush_logger(logger)
-                #  error_raised.append(k)
-
-                #  __n = 5
-                #  if np.diff(error_raised[-__n:]).tolist() == [1] * (__n - 1):
-                    #  logger.exception(e)
-                    #  flush_logger(logger)
-                    #  raise e
         return True
 
     def save(self) -> bool:
@@ -296,21 +292,13 @@ class Sampler:
                     client.cancel(future, force=True)
 
         logger.warning(f"Restarting Dask client for {self.ident}")
-        for _ in range(1):
-            f = client.restart(timeout="5s")
-            try:
-                client.sync(f)
-            except:
-                pass
+        f = client.restart(timeout="5s")
+        try:
+            client.sync(f)
+        except:
+            pass
 
         client.run(garbage_collect)
-
-        #  logger.warning(f"Closing Dask client for {self.ident}")
-        #  f = client.close()
-        #  try:
-            #  client.sync(f)
-        #  except:
-            #  pass
 
         logger.warning(f"Setting stopped-{self.ident}")
         rj.jsonset(f"stopped-{self.ident}", Path("."), True)
