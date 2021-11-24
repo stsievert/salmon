@@ -88,19 +88,29 @@ def _clear_logs(log=None):
             _clear_logs(log=log)
 
 
+def _reset(server):
+    server.reset()
+
+    # Delete files
+    _clear_logs()
+    OUT = Path(__file__).absolute().parent.parent / "out"
+    dump = OUT / "dump.rdb"
+    if dump.exists():
+        dump.unlink()
+    assert not dump.exists()
+
+    # to double-check; dump might have been saved
+    server.reset()
+    return server
+
+
 @pytest.fixture()
 def server():
     server = Server("http://127.0.0.1:8421")
     server.authorize()
-
-    server.reset()
-    _clear_logs()
+    server = _reset(server)
     yield server
-    dump = Path(__file__).absolute().parent.parent / "out" / "dump.rdb"
-    if dump.exists():
-        dump.unlink()
-    server.reset()
-    _clear_logs()
+    server = _reset(server)
 
 
 class LogError(Exception):

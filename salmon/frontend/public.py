@@ -142,7 +142,7 @@ async def get_query(ident="") -> Dict[str, Union[int, str, float]]:
         idx = np.random.choice(len(idents), p=probs)
         ident = idents[idx]
 
-    r = httpx.get(f"http://localhost:8400/query-{ident}")
+    r = httpx.get(f"http://localhost:8400/query/{ident}")
     if r.status_code == 200:
         logger.info(f"query r={r}")
         return r.json()

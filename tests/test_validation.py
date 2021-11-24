@@ -35,6 +35,7 @@ def test_validation_sampling(server, logs):
         q = server.get("/query").json()
         _ans = random.choice([q["left"], q["right"]])
         ans = {"winner": _ans, "puid": k, **q}
+        print([ans[k] for k in ["head", "left", "right"]])
         Q.append(ans)
         server.post("/answer", data=ans)
         data.append(ans)

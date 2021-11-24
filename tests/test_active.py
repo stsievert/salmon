@@ -118,9 +118,9 @@ def test_active_queries_generated(server, sampler, logs):
                 sleep(1)
                 break
 
-            sleep(100e-3)
+            sleep(10e-3)
             if k % n == 0:
-                sleep(1)
+                sleep(0.1)
 
     d = server.get("/responses").json()
 

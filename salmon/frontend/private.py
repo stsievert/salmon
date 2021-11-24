@@ -548,6 +548,7 @@ def _reset(timeout: float = 5):
         logger.warning("    starting with clearing queries...")
         for ident in samplers:
             rj2.delete(f"alg-{ident}-queries")
+    httpx.post(f"http://localhost:8400/reset/")
 
     logger.warning("Trying to completely flush database...")
 

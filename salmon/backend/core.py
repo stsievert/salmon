@@ -29,6 +29,8 @@ rj = Client(host="redis", port=6379, decode_responses=True)
 app = FastAPI(title="salmon-backend")
 threads = []
 
+SAMPLERS = {}
+
 
 def exception_to_string(excp):
     flush_logger(logger)
@@ -111,10 +113,11 @@ async def init(ident: str, background_tasks: BackgroundTasks) -> bool:
             Sampler = getattr(samplers, _class)
             params = {k: _fmt_params(k, v) for k, v in params.items()}
             logger.warning("Sampler for %s = %s", ident, Sampler)
-            logger.warning("params = %s", params)
             common = config["sampling"]["common"]
             p = deepcopy(common)
             p.update(params)
+            kwargs = dict(ident=ident, n=config["n"], **p)
+            logger.warning("class=%s kwargs= %s", _class, kwargs)
             alg = Sampler(ident=ident, n=config["n"], **p)
     except Exception as e:
         msg = exception_to_string(e)
@@ -122,30 +125,38 @@ async def init(ident: str, background_tasks: BackgroundTasks) -> bool:
         flush_logger(logger)
         raise ExpParsingError(status_code=500, detail=msg)
 
-    logger.info(f"alg={ident} initialized; now, does it have get_quer")
-    if hasattr(alg, "get_query"):
-        logger.info(f"Init'ing /query-{ident}")
-        logger.warning(f"alg_id={id(alg)}")
-
-        @app.get(f"/query-{ident}")
-        def _get_query():
-            try:
-                q, score = alg.get_query()
-                logger.debug("q, score = %s, %s", q, score)
-            except Exception as e:
-                logger.exception(e)
-                flush_logger(logger)
-                raise HTTPException(status_code=500, detail=str(e))
-            if q is None:
-                flush_logger(logger)
-                raise HTTPException(status_code=404)
-            return {"alg_ident": ident, "score": score, **q}
+    SAMPLERS[ident] = alg
 
     dask_client = DaskClient("127.0.0.2:8786")
     logger.info("Before adding init task")
     background_tasks.add_task(alg.run, dask_client)
     logger.info("Returning")
     return True
+
+
+@app.post("/reset/")
+def reset():
+    keys = deepcopy(list(SAMPLERS.keys()))
+    for k in keys:
+        SAMPLERS.pop(k)
+
+
+@app.get("/query/{ident}")
+def get_query(ident: str):
+    global SAMPLERS
+    alg = SAMPLERS[ident]
+    if hasattr(alg, "get_query"):
+        try:
+            q, score = alg.get_query()
+            logger.debug("q, score = %s, %s", q, score)
+        except Exception as e:
+            logger.exception(e)
+            flush_logger(logger)
+            raise HTTPException(status_code=500, detail=str(e))
+        if q is None:
+            flush_logger(logger)
+            raise HTTPException(status_code=404)
+        return {"alg_ident": ident, "score": score, **q}
 
 
 def _fmt_params(k, v):

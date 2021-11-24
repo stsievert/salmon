@@ -41,8 +41,11 @@ else
 
     ## Use uvicorn instead of gunicorn because FastAPI's background tasks are threads
     ## in uvicorn, not processes.
+    ##
+    ## Only use one worker because some global state for sampler.get_query
+    # (not a huge issue because this server is mostly a proxy for Dask)
+    uvicorn salmon:app_algs --workers 1 --port 8400 --host 0.0.0.0 &
     # gunicorn --preload --worker-tmp-dir /dev/shm --threads 2 --timeout 90 -w 1 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8400 salmon:app_algs &
-    uvicorn salmon:app_algs --port 8400 --host 0.0.0.0 &
     sleep 1
     gunicorn --worker-tmp-dir /dev/shm --threads 2 --timeout 90 -w 4 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8421 salmon:app
 fi

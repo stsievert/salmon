@@ -11,8 +11,10 @@ from dask.distributed import Client as DaskClient
 from redis.exceptions import ResponseError
 from rejson import Client as RedisClient
 from rejson import Path
+from gc import collect as garbage_collect
 
 from ..utils import flush_logger, get_logger
+
 
 logger = get_logger(__name__)
 
@@ -206,34 +208,34 @@ class Sampler:
                             _update = {"time": _update["time_median"]}
                         to_post.update({_k: Type(v) for _k, v in _update.items()})
 
-                    try:
-                        rj.jsonarrappend(f"alg-perf-{self.ident}", root, to_post)
-                    except ResponseError as e:
-                        if "could not perform this operation on a key that doesn't exist" in str(e):
-                            # I think this happens when the frontend deletes
-                            # the database after the endpoint /reset is
-                            # triggered
-                            pass
-                        else:
-                            raise e
+                    #  try:
+                    rj.jsonarrappend(f"alg-perf-{self.ident}", root, to_post)
+                    #  except ResponseError as e:
+                        #  if "could not perform this operation on a key that doesn't exist" in str(e):
+                            #  # I think this happens when the frontend deletes
+                            #  # the database after the endpoint /reset is
+                            #  # triggered
+                            #  pass
+                        #  else:
+                            #  raise e
 
                     data = []
 
                 if "reset" in rj.keys() and rj.jsonget("reset", root):
                     logger.warning(f"Resetting {self.ident}")
-                    self.reset(client, rj)
+                    self.reset(client, rj, futures=[f_model, f_post, f_search])
                     break
 
             except Exception as e:
                 logger.exception(e)
                 flush_logger(logger)
-                error_raised.append(k)
+                #  error_raised.append(k)
 
-                n = 5
-                if np.diff(error_raised[-n:]).tolist() == [1] * (n - 1):
-                    logger.exception(e)
-                    flush_logger(logger)
-                    raise e
+                #  __n = 5
+                #  if np.diff(error_raised[-__n:]).tolist() == [1] * (__n - 1):
+                    #  logger.exception(e)
+                    #  flush_logger(logger)
+                    #  raise e
         return True
 
     def save(self) -> bool:
@@ -253,7 +255,7 @@ class Sampler:
             rj2.set(f"model-{self.ident}", out)
         return True
 
-    def reset(self, client, rj):
+    def reset(self, client, rj, futures=None):
         """
         Stop the algorithm. The algorithm will be deleted shortly after
         this function is called.
@@ -288,16 +290,27 @@ class Sampler:
         logger.warning(f"Clearing queries again for {self.ident}")
         self.clear_queries(rj)
 
+        if futures:
+            for future in futures:
+                if future:
+                    client.cancel(future, force=True)
+
         logger.warning(f"Restarting Dask client for {self.ident}")
-        try:
-            client.sync(client.restart())
-        except:
-            pass
-        logger.warning(f"Closing Dask client for {self.ident}")
-        try:
-            client.sync(client.close())
-        except:
-            pass
+        for _ in range(1):
+            f = client.restart(timeout="5s")
+            try:
+                client.sync(f)
+            except:
+                pass
+
+        client.run(garbage_collect)
+
+        #  logger.warning(f"Closing Dask client for {self.ident}")
+        #  f = client.close()
+        #  try:
+            #  client.sync(f)
+        #  except:
+            #  pass
 
         logger.warning(f"Setting stopped-{self.ident}")
         rj.jsonset(f"stopped-{self.ident}", Path("."), True)
