@@ -44,6 +44,7 @@ else
     ##
     ## Only use one worker because some global state for sampler.get_query
     # (not a huge issue because this server is mostly a proxy for Dask)
+    # (this breaks down if get_query is relied upon)
     uvicorn salmon:app_algs --workers 1 --port 8400 --host 0.0.0.0 &
     # gunicorn --preload --worker-tmp-dir /dev/shm --threads 2 --timeout 90 -w 1 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8400 salmon:app_algs &
     sleep 1

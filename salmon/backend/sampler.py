@@ -208,16 +208,16 @@ class Sampler:
                             _update = {"time": _update["time_median"]}
                         to_post.update({_k: Type(v) for _k, v in _update.items()})
 
-                    #  try:
-                    rj.jsonarrappend(f"alg-perf-{self.ident}", root, to_post)
-                    #  except ResponseError as e:
-                        #  if "could not perform this operation on a key that doesn't exist" in str(e):
-                            #  # I think this happens when the frontend deletes
-                            #  # the database after the endpoint /reset is
-                            #  # triggered
-                            #  pass
-                        #  else:
-                            #  raise e
+                    try:
+                        rj.jsonarrappend(f"alg-perf-{self.ident}", root, to_post)
+                    except ResponseError as e:
+                        if "could not perform this operation on a key that doesn't exist" in str(e):
+                            # I think this happens when the frontend deletes
+                            # the database after the endpoint /reset is
+                            # triggered
+                            pass
+                        else:
+                            raise e
 
                     data = []
 
