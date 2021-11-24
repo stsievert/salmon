@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>salmon.backend.sampler.Sampler &mdash; Salmon v0.8.0+39.ge3fbfc8 documentation</title>
+  <title>salmon.backend.sampler.Sampler &mdash; Salmon v0.8.0+40.g6d01c27 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/autodoc_pydantic.css" type="text/css" />
@@ -144,7 +144,7 @@ in the database.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#salmon.backend.sampler.Sampler.redis_client" title="salmon.backend.sampler.Sampler.redis_client"><code class="xref py py-obj docutils literal notranslate"><span class="pre">redis_client</span></code></a>([decode_responses])</p></td>
 <td><p>Get the database (/Redis client)</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#salmon.backend.sampler.Sampler.reset" title="salmon.backend.sampler.Sampler.reset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset</span></code></a>(client, rj)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#salmon.backend.sampler.Sampler.reset" title="salmon.backend.sampler.Sampler.reset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset</span></code></a>(client, rj[, futures])</p></td>
 <td><p>Stop the algorithm.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#salmon.backend.sampler.Sampler.run" title="salmon.backend.sampler.Sampler.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>(client)</p></td>
@@ -245,7 +245,7 @@ dashboard or with an HTTP get request.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="salmon.backend.sampler.Sampler.reset">
-<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.backend.sampler.Sampler.reset" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">futures</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.backend.sampler.Sampler.reset" title="Permalink to this definition"></a></dt>
 <dd><p>Stop the algorithm. The algorithm will be deleted shortly after
 this function is called.</p>
 </dd></dl>
