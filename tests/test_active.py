@@ -41,7 +41,7 @@ def test_samplers_per_user(server, logs):
         r = server.get("/responses")
         d = r.json()
         df = pd.DataFrame(d)
-        algs = df.alg_ident.unique()
+        algs = df.sampler.unique()
         assert len(set(algs)) == 1
         _ = len(set(algs))
 
@@ -121,7 +121,7 @@ def test_active_queries_generated(server, sampler, logs):
     assert active_queries.sum()
     assert random_queries.sum()
 
-    samplers = set(df.alg_ident.unique())
+    samplers = set(df.sampler.unique())
     assert samplers == {sampler}
 
 
@@ -142,7 +142,7 @@ def test_active_basics(server, logs):
             q = server.get("/query").json()
 
             # Jerry rig this so this test isn't random (an algorithm is chosen at random)
-            q["alg_ident"] = samplers[k % len(samplers)]
+            q["sampler"] = samplers[k % len(samplers)]
             ans = random.choice([q["left"], q["right"]])
 
             ans = {"winner": ans, "puid": "foo", **q}
@@ -152,7 +152,7 @@ def test_active_basics(server, logs):
         d = r.json()
         df = pd.DataFrame(d)
         assert (df["score"] <= 1).all()
-        algs = df.alg_ident.unique()
+        algs = df.sampler.unique()
         assert set(algs) == {"TSTE", "ARR", "CKL", "tste2", "GNMDS"}
 
 

@@ -77,7 +77,7 @@ def test_basics(server, logs):
         "response_time",
         "network_latency",
         "datetime_received",
-        "alg_ident",
+        "sampler",
         "score",
     }
     assert (df["winner"] != df["loser"]).all()
