@@ -99,7 +99,6 @@ def _reset(server):
         dump.unlink()
     assert not dump.exists()
 
-    # to double-check; dump might have been saved
     server.reset()
     return server
 
