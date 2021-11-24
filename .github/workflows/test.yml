@@ -59,7 +59,6 @@ jobs:
           sudo docker ps
     - name: Run all tests
       run: |
-          export GITHUB_ACTIONS=1
           # sudo docker-compose logs -f &  # if debugging; shows logs
           # sudo /usr/share/miniconda/bin/pytest -s
-          sudo GITHUB_ACTIONS=1 /usr/share/miniconda/bin/pytest
+          sudo /usr/share/miniconda/bin/pytest

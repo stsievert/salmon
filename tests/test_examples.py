@@ -10,7 +10,6 @@ Non-goal: testing to make sure that the backend runs without errors.
 """
 import random
 from pathlib import Path
-from time import sleep
 from zipfile import ZipFile
 
 import pytest

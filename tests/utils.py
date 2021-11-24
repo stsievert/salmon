@@ -108,7 +108,7 @@ def _reset(server):
 def server():
     server = Server("http://127.0.0.1:8421")
     server.authorize()
-    server = _reset(server)
+    #  server = _reset(server)
     yield server
     server = _reset(server)
 
