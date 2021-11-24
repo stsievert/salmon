@@ -81,6 +81,7 @@ class Sampler:
         save_deadline = 0.0  # right away
         data: List[Dict[str, Any]] = []
 
+        error_raised: List[int] = []
         for k in itertools.count():
             try:
                 loop_start = time()
@@ -228,6 +229,13 @@ class Sampler:
             except Exception as e:
                 logger.exception(e)
                 flush_logger(logger)
+                error_raised.append(k)
+
+                __n = 5
+                if np.diff(error_raised[-__n:]).tolist() == [1] * (__n - 1):
+                    logger.exception(e)
+                    flush_logger(logger)
+                    raise e
         return True
 
     def save(self) -> bool:
