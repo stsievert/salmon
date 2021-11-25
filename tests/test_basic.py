@@ -325,8 +325,6 @@ def test_auth_repeated_entries(server):
     assert "maximum number of users" in r.text.lower()
 
 
-
-
 def test_random_error(server, logs):
     n_val = 5
     exp = {"targets": [0, 1, 2, 3, 4, 5], "samplers": {"RandomSampling": {}, "ARR": {}}}
@@ -358,3 +356,16 @@ def test_html_defaults_rendered(server):
         "document.onkeydown = function checkKey(e) {" in rendered
         and "e.keyCode == '37') { // left arrow" in rendered
     )
+
+
+def test_defaults_acceptable_config(server):
+    server.authorize()
+    r = server.post("/init_exp", data={"exp": {"targets": 10}})
+    assert r.status_code == 200
+    config = server.get("/config").json()
+
+    server.reset()
+    r = server.post("/init_exp", data={"exp": config})
+    assert r.status_code == 200
+    config2 = server.get("/config").json()
+    assert config == config2
