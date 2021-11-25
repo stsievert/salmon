@@ -11,6 +11,7 @@ Non-goal: testing to make sure that the backend runs without errors.
 import random
 from pathlib import Path
 from zipfile import ZipFile
+import yaml
 
 import pytest
 
@@ -21,6 +22,16 @@ SUBDIRS = [
     f.name for f in EG_DIR.iterdir() if f.is_dir() and f.name[0] not in ["_", "."]
 ]
 YAMLS = [f.name for f in EG_DIR.glob("*.yaml")]
+
+
+def test_defaults_config(server):
+    server.authorize()
+    targets = ["actually", "required", "with", "zip", "or", "yaml"]
+    r = server.post("/init_exp", data={"exp": {"targets": targets}})
+    assert r.status_code == 200
+    defaults = server.get("/config").json()
+    rendered = yaml.load((EG_DIR / "default.yaml").open())
+    assert defaults == rendered
 
 
 def _test_upload(exp: Path, target_zip: Path = None, server=None):

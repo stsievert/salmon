@@ -286,6 +286,7 @@ def upload_form():
 @app.get("/config", tags=["private"])
 async def _get_config_endpoint(json: bool = True):
     exp_config = await _ensure_initialized()
+    exp_config.pop("n")
     print("json=", json, bool(json), not json)
     if not json:
         return PlainTextResponse(yaml.dump(exp_config))

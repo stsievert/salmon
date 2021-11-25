@@ -6,6 +6,7 @@ html:
     <i>target</i> item.
   max_queries: 50
   skip_button: false
+  title: "Similarity judgements"
 samplers:
   random:
     class: Random
@@ -15,4 +16,4 @@ sampling:
   probs:
     random: 100
   samplers_per_user: 1
-targets: 10  # for completness; actually required
+targets: ["actually", "required", "with", "zip", "or", "yaml"]
