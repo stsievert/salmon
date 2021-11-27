@@ -27,7 +27,12 @@ def test_basics(server, logs):
     r = server.delete("/reset?force=1", timeout=20)
     assert r.json() == {"success": True}
     server.delete("/reset", status_code=401, auth=("foo", "bar"))
+
+    r = server.authorize()
+    assert r.status_code == 200
     r = server.delete("/reset?force=1", timeout=20)
+    server.authorize()
+
     assert r.json() == {"success": True}
     server.get("/init")
     exp = Path(__file__).parent / "data" / "exp.yaml"
@@ -159,6 +164,8 @@ def test_saves_state(server):
     dump = Path(__file__).absolute().parent.parent / "out" / "dump.rdb"
     assert not dump.exists()
     exp = Path(__file__).parent / "data" / "exp.yaml"
+
+    server.authorize()
     server.post("/init_exp", data={"exp": exp.read_text()})
     for k in range(10):
         q = server.get("/query").json()
@@ -217,6 +224,7 @@ def test_logs(server, logs):
     assert not dump.exists()
     exp = Path(__file__).parent / "data" / "exp.yaml"
     server.delete("/reset?force=1", timeout=20)
+    server.authorize()
     server.post("/init_exp", data={"exp": exp.read_text()})
     data = []
     puid = "adsfjkl4awjklra"
@@ -311,6 +319,7 @@ def test_no_init_twice(server, logs):
     server.delete("/reset", status_code=403, timeout=20)
     server.delete("/reset?force=1", timeout=20)
 
+    server.authorize()
     server.post("/init_exp", data={"exp": exp.read_text()}, timeout=20)
     query = server.get("/query")
     assert query
@@ -365,6 +374,7 @@ def test_defaults_acceptable_config(server):
     config = server.get("/config").json()
 
     server.reset()
+    server.authorize()
     r = server.post("/init_exp", data={"exp": config})
     assert r.status_code == 200
     config2 = server.get("/config").json()

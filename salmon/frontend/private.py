@@ -485,12 +485,10 @@ def reset(
     tags=["private"],
     timeout: float = 10,
 ):
-    """
-    Delete all data from the database and a restart of the machine if *any*
-    queries were answered.
+    """Reset the machine to it's initial state.
 
-    Restart the machine via `docker-compose stop; docker-compose up` or
-    "Actions > Instance state > Reboot" on Amazon EC2.
+    This deletes all data from the database (and clear the backend too).
+    It also removes the username/password.
     """
     if not authorized:
         return {"success": False}
@@ -498,23 +496,31 @@ def reset(
     logger.warning("Resetting, force=%s, authorized=%s", force, authorized)
     if not force:
         logger.warning("Resetting, force=False. Erroring")
-        msg = (
-            "Do you really want to delete *all* data? This will delete all "
-            "responses and all target information and *cannot be undone.*\n\n"
-            "If you do really want to reset, go to '[url]/reset?force=1' "
-            "instead of '[url]/reset'"
-        )
-        raise ServerException(msg, status_code=403)
+        msg = """Do you really want to delete *all* data? This will delete all
+            responses and all target information and *cannot be undone.*
+
+            If you do really want to reset, go to '[url]/reset?force=1'
+            instead of '[url]/reset'. That means these actions will occur:
+
+            * Any experiment data will be deleted. Responses, embeddings, etc.
+            * Your username/password will be deleted.
+
+            These actions are final and can not be undone.
+            """
+        raise ServerException(dedent(msg), status_code=403)
 
     logger.warning("Authorized reset, force=True. Removing data from database")
     meta = _reset(timeout=timeout)
     assert meta["success"]
-    return HTMLResponse(
-        "The Salmon databasse has (largely) been cleared. "
-        "To completely clear the database, the server needs to be restarted "
-        "(likely via 'Actions > Instance state > Reboot' on Amazon EC2 "
-        "or `docker-compose stop; docker-compose up`."
+
+    now = datetime.now().isoformat()[:16]
+    logger.warning(
+        f"Authorized reset, force=True. Removing creds.json to creds-{now}.json"
     )
+    CREDS_FILE.rename(ROOT_DIR / f"creds-{now}.json")
+    assert not CREDS_FILE.exists()
+
+    return HTMLResponse("This Salmon server has been reset to it's initial state.")
 
 
 def _save(rj, bg=False):

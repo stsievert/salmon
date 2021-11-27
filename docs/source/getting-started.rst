@@ -34,12 +34,6 @@ hit "create user."
    Do not lose this username/password! You need the username/password to view
    the dashboard and download the received responses.
 
-.. warning::
-
-   Once a username/password are set, they can not be changed. The
-   username/password will remain the same when Salmon is reset and when the
-   machine Salmon is running on is restarted.
-
 It is technically possible to recover the username/password with the key file
 ``key.pem`` that Amazon AWS provides and the URL above:
 

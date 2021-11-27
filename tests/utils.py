@@ -74,6 +74,7 @@ class Server:
         r = self.post(f"/create_user/{username}/{password}", error=True)
         assert r.status_code in {200, 403}
         self._authorized = True
+        return r
 
 
 def _clear_logs(log=None):
@@ -89,6 +90,7 @@ def _clear_logs(log=None):
 
 
 def _reset(server):
+    server.authorize()
     server.reset()
 
     # Delete files
@@ -99,7 +101,8 @@ def _reset(server):
         dump.unlink()
     assert not dump.exists()
 
-    server.reset()
+    #  server.authorize()
+    #  server.reset()
     return server
 
 
