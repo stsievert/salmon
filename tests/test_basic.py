@@ -110,6 +110,9 @@ def test_basics(server, logs):
 
     r = server.get("/dashboard")
     assert r.status_code == 200
+    assert "Embedding dimension: 2" in r.text
+    assert "Number of targets: 6" in r.text
+    assert "Samplers: [&#39;random&#39;]" in r.text  # &#39; is HTML for the apostrophe
 
 
 def test_bad_file_upload(server):
