@@ -51,6 +51,7 @@ Part of a ``init.yaml`` configuration file might look like this:
      Random: {}
    sampling:
      probs: {"ARR": 85, "Random": 15}
+     samplers_per_user: 0  # use probability above
 
 This will create a versions of :class:`~salmon.triplets.samplers.ARR` with
 ``random_state=42`` would be created alongside the default version of
