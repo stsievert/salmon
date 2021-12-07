@@ -66,7 +66,7 @@ class Sampling(BaseSettings):
         probability.""",
     )
     samplers_per_user: int = Field(
-        1,
+        0,
         description="""The number of samplers to assign to each user. Setting
         ``samplers_per_user=1`` means any user only sees queries generated
         from one sampler, and ``sampler_per_user=0`` means the user sees a
