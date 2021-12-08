@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>salmon.triplets.manager.Config &mdash; Salmon v0.9.0rc1 documentation</title>
+  <title>salmon.triplets.manager.Config &mdash; Salmon v0.9.0rc2 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/autodoc_pydantic.css" type="text/css" />
@@ -212,7 +212,7 @@ a YAML file:</p>
                <span class="nt">&quot;d&quot;</span><span class="p">:</span> <span class="mi">2</span>
             <span class="p">},</span>
             <span class="nt">&quot;probs&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
-            <span class="nt">&quot;samplers_per_user&quot;</span><span class="p">:</span> <span class="mi">1</span>
+            <span class="nt">&quot;samplers_per_user&quot;</span><span class="p">:</span> <span class="mi">0</span>
          <span class="p">},</span>
          <span class="nt">&quot;env_names&quot;</span><span class="p">:</span> <span class="s2">&quot;{&#39;sampling&#39;}&quot;</span><span class="p">,</span>
          <span class="nt">&quot;allOf&quot;</span><span class="p">:</span> <span class="p">[</span>
@@ -306,7 +306,7 @@ a YAML file:</p>
             <span class="nt">&quot;samplers_per_user&quot;</span><span class="p">:</span> <span class="p">{</span>
                <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Samplers Per User&quot;</span><span class="p">,</span>
                <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;The number of samplers to assign to each user. Setting\n        ``samplers_per_user=1`` means any user only sees queries generated\n        from one sampler, and ``sampler_per_user=0`` means the user sees a\n        new sampler every query&quot;</span><span class="p">,</span>
-               <span class="nt">&quot;default&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+               <span class="nt">&quot;default&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
                <span class="nt">&quot;env_names&quot;</span><span class="p">:</span> <span class="s2">&quot;{&#39;samplers_per_user&#39;}&quot;</span><span class="p">,</span>
                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span>
             <span class="p">}</span>
@@ -344,7 +344,7 @@ a YAML file:</p>
 
 <dl class="py pydantic_field">
 <dt class="sig sig-object py" id="salmon.triplets.manager.Config.sampling">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sampling</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="salmon.triplets.manager.Sampling.html#salmon.triplets.manager.Sampling" title="salmon.triplets.manager.Sampling"><span class="pre">salmon.triplets.manager.Sampling</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Sampling(common={'d':</span> <span class="pre">2},</span> <span class="pre">probs=None,</span> <span class="pre">samplers_per_user=1)</span></em><a class="headerlink" href="#salmon.triplets.manager.Config.sampling" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sampling</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="salmon.triplets.manager.Sampling.html#salmon.triplets.manager.Sampling" title="salmon.triplets.manager.Sampling"><span class="pre">salmon.triplets.manager.Sampling</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Sampling(common={'d':</span> <span class="pre">2},</span> <span class="pre">probs=None,</span> <span class="pre">samplers_per_user=0)</span></em><a class="headerlink" href="#salmon.triplets.manager.Config.sampling" title="Permalink to this definition"></a></dt>
 <dd><p>Settings to configure how more than two samplers are
         used. See <a class="reference internal" href="salmon.triplets.manager.Sampling.html#salmon.triplets.manager.Sampling" title="salmon.triplets.manager.Sampling"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sampling</span></code></a> for more detail.</p>
 </dd></dl>
