@@ -25,7 +25,7 @@ setup(
     packages=["salmon"],
     install_requires=install_requires,
     tests_require=["pytest"],
-    python_requires="==3.8.*",
+    python_requires=">=3.8.*",
     long_description=long_description,
     classifiers=[
         "Programming Language :: Python :: 3",
