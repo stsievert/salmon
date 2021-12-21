@@ -45,6 +45,10 @@ jobs:
         pip install -r offline.txt
     - name: Install Salmon
       run: pip install .
+    - name: Debug info
+      run: |
+          echo "Running pwd..."
+          python -c "import salmon; print(salmon.__file__)"
     - name: Run tests in salmon/salmon/
       run: sudo /usr/share/miniconda/bin/pytest salmon/
     - name: Run all tests
