@@ -25,6 +25,10 @@ jobs:
       run: |
           echo "Running pwd..."
           pwd
+          echo "CONDA?"
+          echo $CONDA
+          echo "GITHUB_PATH?"
+          echo $GITHUB_PATH
           echo "\nRunning echo $USER..."
           echo $USER
           echo "\nRunning chown..."
@@ -40,11 +44,8 @@ jobs:
           # chown -R -H -L $USER:$USER .
           sudo chown -R -H -L $USER:$USER .
           sudo chown -R -H -L $USER:$USER salmon docs tests
-    - name: Install dependencies
-      run: |
-        pip install -r offline.txt
     - name: Install Salmon
-      run: pip install -t /home/runner/work/salmon2/ .
+      run: pip install .
     - name: change directories
       run: cd /
     - name: Debug info (salmon.__file__)
