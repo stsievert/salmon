@@ -42,3 +42,5 @@ queries, scores, meta = sampler.get_queries(num=10_000)
 
 This script allows the data scientist to score queries for an embedding they
 specify.
+
+[semver]:https://semver.org

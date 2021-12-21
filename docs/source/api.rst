@@ -5,6 +5,22 @@
 API
 ===
 
+Configuration
+-------------
+
+.. autosummary::
+   :toctree: generated/
+
+   salmon.triplets.manager.Config
+
+This configuration has two optional components:
+
+.. autosummary::
+   :toctree: generated/
+
+   salmon.triplets.manager.HTML
+   salmon.triplets.manager.Sampling
+
 Offline embeddings
 ------------------
 
@@ -28,14 +44,14 @@ following API:
    :toctree: generated/
    :template: class.rst
 
-   salmon.backend.sampler.Runner
+   salmon.backend.sampler.Sampler
 
 This class enables running a triplet embedding algorithm on Salmon: it provides
 convenient hooks to the database like ``get_queries`` and ``post_answers`` if
 you want to customize the running of the algorithm. By default, the algorithm
-uses ``Runner.run`` to run the algorithm.
+uses ``Sampler.run`` to run the algorithm.
 
-Every class below inherits from :class:`~salmon.backend.sampler.Runner`.
+Every class below inherits from :class:`~salmon.backend.sampler.Sampler`.
 
 
 Passive Algorithms

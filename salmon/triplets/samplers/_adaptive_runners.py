@@ -67,6 +67,7 @@ class Adaptive(Sampler):
         """
         super().__init__(ident=ident)
 
+        logger.warning(f"Initializing Adaptive with n={n}, d={d}, R={R}")
         self.n = n
         self.d = d
         self.R = R

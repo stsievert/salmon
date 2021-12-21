@@ -6,4 +6,4 @@ from salmon.backend.sampler import StopRunning
 
 class Test(TSTE):
     def process_answers(self, ans):
-        raise StopRunning("Test error")
+        raise Exception("Test error")

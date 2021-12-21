@@ -19,7 +19,7 @@ from starlette_prometheus import PrometheusMiddleware, metrics
 
 from salmon.triplets import manager
 from salmon.utils import get_logger
-from salmon.frontend.utils import ServerException, sha256, image_url
+from salmon.frontend.utils import ServerException, image_url, sha256
 
 logger = get_logger(__name__)
 
@@ -77,7 +77,6 @@ async def _ensure_initialized():
         "targets",
         "samplers",
         "n",
-        "d",
         "sampling",
         "html"
     ]
@@ -143,7 +142,7 @@ async def get_query(ident="") -> Dict[str, Union[int, str, float]]:
         idx = np.random.choice(len(idents), p=probs)
         ident = idents[idx]
 
-    r = httpx.get(f"http://localhost:8400/query-{ident}")
+    r = httpx.get(f"http://localhost:8400/query/{ident}")
     if r.status_code == 200:
         logger.info(f"query r={r}")
         return r.json()
@@ -159,7 +158,7 @@ async def get_query(ident="") -> Dict[str, Union[int, str, float]]:
         q = manager.random_query(config["n"])
         score = -9999
 
-    return {"alg_ident": ident, "score": score, **q}
+    return {"sampler": ident, "score": score, **q}
 
 
 @app.post("/answer", tags=["public"])
@@ -181,7 +180,7 @@ async def process_answer(ans: manager.Answer):
         "loser": d["left"] if d["winner"] == d["right"] else d["right"],
     }
     d.update(_update)
-    ident = d["alg_ident"]
+    ident = d["sampler"]
     logger.warning(f"answer received: {d}")
     rj.jsonarrappend(f"alg-{ident}-answers", root, d)
         # on backend,  key = f"alg-{self.ident}-answers"

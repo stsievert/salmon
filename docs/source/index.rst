@@ -24,8 +24,8 @@ Only distance is relevant in this embedding, not the vertical/horizontal axes.
 However, if you look closely, you can see two axes: positivity and intensity.
 
 Salmon provides efficient methods for collecting these triplet queries. For
-example, Salmon can generate an accurate embedding from only 1,000 responses in
-certain use cases. For the same use case, other approaches might require 2,000
+example, Salmon can generate an accurate embedding from only 2,800 responses in
+certain use cases. For the same use case, other approaches might require 5,500
 responses. More detail is in the :ref:`benchmarks on active sampling
 <experiments>`.
 
@@ -43,11 +43,12 @@ Canada's Western University.
 
    installation
    getting-started
+   init
+   samplers
    monitoring
    offline
-   samplers
-   api
    faq
+   api
 
 .. toctree::
    :maxdepth: 2

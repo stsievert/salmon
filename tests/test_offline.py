@@ -99,3 +99,9 @@ def test_offline_init():
     assert np.allclose(est.embedding_, em)
     est.partial_fit(X)
     assert not np.allclose(est.embedding_, em), "Embedding didn't change"
+
+
+if __name__ == "__main__":
+    test_offline_init()
+    test_offline_embedding_random_state()
+    test_offline_embedding()
