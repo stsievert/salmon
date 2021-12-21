@@ -4,10 +4,9 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>API &mdash; Salmon v0.9.0rc2 documentation</title>
+  <title>API &mdash; Salmon v0.8.0+2.g6940492 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/autodoc_pydantic.css" type="text/css" />
       <link rel="stylesheet" href="_static/basic.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
@@ -20,8 +19,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="salmon.triplets.manager.Config" href="generated/salmon.triplets.manager.Config.html" />
-    <link rel="prev" title="FAQ" href="faq.html" /> 
+    <link rel="next" title="salmon.triplets.offline.OfflineEmbedding" href="generated/salmon.triplets.offline.OfflineEmbedding.html" />
+    <link rel="prev" title="Sampler configuration" href="samplers.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -43,25 +42,16 @@
               <p class="caption" role="heading"><span class="caption-text">Usage</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="init.html">Experiment initialization</a></li>
-<li class="toctree-l1"><a class="reference internal" href="samplers.html">Sampler configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Starting an experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="monitoring.html">Experiment monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="offline.html">Generating embeddings offline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="samplers.html">Sampler configuration</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">API</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#configuration">Configuration</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="generated/salmon.triplets.manager.Config.html">salmon.triplets.manager.Config</a></li>
-<li class="toctree-l3"><a class="reference internal" href="generated/salmon.triplets.manager.HTML.html">salmon.triplets.manager.HTML</a></li>
-<li class="toctree-l3"><a class="reference internal" href="generated/salmon.triplets.manager.Sampling.html">salmon.triplets.manager.Sampling</a></li>
-</ul>
-</li>
 <li class="toctree-l2"><a class="reference internal" href="#offline-embeddings">Offline embeddings</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="generated/salmon.triplets.offline.OfflineEmbedding.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.offline</span></code>.OfflineEmbedding</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#samplers">Samplers</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="generated/salmon.backend.sampler.Sampler.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.backend.sampler</span></code>.Sampler</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#passive-algorithms">Passive Algorithms</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="generated/salmon.triplets.samplers.Random.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.samplers</span></code>.Random</a></li>
 <li class="toctree-l4"><a class="reference internal" href="generated/salmon.triplets.samplers.RoundRobin.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.samplers</span></code>.RoundRobin</a></li>
@@ -83,6 +73,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Benchmarks</span></p>
 <ul>
@@ -111,7 +102,7 @@
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
       <li>API</li>
       <li class="wy-breadcrumbs-aside">
-              <a href="https://github.com/stsievert/salmon/blob/master/docs/source/api.rst" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/stsievert/salmon/blob/master/source/api.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
   </ul>
   <hr/>
@@ -121,35 +112,6 @@
              
   <section id="api">
 <span id="alg-api"></span><span id="id1"></span><h1>API<a class="headerlink" href="#api" title="Permalink to this headline"></a></h1>
-<section id="configuration">
-<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline"></a></h2>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/salmon.triplets.manager.Config.html#salmon.triplets.manager.Config" title="salmon.triplets.manager.Config"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.triplets.manager.Config</span></code></a></p></td>
-<td><p>Customization of Salmon sampling and HTML.</p></td>
-</tr>
-</tbody>
-</table>
-<p>This configuration has two optional components:</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/salmon.triplets.manager.HTML.html#salmon.triplets.manager.HTML" title="salmon.triplets.manager.HTML"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.triplets.manager.HTML</span></code></a></p></td>
-<td><p>Stylistic settings to configure the HTML page.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/salmon.triplets.manager.Sampling.html#salmon.triplets.manager.Sampling" title="salmon.triplets.manager.Sampling"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.triplets.manager.Sampling</span></code></a></p></td>
-<td><p>Settings to configure how more than two samplers are used.</p></td>
-</tr>
-</tbody>
-</table>
-</section>
 <section id="offline-embeddings">
 <h2>Offline embeddings<a class="headerlink" href="#offline-embeddings" title="Permalink to this headline"></a></h2>
 <p>This class can be used to create embeddings from a set of downloaded responses
@@ -177,16 +139,13 @@ following API:</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/salmon.backend.sampler.Sampler.html#salmon.backend.sampler.Sampler" title="salmon.backend.sampler.Sampler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.backend.sampler.Sampler</span></code></a>([ident])</p></td>
-<td><p>Run a sampling algorithm.</p></td>
-</tr>
 </tbody>
 </table>
 <p>This class enables running a triplet embedding algorithm on Salmon: it provides
 convenient hooks to the database like <code class="docutils literal notranslate"><span class="pre">get_queries</span></code> and <code class="docutils literal notranslate"><span class="pre">post_answers</span></code> if
 you want to customize the running of the algorithm. By default, the algorithm
-uses <code class="docutils literal notranslate"><span class="pre">Sampler.run</span></code> to run the algorithm.</p>
-<p>Every class below inherits from <a class="reference internal" href="generated/salmon.backend.sampler.Sampler.html#salmon.backend.sampler.Sampler" title="salmon.backend.sampler.Sampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sampler</span></code></a>.</p>
+uses <code class="docutils literal notranslate"><span class="pre">Runner.run</span></code> to run the algorithm.</p>
+<p>Every class below inherits from <code class="xref py py-class docutils literal notranslate"><span class="pre">Runner</span></code>.</p>
 <section id="passive-algorithms">
 <h3>Passive Algorithms<a class="headerlink" href="#passive-algorithms" title="Permalink to this headline"></a></h3>
 <table class="longtable docutils align-default">
@@ -288,8 +247,8 @@ in <a class="reference internal" href="benchmarks/active.html#experiments"><span
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="faq.html" class="btn btn-neutral float-left" title="FAQ" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="generated/salmon.triplets.manager.Config.html" class="btn btn-neutral float-right" title="salmon.triplets.manager.Config" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="samplers.html" class="btn btn-neutral float-left" title="Sampler configuration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="generated/salmon.triplets.offline.OfflineEmbedding.html" class="btn btn-neutral float-right" title="salmon.triplets.offline.OfflineEmbedding" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

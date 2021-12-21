@@ -1,6 +1,0 @@
-﻿salmon.triplets.manager.Sampling
-================================
-
-.. currentmodule:: salmon.triplets.manager
-
-.. autopydantic_settings:: Sampling

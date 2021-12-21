@@ -4,10 +4,9 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Installation &mdash; Salmon v0.9.0rc2 documentation</title>
+  <title>Installation &mdash; Salmon v0.8.0+2.g6940492 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/autodoc_pydantic.css" type="text/css" />
       <link rel="stylesheet" href="_static/basic.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
@@ -20,7 +19,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Getting started" href="getting-started.html" />
+    <link rel="next" title="Starting an experiment" href="getting-started.html" />
     <link rel="prev" title="Welcome to Salmon’s documentation!" href="index.html" /> 
 </head>
 
@@ -54,13 +53,12 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="init.html">Experiment initialization</a></li>
-<li class="toctree-l1"><a class="reference internal" href="samplers.html">Sampler configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Starting an experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="monitoring.html">Experiment monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="offline.html">Generating embeddings offline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="samplers.html">Sampler configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Benchmarks</span></p>
 <ul>
@@ -89,7 +87,7 @@
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
       <li>Installation</li>
       <li class="wy-breadcrumbs-aside">
-              <a href="https://github.com/stsievert/salmon/blob/master/docs/source/installation.rst" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/stsievert/salmon/blob/master/source/installation.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
   </ul>
   <hr/>
@@ -101,7 +99,7 @@
 <span id="id1"></span><h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline"></a></h1>
 <p>This pages details how to get Salmon running, either on EC2 or locally on your
 machine. After you get Salmon running, detail on how to launch experiments in
-<a class="reference internal" href="getting-started.html#getting-started"><span class="std std-ref">Getting started</span></a>.</p>
+<a class="reference internal" href="getting-started.html#getting-started"><span class="std std-ref">Starting an experiment</span></a>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>See the <a class="reference internal" href="#troubleshooting">Troubleshooting</a> section if you’re having difficulties with either
@@ -208,14 +206,6 @@ not require a username/password.</p>
 <section id="troubleshooting">
 <span id="id2"></span><h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline"></a></h2>
 <p>See <a class="reference internal" href="faq.html#faq"><span class="std std-ref">FAQ</span></a> for more general questions.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Please include the version in any bug reports or feature requests.  The
-version number should look something like <code class="docutils literal notranslate"><span class="pre">v0.4.1</span></code>. It can be found at
-<code class="docutils literal notranslate"><span class="pre">http://[url]:8421/docs</span></code> or in the downloaded experiment file (found at
-<code class="docutils literal notranslate"><span class="pre">http://[url]:8421/download</span></code> which has a filename like
-<code class="docutils literal notranslate"><span class="pre">exp-2021-05-20T07:31-salmon-v0.4.1.rdb</span></code>).</p>
-</div>
 <section id="i-can-t-access-salmon-s-url">
 <h3>I can’t access Salmon’s URL<a class="headerlink" href="#i-can-t-access-salmon-s-url" title="Permalink to this headline"></a></h3>
 <p>Try using <code class="docutils literal notranslate"><span class="pre">http://</span></code> instead of <code class="docutils literal notranslate"><span class="pre">https://</span></code>.  By default, EC2 does not
@@ -229,7 +219,7 @@ right of the Amazon EC2 interface.</p>
 only available in the regions they’re created in.</p>
 </section>
 <section id="restoring-from-a-backup-didn-t-work">
-<span id="restorefrombackupfaq"></span><h3>Restoring from a backup didn’t work<a class="headerlink" href="#restoring-from-a-backup-didn-t-work" title="Permalink to this headline"></a></h3>
+<h3>Restoring from a backup didn’t work<a class="headerlink" href="#restoring-from-a-backup-didn-t-work" title="Permalink to this headline"></a></h3>
 <p>That’s perhaps expected depending on how much Salmon has changed. Launching
 from EC2 always downloads the latest version of Salmon, which may not work with
 your backup file.</p>
@@ -288,7 +278,7 @@ yourself (but it’s not feasible).</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="index.html" class="btn btn-neutral float-left" title="Welcome to Salmon’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="getting-started.html" class="btn btn-neutral float-right" title="Getting started" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="getting-started.html" class="btn btn-neutral float-right" title="Starting an experiment" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

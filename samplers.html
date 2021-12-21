@@ -4,10 +4,9 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sampler configuration &mdash; Salmon v0.9.0rc2 documentation</title>
+  <title>Sampler configuration &mdash; Salmon v0.8.0+2.g6940492 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/autodoc_pydantic.css" type="text/css" />
       <link rel="stylesheet" href="_static/basic.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
@@ -20,8 +19,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Experiment monitoring" href="monitoring.html" />
-    <link rel="prev" title="Experiment initialization" href="init.html" /> 
+    <link rel="next" title="API" href="api.html" />
+    <link rel="prev" title="Generating embeddings offline" href="offline.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -43,21 +42,12 @@
               <p class="caption" role="heading"><span class="caption-text">Usage</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="init.html">Experiment initialization</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Sampler configuration</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#file-structure">File structure</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#multiple-samplers-of-the-same-name">Multiple samplers of the same name</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#initialization-arguments">Initialization arguments</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#example">Example</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Starting an experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="monitoring.html">Experiment monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="offline.html">Generating embeddings offline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Sampler configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Benchmarks</span></p>
 <ul>
@@ -86,7 +76,7 @@
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
       <li>Sampler configuration</li>
       <li class="wy-breadcrumbs-aside">
-              <a href="https://github.com/stsievert/salmon/blob/master/docs/source/samplers.rst" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/stsievert/salmon/blob/master/source/samplers.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
   </ul>
   <hr/>
@@ -103,134 +93,6 @@ won’t improve the embedding much.</p>
 “active machine learning” aka “adaptive sampling algorithms.” These algorithms
 use all previous responses collected to determine the next query that will help
 improve the embedding the most.</p>
-<p>If quality embeddings are desired, the benchmarks at “<a class="reference internal" href="benchmarks/active.html#experiments"><span class="std std-ref">Active sampling</span></a>” are
-likely of interest, as are the FAQs on “<a class="reference internal" href="faq.html#random-vs-active"><span class="std std-ref">When should I use random/active sampling?</span></a>” and
-“<a class="reference internal" href="faq.html#adaptiveconfig"><span class="std std-ref">What active samplers are recommended?</span></a>” However, quality embeddings may not always be of
-interest: sometimes, the goal is not to generate a good embedding, but rather
-to see how well the crowd agrees with each other, or to make sure participants
-don’t influence each other (and each response is independent of other
-responses). Here’s a rule of thumb:</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p><strong>Want an unbiased estimate of what the crowd thinks?</strong> Don’t specify
-<code class="docutils literal notranslate"><span class="pre">samplers</span></code>, or use the default <code class="docutils literal notranslate"><span class="pre">Random:</span> <span class="pre">{}</span></code>, which will rely on
-<a class="reference internal" href="generated/salmon.triplets.samplers.Random.html#salmon.triplets.samplers.Random" title="salmon.triplets.samplers.Random"><code class="xref py py-class docutils literal notranslate"><span class="pre">Random</span></code></a></p>
-<p><strong>Want to generate a better embedding? Worried about the cost of
-collecting responses?</strong> Use <code class="docutils literal notranslate"><span class="pre">ARR:</span> <span class="pre">{}</span></code>, which will rely on
-<a class="reference internal" href="generated/salmon.triplets.samplers.ARR.html#salmon.triplets.samplers.ARR" title="salmon.triplets.samplers.ARR"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARR</span></code></a>.</p>
-<p><strong>Want to measure how well the crowd agrees with one another?</strong> Use
-<code class="docutils literal notranslate"><span class="pre">Validation:</span> <span class="pre">{}</span></code>, which will rely on
-<a class="reference internal" href="generated/salmon.triplets.samplers.Validation.html#salmon.triplets.samplers.Validation" title="salmon.triplets.samplers.Validation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Validation</span></code></a>,</p>
-</div>
-<p>Now, let’s go over how to configure different samplers and an example.</p>
-<section id="file-structure">
-<h2>File structure<a class="headerlink" href="#file-structure" title="Permalink to this headline"></a></h2>
-<p>Part of a <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code> configuration file might look like this:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: init.yaml</span>
-<span class="nt">samplers</span><span class="p">:</span>
-  <span class="nt">ARR</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt">random_state</span><span class="p">:</span> <span class="nv">42</span><span class="p p-Indicator">}</span>
-  <span class="nt">Random</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
-<span class="nt">sampling</span><span class="p">:</span>
-  <span class="nt">probs</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="s">&quot;ARR&quot;</span><span class="p p-Indicator">:</span> <span class="nv">85</span><span class="p p-Indicator">,</span> <span class="s">&quot;Random&quot;</span><span class="p p-Indicator">:</span> <span class="nv">15</span><span class="p p-Indicator">}</span>
-  <span class="nt">samplers_per_user</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0</span>  <span class="c1"># use probability above</span>
-</pre></div>
-</div>
-<p>This will create a versions of <a class="reference internal" href="generated/salmon.triplets.samplers.ARR.html#salmon.triplets.samplers.ARR" title="salmon.triplets.samplers.ARR"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARR</span></code></a> with
-<code class="docutils literal notranslate"><span class="pre">random_state=42</span></code> would be created alongside the default version of
-<a class="reference internal" href="generated/salmon.triplets.samplers.Random.html#salmon.triplets.samplers.Random" title="salmon.triplets.samplers.Random"><code class="xref py py-class docutils literal notranslate"><span class="pre">Random</span></code></a>. When a query is generated, it will be
-generated from <code class="docutils literal notranslate"><span class="pre">ARR</span></code> 85% of the time and from <code class="docutils literal notranslate"><span class="pre">Random</span></code> the rest of the
-time. Generally, the keys in <code class="docutils literal notranslate"><span class="pre">samplers</span></code> and <code class="docutils literal notranslate"><span class="pre">sampling</span></code> follow these general
-rules:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">samplers</span></code>: controls how one specific sampler behaves (i.e., sampler
-initialization).</p>
-<ul>
-<li><p>The type of sampler is specified by each key (e.g., key <code class="docutils literal notranslate"><span class="pre">ARR</span></code> corresponds
-to <a class="reference internal" href="generated/salmon.triplets.samplers.ARR.html#salmon.triplets.samplers.ARR" title="salmon.triplets.samplers.ARR"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARR</span></code></a>), and any arguments are
-initialization parameters for that object.</p></li>
-</ul>
-</li>
-<li><p><code class="docutils literal notranslate"><span class="pre">sampling</span></code>: controls samplers interact. For example:</p>
-<ul>
-<li><p>the <code class="docutils literal notranslate"><span class="pre">probs</span></code> key controls how frequently each sampler in
-<code class="docutils literal notranslate"><span class="pre">samplers</span></code> is used</p></li>
-<li><p>the <code class="docutils literal notranslate"><span class="pre">common</span></code> key controls sending initialization arguments to <cite>every</cite>
-sampler.</p></li>
-<li><p>the <code class="docutils literal notranslate"><span class="pre">samplers_per_user</span></code> key controls how many samplers are seen by any
-one user who visits Salmon.</p></li>
-</ul>
-</li>
-</ul>
-<p>A good default configuration is mentioned in the FAQ “<a class="reference internal" href="faq.html#adaptiveconfig"><span class="std std-ref">What active samplers are recommended?</span></a>”
-The defaults and complete details are in
-<a class="reference internal" href="generated/salmon.triplets.manager.Config.html#salmon.triplets.manager.Config" title="salmon.triplets.manager.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a>.</p>
-<section id="multiple-samplers-of-the-same-name">
-<h3>Multiple samplers of the same name<a class="headerlink" href="#multiple-samplers-of-the-same-name" title="Permalink to this headline"></a></h3>
-<p>If two samplers with different purposes want to be used, the key <code class="docutils literal notranslate"><span class="pre">class</span></code> is
-used to specify which type of sampler should be used:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: init.yaml</span>
-<span class="nt">samplers</span><span class="p">:</span>
-  <span class="nt">testing</span><span class="p">:</span>
-    <span class="nt">class</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Random</span>
-  <span class="nt">training</span><span class="p">:</span>
-    <span class="nt">class</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Random</span>
-</pre></div>
-</div>
-<p>This will generate queries from these two samplers with equal probability:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">salmon.triplets.samplers</span> <span class="kn">import</span> <span class="n">Random</span>
-<span class="n">Random</span><span class="p">()</span>
-<span class="n">Random</span><span class="p">()</span>
-</pre></div>
-</div>
-</section>
-<section id="initialization-arguments">
-<h3>Initialization arguments<a class="headerlink" href="#initialization-arguments" title="Permalink to this headline"></a></h3>
-<p>Arguments inside each key are passed to the sampler. For example,</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: init.yaml</span>
-<span class="nt">samplers</span><span class="p">:</span>
-  <span class="nt">ARR</span><span class="p">:</span>
-    <span class="nt">random_state</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">42</span>
-    <span class="nt">module</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">CKL</span>
-    <span class="nt">d</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">3</span>
-    <span class="nt">scorer</span><span class="p">:</span> <span class="s">&quot;uncertainty&quot;</span>
-</pre></div>
-</div>
-<p>would create an instance of <a class="reference internal" href="generated/salmon.triplets.samplers.ARR.html#salmon.triplets.samplers.ARR" title="salmon.triplets.samplers.ARR"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARR</span></code></a>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">salmon.triplets.samplers</span> <span class="kn">import</span> <span class="n">ARR</span>
-<span class="n">ARR</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="s2">&quot;CKL&quot;</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">scorer</span><span class="o">=</span><span class="s2">&quot;uncertainty&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Note that the argument are documented in
-<a class="reference internal" href="generated/salmon.triplets.samplers.ARR.html#salmon.triplets.samplers.ARR" title="salmon.triplets.samplers.ARR"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARR</span></code></a>. Some argument are arguments that
-<a class="reference internal" href="generated/salmon.triplets.samplers.ARR.html#salmon.triplets.samplers.ARR" title="salmon.triplets.samplers.ARR"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARR</span></code></a> directly uses (like <code class="docutils literal notranslate"><span class="pre">module</span></code>), and
-other are passed to <a class="reference internal" href="generated/salmon.triplets.samplers.Adaptive.html#salmon.triplets.samplers.Adaptive" title="salmon.triplets.samplers.Adaptive"><code class="xref py py-class docutils literal notranslate"><span class="pre">Adaptive</span></code></a> as mentioned in
-the docstring of <a class="reference internal" href="generated/salmon.triplets.samplers.ARR.html#salmon.triplets.samplers.ARR" title="salmon.triplets.samplers.ARR"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARR</span></code></a>.</p>
-<p>If you have multiple arguments for <em>every</em> sampler, you can specify that with the
-<code class="docutils literal notranslate"><span class="pre">common</span></code> key:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: init.yaml</span>
-<span class="nt">samplers</span><span class="p">:</span>
-  <span class="nt">arr_tste</span><span class="p">:</span>
-    <span class="nt">module</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">TSTE</span>
-  <span class="nt">arr_ckl</span><span class="p">:</span>
-    <span class="nt">module</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">CKL</span>
-<span class="nt">sampling</span><span class="p">:</span>
-  <span class="nt">common</span><span class="p">:</span>
-    <span class="nt">d</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">3</span>
-    <span class="nt">random_state</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">42</span>
-</pre></div>
-</div>
-<p>This would initialize these samplers:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">salmon.triplets.samplers</span> <span class="kn">import</span> <span class="n">ARR</span>
-<span class="n">ARR</span><span class="p">(</span><span class="n">module</span><span class="o">=</span><span class="s2">&quot;TSTE&quot;</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
-<span class="n">ARR</span><span class="p">(</span><span class="n">module</span><span class="o">=</span><span class="s2">&quot;CKL&quot;</span><span class="p">,</span>  <span class="n">d</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>The documentation for <code class="docutils literal notranslate"><span class="pre">ARR</span></code> is available at
-<a class="reference internal" href="generated/salmon.triplets.samplers.ARR.html#salmon.triplets.samplers.ARR" title="salmon.triplets.samplers.ARR"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARR</span></code></a>.</p>
-</section>
-</section>
-<section id="example">
-<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline"></a></h2>
 <p>Let’s start out with a simple <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code> file, one suited for random
 sampling.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">targets</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;obj1&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;obj2&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;foo&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;bar&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;foobar!&quot;</span><span class="p p-Indicator">]</span>
@@ -249,6 +111,18 @@ sampling.</p>
   <span class="nt">probs</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="s">&quot;ARR&quot;</span><span class="p p-Indicator">:</span> <span class="nv">70</span><span class="p p-Indicator">,</span> <span class="s">&quot;Random&quot;</span><span class="p p-Indicator">:</span> <span class="nv">20</span><span class="p p-Indicator">,</span> <span class="s">&quot;Validation&quot;</span><span class="p p-Indicator">:</span> <span class="nv">10</span><span class="p p-Indicator">}</span>
 </pre></div>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Want an unbiased estimate of what the crowd thinks? Don’t specify
+<code class="docutils literal notranslate"><span class="pre">samplers</span></code>, or use the default <code class="docutils literal notranslate"><span class="pre">Random:</span> <span class="pre">{}</span></code>, which will rely on
+<a class="reference internal" href="generated/salmon.triplets.samplers.Random.html#salmon.triplets.samplers.Random" title="salmon.triplets.samplers.Random"><code class="xref py py-class docutils literal notranslate"><span class="pre">Random</span></code></a></p>
+<p>Want to generate a better embedding? Worried about the cost of collecting
+responses? Use <code class="docutils literal notranslate"><span class="pre">ARR:</span> <span class="pre">{}</span></code>, which will rely on
+<a class="reference internal" href="generated/salmon.triplets.samplers.ARR.html#salmon.triplets.samplers.ARR" title="salmon.triplets.samplers.ARR"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARR</span></code></a>.</p>
+<p>Want to measure how well the crowd agrees with one another? Use
+<code class="docutils literal notranslate"><span class="pre">Validation:</span> <span class="pre">{}</span></code>, which will rely on
+<a class="reference internal" href="generated/salmon.triplets.samplers.Validation.html#salmon.triplets.samplers.Validation" title="salmon.triplets.samplers.Validation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Validation</span></code></a>,</p>
+</div>
 <p>When <code class="docutils literal notranslate"><span class="pre">ARR</span></code> is specified as a key for <code class="docutils literal notranslate"><span class="pre">samplers</span></code>,
 <a class="reference internal" href="generated/salmon.triplets.samplers.ARR.html#salmon.triplets.samplers.ARR" title="salmon.triplets.samplers.ARR"><code class="xref py py-class docutils literal notranslate"><span class="pre">salmon.triplets.samplers.ARR</span></code></a> is used for the sampling method.
 Customization is possible by passing different keyword arguments to
@@ -261,15 +135,37 @@ configuration:</p>
     <span class="nt">module</span><span class="p">:</span> <span class="s">&quot;TSTE&quot;</span>
 </pre></div>
 </div>
-</section>
+<p><code class="docutils literal notranslate"><span class="pre">module</span></code> is a keyword argument to <a class="reference internal" href="generated/salmon.triplets.samplers.ARR.html#salmon.triplets.samplers.ARR" title="salmon.triplets.samplers.ARR"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARR</span></code></a>, and
+determines the noise model used for query scoring/embedding. This configuration
+would compare two different instances of
+<a class="reference internal" href="generated/salmon.triplets.samplers.ARR.html#salmon.triplets.samplers.ARR" title="salmon.triplets.samplers.ARR"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARR</span></code></a>:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">targets</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;obj1&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;obj2&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;foo&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;bar&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;foobar!&quot;</span><span class="p p-Indicator">]</span>
+
+<span class="nt">samplers</span><span class="p">:</span>
+  <span class="nt">Random</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
+  <span class="nt">arr_tste</span><span class="p">:</span>
+    <span class="nt">class</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ARR</span>
+    <span class="nt">module</span><span class="p">:</span> <span class="s">&quot;TSTE&quot;</span>
+  <span class="nt">arr_ckl</span><span class="p">:</span>
+    <span class="nt">class</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ARR</span>
+    <span class="nt">module</span><span class="p">:</span> <span class="s">&quot;CKL&quot;</span>
+    <span class="nt">module__mu</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.02</span>
+
+<span class="nt">sampling</span><span class="p">:</span>
+  <span class="nt">probs</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="s">&quot;Random&quot;</span><span class="p p-Indicator">:</span> <span class="nv">20</span><span class="p p-Indicator">,</span> <span class="s">&quot;arr_ckl&quot;</span><span class="p p-Indicator">:</span> <span class="nv">40</span><span class="p p-Indicator">,</span> <span class="s">&quot;arr_tste&quot;</span><span class="p p-Indicator">:</span> <span class="nv">40</span><span class="p p-Indicator">}</span>
+</pre></div>
+</div>
+<p>In this configuration, custom names are provided for two instances of
+<a class="reference internal" href="generated/salmon.triplets.samplers.ARR.html#salmon.triplets.samplers.ARR" title="salmon.triplets.samplers.ARR"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARR</span></code></a>. Both instances are sampled 40% of the
+time, with the remaining 20% reserved for a test set with random queries.</p>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="init.html" class="btn btn-neutral float-left" title="Experiment initialization" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="monitoring.html" class="btn btn-neutral float-right" title="Experiment monitoring" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="offline.html" class="btn btn-neutral float-left" title="Generating embeddings offline" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api.html" class="btn btn-neutral float-right" title="API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

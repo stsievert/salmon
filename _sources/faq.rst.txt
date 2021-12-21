@@ -6,16 +6,6 @@ FAQ
 Also relevant is the :ref:`troubleshooting`, which goes over some (blocking)
 difficulties while launching.
 
-.. note::
-
-   Please include the version in any bug reports or feature requests.  The
-   version number should look something like ``v0.4.1``. It can be found at
-   ``http://[url]:8421/docs`` or in the downloaded experiment file (found at
-   ``http://[url]:8421/download`` which has a filename like
-   ``exp-2021-05-20T07:31-salmon-v0.4.1.rdb``).
-
-.. _random_vs_active:
-
 When should I use random/active sampling?
 -----------------------------------------
 
@@ -34,6 +24,7 @@ that active sampling requires.
 By default, Salmon will produce random embeddings. This is the simplest
 sampler, and doesn't require any user configuration. Tips on how to use active
 samplers are in :ref:`adaptiveconfig`.
+
 
 .. _faq-n_responses:
 
@@ -91,7 +82,6 @@ configuration:
      Random: {}
    sampling:
      probs: {"ARR": 85, "Random": 15}
-
 
 Can I choose a different machine?
 ---------------------------------
@@ -167,3 +157,57 @@ process is beyond scope for this project. [#f]_
 
 .. [#f] though the package `mkcert`_ might help.
 
+
+How do I generate offline embeddings without using conda?
+---------------------------------------------------------
+
+Using conda is the officially supported method. Use other dependency managers at
+your own peril.
+
+That said, this process worked to generate offline embeddings with Salmon v0.9.0:
+
+.. code-block:: bash
+
+   $ git clone https://github.com/stsievert/salmon.git
+   $ cd salmon
+   $ pip install -r offline.txt  # see file below
+   $ pip install .
+
+The list of dependencies in ``offline.txt`` is below:
+
+.. code-block:: yaml
+
+   # file offline.txt
+   numpy>=1.18.0
+   scipy
+   pandas>=1.0.1
+   Cython
+   scikit-learn
+   dask>=2021.02.0
+   distributed>=2021.02.0
+   torch
+   altair
+   seaborn
+   matplotlib
+   skorch>=0.8.0
+   fastparquet
+   dask-ml
+   lz4
+   blosc
+   cytoolz
+   ujson
+   pyyaml
+   pyarrow
+   pytest
+   fastapi[all]
+   rejson
+   cloudpickle
+   bokeh==2.0.1
+   rejson
+   httpx
+   aiofiles
+   jinja2
+   redis==3.5.*
+   gunicorn
+   python-multipart
+   starlette-prometheus
