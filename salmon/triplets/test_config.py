@@ -42,7 +42,7 @@ def test_defaults():
         "sampling": {
             "common": {"d": 2},
             "probs": {"random": 100},
-            "samplers_per_user": 1,
+            "samplers_per_user": 0,
         },
     }
 
