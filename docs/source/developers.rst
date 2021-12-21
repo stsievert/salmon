@@ -17,6 +17,11 @@ expects two functions:
     * ``get_queries``, which returns a list of queries and scores. These are
       saved in the database, and popped when a user requests a query.
 
+Use of ``get_queries`` is strongly recommended. Then Salmon's backend relies on
+Dask, which allows for higher throughput (more concurrent users). ``get_query``
+uses a single worker process, so it may get overloaded with a moderate number
+of concurrent users.
+
 For complete documentation, see :ref:`alg-api`. In short, your algorithm should
 be a class that implement ``get_query`` and ``process_answers``.
 
@@ -25,7 +30,7 @@ After you have developed these functions, look at other algorithms in
 to figure out inheritance details. In short, the following details are
 important:
 
-* **Inheriting from** :class:`~salmon.backend.alg.Runner`, which enables Salmon
+* **Inheriting from** :class:`~salmon.backend.alg.Sampler`, which enables Salmon
   to work with custom algorithms.
 * **Accepting an** ``ident: str`` keyword argument in ``__init__`` **and
   passing that argument to** ``super().__init__``. (``ident`` is passed to all
@@ -40,14 +45,11 @@ necessary but are highly encouraged:
 * **Ensure query searches are fast enough.** The user will be waiting if
   thousands of users come to Salmon and deplete all the searched queries.
 
-It's not a strong requirement, but I would encourage both ``process_answers``
-and ``get_queries`` to be quick and complete in about a second each.
-
 Debugging
 ---------
 
 Let's say you've integrated most of your algorithm into
-:class:`~salmon.backend.sampler.Runner`. Now, you'd like to make sure everything is
+:class:`~salmon.backend.sampler.Sampler`. Now, you'd like to make sure everything is
 working properly.
 
 This script will help:

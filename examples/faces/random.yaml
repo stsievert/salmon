@@ -1,6 +1,6 @@
-instructions: Which of the comparison objects is most similar to the target object?
-debrief: Thanks! Please enter this participant ID in the assignment.
-max_queries: 100  # took about 2.05 minutes for 100 queries
-d: 2
+html:
+  instructions: Which of the comparison objects is most similar to the target object?
+  debrief: Thanks! Please enter this participant ID in the assignment.
+  max_queries: 100  # took about 2.05 minutes for 100 queries
 samplers:
-  RandomSampling: {}
+  Random: {}

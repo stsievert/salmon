@@ -4,7 +4,7 @@ from typing import List, Optional, Tuple
 
 import numpy as np
 
-from salmon.backend.sampler import DaskClient, Path, Runner, root
+from salmon.backend.sampler import DaskClient, Path, Sampler, root
 
 from .utils import Answer, Query
 
@@ -16,7 +16,7 @@ def _get_query(n) -> Tuple[int, int, int]:
     return int(a), int(b), int(c)
 
 
-class RandomSampling(Runner):
+class Random(Sampler):
     """
     Choose the triplet queries randomly, only ensuring objects are not repeated.
 

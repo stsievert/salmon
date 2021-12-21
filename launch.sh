@@ -3,7 +3,12 @@
 # Currently so don't have to rebuild docker machines; see
 # https://github.com/dask/dask-docker/pull/108
 
-export SALMON_NPROC=$(getconf _NPROCESSORS_ONLN)
+# TODO: _NPROCESSORS_ONLN==1 for github actions. Leads to index error on
+# backend, not enough workers.
+
+
+export NUM_PROCS=$(getconf _NPROCESSORS_ONLN)
+export SALMON_NPROC=$(python -c "print(max(4, $NUM_PROCS))")
 
 # chose nthreads=1 because best practice [1]
 # [1]: https://docs.dask.org/en/latest/array-best-practices.html#avoid-oversubscribing-threads
@@ -36,8 +41,12 @@ else
 
     ## Use uvicorn instead of gunicorn because FastAPI's background tasks are threads
     ## in uvicorn, not processes.
+    ##
+    ## Only use one worker because some global state for sampler.get_query
+    # (not a huge issue because this server is mostly a proxy for Dask)
+    # (this breaks down if get_query is relied upon)
+    uvicorn salmon:app_algs --workers 1 --port 8400 --host 0.0.0.0 &
     # gunicorn --preload --worker-tmp-dir /dev/shm --threads 2 --timeout 90 -w 1 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8400 salmon:app_algs &
-    uvicorn salmon:app_algs --port 8400 --host 0.0.0.0 &
     sleep 1
     gunicorn --worker-tmp-dir /dev/shm --threads 2 --timeout 90 -w 4 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8421 salmon:app
 fi

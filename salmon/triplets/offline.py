@@ -109,7 +109,7 @@ class OfflineEmbedding(BaseEstimator):
         """
         return self.opt_.embedding_
 
-    def initialize(self, X_train):
+    def initialize(self, X_train, embedding=None):
         """
         Initialize this optimizer.
 
@@ -117,6 +117,9 @@ class OfflineEmbedding(BaseEstimator):
         ----------
         X_train : np.ndarray
             Responses organized to be [head, winner, loser].
+
+        embedding : nd.ndarray, optional
+            If specified, initialize the embedding with the given values.
 
         """
         if self.opt is None:
@@ -134,6 +137,7 @@ class OfflineEmbedding(BaseEstimator):
             opt = OGD(**kwargs)
         else:
             opt = self.opt
+        opt.initialize(embedding=embedding)
         opt.push(X_train)
         self._meta: Dict[str, Number] = {"pf_calls": 0}
 
@@ -159,7 +163,7 @@ class OfflineEmbedding(BaseEstimator):
         self._partial_fit(X_train)
         return self
 
-    def fit(self, X_train, X_test):
+    def fit(self, X_train, X_test, embedding=None, get_stats=None, **stats_kwargs):
         """
         Fit the embedding with train and validation data.
 
@@ -176,33 +180,73 @@ class OfflineEmbedding(BaseEstimator):
 
             The responses with shape ``(n_questions, 3)``.
             Each question is organized as ``[head, winner, loser]``.
+
+        embedding : np.ndarray, optional
+            The embedding to initialize with.
+
+            .. note::
+
+               This is particularly useful when ``embedding`` is the
+               online embedding from the CSV:
+
+               .. code-block:: python
+
+                  import pandas as pd
+                  em = pd.read_csv("embedding.csv")  # from dashboard
+                  df = pd.read_csv("responses.csv")  # from dashboard
+                  X = df[["head", "winner", "loser"]]
+
+                  from salmon.triplets.offline import OfflineEmbedding
+                  est = OfflineEmbedding(...)
+                  est.initialize(X, embedding=em)
+
+        get_stats : Callable
+
         """
-        self.initialize(X_train)
+        self.initialize(X_train, embedding=embedding)
         self._meta["pf_calls"] = 0
         _start = time()
+        if self.verbose:
+            __score, __loss = self._score(X_test)
+            print("initial score: ", __score)
+            if get_stats:
+                em = deepcopy(self.embedding_)
+                datum2 = get_stats(embedding=em, X_test=X_test, **stats_kwargs)
+                print("initial nn_diff_mean", datum2.get("nn_diff_mean", ""))
         for k in itertools.count():
             self._partial_fit(X_train)
             if self.verbose and k == 0:
                 print(self.opt_.optimizer, self.opt_.get_params())
-            if self.opt_.meta_["num_grad_comps"] >= self.max_epochs * len(X_train):
-                break
 
-            if self.verbose and (
-                k % self.verbose == 0 or abs(self.max_epochs - k) <= 3
-            ):
-
+            if (self.verbose and k % self.verbose == 0) or abs(
+                self.max_epochs - k
+            ) <= 3:
                 datum = deepcopy(self._meta)
                 datum.update(self.opt_.meta_)
-                test_score, loss_test = self._score(X_test)
-                datum["score_test"] = test_score
-                datum["loss_test"] = loss_test
-                keys = ["ident", "score_test", "train_data", "max_epochs", "_epochs", "_elapsed_time"]
+                for prefix, __X in [("train", X_train), ("test", X_test)]:
+                    __score, __loss = self._score(__X)
+                    datum[f"score_{prefix}"] = __score
+                    datum[f"loss_{prefix}"] = __loss
+
                 datum["_elapsed_time"] = int(time() - _start)
-                show = {k: _print_fmt(datum[k]) for k in keys}
+
+                if get_stats:
+                    em = deepcopy(self.embedding_)
+                    datum2 = get_stats(embedding=em, X_test=X_test, **stats_kwargs)
+                    datum.update({f"stats__{k}": v for k, v in datum2.items()})
+
                 self._history_.append(datum)
             if self.verbose and k % self.verbose == 0:
+                # fmt: off
+                keys = [
+                    "ident", "score_test", "train_data", "max_epochs",
+                    "_epochs", "_elapsed_time", "batch_size",
+                ]
+                # fmt: on
+                show = {k: _print_fmt(datum.get(k, "")) for k in keys}
                 print(show)
-
+            if self.opt_.meta_["num_grad_comps"] >= self.max_epochs * len(X_train):
+                break
         test_score, loss_test = self._score(X_test)
         self._history_[-1]["score_test"] = test_score
         self._history_[-1]["loss_test"] = loss_test
@@ -224,17 +268,17 @@ class OfflineEmbedding(BaseEstimator):
         self._meta["pf_calls"] += 1
         self._meta.update(deepcopy(self.opt_.meta_))
 
-        train_score = self.opt_.score(X_train)
-        module_ = self.opt_.module_
-        loss_train = module_.losses(*module_._get_dists(X_train)).mean().item()
+        # train_score = self.opt_.score(X_train)
+        # module_ = self.opt_.module_
+        # loss_train = module_.losses(*module_._get_dists(X_train)).mean().item()
 
         prev_time = 0
         if len(self._history_):
             prev_time = self._history_[-1]["elapsed_time"]
 
         datum = {
-            "score_train": train_score,
-            "loss_train": loss_train,
+            # "score_train": train_score,
+            # "loss_train": loss_train,
             "k": k,
             "elapsed_time": time() - _start + prev_time,
             "train_data": len(X_train),

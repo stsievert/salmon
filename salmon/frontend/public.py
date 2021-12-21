@@ -19,7 +19,7 @@ from starlette_prometheus import PrometheusMiddleware, metrics
 
 from ..triplets import manager
 from ..utils import get_logger
-from .utils import ServerException, sha256
+from .utils import ServerException, image_url, sha256
 
 logger = get_logger(__name__)
 
@@ -76,23 +76,33 @@ async def _ensure_initialized():
     expected_keys = [
         "targets",
         "samplers",
-        "instructions",
         "n",
-        "d",
+        "sampling",
+        "html"
+    ]
+    html_keys = [
+        "instructions",
         "max_queries",
         "debrief",
         "skip_button",
-        "sampling",
         "css",
+        "arrow_keys",
     ]
+    err = False
     if not set(exp_config) == set(expected_keys):
+        err = True
+        extra = set(exp_config) - set(expected_keys)
+        missing = set(expected_keys) - set(exp_config)
+    if "html" in exp_config and not set(html_keys).issubset(set(exp_config["html"])):
+        err = True
+        extra = set()#exp_config["html"]) - set(expected_keys)
+        missing = set(expected_keys) - set(exp_config["html"])
+    if err:
         msg = (
             "Experiment keys are not correct. Expected {}, got {}.\n\n"
             "Extra keys: {}\n"
             "Missing keys: {}"
         )
-        extra = set(exp_config) - set(expected_keys)
-        missing = set(expected_keys) - set(exp_config)
         raise ServerException(
             msg.format(expected_keys, list(exp_config.keys()), extra, missing)
         )
@@ -100,35 +110,39 @@ async def _ensure_initialized():
 
 
 @app.get("/", tags=["public"])
-async def get_query_page(request: Request):
+async def get_query_page(request: Request, puid: str=""):
     """
     Load the query page and present a "triplet query".
     """
     exp_config = await _ensure_initialized()
-    uid = "salmon-{}".format(np.random.randint(2 ** 32 - 1))
-    puid = sha256(uid)[:16]
+    if puid == "":
+        uid = "salmon-{}".format(np.random.randint(2 ** 32 - 1))
+        puid = sha256(uid)[:16]
+    try:
+        urls = [image_url(t) for t in exp_config["targets"]]
+    except:
+        urls = []
     items = {
         "puid": puid,
-        "instructions": exp_config["instructions"],
         "targets": exp_config["targets"],
-        "max_queries": exp_config["max_queries"],
-        "debrief": exp_config["debrief"],
-        "skip_button": exp_config["skip_button"],
-        "css": exp_config["css"],
+        "samplers_per_user": exp_config["sampling"]["samplers_per_user"],
+        "urls": urls,
+        "html": exp_config["html"],
     }
     items.update(request=request)
     return templates.TemplateResponse("query_page.html", items)
 
 
 @app.get("/query", tags=["public"])
-async def get_query() -> Dict[str, Union[int, str, float]]:
-    idents = rj.jsonget("samplers")
-    probs = rj.jsonget("sampling_probs")
+async def get_query(ident="") -> Dict[str, Union[int, str, float]]:
+    if ident == "":
+        idents = rj.jsonget("samplers")
+        probs = rj.jsonget("sampling_probs")
 
-    idx = np.random.choice(len(idents), p=probs)
-    ident = idents[idx]
+        idx = np.random.choice(len(idents), p=probs)
+        ident = idents[idx]
 
-    r = httpx.get(f"http://localhost:8400/query-{ident}")
+    r = httpx.get(f"http://localhost:8400/query/{ident}")
     if r.status_code == 200:
         logger.info(f"query r={r}")
         return r.json()
@@ -144,7 +158,7 @@ async def get_query() -> Dict[str, Union[int, str, float]]:
         q = manager.random_query(config["n"])
         score = -9999
 
-    return {"alg_ident": ident, "score": score, **q}
+    return {"sampler": ident, "score": score, **q}
 
 
 @app.post("/answer", tags=["public"])
@@ -166,9 +180,10 @@ async def process_answer(ans: manager.Answer):
         "loser": d["left"] if d["winner"] == d["right"] else d["right"],
     }
     d.update(_update)
-    ident = d["alg_ident"]
+    ident = d["sampler"]
     logger.warning(f"answer received: {d}")
     rj.jsonarrappend(f"alg-{ident}-answers", root, d)
+        # on backend,  key = f"alg-{self.ident}-answers"
     rj.jsonarrappend("all-responses", root, d)
     last_save = rj.lastsave()
 

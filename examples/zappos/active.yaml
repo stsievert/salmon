@@ -1,9 +1,11 @@
-instructions: Which of the comparison shoes is most similar to the target shoe?
-debrief: Thanks! Please enter this participant ID in the assignment.
-max_queries: 100
-d: 2
+html:
+  instructions: Which of the comparison shoes is most similar to the target shoe?
+  debrief: Thanks! Please enter this participant ID in the assignment.
+  max_queries: 100
+  title: Zappos shoes
 samplers:
-  RandomSampling: {}
+  Random: {}
   ARR: {random_state: 42}
 sampling:
-  probs: {"ARR": 80, "RandomSampling": 20}
+  probs: {"ARR": 80, "Random": 20}
+  common: {d: 2}

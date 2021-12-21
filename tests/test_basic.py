@@ -13,7 +13,8 @@ import pandas as pd
 import pytest
 import yaml
 
-from .utils import logs, server
+from salmon.triplets.manager import Config
+from .utils import LogError, logs, server
 
 
 def test_basics(server, logs):
@@ -26,7 +27,12 @@ def test_basics(server, logs):
     r = server.delete("/reset?force=1", timeout=20)
     assert r.json() == {"success": True}
     server.delete("/reset", status_code=401, auth=("foo", "bar"))
+
+    r = server.authorize()
+    assert r.status_code == 200
     r = server.delete("/reset?force=1", timeout=20)
+    server.authorize()
+
     assert r.json() == {"success": True}
     server.get("/init")
     exp = Path(__file__).parent / "data" / "exp.yaml"
@@ -35,15 +41,15 @@ def test_basics(server, logs):
     puid = "puid-foo"
     answers = []
     print("Starting loop...")
-    with logs:
-        for k in range(70):
-            _start = time()
-            q = server.get("/query").json()
-            ans = {"winner": random.choice([q["left"], q["right"]]), "puid": puid, **q}
-            answers.append(ans)
-            sleep(10e-3)
-            ans["response_time"] = time() - _start
-            server.post("/answer", data=ans)
+    n_ans = 40
+    for k in range(n_ans):
+        _start = time()
+        q = server.get("/query").json()
+        ans = {"winner": random.choice([q["left"], q["right"]]), "puid": puid, **q}
+        answers.append(ans)
+        sleep(100e-3)
+        ans["response_time"] = time() - _start
+        server.post("/answer", data=ans)
 
     r = server.get("/responses")
     for server_ans, actual_ans in zip(r.json(), answers):
@@ -76,7 +82,7 @@ def test_basics(server, logs):
         "response_time",
         "network_latency",
         "datetime_received",
-        "alg_ident",
+        "sampler",
         "score",
     }
     assert (df["winner"] != df["loser"]).all()
@@ -100,10 +106,13 @@ def test_basics(server, logs):
     assert r.status_code == 200
     assert "exception" not in r.text
     df = pd.DataFrame(r.json())
-    assert len(df) == 70
+    assert len(df) == n_ans
 
     r = server.get("/dashboard")
     assert r.status_code == 200
+    assert "Embedding dimension: 2" in r.text
+    assert "Number of targets: 6" in r.text
+    assert "Samplers: [&#39;random&#39;]" in r.text  # &#39; is HTML for the apostrophe
 
 
 def test_bad_file_upload(server):
@@ -125,6 +134,7 @@ def test_no_repeats(server):
         q = server.get("/query").json()
         ans = {"winner": random.choice([q["left"], q["right"]]), "puid": "foo", **q}
         server.post("/answer", data=ans)
+        sleep(10e-3)
 
     r = server.get("/responses")
     df = pd.DataFrame(r.json())
@@ -157,6 +167,8 @@ def test_saves_state(server):
     dump = Path(__file__).absolute().parent.parent / "out" / "dump.rdb"
     assert not dump.exists()
     exp = Path(__file__).parent / "data" / "exp.yaml"
+
+    server.authorize()
     server.post("/init_exp", data={"exp": exp.read_text()})
     for k in range(10):
         q = server.get("/query").json()
@@ -215,25 +227,25 @@ def test_logs(server, logs):
     assert not dump.exists()
     exp = Path(__file__).parent / "data" / "exp.yaml"
     server.delete("/reset?force=1", timeout=20)
+    server.authorize()
     server.post("/init_exp", data={"exp": exp.read_text()})
     data = []
     puid = "adsfjkl4awjklra"
-    with logs:
-        for k in range(10):
-            q = server.get("/query").json()
-            ans = {"winner": random.choice([q["left"], q["right"]]), "puid": k, **q}
-            server.post("/answer", data=ans)
-            data.append(ans)
+    for k in range(10):
+        q = server.get("/query").json()
+        ans = {"winner": random.choice([q["left"], q["right"]]), "puid": k, **q}
+        server.post("/answer", data=ans)
+        data.append(ans)
 
-        r = server.get("/logs")
-        assert r.status_code == 200
-        logs = r.json()
-        query_logs = logs["salmon.frontend.public.log"]
+    r = server.get("/logs")
+    assert r.status_code == 200
+    logs = r.json()
+    query_logs = logs["salmon.frontend.public.log"]
 
-        str_answers = [q.strip("\n") for q in query_logs if "answer received" in q]
-        answers = [ast.literal_eval(q[q.find("{") :]) for q in str_answers]
-        puids = {ans["puid"] for ans in answers}
-        assert {str(i) for i in range(10)}.issubset(puids)
+    str_answers = [q.strip("\n") for q in query_logs if "answer received" in q]
+    answers = [ast.literal_eval(q[q.find("{") :]) for q in str_answers]
+    puids = {ans["puid"] for ans in answers}
+    assert {str(i) for i in range(10)}.issubset(puids)
 
 
 def test_zip_upload(server):
@@ -254,6 +266,8 @@ def test_get_config(server):
     my_config = yaml.safe_load(exp.read_text())
     rendered_config = server.get("/config").json()
     assert set(my_config).issubset(rendered_config)
+    user_html = my_config.pop("html")
+    assert set(user_html).issubset(set(rendered_config["html"]))
     for k, v in my_config.items():
         if k == "targets":
             v = [str(t) for t in v]
@@ -262,6 +276,33 @@ def test_get_config(server):
     yaml_config = server.get("/config?json=0").text
     assert "\n" in yaml_config
     assert yaml.safe_load(yaml_config) == rendered_config
+
+
+def test_config_defaults_update(server):
+    server.authorize()
+    html = {
+        "instructions": "foo",
+        "debrief": "bar",
+        "max_queries": 42,
+        "custom_tag": "foo",
+    }
+    exp = {"targets": 10, "html": html}
+    server.post("/init_exp", data={"exp": exp})
+
+    rendered = server.get("/config").json()
+    assert "custom_tag" in rendered["html"] and rendered["html"]["custom_tag"] == "foo"
+    assert rendered["html"]["instructions"] == "foo"
+    assert rendered["html"]["debrief"] == "bar"
+    assert rendered["html"]["max_queries"] == 42
+    assert rendered["samplers"] == {"random": {"class": "Random"}}
+
+
+def test_config_misplaced_error(server):
+    server.authorize()
+    exp = {"instructions": "foo", "debrief": "bar", "max_queries": 42, "targets": 10}
+    r = server.post("/init_exp", data={"exp": exp}, error=500)
+    assert "Move keys" in r.text and "YAML" in r.text
+    assert "include this block of YAML" in r.text and "html:\n  debrief: bar" in r.text
 
 
 def test_no_init_twice(server, logs):
@@ -281,6 +322,7 @@ def test_no_init_twice(server, logs):
     server.delete("/reset", status_code=403, timeout=20)
     server.delete("/reset?force=1", timeout=20)
 
+    server.authorize()
     server.post("/init_exp", data={"exp": exp.read_text()}, timeout=20)
     query = server.get("/query")
     assert query
@@ -295,33 +337,48 @@ def test_auth_repeated_entries(server):
     assert "maximum number of users" in r.text.lower()
 
 
-def test_validation_sampling(server, logs):
-    server.authorize()
+def test_random_error(server, logs):
     n_val = 5
+    exp = {"targets": [0, 1, 2, 3, 4, 5], "samplers": {"RandomSampling": {}, "ARR": {}}}
+
+    with pytest.raises(LogError), logs:
+        server.authorize()
+        r = server.post("/init_exp", data={"exp": exp}, status_code=500)
+        assert "The sampler `RandomSampling` has been renamed to `Random`" in r.text
+
+
+def test_html_defaults_rendered(server):
+    server.authorize()
     exp = {
-        "targets": [0, 1, 2, 3, 4, 5],
-        "samplers": {"Validation": {"n_queries": n_val}},
+        "targets": 10,
+        "html": {"arrow_keys": True, "css": "/*css foo*/", "skip_button": True},
     }
     server.post("/init_exp", data={"exp": exp})
-    data = []
-    puid = "adsfjkl4awjklra"
-    with logs:
-        for k in range(3 * n_val):
-            q = server.get("/query").json()
-            ans = {"winner": random.choice([q["left"], q["right"]]), "puid": k, **q}
-            server.post("/answer", data=ans)
-            data.append(ans)
+    rendered = server.get("/").text
 
-        sleep(1)
-        r = server.get("/responses")
-    queries = [(q["head"], (q["left"], q["right"])) for q in r.json()]
-    uniq_queries = [(h, (min(c), max(c))) for h, c in queries]
-    assert len(set(uniq_queries)) == n_val
-    order = [hash(q) for q in queries]
-    round_orders = [
-        order[k * n_val : (k + 1) * n_val]
-        for k in range(3)
-    ]
-    for round_order in round_orders:
-        assert len(set(round_order)) == n_val
-    assert all(round_orders[0] != order for order in round_orders[1:])
+    html = Config().html.dict()
+
+    assert f"<title>{html['title']}</title>" in rendered
+    assert f"<p id=\"instructions\">{html['instructions']}</p>" in rendered
+    assert f"id=\"debrief\">{html['debrief']}" in rendered
+    assert f"var max_queries = {html['max_queries']};" in rendered
+    assert 'id="skip-button"' in rendered and "Skip this question" in rendered
+    assert "/*css foo*/" in rendered
+    assert (
+        "document.onkeydown = function checkKey(e) {" in rendered
+        and "e.keyCode == '37') { // left arrow" in rendered
+    )
+
+
+def test_defaults_acceptable_config(server):
+    server.authorize()
+    r = server.post("/init_exp", data={"exp": {"targets": 10}})
+    assert r.status_code == 200
+    config = server.get("/config").json()
+
+    server.reset()
+    server.authorize()
+    r = server.post("/init_exp", data={"exp": config})
+    assert r.status_code == 200
+    config2 = server.get("/config").json()
+    assert config == config2

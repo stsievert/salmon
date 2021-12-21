@@ -58,4 +58,7 @@ jobs:
           until curl 127.0.0.1:8421 > /dev/null 2>&1; do :; done  # wait for container to start
           sudo docker ps
     - name: Run all tests
-      run: sudo /usr/share/miniconda/bin/pytest
+      run: |
+          # sudo docker-compose logs -f &  # if debugging; shows logs
+          # sudo /usr/share/miniconda/bin/pytest -s
+          sudo /usr/share/miniconda/bin/pytest

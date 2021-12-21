@@ -85,3 +85,22 @@ def test_offline_embedding_random_state():
         n=n, d=d, max_epochs=max_epochs, random_state=random_state
     ).initialize(X_train)
     assert np.allclose(m1.embedding_, m2.embedding_)
+
+
+def test_offline_init():
+    n, d = 20, 2
+
+    X = np.random.choice(n, size=(100, 3))
+    em = np.random.uniform(size=(n, d))
+    est = OfflineEmbedding(n=n, d=d)
+    est.initialize(X, embedding=em)
+
+    assert np.allclose(est.embedding_, em)
+    est.partial_fit(X)
+    assert not np.allclose(est.embedding_, em), "Embedding didn't change"
+
+
+if __name__ == "__main__":
+    test_offline_init()
+    test_offline_embedding_random_state()
+    test_offline_embedding()

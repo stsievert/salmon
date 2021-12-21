@@ -2,8 +2,9 @@ Welcome to Salmon's documentation!
 ==================================
 
 Salmon is a tool to easily allow collection of "triplet queries." These queries
-are of the form "is object :math:`a` more similar to object :math:`b` or
-:math:`b`?" An example is shown below with facial similarities:
+are relative similarity judgments of the form "is object :math:`a` or :math:`b`
+closer to object :math:`h`?" An example is shown below with facial
+similarities:
 
 .. image:: imgs/query.png
    :width: 300px
@@ -38,9 +39,10 @@ contribution guide`_.
 Users
 =====
 
-Salmon is currently being actively used by several  psychologists at the
-University of Wisconsin--Madison, and has seen serious interest from the Air
-Force Research Lab and a psychologist at Louisiana State University.
+Salmon is currently being actively used by several psychologists at the
+University of Wisconsin--Madison. It has seen serious interest from the Air
+Force Research Lab, and a psychologist at Louisiana State University and
+Canada's Western University.
 
 .. toctree::
    :maxdepth: 2
@@ -48,11 +50,12 @@ Force Research Lab and a psychologist at Louisiana State University.
 
    installation
    getting-started
+   init
+   samplers
    monitoring
    offline
-   algorithms
-   api
    faq
+   api
 
 .. toctree::
    :maxdepth: 2

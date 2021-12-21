@@ -21,8 +21,12 @@ import requests as httpx
 import yaml
 from bokeh.embed import json_item
 from fastapi import Depends, File, Form, HTTPException
-from fastapi.responses import (FileResponse, HTMLResponse, JSONResponse,
-                               PlainTextResponse)
+from fastapi.responses import (
+    FileResponse,
+    HTMLResponse,
+    JSONResponse,
+    PlainTextResponse,
+)
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from redis import ResponseError
 from rejson import Client, Path
@@ -31,12 +35,18 @@ from starlette.requests import Request
 from starlette.status import HTTP_401_UNAUTHORIZED, HTTP_409_CONFLICT
 
 import salmon
+from salmon.triplets.manager import Config
 
 from ..triplets import manager
 from . import plotting
 from .public import _ensure_initialized, app, templates
-from .utils import (ServerException, _extract_zipfile, _format_target,
-                    _format_targets, get_logger)
+from .utils import (
+    ServerException,
+    _extract_zipfile,
+    _format_target,
+    _format_targets,
+    get_logger,
+)
 
 security = HTTPBasic()
 
@@ -134,7 +144,7 @@ def _authorize(creds: HTTPBasicCredentials = Depends(security)) -> bool:
 
     name = creds.username
     if (name in passwords and _salt(creds.password) == passwords[name]) or (
-        name == "foo" and _salt(creds.password) == EXPECTED_PWORD
+        name == "foo8421" and _salt(creds.password) == EXPECTED_PWORD
     ):
         logger.info("Authorized: true")
         return True
@@ -245,21 +255,26 @@ def upload_form():
         </form>
         {warning}
         </div>
-        <h3 style="text-align: center;">Option 2: restore from old experiment.</h3>
+        <h3 style="text-align: center;">Option 2: restore an old experiment.</h3>
         <div style="text-align: center; padding: 10px;">
         <p>Instructions:
         <ol style="text-align: left;">
         <li>Upload database dump from Salmon. The name should look like
-          <code>exp-2020-03-12.rdb</code> if downloaded on March 12th, 2020.</li>
+          <code>exp-2020-03-12-v0.3.1.rdb</code> if downloaded on March 12th, 2020.</li>
         <li>Restart the server. On Amazon EC2, this means choosing the EC2 instance state "reboot".</li>
         </ol>
         </p>
         <form action="/init_exp" enctype="multipart/form-data" method="post">
-        <ul>
-          <li>Database file : <input name="rdb" type="file"></li>
-        </ul>
-        <input type="submit" value="Create experiment">
+          <ul>
+            <li>Database file : <input name="rdb" type="file"></li>
+          </ul>
+          <input type="submit" value="Create experiment">
         </form>
+        <p>
+          This may fail. See the documentation FAQs for
+          more detail and tips to resolve it:
+          <a href="https://docs.stsievert.com/salmon/installation#troubleshooting">https://docs.stsievert.com/salmon/installation#troubleshooting</a>.
+        </p>
         </div>
         </div>
         </body>
@@ -271,6 +286,7 @@ def upload_form():
 @app.get("/config", tags=["private"])
 async def _get_config_endpoint(json: bool = True):
     exp_config = await _ensure_initialized()
+    exp_config.pop("n")
     print("json=", json, bool(json), not json)
     if not json:
         return PlainTextResponse(yaml.dump(exp_config))
@@ -278,60 +294,33 @@ async def _get_config_endpoint(json: bool = True):
 
 
 async def _get_config(exp: bytes, targets: bytes) -> Dict[str, Any]:
-    config = yaml.safe_load(exp)
+    user_config = yaml.safe_load(exp)
     logger.warning(f"exp = {exp}")
-    logger.warning(f"config = {config}")
-    exp_config: Dict = {
-        "instructions": "Default instructions (can include <i>arbitrary</i> HTML)",
-        "max_queries": None,
-        "debrief": "Thanks!",
-        "samplers": {"random": {"class": "RandomSampling"}},
-        "max_queries": -1,
-        "d": 2,
-        "skip_button": False,
-        "css": "",
-    }
-    exp_config.update(config)
-    if "sampling" not in exp_config:
-        n = len(exp_config["samplers"])
-        freqs = [100 // n] * n
-        freqs[0] += 100 % n
-        sampling_percent = {k: f for k, f in zip(exp_config["samplers"], freqs)}
-        exp_config["sampling"] = {"probs": sampling_percent}
+    logger.warning(f"user_config = {user_config}")
 
-    if set(exp_config["sampling"]["probs"]) != set(exp_config["samplers"]):
-        sf = set(exp_config["sampling"]["probs"])
-        s = set(exp_config["samplers"])
-        msg = (
-            "sampling.probs keys={} are not the same as samplers keys={}.\n\n"
-            "Keys in sampling.probs but not in samplers: {}\n"
-            "Keys in samplers but but in sampling.probs: {}\n\n"
-        )
-        raise ValueError(msg.format(sf, s, sf - s, s - sf))
-    if sum(exp_config["sampling"]["probs"].values()) != 100:
-        msg = (
-            "The values in sampling.probs should add up to 100; however, "
-            "the passed sampling.probs={} adds up to {}"
-        )
-        s = exp_config["sampling"]["probs"]
-        raise ValueError(msg.format(s, sum(s.values())))
+    c = Config()  # defaults already encoded
+    c = c.parse(user_config)
+    config = c.dict()
+
+    logger.warning(config["sampling"]["probs"])
+    logger.warning(config["samplers"])
 
     if targets:
         fnames = _extract_zipfile(targets)
         logger.info("fnames = %s", fnames)
         if len(fnames) == 1 and ".csv" in fnames[0].suffixes:
-            exp_config["targets"] = _format_targets(fnames[0])
+            config["targets"] = _format_targets(fnames[0])
         else:
             targets = [_format_target(f) for f in fnames]
-            exp_config["targets"] = targets
+            config["targets"] = targets
     elif isinstance(config["targets"], int):
-        exp_config["targets"] = [str(x) for x in range(config["targets"])]
+        config["targets"] = [str(x) for x in range(config["targets"])]
     else:
-        exp_config["targets"] = [str(x) for x in exp_config["targets"]]
+        config["targets"] = [str(x) for x in config["targets"]]
 
-    exp_config["n"] = len(exp_config["targets"])
-    logger.info("initializing experinment with %s", exp_config)
-    return exp_config
+    config["n"] = len(config["targets"])
+    logger.info("initializing experinment with %s", config)
+    return config
 
 
 def exception_to_string(excp):
@@ -456,7 +445,7 @@ async def _process_form(
     rj.jsonset("start_time", root, _time)
     rj.jsonset("start_datetime", root, datetime.now().isoformat())
     rj.jsonset("all-responses", root, [])
-    rj.bgsave()
+    _save(rj)
 
     nice_config = pprint.pformat(exp_config)
     logger.info("Experiment initialized with\nexp_config=%s", nice_config)
@@ -496,12 +485,10 @@ def reset(
     tags=["private"],
     timeout: float = 10,
 ):
-    """
-    Delete all data from the database and a restart of the machine if *any*
-    queries were answered.
+    """Reset the machine to it's initial state.
 
-    Restart the machine via `docker-compose stop; docker-compose up` or
-    "Actions > Instance state > Reboot" on Amazon EC2.
+    This deletes all data from the database (and clear the backend too).
+    It also removes the username/password.
     """
     if not authorized:
         return {"success": False}
@@ -509,31 +496,46 @@ def reset(
     logger.warning("Resetting, force=%s, authorized=%s", force, authorized)
     if not force:
         logger.warning("Resetting, force=False. Erroring")
-        msg = (
-            "Do you really want to delete *all* data? This will delete all "
-            "responses and all target information and *cannot be undone.*\n\n"
-            "If you do really want to reset, go to '[url]/reset?force=1' "
-            "instead of '[url]/reset'"
-        )
-        raise ServerException(msg, status_code=403)
+        msg = """Do you really want to delete *all* data? This will delete all
+            responses and all target information and *cannot be undone.*
 
-    logger.error("Authorized reset, force=True. Removing data from database")
+            If you do really want to reset, go to '[url]/reset?force=1'
+            instead of '[url]/reset'. That means these actions will occur:
+
+            * Any experiment data will be deleted. Responses, embeddings, etc.
+            * Your username/password will be deleted.
+
+            These actions are final and can not be undone.
+            """
+        raise ServerException(dedent(msg), status_code=403)
+
+    logger.warning("Authorized reset, force=True. Removing data from database")
     meta = _reset(timeout=timeout)
     assert meta["success"]
-    return HTMLResponse(
-        "The Salmon databasse has (largely) been cleared. "
-        "To completely clear the database, the server needs to be restarted "
-        "(likely via 'Actions > Instance state > Reboot' on Amazon EC2 "
-        "or `docker-compose stop; docker-compose up`."
+
+    now = datetime.now().isoformat()[:16]
+    logger.warning(
+        f"Authorized reset, force=True. Removing creds.json to creds-{now}.json"
     )
+    CREDS_FILE.rename(ROOT_DIR / f"creds-{now}.json")
+    assert not CREDS_FILE.exists()
+
+    return HTMLResponse("This Salmon server has been reset to it's initial state.")
 
 
-def _reset(timeout: float = 5):
+def _save(rj, bg=False):
     try:
-        rj.save()
+        if bg:
+            rj.bgsave()
+        else:
+            rj.save()
     except ResponseError as e:
         if "save already in progress" not in str(e):
             raise e
+
+
+def _reset(timeout: float = 5):
+    _save(rj)
 
     # Stop background jobs (ie adaptive algs)
     rj.jsonset("reset", root, True)
@@ -562,23 +564,18 @@ def _reset(timeout: float = 5):
         logger.warning("    starting with clearing queries...")
         for ident in samplers:
             rj2.delete(f"alg-{ident}-queries")
+    httpx.post(f"http://localhost:8400/reset/")
 
     logger.warning("Trying to completely flush database...")
 
-    rj.flushall(asynchronous=True)
-    rj2.flushall(asynchronous=True)
-    rj.flushdb(asynchronous=True)
-    rj2.flushdb(asynchronous=True)
     for _rj in [rj, rj2]:
         _rj.memory_purge()
-        sleep(1)
-        for k in _rj.keys():
-            _rj.delete(k)
         _rj.flushall(asynchronous=True)
         _rj.flushdb(asynchronous=True)
-        sleep(1)
+        _rj.memory_purge()
+        for k in _rj.keys():
+            _rj.delete(k)
         _rj.flushdb(asynchronous=False)
-        sleep(1)
         _rj.flushall(asynchronous=False)
 
     now = datetime.now().isoformat()[: 10 + 6]
@@ -587,7 +584,7 @@ def _reset(timeout: float = 5):
     files = [f.name for f in save_dir.glob("*")]
     logger.warning(f"dump_rdb in files? {'dump.rdb' in files}")
     if "dump.rdb" in files:
-        logger.error(f"Moving dump.rdb to dump-{now}.rdb")
+        logger.warning(f"Moving dump.rdb to dump-{now}.rdb")
         shutil.move(str(save_dir / "dump.rdb"), str(save_dir / f"dump-{now}.rdb"))
         files = [f.name for f in save_dir.glob("*")]
         logger.warning(f"after moving, dump_rdb in files? {'dump.rdb' in files}")
@@ -654,18 +651,17 @@ def _fmt_embedding(
     for k, v in kwargs.items():
         df[k] = v
 
-    embedding = np.asarray(embedding)
-    if embedding.ndim == 1:
-        embedding = embedding.reshape(1, -1)
-    for k, col in enumerate(range(embedding.shape[1])):
-        df[k] = embedding[:, col]
-
+    em = np.asarray(embedding)
+    if em.ndim == 1:
+        em = em.reshape(1, -1)
+    for k2, col in enumerate(range(em.shape[1])):
+        df[k2] = em[:, col]
     return df
 
 
 @app.get("/embeddings", tags=["private"])
 async def get_embeddings(
-    authorized: bool = Depends(_authorize), alg: Optional[str] = None,
+    authorized: bool = Depends(_authorize), sampler: Optional[str] = None,
 ):
     """
     Get the embeddings for algorithms.
@@ -673,7 +669,7 @@ async def get_embeddings(
     Parameters
     ----------
 
-    * alg : str, optional. The algorithm to get the embedding for.
+    * sampler : str, optional. The algorithm to get the embedding for.
 
     Returns
     -------
@@ -683,15 +679,24 @@ async def get_embeddings(
     exp_config = await _ensure_initialized()
     exp_config = deepcopy(exp_config)
     targets = exp_config.pop("targets")
-    alg_idents = list(exp_config.pop("samplers").keys())
-    embeddings = {alg: await get_model(alg) for alg in alg_idents}
+    samplers = list(exp_config.pop("samplers").keys())
+    embeddings = {}
+    for s in samplers:
+        try:
+            embeddings[s] = await get_model(s)
+        except:
+            pass
+    if len(embeddings) == 0:
+        raise ServerException(
+            f"No model has been created for any sampler in {samplers}"
+        )
     dfs = {
         alg: _fmt_embedding(model["embedding"], targets, alg=alg)
         for alg, model in embeddings.items()
     }
 
-    if alg is not None:
-        df = dfs[alg]
+    if sampler is not None:
+        df = dfs[sampler]
     else:
         df = pd.concat(dfs)
 
@@ -699,7 +704,7 @@ async def get_embeddings(
         df.to_csv(f, index=False)
         out = f.getvalue()
 
-    fname = "embeddings.csv" if alg is None else f"embedding-{alg}.csv"
+    fname = "embeddings.csv" if sampler is None else f"embedding-{sampler}.csv"
     return PlainTextResponse(
         out, headers={"Content-Disposition": f'attachment; filename="{fname}"'}
     )
@@ -750,7 +755,7 @@ async def get_dashboard(request: Request, authorized: bool = Depends(_authorize)
       query page?"
     """
     logger.info("Getting dashboard")
-    rj.bgsave()
+    _save(rj, bg=True)
     exp_config = await _ensure_initialized()
     exp_config = deepcopy(exp_config)
     targets = exp_config.pop("targets")
@@ -940,11 +945,11 @@ async def download(request: Request, authorized: bool = Depends(_authorize)):
     This file can be used to restore the contents of the Redis
     database on a new machine.
     """
-    rj.save()
+    _save(rj, bg=False)
     fname = datetime.now().isoformat()[: 10 + 6]
     version = salmon.__version__
     headers = {
-        "Content-Disposition": f'attachment; filename="exp-{fname}-{version}.rdb"'
+        "Content-Disposition": f'attachment; filename="exp-{fname}-salmon-{version}.rdb"'
     }
     return FileResponse(str(ROOT_DIR / "out" / "dump.rdb"), headers=headers)
 
@@ -986,18 +991,18 @@ async def restore(
     return HTMLResponse(msg)
 
 
-@app.get("/model/{alg_ident}")
-async def get_model(alg_ident: str) -> Dict[str, Any]:
+@app.get("/model/{sampler}")
+async def get_model(sampler: str) -> Dict[str, Any]:
     logger.info("In public get_model with rj.keys() == %s", rj.keys())
-    r = httpx.get(f"http://localhost:8400/model/{alg_ident}")
+    r = httpx.get(f"http://localhost:8400/model/{sampler}")
     if r.status_code != 200:
         raise ServerException(r.json()["detail"])
     return r.json()
 
 
-async def _get_alg_perf(ident: str) -> Dict[str, Any]:
+async def _get_alg_perf(sampler: str) -> Dict[str, Any]:
     logger.info("In private _get_alg_perf with rj.keys() == %s", rj.keys())
-    r = httpx.get(f"http://localhost:8400/meta/perf/{ident}")
+    r = httpx.get(f"http://localhost:8400/meta/perf/{sampler}")
     if r.status_code != 200:
         raise ServerException(r.json()["detail"])
     return r.json()

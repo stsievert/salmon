@@ -3,7 +3,7 @@ from typing import List, Tuple
 
 import numpy as np
 
-from ...backend.sampler import Path, Runner
+from ...backend.sampler import Path, Sampler
 from .utils import Answer, Query
 
 logger = logging.getLogger(__name__)
@@ -24,7 +24,7 @@ def _score_query(q: Tuple[int, int, int]) -> float:
     return float(score)
 
 
-class RoundRobin(Runner):
+class RoundRobin(Sampler):
     """
     Let the head of the triplet query rotate through the available items while choosing the bottom two items randomly.
     """

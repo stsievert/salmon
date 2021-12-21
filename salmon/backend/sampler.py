@@ -11,8 +11,10 @@ from dask.distributed import Client as DaskClient
 from redis.exceptions import ResponseError
 from rejson import Client as RedisClient
 from rejson import Path
+from gc import collect as garbage_collect
 
-from ..utils import get_logger
+from ..utils import flush_logger, get_logger
+
 
 logger = get_logger(__name__)
 
@@ -21,7 +23,7 @@ Answer = TypeVar("Answer")
 root = Path.rootPath()
 
 
-class Runner:
+class Sampler:
     """
     Run a sampling algorithm. Provides hooks to connect with the database and
     the Dask cluster.
@@ -78,6 +80,8 @@ class Runner:
         rj.jsonset(f"alg-perf-{self.ident}", root, [])
         save_deadline = 0.0  # right away
         data: List[Dict[str, Any]] = []
+
+        error_raised: List[int] = []
         for k in itertools.count():
             try:
                 loop_start = time()
@@ -117,12 +121,9 @@ class Runner:
                     "process_answers", self_future, answers, workers=workers[1],
                 )
 
-                if hasattr(self, "get_queries"):
-                    f_search = submit(
-                        "get_queries", self_future, stop=done, workers=workers[2],
-                    )
-                else:
-                    f_search = client.submit(lambda x: ([], [], {}), 0)
+                f_search = submit(
+                    "get_queries", self_future, stop=done, workers=workers[2],
+                )
 
                 time_model = 0.0
                 time_post = 0.0
@@ -181,6 +182,7 @@ class Runner:
                 logger.info(datum)
                 posting_deadline = data[0]["time"] + 2 * 60
                 if time() >= posting_deadline or k == 10 or k == 20:
+                    flush_logger(logger)
                     keys = data[-1].keys()
                     to_post = {}
                     for _k in keys:
@@ -202,23 +204,43 @@ class Runner:
                         }
                         if _k == "time":
                             _update = {"time": _update["time_median"]}
-                        to_post.update({k: Type(v) for k, v in _update.items()})
+                        to_post.update({_k: Type(v) for _k, v in _update.items()})
 
-                    rj.jsonarrappend(f"alg-perf-{self.ident}", root, to_post)
+                    try:
+                        rj.jsonarrappend(f"alg-perf-{self.ident}", root, to_post)
+                    except ResponseError as e:
+                        if (
+                            "could not perform this operation on a key that doesn't exist"
+                            in str(e)
+                        ):
+                            # I think this happens when the frontend deletes
+                            # the database when /reset is triggered
+                            pass
+                        else:
+                            raise e
+
                     data = []
 
                 if "reset" in rj.keys() and rj.jsonget("reset", root):
                     logger.warning(f"Resetting {self.ident}")
-                    self.reset(client, rj)
+                    self.reset(client, rj, futures=[f_model, f_post, f_search])
                     break
 
             except Exception as e:
                 logger.exception(e)
+                flush_logger(logger)
+                error_raised.append(k)
+
+                __n = 5
+                if np.diff(error_raised[-__n:]).tolist() == [1] * (__n - 1):
+                    logger.exception(e)
+                    flush_logger(logger)
+                    raise e
         return True
 
     def save(self) -> bool:
         """
-        Save the runner's state and current embedding to the database.
+        Save the sampler's state and current embedding to the database.
         """
         rj2 = self.redis_client(decode_responses=False)
 
@@ -233,7 +255,7 @@ class Runner:
             rj2.set(f"model-{self.ident}", out)
         return True
 
-    def reset(self, client, rj):
+    def reset(self, client, rj, futures=None):
         """
         Stop the algorithm. The algorithm will be deleted shortly after
         this function is called.
@@ -268,16 +290,19 @@ class Runner:
         logger.warning(f"Clearing queries again for {self.ident}")
         self.clear_queries(rj)
 
+        if futures:
+            for future in futures:
+                if future:
+                    client.cancel(future, force=True)
+
         logger.warning(f"Restarting Dask client for {self.ident}")
+        f = client.restart(timeout="5s")
         try:
-            client.sync(client.restart())
+            client.sync(f)
         except:
             pass
-        logger.warning(f"Closing Dask client for {self.ident}")
-        try:
-            client.sync(client.close())
-        except:
-            pass
+
+        client.run(garbage_collect)
 
         logger.warning(f"Setting stopped-{self.ident}")
         rj.jsonset(f"stopped-{self.ident}", Path("."), True)
@@ -309,25 +334,27 @@ class Runner:
         """
         raise NotImplementedError
 
-        #  def get_queries(self) -> Tuple[List[Query], List[float]]:
-        """
-        Get queries.
+        def get_queries(self) -> Tuple[List[Query], List[float]]:
+            """
+            Get queries.
 
-        Returns
-        -------
-        queries : List[Query]
-            The list of queries
-        scores : List[float]
-            The scores for each query. Higher scores are sampled more
-            often.
+            Returns
+            -------
+            queries : List[Query]
+                The list of queries
+            scores : List[float]
+                The scores for each query. Higher scores are sampled more
+                often.
+            meta : Dict[str, Any]
+                Information about the search.
 
-        Notes
-        -----
-        The scores have to be unique. The underlying implementation does
-        not sample queries of the same score unbiased.
+            Notes
+            -----
+            The scores have to be unique. The underlying implementation does
+            not sample queries of the same score unbiased.
 
-        """
-        raise NotImplementedError
+            """
+            return [], [], {}
 
     def get_model(self) -> Dict[str, Any]:
         """
@@ -343,7 +370,7 @@ class Runner:
 
     def clear_queries(self, rj: RedisClient) -> bool:
         """
-        Clear all queries that this runner has posted from the database.
+        Clear all queries that this sampler has posted from the database.
         """
         rj.delete(f"alg-{self.ident}-queries")
         return True
