@@ -1,7 +1,7 @@
 .. _getting-started:
 
-Starting an experiment
-======================
+Getting started
+===============
 
 Launching an experiment to crowdsourcing participants requires following this
 process:
@@ -34,12 +34,6 @@ hit "create user."
    Do not lose this username/password! You need the username/password to view
    the dashboard and download the received responses.
 
-.. warning::
-
-   Once a username/password are set, they can not be changed. The
-   username/password will remain the same when Salmon is reset and when the
-   machine Salmon is running on is restarted.
-
 It is technically possible to recover the username/password with the key file
 ``key.pem`` that Amazon AWS provides and the URL above:
 
@@ -51,207 +45,29 @@ It is technically possible to recover the username/password with the key file
 
 Experiment initialization
 -------------------------
-After a user has been successfully created, hit the back
-button and launch an experiment. You have three options:
+
+Hit the back button to visit ``http://[url]:8421/init`` again after after a
+user has been successfully created. Now, let's launch an experiment! There are
+three options:
 
 1. Upload of a YAML file completely detailing the experiment.
 2. Upload of a YAML file describing experiment, and ZIP file for the targets.
 3. Upload of a database dump from Salmon.
 
-These options will be detailed below. Throughout the documentation, the YAML
-file for initialization will be referred to as ``init.yaml``.
+These options are detailed at ":ref:`init`." If an experiment is incorrectly
+specified, (hopefully helpful) errors will be raised. After the experiment is
+finished launching, you will see a couple links:
 
-After you launch your experiment and vist ``http://[url]:8421``, you will see a query
-page:
+* A link to the dashboard (``http://[url]:8421/dashboard``), an example of
+  which is at ":ref:`exp-monitoring`."
+* A link to the query page to send to crowdsourcing users
+  (``http://[url]:8421/``). An (out-of-date) example:
 
 .. _YAML specification: https://yaml.org/
 
 .. image:: imgs/query_page.png
    :align: center
    :width: 500px
-
-.. note::
-
-   This image is almost certainly out of date.
-
-.. note::
-
-   Please include the version in any bug reports or feature requests.
-   The version number is available at ``http://[url]:8421/docs`` and should look
-   something like ``v0.4.1``, typically shown right next to "Salmon."
-
-Now, let's describe three methods on how to launch this experiment:
-
-Experiment initialization with YAML file
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-"YAML files" must obey a standard; see for a (human-readable) description of
-the specification https://learnxinyminutes.com/docs/yaml/. To see if your YAML
-is valid, go to https://yamlchecker.com/.
-
-
-Here's an example ``init.yaml`` YAML file for initialization:
-
-.. code-block:: yaml
-
-   # file: init.yaml
-   targets: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-   html:
-     instructions: Select the item on the bottom most similar to the item on the top.
-     debrief: Thanks! Use the participant ID below in Mechnical Turk.
-     max_queries: 100
-
-This file will initialize a basic experiment. To do anything fancier,
-additional configuration is required. Here's some documentation on each
-top-level element like ``html``, a "key" in YAML-jargon:
-
-
-* ``targets``, optional list. Choices:
-
-    * Upload a ZIP file, detailed at :ref:`yaml_plus_zip`.  This will replace
-      the ``targets`` key with the HTML rendering of the contents of the ZIP
-      file.
-
-    * list of HTML targets. Specifying
-      ``targets: ["vonn", "miller", "ligety", "shiffrin"]``
-      will show text to the user. If this text includes HTML, it will be
-      rendered. For example if one target is ``"<i>kildow</i>"`` the user will
-      see italic text when that target is displayed.
-
-* ``samplers``, optional.  **Customizing this key is likely of interest and can
-  generate better embeddings.** See ":ref:`adaptive-config`" for more detail, and
-  ":ref:`experiments`" for examples/benchmarks.
-
-* ``html``, optional. Style options for the crowdsourcing user's query page:
-
-    * ``instructions``: text. The instructions for the participant, shown above
-      each query.
-
-    * ``debrief``: text. The message to show at the end of the experiment. This
-      debrief will show alongside the participant ID (aka "puid", which will be
-      available through in the responses).
-
-    * ``max_queries``: int. The number of queries a participant should answer. Set
-      ``max_queries: -1`` for unlimited queries.
-
-    * ``skip_button``, optional boolean. Default ``false``. If ``true``, show a
-      button that says "new query."
-
-    * ``css``, optional string. Defaults to ``""``. This CSS is inserted in the
-      ``<style>`` tag in the HTML query page. This allows customization of
-      colors/borders/etc.
-
-    * ``arrow_keys`` optional boolean, default True. If True, allow users to
-      answer queries with the arrow keys.
-
-* ``d``, optional int (default=2). The embedding the samplers should embed into.
-
-* ``sampling``, optional. A dictionary with the following keys:
-
-    * ``probs``, a map between sampler names and the percentage that
-      each sampler is selected. By default, all samplers are sampled equally.
-
-    * ``samplers_per_user``: (optional int, default=0). Controls the
-      number of samplers each user sees. If ``samplers_per_user=0``, show
-      users a random sampler.
-
-Examples of these files are in `salmon/examples`_. A complete example is
-available at `salmon/examples/complete.yaml`_.
-
-
-.. _salmon/tests/data: https://github.com/stsievert/salmon/tree/master/tests/data
-.. _salmon/examples: https://github.com/stsievert/salmon/tree/master/examples
-.. _salmon/examples/complete.yaml: https://github.com/stsievert/salmon/tree/master/examples/complete.yaml
-
-.. _yaml_plus_zip:
-
-YAML file with ZIP file
-^^^^^^^^^^^^^^^^^^^^^^^
-
-Uploading a ZIP file will completely replace the ``targets`` key. It's
-recommended not to specify it. However, it doesn't matter if you have specified
-it because it will be overwritten.
-
-Here are the choices for different files to include in the ZIP file:
-
-- A single CSV file. Each textual target should be on a new line.
-- A bunch of images/videos. Support extensions:
-
-    - Videos: ``mp4``, ``mov``
-    - Images: ``png``, ``gif``, ``jpg``, ``jpeg``
-
-
-Let's walk through two examples, both with uploading a bunch of images with
-skiers. Both cases will use this ``init.yaml`` file:
-
-.. code-block:: yaml
-
-  # file: init.yaml
-  html:
-    instructions: Select the item on the bottom most similar to the item on the top.
-    debrief: Thanks! Use the participant ID below in Mechanical Turk.
-    max_queries: 100
-
-.. note::
-
-   Uploading a ZIP file completely replaces any specification of the
-   ``targets`` key above. This means that it is not necessary to specify the
-   ``targets`` key when a ZIP file is uploaded because it will be specified
-   automatically.
-
-Images/videos
-"""""""""""""
-
-If I had all these images in a ZIP file (say ``skiers.zip``), I would gather
-all the images into a ZIP file. On macOS, that's possible by selecting all the
-images then control-clicking and selecting "Compress items." On the command
-line, the command ``zip targets.zip *.jpg *.png`` will collect all JPG/PNG
-images into ``targets.zip``.
-
-Text targets
-""""""""""""
-
-This is a valid CSV file that will render textual targets:
-
-.. code-block::
-
-   # file: targets.csv. Zipped into targets.csv.zip and uploaded.
-   Bode Miller
-   Lindsey Kildow
-   Mikaela Shiffrin
-   <b>Ted Ligety</b>
-   Paula Moltzan
-   Jessie Diggins
-
-Again, every line here is valid HTML, so the crowdsourcing participant will see
-bolded text for "**Ted Ligety**." That means we can also render images:
-
-.. code-block::
-
-   # file: targets.csv. Zipped into targets.csv.zip and uploaded.
-   <img width="300px" src="https://upload.wikimedia.org/wikipedia/commons/3/30/Bode_Miller_at_the_2010_Winter_Olympic_downhill.jpg" />
-   <img width="300px" src="https://upload.wikimedia.org/wikipedia/commons/8/89/Miller_Bode_2008_002.jpg" />
-   <img width="300px" src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Lindsey_Kildow_Aspen.jpg" />
-   <img width="300px" src="https://commons.wikimedia.org/wiki/File:Michael_Sablatnik_Slalom_Spital_am_Semmering_2008.jpg" />
-   <img width="300px" src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Kjetil_Jansrud_giant_slalom_Norway_2011.jpg" />
-
-One rendered target will be this image:
-
-.. raw:: html
-
-   <img width="300px" src="https://upload.wikimedia.org/wikipedia/commons/8/89/Miller_Bode_2008_002.jpg" />
-
-
-
-Database dump
-^^^^^^^^^^^^^
-
-The dashboard offers a link to download the experiment on the dashboard (that
-is, at ``http://[url]:8421/dashboard``). This will download a file called
-``exp-[date]-vX.Y.Z.rdb``. Do not delete the numbers ``X.Y.Z``!
-
-Salmon supports the upload of this file to the same version of Salmon. The
-upload of this file will restore the state of your experiment.
 
 Send the URL to participants
 ----------------------------

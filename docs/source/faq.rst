@@ -6,6 +6,16 @@ FAQ
 Also relevant is the :ref:`troubleshooting`, which goes over some (blocking)
 difficulties while launching.
 
+.. note::
+
+   Please include the version in any bug reports or feature requests.  The
+   version number should look something like ``v0.4.1``. It can be found at
+   ``http://[url]:8421/docs`` or in the downloaded experiment file (found at
+   ``http://[url]:8421/download`` which has a filename like
+   ``exp-2021-05-20T07:31-salmon-v0.4.1.rdb``).
+
+.. _random_vs_active:
+
 When should I use random/active sampling?
 -----------------------------------------
 
@@ -24,7 +34,6 @@ that active sampling requires.
 By default, Salmon will produce random embeddings. This is the simplest
 sampler, and doesn't require any user configuration. Tips on how to use active
 samplers are in :ref:`adaptiveconfig`.
-
 
 .. _faq-n_responses:
 
@@ -82,6 +91,7 @@ configuration:
      Random: {}
    sampling:
      probs: {"ARR": 85, "Random": 15}
+
 
 Can I choose a different machine?
 ---------------------------------

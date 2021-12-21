@@ -1,8 +1,8 @@
-d: 2
 samplers:
   ARR:
     module__mu: 0.05
     module: "CKL"
+sampling: {"common": {"d": 2}}
 html:
   instructions: Which of the comparison objects is most similar to the target object?
   debrief: Thanks! Please enter this participant ID in the assignment.

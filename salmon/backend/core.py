@@ -3,6 +3,7 @@ import os
 import random
 import threading
 import traceback
+from copy import deepcopy
 from typing import Dict, Union
 
 import cloudpickle
@@ -16,7 +17,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from salmon.frontend.utils import ServerException
 
 from ..triplets import samplers
-from ..utils import get_logger
+from ..utils import flush_logger, get_logger
 
 DEBUG = os.environ.get("SALMON_DEBUG", 0)
 
@@ -28,8 +29,11 @@ rj = Client(host="redis", port=6379, decode_responses=True)
 app = FastAPI(title="salmon-backend")
 threads = []
 
+SAMPLERS = {}
+
 
 def exception_to_string(excp):
+    flush_logger(logger)
     stack = traceback.extract_stack() + traceback.extract_tb(
         excp.__traceback__
     )  # add limit=??
@@ -45,6 +49,7 @@ class ExpParsingError(StarletteHTTPException):
 
 @app.exception_handler(ExpParsingError)
 async def http_exception_handler(request, exc):
+    flush_logger(logger)
     return PlainTextResponse(exc.detail, status_code=exc.status_code)
 
 
@@ -108,35 +113,50 @@ async def init(ident: str, background_tasks: BackgroundTasks) -> bool:
             Sampler = getattr(samplers, _class)
             params = {k: _fmt_params(k, v) for k, v in params.items()}
             logger.warning("Sampler for %s = %s", ident, Sampler)
-            logger.warning("params = %s", params)
-            alg = Sampler(ident=ident, n=config["n"], d=config["d"], **params)
+            common = config["sampling"]["common"]
+            p = deepcopy(common)
+            p.update(params)
+            kwargs = dict(ident=ident, n=config["n"], **p)
+            logger.warning("class=%s kwargs= %s", _class, kwargs)
+            alg = Sampler(ident=ident, n=config["n"], **p)
     except Exception as e:
         msg = exception_to_string(e)
         logger.error(f"Error on alg={ident} init: {msg}")
+        flush_logger(logger)
         raise ExpParsingError(status_code=500, detail=msg)
 
-    logger.info(f"alg={ident} initialized; now, does it have get_quer")
-    if hasattr(alg, "get_query"):
-        logger.info(f"Init'ing /query-{ident}")
-        logger.warning(f"alg_id={id(alg)}")
-
-        @app.get(f"/query-{ident}")
-        def _get_query():
-            try:
-                q, score = alg.get_query()
-                logger.debug("q, score = %s, %s", q, score)
-            except Exception as e:
-                logger.exception(e)
-                raise HTTPException(status_code=500, detail=str(e))
-            if q is None:
-                raise HTTPException(status_code=404)
-            return {"alg_ident": ident, "score": score, **q}
+    SAMPLERS[ident] = alg
 
     dask_client = DaskClient("127.0.0.2:8786")
     logger.info("Before adding init task")
     background_tasks.add_task(alg.run, dask_client)
     logger.info("Returning")
     return True
+
+
+@app.post("/reset/")
+def reset():
+    keys = deepcopy(list(SAMPLERS.keys()))
+    for k in keys:
+        SAMPLERS.pop(k)
+
+
+@app.get("/query/{ident}")
+def get_query(ident: str):
+    global SAMPLERS
+    alg = SAMPLERS[ident]
+    if hasattr(alg, "get_query"):
+        try:
+            q, score = alg.get_query()
+            logger.debug("q, score = %s, %s", q, score)
+        except Exception as e:
+            logger.exception(e)
+            flush_logger(logger)
+            raise HTTPException(status_code=500, detail=str(e))
+        if q is None:
+            flush_logger(logger)
+            raise HTTPException(status_code=404)
+        return {"sampler": ident, "score": score, **q}
 
 
 def _fmt_params(k, v):
@@ -147,35 +167,36 @@ def _fmt_params(k, v):
     raise ValueError(f"Error formatting key={k} with value {v}")
 
 
-@app.get("/model/{alg_ident}")
-async def get_model(alg_ident: str):
+@app.get("/model/{sampler}")
+async def get_model(sampler: str):
     samplers = rj.jsonget("samplers")
-    if alg_ident not in samplers:
+    if sampler not in samplers:
         raise ServerException(
-            f"Can't find model for alg_ident='{alg_ident}'. "
-            f"Valid choices for alg_ident are {samplers}"
+            f"Can't find model for sampler='{sampler}'. "
+            f"Valid choices for sampler are {samplers}"
         )
-    if f"model-{alg_ident}" not in rj.keys():
+    if f"model-{sampler}" not in rj.keys():
         logger.warning("rj.keys() = %s", rj.keys())
-        raise ServerException(f"Model has not been created for alg_ident='{alg_ident}'")
+        flush_logger(logger)
+        raise ServerException(f"Model has not been created for sampler='{sampler}'")
     rj2 = Client(host="redis", port=6379, decode_responses=False)
-    ir = rj2.get(f"model-{alg_ident}")
+    ir = rj2.get(f"model-{sampler}")
     model = cloudpickle.loads(ir)
     return model
 
 
-@app.get("/meta/perf/{alg_ident}")
-async def get_timings(alg_ident: str):
+@app.get("/meta/perf/{sampler}")
+async def get_timings(sampler: str):
     samplers = rj.jsonget("samplers")
-    if alg_ident not in samplers:
+    if sampler not in samplers:
         raise ServerException(
-            f"Can't find key for alg_ident='{alg_ident}'. "
-            f"Valid choices for alg_ident are {samplers}"
+            f"Can't find key for sampler='{sampler}'. "
+            f"Valid choices for sampler are {samplers}"
         )
     keys = list(sorted(rj.keys()))
-    if f"alg-perf-{alg_ident}" not in keys:
+    if f"alg-perf-{sampler}" not in keys:
         logger.warning("rj.keys() = %s", keys)
         raise ServerException(
-            f"Performance data has not been created for alg_ident='{alg_ident}'. Database has keys {keys}"
+            f"Performance data has not been created for sampler='{sampler}'. Database has keys {keys}"
         )
-    return rj.jsonget(f"alg-perf-{alg_ident}")
+    return rj.jsonget(f"alg-perf-{sampler}")

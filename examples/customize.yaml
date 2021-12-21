@@ -1,0 +1,17 @@
+samplers:
+  arr1:
+    class: ARR
+    n_top: 3  # argument to salmon.triplets.samplers.ARR
+    scorer: "infogain"  # argument to salmon.triplets.samplers.Adaptive
+  arr2:
+    class: ARR
+    n_top: 1
+    scorer: "uncertainty"  # argument to salmon.triplets.samplers.Adaptive
+sampling:
+  common:
+    d: 3  # Adaptive
+    random_state: 42  # Adaptive
+    initial_batch_size: 128  # Embedding
+html:
+  instructions: Click buttons, <b>or else.</b>
+targets: 10

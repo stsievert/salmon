@@ -11,10 +11,12 @@ import pandas as pd
 import torch.optim
 
 import salmon.triplets.samplers.adaptive as adaptive
-from ...backend.sampler import Sampler
-from salmon.triplets.samplers._random_sampling import _get_query as _random_query
+from salmon.triplets.samplers._random_sampling import \
+    _get_query as _random_query
 from salmon.triplets.samplers.adaptive import InfoGainScorer, UncertaintyScorer
 from salmon.utils import get_logger
+
+from ...backend.sampler import Sampler
 
 logger = get_logger(__name__)
 
@@ -67,6 +69,7 @@ class Adaptive(Sampler):
         """
         super().__init__(ident=ident)
 
+        logger.warning(f"Initializing Adaptive with n={n}, d={d}, R={R}")
         self.n = n
         self.d = d
         self.R = R

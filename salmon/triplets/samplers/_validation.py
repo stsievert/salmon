@@ -4,10 +4,14 @@ import random
 import numpy as np
 
 from ...backend.sampler import Path
+from ._round_robin import RoundRobin, _get_query, _score_query
 from .utils import Answer, Query
-from ._round_robin import _get_query, _score_query, RoundRobin
+
 logger = logging.getLogger(__name__)
 
+
+def _random_query(n: int):
+    return np.random.choice(n, size=3, replace=False).tolist()
 
 class Validation(RoundRobin):
     """Ask about the same queries repeatedly"""
@@ -41,7 +45,13 @@ class Validation(RoundRobin):
         """
         self.n_queries = n_queries
         if queries is None:
-            queries = [np.random.choice(n, size=3, replace=False) for _ in range(n_queries)]
+            queries = []
+            while True:
+                q = _random_query(n)
+                if q not in queries:
+                    queries.append(q)
+                if len(queries) == n_queries:
+                    break
         idx = [i for query in queries for i in query]
         if n - 1 < max(idx):
             raise ValueError(
