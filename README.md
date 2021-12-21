@@ -5,6 +5,9 @@
   <img src="https://github.com/stsievert/salmon/actions/workflows/docs.yml/badge.svg" alt="Documentation status badge" />
 </a>
 
+Salmon is a tool for efficiently generating ordinal embeddings. It relies on
+"active" machine learning algorithms to choose the most informative queries for
+humans to answer.
 
 See the documentation for more detail: https://docs.stsievert.com/salmon/
 
