@@ -1,5 +1,6 @@
 import itertools
 import random
+from gc import collect as garbage_collect
 from pprint import pprint
 from time import sleep, time
 from typing import Any, Dict, List, Optional, Tuple, TypeVar
@@ -11,9 +12,8 @@ from dask.distributed import Client as DaskClient
 from redis.exceptions import ResponseError
 from rejson import Client as RedisClient
 from rejson import Path
-from gc import collect as garbage_collect
 
-from salmon.utils import flush_logger, get_logger 
+from salmon.utils import flush_logger, get_logger
 
 logger = get_logger(__name__)
 

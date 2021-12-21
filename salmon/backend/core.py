@@ -18,7 +18,6 @@ from salmon.frontend.utils import ServerException
 from salmon.triplets import samplers
 from salmon.utils import flush_logger, get_logger
 
-
 DEBUG = os.environ.get("SALMON_DEBUG", 0)
 
 logger = get_logger(__name__)

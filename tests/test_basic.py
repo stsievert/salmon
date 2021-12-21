@@ -14,6 +14,7 @@ import pytest
 import yaml
 
 from salmon.triplets.manager import Config
+
 from .utils import LogError, logs, server
 
 
