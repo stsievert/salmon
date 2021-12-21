@@ -8,6 +8,7 @@ from sklearn.model_selection import train_test_split
 
 from salmon.triplets.offline import OfflineEmbedding
 from salmon.triplets.samplers import TSTE
+import salmon
 
 
 def test_score_predict_basic():
