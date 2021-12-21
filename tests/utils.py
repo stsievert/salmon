@@ -123,7 +123,7 @@ class Logs:
     def __init__(self):
         this_dir = Path(__file__).absolute().parent
         root_dir = this_dir.parent
-        self.log_dir = root_dir / "out"
+        self.log_dir = root_dir / "salmon" / "logs"
         self.catch = True
         self.warn = True
         self.delay = 0.5  # for files to finish flushing
