@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FAQ &mdash; Salmon v0.8.0+2.g6940492 documentation</title>
+  <title>FAQ &mdash; Salmon v0.8.0+3.g2903f46 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/basic.css" type="text/css" />
@@ -56,7 +56,6 @@
 <li class="toctree-l2"><a class="reference internal" href="#how-do-i-see-the-dask-dashboard">How do I see the Dask dashboard?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#how-do-i-customize-the-participant-unique-identifier-aka-puid">How do I customize the participant unique identifier aka “puid”?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#how-do-i-use-https-with-salmon">How do I use HTTPS with Salmon?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#how-do-i-generate-offline-embeddings-without-using-conda">How do I generate offline embeddings without using conda?</a></li>
 </ul>
 </li>
 </ul>
@@ -226,55 +225,6 @@ Jain, Jamieson and Nowak. 2016. NeurIPS.
 <dd><p>though the package <a class="reference external" href="https://github.com/FiloSottile/mkcert">mkcert</a> might help.</p>
 </dd>
 </dl>
-</section>
-<section id="how-do-i-generate-offline-embeddings-without-using-conda">
-<h2>How do I generate offline embeddings without using conda?<a class="headerlink" href="#how-do-i-generate-offline-embeddings-without-using-conda" title="Permalink to this headline"></a></h2>
-<p>Using conda is the officially supported method. Use other dependency managers at
-your own peril.</p>
-<p>That said, this process worked to generate offline embeddings with Salmon v0.9.0:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/stsievert/salmon.git
-$ <span class="nb">cd</span> salmon
-$ pip install -r offline.txt  <span class="c1"># see file below</span>
-$ pip install .
-</pre></div>
-</div>
-<p>The list of dependencies in <code class="docutils literal notranslate"><span class="pre">offline.txt</span></code> is below:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># file offline.txt</span>
-<span class="l l-Scalar l-Scalar-Plain">numpy&gt;=1.18.0</span>
-<span class="l l-Scalar l-Scalar-Plain">scipy</span>
-<span class="l l-Scalar l-Scalar-Plain">pandas&gt;=1.0.1</span>
-<span class="l l-Scalar l-Scalar-Plain">Cython</span>
-<span class="l l-Scalar l-Scalar-Plain">scikit-learn</span>
-<span class="l l-Scalar l-Scalar-Plain">dask&gt;=2021.02.0</span>
-<span class="l l-Scalar l-Scalar-Plain">distributed&gt;=2021.02.0</span>
-<span class="l l-Scalar l-Scalar-Plain">torch</span>
-<span class="l l-Scalar l-Scalar-Plain">altair</span>
-<span class="l l-Scalar l-Scalar-Plain">seaborn</span>
-<span class="l l-Scalar l-Scalar-Plain">matplotlib</span>
-<span class="l l-Scalar l-Scalar-Plain">skorch&gt;=0.8.0</span>
-<span class="l l-Scalar l-Scalar-Plain">fastparquet</span>
-<span class="l l-Scalar l-Scalar-Plain">dask-ml</span>
-<span class="l l-Scalar l-Scalar-Plain">lz4</span>
-<span class="l l-Scalar l-Scalar-Plain">blosc</span>
-<span class="l l-Scalar l-Scalar-Plain">cytoolz</span>
-<span class="l l-Scalar l-Scalar-Plain">ujson</span>
-<span class="l l-Scalar l-Scalar-Plain">pyyaml</span>
-<span class="l l-Scalar l-Scalar-Plain">pyarrow</span>
-<span class="l l-Scalar l-Scalar-Plain">pytest</span>
-<span class="l l-Scalar l-Scalar-Plain">fastapi[all]</span>
-<span class="l l-Scalar l-Scalar-Plain">rejson</span>
-<span class="l l-Scalar l-Scalar-Plain">cloudpickle</span>
-<span class="l l-Scalar l-Scalar-Plain">bokeh==2.0.1</span>
-<span class="l l-Scalar l-Scalar-Plain">rejson</span>
-<span class="l l-Scalar l-Scalar-Plain">httpx</span>
-<span class="l l-Scalar l-Scalar-Plain">aiofiles</span>
-<span class="l l-Scalar l-Scalar-Plain">jinja2</span>
-<span class="l l-Scalar l-Scalar-Plain">redis==3.5.*</span>
-<span class="l l-Scalar l-Scalar-Plain">gunicorn</span>
-<span class="l l-Scalar l-Scalar-Plain">python-multipart</span>
-<span class="l l-Scalar l-Scalar-Plain">starlette-prometheus</span>
-</pre></div>
-</div>
 </section>
 </section>
 
