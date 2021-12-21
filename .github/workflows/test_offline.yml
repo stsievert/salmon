@@ -2,7 +2,7 @@ name: Test (offline)
 
 on:
   push:
-    branches: [ master, offline ]
+    branches: [ master ]
   pull_request:
     branches: [ master ]
 
