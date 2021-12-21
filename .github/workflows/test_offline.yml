@@ -47,9 +47,11 @@ jobs:
       run: pip install .
     - name: Debug info
       run: |
-          echo "Running pwd..."
+          echo "Running python -c 'import salmon; print(salmon.__file__)'..."
           python -c "import salmon; print(salmon.__file__)"
+    - name: change directories
+      run: cd /
     - name: Run tests in salmon/salmon/
-      run: sudo /usr/share/miniconda/bin/pytest salmon/
+      run: sudo /usr/share/miniconda/bin/pytest /home/runner/work/salmon/salmon/
     - name: Run all tests
-      run: sudo /usr/share/miniconda/bin/pytest tests/test_offline.py
+      run: sudo /usr/share/miniconda/bin/pytest /home/runner/work/salmon/tests/test_offline.py
