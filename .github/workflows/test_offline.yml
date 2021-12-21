@@ -45,13 +45,13 @@ jobs:
         pip install -r offline.txt
     - name: Install Salmon
       run: pip install .
-    - name: Debug info
+    - name: change directories
+      run: cd /
+    - name: Debug info (salmon.__file__)
       run: |
           echo "Running python -c 'import salmon; print(salmon.__file__)'..."
           python -c "import salmon; print(salmon.__file__)"
-    - name: change directories
-      run: cd /
+    - name: Run offline tests
+      run: sudo /usr/share/miniconda/bin/pytest /home/runner/work/salmon/salmon/tests/test_offline.py
     - name: Run tests in salmon/salmon/
-      run: sudo /usr/share/miniconda/bin/pytest /home/runner/work/salmon/salmon/
-    - name: Run all tests
-      run: sudo /usr/share/miniconda/bin/pytest /home/runner/work/salmon/tests/test_offline.py
+      run: sudo /usr/share/miniconda/bin/pytest /home/runner/work/salmon/salmon/salmon
