@@ -36,10 +36,10 @@ from starlette.status import HTTP_401_UNAUTHORIZED, HTTP_409_CONFLICT
 
 import salmon
 
-from ..triplets import manager
-from . import plotting
-from .public import _ensure_initialized, app, templates
-from .utils import (
+from salmon.triplets import manager
+from salmon.frontend import plotting
+from salmon.frontend.public import _ensure_initialized, app, templates
+from salmon.frontend.utils import (
     ServerException,
     _extract_zipfile,
     _format_target,

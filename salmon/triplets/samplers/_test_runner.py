@@ -1,7 +1,7 @@
 from time import sleep
 
-from ._adaptive_runners import TSTE
-from ...backend.sampler import StopRunning
+from salmon.triplets.samplers._adaptive_runners import TSTE
+from salmon.backend.sampler import StopRunning
 
 
 class Test(TSTE):

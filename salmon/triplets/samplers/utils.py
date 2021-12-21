@@ -7,7 +7,7 @@ from pydantic import BaseModel
 from rejson import Client as RedisClient
 from rejson import Path
 
-from ...utils import get_logger
+from salmon.utils import get_logger
 
 Query = Tuple[int, Tuple[int, int]]  # head, (choice 1, choice 2)
 

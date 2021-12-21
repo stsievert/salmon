@@ -17,9 +17,9 @@ from starlette.staticfiles import StaticFiles
 from starlette.templating import Jinja2Templates
 from starlette_prometheus import PrometheusMiddleware, metrics
 
-from ..triplets import manager
-from ..utils import get_logger
-from .utils import ServerException, sha256, image_url
+from salmon.triplets import manager
+from salmon.utils import get_logger
+from salmon.frontend.utils import ServerException, sha256, image_url
 
 logger = get_logger(__name__)
 

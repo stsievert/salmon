@@ -3,7 +3,7 @@ from sklearn.base import BaseEstimator
 
 import salmon.utils as utils
 
-from .search import gram_utils, score
+from salmon.triplets.samplers.adaptive.search import gram_utils, score
 
 logger = utils.get_logger(__name__)
 

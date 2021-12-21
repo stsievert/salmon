@@ -14,9 +14,8 @@ from rejson import Client, Path
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from salmon.frontend.utils import ServerException
-
-from ..triplets import samplers
-from ..utils import get_logger
+from salmon.triplets import samplers
+from salmon.utils import get_logger
 
 DEBUG = os.environ.get("SALMON_DEBUG", 0)
 

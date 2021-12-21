@@ -12,7 +12,7 @@ from redis.exceptions import ResponseError
 from rejson import Client as RedisClient
 from rejson import Path
 
-from ..utils import get_logger, flush_logger
+from salmon.utils import get_logger, flush_logger
 
 logger = get_logger(__name__)
 

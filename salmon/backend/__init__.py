@@ -1,2 +1,2 @@
-from .core import app
-from .sampler import Sampler
+from salmon.backend.core import app
+from salmon.backend.sampler import Sampler
