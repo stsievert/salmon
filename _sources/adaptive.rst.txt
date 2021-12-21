@@ -6,7 +6,7 @@ The API the must conform to below:
 
 .. autosummary::
 
-   salmon.backend.sampler.Runner
+   salmon.backend.sampler.Sampler
 
 This API balances the fundamentally serial nature of adaptive algorithms with
 the parallel context of web servers.
@@ -34,7 +34,7 @@ following:
    async def process_answer(answer):
        db.push(answer)
 
-The :class:`~salmon.backend.sampler.Runner` API balances the two and runs the code
+The :class:`~salmon.backend.sampler.Sampler` API balances the two and runs the code
 to `receive answers` and `process answers` in separate processes.
 `Processing the received answers` is an optimization that needs to be performed
 quickly because ``model.best_query`` depends on the optimization.

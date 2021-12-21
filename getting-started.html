@@ -4,9 +4,10 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Starting an experiment &mdash; Salmon v0.8.0+3.g2903f46 documentation</title>
+  <title>Getting started &mdash; Salmon v0.9.0rc3 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/autodoc_pydantic.css" type="text/css" />
       <link rel="stylesheet" href="_static/basic.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
@@ -19,7 +20,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Experiment monitoring" href="monitoring.html" />
+    <link rel="next" title="Experiment initialization" href="init.html" />
     <link rel="prev" title="Installation" href="installation.html" /> 
 </head>
 
@@ -42,27 +43,19 @@
               <p class="caption" role="heading"><span class="caption-text">Usage</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Starting an experiment</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting started</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#initialization-page">Initialization page</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#username-password">Username/password</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#experiment-initialization">Experiment initialization</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#experiment-initialization-with-yaml-file">Experiment initialization with YAML file</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#yaml-file-with-zip-file">YAML file with ZIP file</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#images-videos">Images/videos</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#text-targets">Text targets</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#database-dump">Database dump</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="#experiment-initialization">Experiment initialization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#send-the-url-to-participants">Send the URL to participants</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="init.html">Experiment initialization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="samplers.html">Sampler configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="monitoring.html">Experiment monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="offline.html">Generating embeddings offline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="samplers.html">Sampler configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Benchmarks</span></p>
 <ul>
@@ -89,9 +82,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Starting an experiment</li>
+      <li>Getting started</li>
       <li class="wy-breadcrumbs-aside">
-              <a href="https://github.com/stsievert/salmon/blob/master/source/getting-started.rst" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/stsievert/salmon/blob/master/docs/source/getting-started.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
   </ul>
   <hr/>
@@ -99,8 +92,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="starting-an-experiment">
-<span id="getting-started"></span><h1>Starting an experiment<a class="headerlink" href="#starting-an-experiment" title="Permalink to this headline"></a></h1>
+  <section id="getting-started">
+<span id="id1"></span><h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline"></a></h1>
 <p>Launching an experiment to crowdsourcing participants requires following this
 process:</p>
 <ol class="arabic simple">
@@ -127,12 +120,6 @@ hit “create user.”</p>
 <p>Do not lose this username/password! You need the username/password to view
 the dashboard and download the received responses.</p>
 </div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Once a username/password are set, they can not be changed. The
-username/password will remain the same when Salmon is reset and when the
-machine Salmon is running on is restarted.</p>
-</div>
 <p>It is technically possible to recover the username/password with the key file
 <code class="docutils literal notranslate"><span class="pre">key.pem</span></code> that Amazon AWS provides and the URL above:</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>personal<span class="o">)</span> $ ssh -i key.pem ubuntu@<span class="o">[</span>url<span class="o">]</span>
@@ -142,174 +129,24 @@ machine Salmon is running on is restarted.</p>
 </section>
 <section id="experiment-initialization">
 <h2>Experiment initialization<a class="headerlink" href="#experiment-initialization" title="Permalink to this headline"></a></h2>
-<p>After a user has been successfully created, hit the back
-button and launch an experiment. You have three options:</p>
+<p>Hit the back button to visit <code class="docutils literal notranslate"><span class="pre">http://[url]:8421/init</span></code> again after after a
+user has been successfully created. Now, let’s launch an experiment! There are
+three options:</p>
 <ol class="arabic simple">
 <li><p>Upload of a YAML file completely detailing the experiment.</p></li>
 <li><p>Upload of a YAML file describing experiment, and ZIP file for the targets.</p></li>
 <li><p>Upload of a database dump from Salmon.</p></li>
 </ol>
-<p>These options will be detailed below. Throughout the documentation, the YAML
-file for initialization will be referred to as <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code>.</p>
-<p>After you launch your experiment and vist <code class="docutils literal notranslate"><span class="pre">http://[url]:8421</span></code>, you will see a query
-page:</p>
+<p>These options are detailed at “<a class="reference internal" href="init.html#init"><span class="std std-ref">Experiment initialization</span></a>.” If an experiment is incorrectly
+specified, (hopefully helpful) errors will be raised. After the experiment is
+finished launching, you will see a couple links:</p>
+<ul class="simple">
+<li><p>A link to the dashboard (<code class="docutils literal notranslate"><span class="pre">http://[url]:8421/dashboard</span></code>), an example of
+which is at “<a class="reference internal" href="monitoring.html#exp-monitoring"><span class="std std-ref">Experiment monitoring</span></a>.”</p></li>
+<li><p>A link to the query page to send to crowdsourcing users
+(<code class="docutils literal notranslate"><span class="pre">http://[url]:8421/</span></code>). An (out-of-date) example:</p></li>
+</ul>
 <a class="reference internal image-reference" href="_images/query_page.png"><img alt="_images/query_page.png" class="align-center" src="_images/query_page.png" style="width: 500px;" /></a>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>This image is almost certainly out of date.</p>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Please include the version in any bug reports or feature requests.
-The version number is available at <code class="docutils literal notranslate"><span class="pre">http://[url]:8421/docs</span></code> and should look
-something like <code class="docutils literal notranslate"><span class="pre">v0.4.1</span></code>, typically shown right next to “Salmon.”</p>
-</div>
-<p>Now, let’s describe three methods on how to launch this experiment:</p>
-<section id="experiment-initialization-with-yaml-file">
-<h3>Experiment initialization with YAML file<a class="headerlink" href="#experiment-initialization-with-yaml-file" title="Permalink to this headline"></a></h3>
-<p>“YAML files” must obey a standard; see for a (human-readable) description of
-the specification <a class="reference external" href="https://learnxinyminutes.com/docs/yaml/">https://learnxinyminutes.com/docs/yaml/</a>. To see if your YAML
-is valid, go to <a class="reference external" href="https://yamlchecker.com/">https://yamlchecker.com/</a>.</p>
-<p>Here’s an example <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code> YAML file for initialization:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: init.yaml</span>
-<span class="nt">targets</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">0</span><span class="p p-Indicator">,</span> <span class="nv">1</span><span class="p p-Indicator">,</span> <span class="nv">2</span><span class="p p-Indicator">,</span> <span class="nv">3</span><span class="p p-Indicator">,</span> <span class="nv">4</span><span class="p p-Indicator">,</span> <span class="nv">5</span><span class="p p-Indicator">,</span> <span class="nv">6</span><span class="p p-Indicator">,</span> <span class="nv">7</span><span class="p p-Indicator">,</span> <span class="nv">8</span><span class="p p-Indicator">,</span> <span class="nv">9</span><span class="p p-Indicator">,</span> <span class="nv">10</span><span class="p p-Indicator">]</span>
-<span class="nt">html</span><span class="p">:</span>
-  <span class="nt">instructions</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Select the item on the bottom most similar to the item on the top.</span>
-  <span class="nt">debrief</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Thanks! Use the participant ID below in Mechnical Turk.</span>
-  <span class="nt">max_queries</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">100</span>
-</pre></div>
-</div>
-<p>This file will initialize a basic experiment. To do anything fancier,
-additional configuration is required. Here’s some documentation on each
-top-level element like <code class="docutils literal notranslate"><span class="pre">html</span></code>, a “key” in YAML-jargon:</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">targets</span></code>, optional list. Choices:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>Upload a ZIP file, detailed at <a class="reference internal" href="#yaml-plus-zip"><span class="std std-ref">YAML file with ZIP file</span></a>.  This will replace
-the <code class="docutils literal notranslate"><span class="pre">targets</span></code> key with the HTML rendering of the contents of the ZIP
-file.</p></li>
-<li><p>list of HTML targets. Specifying
-<code class="docutils literal notranslate"><span class="pre">targets:</span> <span class="pre">[&quot;vonn&quot;,</span> <span class="pre">&quot;miller&quot;,</span> <span class="pre">&quot;ligety&quot;,</span> <span class="pre">&quot;shiffrin&quot;]</span></code>
-will show text to the user. If this text includes HTML, it will be
-rendered. For example if one target is <code class="docutils literal notranslate"><span class="pre">&quot;&lt;i&gt;kildow&lt;/i&gt;&quot;</span></code> the user will
-see italic text when that target is displayed.</p></li>
-</ul>
-</div></blockquote>
-</li>
-<li><p><code class="docutils literal notranslate"><span class="pre">samplers</span></code>, optional.  <strong>Customizing this key is likely of interest and can
-generate better embeddings.</strong> See “<a class="reference internal" href="samplers.html#adaptive-config"><span class="std std-ref">Sampler configuration</span></a>” for more detail, and
-“<a class="reference internal" href="benchmarks/active.html#experiments"><span class="std std-ref">Active sampling</span></a>” for examples/benchmarks.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">html</span></code>, optional. Style options for the crowdsourcing user’s query page:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">instructions</span></code>: text. The instructions for the participant, shown above
-each query.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">debrief</span></code>: text. The message to show at the end of the experiment. This
-debrief will show alongside the participant ID (aka “puid”, which will be
-available through in the responses).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">max_queries</span></code>: int. The number of queries a participant should answer. Set
-<code class="docutils literal notranslate"><span class="pre">max_queries:</span> <span class="pre">-1</span></code> for unlimited queries.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">skip_button</span></code>, optional boolean. Default <code class="docutils literal notranslate"><span class="pre">false</span></code>. If <code class="docutils literal notranslate"><span class="pre">true</span></code>, show a
-button that says “new query.”</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">css</span></code>, optional string. Defaults to <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code>. This CSS is inserted in the
-<code class="docutils literal notranslate"><span class="pre">&lt;style&gt;</span></code> tag in the HTML query page. This allows customization of
-colors/borders/etc.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">arrow_keys</span></code> optional boolean, default True. If True, allow users to
-answer queries with the arrow keys.</p></li>
-</ul>
-</div></blockquote>
-</li>
-<li><p><code class="docutils literal notranslate"><span class="pre">d</span></code>, optional int (default=2). The embedding the samplers should embed into.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">sampling</span></code>, optional. A dictionary with the following keys:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">probs</span></code>, a map between sampler names and the percentage that
-each sampler is selected. By default, all samplers are sampled equally.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">samplers_per_user</span></code>: (optional int, default=0). Controls the
-number of samplers each user sees. If <code class="docutils literal notranslate"><span class="pre">samplers_per_user=0</span></code>, show
-users a random sampler.</p></li>
-</ul>
-</div></blockquote>
-</li>
-</ul>
-<p>Examples of these files are in <a class="reference external" href="https://github.com/stsievert/salmon/tree/master/examples">salmon/examples</a>. A complete example is
-available at <a class="reference external" href="https://github.com/stsievert/salmon/tree/master/examples/complete.yaml">salmon/examples/complete.yaml</a>.</p>
-</section>
-<section id="yaml-file-with-zip-file">
-<span id="yaml-plus-zip"></span><h3>YAML file with ZIP file<a class="headerlink" href="#yaml-file-with-zip-file" title="Permalink to this headline"></a></h3>
-<p>Uploading a ZIP file will completely replace the <code class="docutils literal notranslate"><span class="pre">targets</span></code> key. It’s
-recommended not to specify it. However, it doesn’t matter if you have specified
-it because it will be overwritten.</p>
-<p>Here are the choices for different files to include in the ZIP file:</p>
-<ul>
-<li><p>A single CSV file. Each textual target should be on a new line.</p></li>
-<li><p>A bunch of images/videos. Support extensions:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>Videos: <code class="docutils literal notranslate"><span class="pre">mp4</span></code>, <code class="docutils literal notranslate"><span class="pre">mov</span></code></p></li>
-<li><p>Images: <code class="docutils literal notranslate"><span class="pre">png</span></code>, <code class="docutils literal notranslate"><span class="pre">gif</span></code>, <code class="docutils literal notranslate"><span class="pre">jpg</span></code>, <code class="docutils literal notranslate"><span class="pre">jpeg</span></code></p></li>
-</ul>
-</div></blockquote>
-</li>
-</ul>
-<p>Let’s walk through two examples, both with uploading a bunch of images with
-skiers. Both cases will use this <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code> file:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: init.yaml</span>
-<span class="nt">html</span><span class="p">:</span>
-  <span class="nt">instructions</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Select the item on the bottom most similar to the item on the top.</span>
-  <span class="nt">debrief</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Thanks! Use the participant ID below in Mechanical Turk.</span>
-  <span class="nt">max_queries</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">100</span>
-</pre></div>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Uploading a ZIP file completely replaces any specification of the
-<code class="docutils literal notranslate"><span class="pre">targets</span></code> key above. This means that it is not necessary to specify the
-<code class="docutils literal notranslate"><span class="pre">targets</span></code> key when a ZIP file is uploaded because it will be specified
-automatically.</p>
-</div>
-<section id="images-videos">
-<h4>Images/videos<a class="headerlink" href="#images-videos" title="Permalink to this headline"></a></h4>
-<p>If I had all these images in a ZIP file (say <code class="docutils literal notranslate"><span class="pre">skiers.zip</span></code>), I would gather
-all the images into a ZIP file. On macOS, that’s possible by selecting all the
-images then control-clicking and selecting “Compress items.” On the command
-line, the command <code class="docutils literal notranslate"><span class="pre">zip</span> <span class="pre">targets.zip</span> <span class="pre">*.jpg</span> <span class="pre">*.png</span></code> will collect all JPG/PNG
-images into <code class="docutils literal notranslate"><span class="pre">targets.zip</span></code>.</p>
-</section>
-<section id="text-targets">
-<h4>Text targets<a class="headerlink" href="#text-targets" title="Permalink to this headline"></a></h4>
-<p>This is a valid CSV file that will render textual targets:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: targets.csv. Zipped into targets.csv.zip and uploaded.</span>
-<span class="n">Bode</span> <span class="n">Miller</span>
-<span class="n">Lindsey</span> <span class="n">Kildow</span>
-<span class="n">Mikaela</span> <span class="n">Shiffrin</span>
-<span class="o">&lt;</span><span class="n">b</span><span class="o">&gt;</span><span class="n">Ted</span> <span class="n">Ligety</span><span class="o">&lt;/</span><span class="n">b</span><span class="o">&gt;</span>
-<span class="n">Paula</span> <span class="n">Moltzan</span>
-<span class="n">Jessie</span> <span class="n">Diggins</span>
-</pre></div>
-</div>
-<p>Again, every line here is valid HTML, so the crowdsourcing participant will see
-bolded text for “<strong>Ted Ligety</strong>.” That means we can also render images:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: targets.csv. Zipped into targets.csv.zip and uploaded.</span>
-<span class="o">&lt;</span><span class="n">img</span> <span class="n">width</span><span class="o">=</span><span class="s2">&quot;300px&quot;</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;https://upload.wikimedia.org/wikipedia/commons/3/30/Bode_Miller_at_the_2010_Winter_Olympic_downhill.jpg&quot;</span> <span class="o">/&gt;</span>
-<span class="o">&lt;</span><span class="n">img</span> <span class="n">width</span><span class="o">=</span><span class="s2">&quot;300px&quot;</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;https://upload.wikimedia.org/wikipedia/commons/8/89/Miller_Bode_2008_002.jpg&quot;</span> <span class="o">/&gt;</span>
-<span class="o">&lt;</span><span class="n">img</span> <span class="n">width</span><span class="o">=</span><span class="s2">&quot;300px&quot;</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;https://upload.wikimedia.org/wikipedia/commons/5/5e/Lindsey_Kildow_Aspen.jpg&quot;</span> <span class="o">/&gt;</span>
-<span class="o">&lt;</span><span class="n">img</span> <span class="n">width</span><span class="o">=</span><span class="s2">&quot;300px&quot;</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;https://commons.wikimedia.org/wiki/File:Michael_Sablatnik_Slalom_Spital_am_Semmering_2008.jpg&quot;</span> <span class="o">/&gt;</span>
-<span class="o">&lt;</span><span class="n">img</span> <span class="n">width</span><span class="o">=</span><span class="s2">&quot;300px&quot;</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;https://upload.wikimedia.org/wikipedia/commons/e/e9/Kjetil_Jansrud_giant_slalom_Norway_2011.jpg&quot;</span> <span class="o">/&gt;</span>
-</pre></div>
-</div>
-<p>One rendered target will be this image:</p>
-<img width="300px" src="https://upload.wikimedia.org/wikipedia/commons/8/89/Miller_Bode_2008_002.jpg" /></section>
-</section>
-<section id="database-dump">
-<h3>Database dump<a class="headerlink" href="#database-dump" title="Permalink to this headline"></a></h3>
-<p>The dashboard offers a link to download the experiment on the dashboard (that
-is, at <code class="docutils literal notranslate"><span class="pre">http://[url]:8421/dashboard</span></code>). This will download a file called
-<code class="docutils literal notranslate"><span class="pre">exp-[date]-vX.Y.Z.rdb</span></code>. Do not delete the numbers <code class="docutils literal notranslate"><span class="pre">X.Y.Z</span></code>!</p>
-<p>Salmon supports the upload of this file to the same version of Salmon. The
-upload of this file will restore the state of your experiment.</p>
-</section>
 </section>
 <section id="send-the-url-to-participants">
 <h2>Send the URL to participants<a class="headerlink" href="#send-the-url-to-participants" title="Permalink to this headline"></a></h2>
@@ -329,7 +166,7 @@ recruitment.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="monitoring.html" class="btn btn-neutral float-right" title="Experiment monitoring" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="init.html" class="btn btn-neutral float-right" title="Experiment initialization" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

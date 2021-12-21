@@ -1,0 +1,6 @@
+﻿salmon.triplets.manager.Config
+==============================
+
+.. currentmodule:: salmon.triplets.manager
+
+.. autopydantic_settings:: Config

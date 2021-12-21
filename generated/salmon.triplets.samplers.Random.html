@@ -4,9 +4,10 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>salmon.triplets.samplers.Random &mdash; Salmon v0.8.0+3.g2903f46 documentation</title>
+  <title>salmon.triplets.samplers.Random &mdash; Salmon v0.9.0rc3 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/autodoc_pydantic.css" type="text/css" />
       <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
@@ -20,7 +21,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="salmon.triplets.samplers.RoundRobin" href="salmon.triplets.samplers.RoundRobin.html" />
-    <link rel="prev" title="salmon.triplets.offline.OfflineEmbedding" href="salmon.triplets.offline.OfflineEmbedding.html" /> 
+    <link rel="prev" title="salmon.backend.sampler.Sampler" href="salmon.backend.sampler.Sampler.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -42,13 +43,17 @@
               <p class="caption" role="heading"><span class="caption-text">Usage</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../getting-started.html">Starting an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../init.html">Experiment initialization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../samplers.html">Sampler configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../monitoring.html">Experiment monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../offline.html">Generating embeddings offline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../samplers.html">Sampler configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">FAQ</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api.html#configuration">Configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api.html#offline-embeddings">Offline embeddings</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../api.html#samplers">Samplers</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="salmon.backend.sampler.Sampler.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.backend.sampler</span></code>.Sampler</a></li>
 <li class="toctree-l3 current"><a class="reference internal" href="../api.html#passive-algorithms">Passive Algorithms</a><ul class="current">
 <li class="toctree-l4 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.samplers</span></code>.Random</a></li>
 <li class="toctree-l4"><a class="reference internal" href="salmon.triplets.samplers.RoundRobin.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.samplers</span></code>.RoundRobin</a></li>
@@ -60,7 +65,6 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../faq.html">FAQ</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Benchmarks</span></p>
 <ul>
@@ -90,7 +94,7 @@
           <li><a href="../api.html">API</a> &raquo;</li>
       <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.samplers</span></code>.Random</li>
       <li class="wy-breadcrumbs-aside">
-              <a href="https://github.com/stsievert/salmon/blob/master/source/generated/salmon.triplets.samplers.Random.rst" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/stsievert/salmon/blob/master/docs/source/generated/salmon.triplets.samplers.Random.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
   </ul>
   <hr/>
@@ -127,7 +131,7 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="salmon.triplets.offline.OfflineEmbedding.html" class="btn btn-neutral float-left" title="salmon.triplets.offline.OfflineEmbedding" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="salmon.backend.sampler.Sampler.html" class="btn btn-neutral float-left" title="salmon.backend.sampler.Sampler" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="salmon.triplets.samplers.RoundRobin.html" class="btn btn-neutral float-right" title="salmon.triplets.samplers.RoundRobin" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
