@@ -4,10 +4,9 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>salmon.triplets.offline.OfflineEmbedding &mdash; Salmon v0.9.0rc3 documentation</title>
+  <title>salmon.triplets.offline.OfflineEmbedding &mdash; Salmon v0.6.1rc8+10.gdcb0d17 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/autodoc_pydantic.css" type="text/css" />
       <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
@@ -20,8 +19,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="salmon.backend.sampler.Sampler" href="salmon.backend.sampler.Sampler.html" />
-    <link rel="prev" title="salmon.triplets.manager.Sampling" href="salmon.triplets.manager.Sampling.html" /> 
+    <link rel="next" title="salmon.backend.sampler.Runner" href="salmon.backend.sampler.Runner.html" />
+    <link rel="prev" title="API" href="../api.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -43,14 +42,11 @@
               <p class="caption" role="heading"><span class="caption-text">Usage</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../getting-started.html">Getting started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../init.html">Experiment initialization</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../samplers.html">Sampler configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started.html">Starting an experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../monitoring.html">Experiment monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../offline.html">Generating embeddings offline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms.html">Algorithm configuration</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">API</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../api.html#configuration">Configuration</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../api.html#offline-embeddings">Offline embeddings</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.offline</span></code>.OfflineEmbedding</a></li>
 </ul>
@@ -58,6 +54,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../api.html#samplers">Samplers</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">FAQ</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Benchmarks</span></p>
 <ul>
@@ -87,7 +84,7 @@
           <li><a href="../api.html">API</a> &raquo;</li>
       <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.offline</span></code>.OfflineEmbedding</li>
       <li class="wy-breadcrumbs-aside">
-              <a href="https://github.com/stsievert/salmon/blob/master/docs/source/generated/salmon.triplets.offline.OfflineEmbedding.rst" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/stsievert/salmon/blob/master/source/generated/salmon.triplets.offline.OfflineEmbedding.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
   </ul>
   <hr/>
@@ -140,13 +137,13 @@ Only used when <code class="docutils literal notranslate"><span class="pre">opt<
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#salmon.triplets.offline.OfflineEmbedding.fit" title="salmon.triplets.offline.OfflineEmbedding.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X_train, X_test[, embedding, get_stats])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#salmon.triplets.offline.OfflineEmbedding.fit" title="salmon.triplets.offline.OfflineEmbedding.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X_train, X_test)</p></td>
 <td><p>Fit the embedding with train and validation data.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code>([deep])</p></td>
 <td><p>Get parameters for this estimator.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#salmon.triplets.offline.OfflineEmbedding.initialize" title="salmon.triplets.offline.OfflineEmbedding.initialize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialize</span></code></a>(X_train[, embedding])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#salmon.triplets.offline.OfflineEmbedding.initialize" title="salmon.triplets.offline.OfflineEmbedding.initialize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialize</span></code></a>(X_train)</p></td>
 <td><p>Initialize this optimizer.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#salmon.triplets.offline.OfflineEmbedding.partial_fit" title="salmon.triplets.offline.OfflineEmbedding.partial_fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">partial_fit</span></code></a>(X_train)</p></td>
@@ -169,7 +166,7 @@ Only used when <code class="docutils literal notranslate"><span class="pre">opt<
 
 <dl class="py method">
 <dt class="sig sig-object py" id="salmon.triplets.offline.OfflineEmbedding.fit">
-<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_test</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_stats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">stats_kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.offline.OfflineEmbedding.fit" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_test</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.offline.OfflineEmbedding.fit" title="Permalink to this definition"></a></dt>
 <dd><p>Fit the embedding with train and validation data.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -182,24 +179,6 @@ Each question is organized as <code class="docutils literal notranslate"><span c
 <p>The responses with shape <code class="docutils literal notranslate"><span class="pre">(n_questions,</span> <span class="pre">3)</span></code>.
 Each question is organized as <code class="docutils literal notranslate"><span class="pre">[head,</span> <span class="pre">winner,</span> <span class="pre">loser]</span></code>.</p>
 </dd>
-<dt><strong>embedding</strong><span class="classifier">np.ndarray, optional</span></dt><dd><p>The embedding to initialize with.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>This is particularly useful when <code class="docutils literal notranslate"><span class="pre">embedding</span></code> is the
-online embedding from the CSV:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="n">em</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;embedding.csv&quot;</span><span class="p">)</span>  <span class="c1"># from dashboard</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;responses.csv&quot;</span><span class="p">)</span>  <span class="c1"># from dashboard</span>
-<span class="n">X</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s2">&quot;head&quot;</span><span class="p">,</span> <span class="s2">&quot;winner&quot;</span><span class="p">,</span> <span class="s2">&quot;loser&quot;</span><span class="p">]]</span>
-
-<span class="kn">from</span> <span class="nn">salmon.triplets.offline</span> <span class="kn">import</span> <span class="n">OfflineEmbedding</span>
-<span class="n">est</span> <span class="o">=</span> <span class="n">OfflineEmbedding</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
-<span class="n">est</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">embedding</span><span class="o">=</span><span class="n">em</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</dd>
-<dt><strong>get_stats</strong><span class="classifier">Callable</span></dt><dd></dd>
 </dl>
 </dd>
 </dl>
@@ -214,14 +193,12 @@ online embedding from the CSV:</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="salmon.triplets.offline.OfflineEmbedding.initialize">
-<span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.offline.OfflineEmbedding.initialize" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_train</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.offline.OfflineEmbedding.initialize" title="Permalink to this definition"></a></dt>
 <dd><p>Initialize this optimizer.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>X_train</strong><span class="classifier">np.ndarray</span></dt><dd><p>Responses organized to be [head, winner, loser].</p>
-</dd>
-<dt><strong>embedding</strong><span class="classifier">nd.ndarray, optional</span></dt><dd><p>If specified, initialize the embedding with the given values.</p>
 </dd>
 </dl>
 </dd>
@@ -274,8 +251,8 @@ Each question is organized as <code class="docutils literal notranslate"><span c
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="salmon.triplets.manager.Sampling.html" class="btn btn-neutral float-left" title="salmon.triplets.manager.Sampling" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="salmon.backend.sampler.Sampler.html" class="btn btn-neutral float-right" title="salmon.backend.sampler.Sampler" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../api.html" class="btn btn-neutral float-left" title="API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="salmon.backend.sampler.Runner.html" class="btn btn-neutral float-right" title="salmon.backend.sampler.Runner" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

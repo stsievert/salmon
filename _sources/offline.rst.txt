@@ -45,18 +45,14 @@ This code will generate an embedding:
 
    from salmon.triplets.offline import OfflineEmbedding
 
-   df = pd.read_csv("responses.csv")  # from dashboard
+   df = pd.read_csv("responses.csv")
    X = df[["head", "winner", "loser"]].to_numpy()
-
-   em = pd.read_csv("embedding.csv")  # from dashboard
 
    n = int(X.max() + 1)  # number of targets
    d = 2  # embed into 2 dimensions
 
    X_train, X_test = train_test_split(X, random_state=42, test_size=0.2)
    model = OfflineEmbedding(n=n, d=d)
-   model.initialize(X_train, embedding=em.to_numpy())
-
    model.fit(X_train, X_test)
 
    model.embedding_  # embedding

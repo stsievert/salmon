@@ -4,10 +4,9 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>salmon.triplets.samplers.ARR &mdash; Salmon v0.9.0rc3 documentation</title>
+  <title>salmon.triplets.samplers.ARR &mdash; Salmon v0.6.1rc8+10.gdcb0d17 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/autodoc_pydantic.css" type="text/css" />
       <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
@@ -43,17 +42,14 @@
               <p class="caption" role="heading"><span class="caption-text">Usage</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../getting-started.html">Getting started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../init.html">Experiment initialization</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../samplers.html">Sampler configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started.html">Starting an experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../monitoring.html">Experiment monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../offline.html">Generating embeddings offline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms.html">Algorithm configuration</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">API</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../api.html#configuration">Configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api.html#offline-embeddings">Offline embeddings</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../api.html#samplers">Samplers</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="salmon.backend.sampler.Sampler.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.backend.sampler</span></code>.Sampler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salmon.backend.sampler.Runner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.backend.sampler</span></code>.Runner</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../api.html#passive-algorithms">Passive Algorithms</a></li>
 <li class="toctree-l3 current"><a class="reference internal" href="../api.html#active-algorithms">Active Algorithms</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="salmon.triplets.samplers.Adaptive.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.samplers</span></code>.Adaptive</a></li>
@@ -70,6 +66,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">FAQ</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Benchmarks</span></p>
 <ul>
@@ -99,7 +96,7 @@
           <li><a href="../api.html">API</a> &raquo;</li>
       <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.samplers</span></code>.ARR</li>
       <li class="wy-breadcrumbs-aside">
-              <a href="https://github.com/stsievert/salmon/blob/master/docs/source/generated/salmon.triplets.samplers.ARR.rst" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/stsievert/salmon/blob/master/source/generated/salmon.triplets.samplers.ARR.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
   </ul>
   <hr/>
@@ -111,49 +108,35 @@
 <h1><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.samplers</span></code>.ARR<a class="headerlink" href="#salmon-triplets-samplers-arr" title="Permalink to this headline"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="salmon.triplets.samplers.ARR">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">salmon.triplets.samplers.</span></span><span class="sig-name descname"><span class="pre">ARR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_top</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'TSTE'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">priority</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'random'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.samplers.ARR" title="Permalink to this definition"></a></dt>
-<dd><p>An adaptive “round robin” sampler.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>This class is usable in it’s default configuration. Most of the
-<a class="reference internal" href="../benchmarks/active.html#experiments"><span class="std std-ref">active sampling benchmarks</span></a> have been run under
-the default configuration of this class. Please carefully consider
-any changes to the default parameters.</p>
-</div>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">salmon.triplets.samplers.</span></span><span class="sig-name descname"><span class="pre">ARR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_top</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'TSTE'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.samplers.ARR" title="Permalink to this definition"></a></dt>
+<dd><p>A randomized round robin algorithm.</p>
+<p>In practice, this sampling algorithm randomly asks about high scoring
+queries for each head.</p>
 <p class="rubric">Notes</p>
 <p>This algorithms asks about “high scoring queries” uniformly at random. For
 each head, the top <code class="docutils literal notranslate"><span class="pre">n_top</span></code> queries are selected. The query shown to the
 user is a query selected uniformly at random from this set.</p>
-<p>If <code class="docutils literal notranslate"><span class="pre">n_top</span> <span class="pre">&gt;</span> <span class="pre">1</span></code>, then in practice, this sampling algorithm randomly asks
-about high scoring queries for each head. Becaues it’s asynchronous, it
-randomly selects a head (instead of doing it a round-robin fashion).</p>
+<p>This algorithm is proposed because “scoring every triplet is prohibitvely
+expensive.” It’s perhaps more useful with Salmon’s complete search
+because adds some randomness to the query shown to the user.</p>
 <p class="rubric">References</p>
 <dl class="citation">
 <dt class="label" id="ra8579be366ab-1"><span class="brackets">1</span></dt>
 <dd><p>Heim, Eric, et al. “Active perceptual similarity modeling with
-auxiliary information.” <a class="reference external" href="https://arxiv.org/abs/1511.02254">arXiv preprint arXiv:1511.02254</a> (2015).</p>
+auxiliary information.” arXiv preprint arXiv:1511.02254 (2015). https://arxiv.org/abs/1511.02254</p>
 </dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="salmon.triplets.samplers.ARR.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_top</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'TSTE'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">priority</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'random'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.samplers.ARR.__init__" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_top</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'TSTE'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.samplers.ARR.__init__" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt><strong>R</strong><span class="classifier">int (optional, default <code class="docutils literal notranslate"><span class="pre">1</span></code>)</span></dt><dd><p>Adaptive sampling starts after <code class="docutils literal notranslate"><span class="pre">R</span> <span class="pre">*</span> <span class="pre">n</span></code> responses have been received.</p>
+<dt><strong>R: int (optional, default ``1``)</strong></dt><dd><p>Adaptive sampling starts are <code class="docutils literal notranslate"><span class="pre">R</span> <span class="pre">*</span> <span class="pre">n</span></code> response have been received.</p>
 </dd>
 <dt><strong>module</strong><span class="classifier">str, optional (default <code class="docutils literal notranslate"><span class="pre">&quot;TSTE&quot;</span></code>).</span></dt><dd><p>The noise model to use.</p>
 </dd>
-<dt><strong>n_top</strong><span class="classifier">int (optional, default <code class="docutils literal notranslate"><span class="pre">1</span></code>)</span></dt><dd><p>For each head, the number of top-scoring queries to ask about.</p>
-</dd>
-<dt><strong>priority</strong><span class="classifier">str, optional (default <code class="docutils literal notranslate"><span class="pre">&quot;random&quot;</span></code>)</span></dt><dd><p>Determines how queries should be ordered. Setting
-<code class="docutils literal notranslate"><span class="pre">priority=&quot;random&quot;</span></code> will randomly shuffle queries; setting
-<code class="docutils literal notranslate"><span class="pre">priority=&quot;original&quot;</span></code> will perserve the original scores. Setting
-<code class="docutils literal notranslate"><span class="pre">priority=&quot;approx&quot;</span></code> will add some noise to the original score
-ranks.</p>
-<p>Regardless of the <code class="docutils literal notranslate"><span class="pre">scores</span></code> value, <code class="docutils literal notranslate"><span class="pre">n_top</span></code> queries per
-head will be perserved. It is likely most relevant when
-<code class="docutils literal notranslate"><span class="pre">n_top==1</span></code>.</p>
+<dt><strong>n_top</strong><span class="classifier">int (optional, default <code class="docutils literal notranslate"><span class="pre">3</span></code>)</span></dt><dd><p>For each head, the number of top-scoring queries to ask about.</p>
 </dd>
 <dt><strong>kwargs</strong><span class="classifier">dict</span></dt><dd><p>Keyword arguments to pass to <a class="reference internal" href="salmon.triplets.samplers.Adaptive.html#salmon.triplets.samplers.Adaptive" title="salmon.triplets.samplers.Adaptive"><code class="xref py py-class docutils literal notranslate"><span class="pre">Adaptive</span></code></a>.</p>
 </dd>
