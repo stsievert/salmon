@@ -44,7 +44,7 @@ jobs:
       run: |
         pip install -r offline.txt
     - name: Install Salmon
-      run: pip install . -t /home/runner/work/salmon2/
+      run: pip install -t /home/runner/work/salmon2/ .
     - name: change directories
       run: cd /
     - name: Debug info (salmon.__file__)
