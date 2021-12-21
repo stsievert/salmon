@@ -157,3 +157,57 @@ process is beyond scope for this project. [#f]_
 
 .. [#f] though the package `mkcert`_ might help.
 
+
+How do I generate offline embeddings without using conda?
+---------------------------------------------------------
+
+Using conda is the officially supported method. Use other dependency managers at
+your own peril.
+
+That said, this process worked to generate offline embeddings with Salmon v0.9.0:
+
+.. code-block:: bash
+
+   $ git clone https://github.com/stsievert/salmon.git
+   $ cd salmon
+   $ pip install -r offline.txt  # see file below
+   $ pip install .
+
+The list of dependencies in ``offline.txt`` is below:
+
+.. code-block:: yaml
+
+   # file offline.txt
+   numpy>=1.18.0
+   scipy
+   pandas>=1.0.1
+   Cython
+   scikit-learn
+   dask>=2021.02.0
+   distributed>=2021.02.0
+   torch
+   altair
+   seaborn
+   matplotlib
+   skorch>=0.8.0
+   fastparquet
+   dask-ml
+   lz4
+   blosc
+   cytoolz
+   ujson
+   pyyaml
+   pyarrow
+   pytest
+   fastapi[all]
+   rejson
+   cloudpickle
+   bokeh==2.0.1
+   rejson
+   httpx
+   aiofiles
+   jinja2
+   redis==3.5.*
+   gunicorn
+   python-multipart
+   starlette-prometheus
