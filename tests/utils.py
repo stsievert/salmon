@@ -84,7 +84,7 @@ def _clear_logs(log=None):
     else:
         this_dir = Path(__file__).absolute().parent
         root_dir = this_dir.parent
-        log_dir = root_dir / "out"
+        log_dir = root_dir / "salmon" / "logs"
         for log in log_dir.glob("*.log"):
             _clear_logs(log=log)
 
@@ -95,7 +95,7 @@ def _reset(server):
 
     # Delete files
     _clear_logs()
-    OUT = Path(__file__).absolute().parent.parent / "out"
+    OUT = Path(__file__).absolute().parent.parent / "salmon" / "logs"
     dump = OUT / "dump.rdb"
     if dump.exists():
         dump.unlink()

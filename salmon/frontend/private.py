@@ -570,7 +570,7 @@ def _reset(timeout: float = 5):
 
     now = datetime.now().isoformat()[: 10 + 6]
 
-    save_dir = ROOT_DIR / "out"
+    save_dir = ROOT_DIR / "salmon" / "logs"
     files = [f.name for f in save_dir.glob("*")]
     logger.warning(f"dump_rdb in files? {'dump.rdb' in files}")
     if "dump.rdb" in files:
