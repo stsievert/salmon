@@ -185,6 +185,7 @@ def alien_egg(head, left, right, random_state=None):
 
     winner = 0 if ldiff < rdiff else 1
     random_state = check_random_state(random_state)
+
     if random_state.uniform() <= p_correct:
         return winner
     return 1 - winner
