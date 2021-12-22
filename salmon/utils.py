@@ -28,8 +28,8 @@ def get_logger(name):
 
     SRC = Path(__file__).absolute().parent
     assert SRC.is_dir()  # points to salmon/ source directory
-    assert (SRC / "logs").exists(), str(SRC / "logs")
-    out = SRC / "logs" / f"{name}.log"
+    assert (SRC / "_out").exists(), str(SRC / "_out")
+    out = SRC / "_out" / f"{name}.log"
 
     fh = logging.FileHandler(str(out))
     fh.setLevel(LEVEL)

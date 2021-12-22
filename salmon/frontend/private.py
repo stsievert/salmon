@@ -570,7 +570,7 @@ def _reset(timeout: float = 5):
 
     now = datetime.now().isoformat()[: 10 + 6]
 
-    save_dir = ROOT_DIR / "salmon" / "logs"
+    save_dir = ROOT_DIR / "salmon" / "_out"
     files = [f.name for f in save_dir.glob("*")]
     logger.warning(f"dump_rdb in files? {'dump.rdb' in files}")
     if "dump.rdb" in files:
@@ -894,7 +894,7 @@ async def get_logs(request: Request, authorized: bool = Depends(_authorize)):
     logger.info("Getting logs")
 
     items = {"request": request}
-    log_dir = ROOT_DIR / "out"
+    log_dir = ROOT_DIR / "salmon" / "_out"
     files = log_dir.glob("*.log")
     out = {}
     for file in files:

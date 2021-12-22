@@ -13,7 +13,7 @@ packages = [
     "salmon.frontend",
     "salmon.backend",
     "salmon.triplets",
-    "salmon.logs",
+    "salmon._out",
 ]
 
 long_description = """Salmon is a tool for efficiently generating ordinal
