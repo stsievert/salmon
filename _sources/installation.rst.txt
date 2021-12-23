@@ -12,6 +12,8 @@ machine. After you get Salmon running, detail on how to launch experiments in
    See the `Troubleshooting`_ section if you're having difficulties with either
    of the processes below.
 
+.. _Salmon's issue tracker: https://github.com/stsievert/salmon/issues
+
 Experimentalist
 ---------------
 
@@ -83,6 +85,8 @@ To start using Salmon, these endpoints will be available:
 
 .. _list of Salmon releases: https://github.com/stsievert/salmon/releases
 
+.. _local-install:
+
 Local machine
 -------------
 
@@ -127,8 +131,21 @@ build, up}``.
 If you run the command ``export SALMON_NO_AUTH=1``, the Salmon server will
 not require a username/password.
 
+.. _troubleshooting:
+
 Troubleshooting
 ---------------
+
+See :ref:`faq` for more general questions.
+
+.. note::
+
+   Please include the version in any bug reports or feature requests.  The
+   version number should look something like ``v0.4.1``. It can be found at
+   ``http://[url]:8421/docs`` or in the downloaded experiment file (found at
+   ``http://[url]:8421/download`` which has a filename like
+   ``exp-2021-05-20T07:31-salmon-v0.4.1.rdb``).
+
 
 I can't access Salmon's URL
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -144,6 +161,64 @@ right of the Amazon EC2 interface.
 
 The Salmon AMI has been created in the ``us-west-2`` region, and EC2 AMIs are
 only available in the regions they're created in.
+
+
+.. _restorefrombackupfaq:
+
+Restoring from a backup didn't work
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+That's perhaps expected depending on how much Salmon has changed. Launching
+from EC2 always downloads the latest version of Salmon, which may not work with
+your backup file.
+
+Let's follow this process to restore your backup with the correct version of Salmon:
+
+1. Get the correct version of Salmon.
+2. Launch a Salmon server.
+3. Restore.
+
+First, let's get the right version of Salmon:
+
+.. code-block:: shell
+
+   $ # Get right version of Salmon
+   $ git clone https://github.com/stsievert/salmon.git
+   $ cd salmon
+   $ git checkout v0.7.0  # from .rdb filename; will take the form "vA.B.C" or "vA.B.CrcD"
+
+Second, let's launch Salmon (following the same process as in
+:ref:`local-install`).
+
+.. code-block:: shell
+
+   $ docker-compose up  # takes a while
+   $ # visit http://[url]:8421/init and re-upload file
+
+Finally, let's follow the instructions provided, which for Salmon v0.7.0 are
+below:
+
+.. code-block:: shell
+
+   $ # Now, let's follow the directions Salmon gave:
+   $ docker-compose stop; docker-compose start
+   $ docker-compose logs -f
+   $ # visit http://[ur]:8421/dashboard
+
+Salmon follows `semantic software versioning`_. If the version string in the
+.rdb file takes the form ``vA.B.C``, then:
+
+* The backup is guaranteed to work if `the latest release`_ has version
+  ``vA.B.C``.
+* The backup will almost certainly work if `the latest release`_ has version
+  ``vA.B.*``.
+* The backup `might` work if `the latest release`_ has version ``vA.*.*``.
+
+Uploading backup files when `relevant` "backwards incompatible" software
+changes are made, which should be encoded in the release notes.
+
+.. _semantic software versioning: https://semver.org/
+.. _the latest release: https://github.com/stsievert/salmon/releases
 
 The Docker machines aren't launching
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

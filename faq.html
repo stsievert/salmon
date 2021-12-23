@@ -4,9 +4,10 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FAQ &mdash; Salmon v0.6.1rc8+10.gdcb0d17 documentation</title>
+  <title>FAQ &mdash; Salmon v0.9.0rc3 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/autodoc_pydantic.css" type="text/css" />
       <link rel="stylesheet" href="_static/basic.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
@@ -20,8 +21,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Concurrent Users" href="benchmarks/server.html" />
-    <link rel="prev" title="salmon.triplets.samplers.GNMDS" href="generated/salmon.triplets.samplers.GNMDS.html" /> 
+    <link rel="next" title="API" href="api.html" />
+    <link rel="prev" title="Generating embeddings offline" href="offline.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -43,18 +44,22 @@
               <p class="caption" role="heading"><span class="caption-text">Usage</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Starting an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="init.html">Experiment initialization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="samplers.html">Sampler configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="monitoring.html">Experiment monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="offline.html">Generating embeddings offline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="algorithms.html">Algorithm configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#when-should-i-use-random-active-sampling">When should I use random/active sampling?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#how-many-responses-will-be-needed">How many responses will be needed?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#what-adaptive-algorithms-are-recommended">What adaptive algorithms are recommended?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#what-active-samplers-are-recommended">What active samplers are recommended?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#can-i-choose-a-different-machine">Can I choose a different machine?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#how-do-i-see-the-dask-dashboard">How do I see the Dask dashboard?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-do-i-customize-the-participant-unique-identifier-aka-puid">How do I customize the participant unique identifier aka “puid”?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-do-i-use-https-with-salmon">How do I use HTTPS with Salmon?</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Benchmarks</span></p>
 <ul>
@@ -83,7 +88,7 @@
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
       <li>FAQ</li>
       <li class="wy-breadcrumbs-aside">
-              <a href="https://github.com/stsievert/salmon/blob/master/source/faq.rst" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/stsievert/salmon/blob/master/docs/source/faq.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
   </ul>
   <hr/>
@@ -92,7 +97,34 @@
            <div itemprop="articleBody">
              
   <section id="faq">
-<h1>FAQ<a class="headerlink" href="#faq" title="Permalink to this headline"></a></h1>
+<span id="id1"></span><h1>FAQ<a class="headerlink" href="#faq" title="Permalink to this headline"></a></h1>
+<p>Also relevant is the <a class="reference internal" href="installation.html#troubleshooting"><span class="std std-ref">Troubleshooting</span></a>, which goes over some (blocking)
+difficulties while launching.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Please include the version in any bug reports or feature requests.  The
+version number should look something like <code class="docutils literal notranslate"><span class="pre">v0.4.1</span></code>. It can be found at
+<code class="docutils literal notranslate"><span class="pre">http://[url]:8421/docs</span></code> or in the downloaded experiment file (found at
+<code class="docutils literal notranslate"><span class="pre">http://[url]:8421/download</span></code> which has a filename like
+<code class="docutils literal notranslate"><span class="pre">exp-2021-05-20T07:31-salmon-v0.4.1.rdb</span></code>).</p>
+</div>
+<section id="when-should-i-use-random-active-sampling">
+<span id="random-vs-active"></span><h2>When should I use random/active sampling?<a class="headerlink" href="#when-should-i-use-random-active-sampling" title="Permalink to this headline"></a></h2>
+<p>Rule of thumb:</p>
+<ul class="simple">
+<li><p>Use random sampling for simple problems when not many responses are required
+(small number of targets and clean responses).</p></li>
+<li><p>Use active sampling for anything more complicated (large number of targets or
+noisy responses) when the crowdsourcing budget and/or embedding quality are
+relevant.</p></li>
+</ul>
+<p>Specifics are <a class="reference internal" href="#faq-n-responses"><span class="std std-ref">How many responses will be needed?</span></a> and <a class="reference internal" href="#adaptiveconfig"><span class="std std-ref">What active samplers are recommended?</span></a>. Random sampling
+can produce good embeddings, but will require about 3× the number of responses
+that active sampling requires.</p>
+<p>By default, Salmon will produce random embeddings. This is the simplest
+sampler, and doesn’t require any user configuration. Tips on how to use active
+samplers are in <a class="reference internal" href="#adaptiveconfig"><span class="std std-ref">What active samplers are recommended?</span></a>.</p>
+</section>
 <section id="how-many-responses-will-be-needed">
 <span id="faq-n-responses"></span><h2>How many responses will be needed?<a class="headerlink" href="#how-many-responses-will-be-needed" title="Permalink to this headline"></a></h2>
 <p>Depends on the targets used, and how humans respond. Let’s say there are
@@ -102,10 +134,10 @@ we can provide bounds on how many responses you’ll need:</p>
 <li><p><strong>Lower bound:</strong> at least <span class="math notranslate nohighlight">\(nd\log_2(n)\)</span> responses are needed for a
 <cite>perfect</cite> embedding with noiseless responses. Active triplet algorithms
 require <span class="math notranslate nohighlight">\(\Omega(nd\log_2(n))\)</span> responses (so a constant number of
-responses more/less). <a class="footnote-reference brackets" href="#id3" id="id1">1</a></p></li>
+responses more/less). <a class="footnote-reference brackets" href="#id5" id="id2">1</a></p></li>
 <li><p><strong>Upper bound:</strong> if random responses are collected, a high quality embedding
 will likely be generated with <span class="math notranslate nohighlight">\(O(nd\log_2(n))\)</span> responses, likely
-<span class="math notranslate nohighlight">\(20 nd \log_2(n)\)</span> responses (or possibly <span class="math notranslate nohighlight">\(10 nd \log_2(n)\)</span>). <a class="footnote-reference brackets" href="#id4" id="id2">2</a></p></li>
+<span class="math notranslate nohighlight">\(20 nd \log_2(n)\)</span> responses (or possibly <span class="math notranslate nohighlight">\(10 nd \log_2(n)\)</span>). <a class="footnote-reference brackets" href="#id6" id="id3">2</a></p></li>
 </ul>
 <p>This suggests that the number of responses required when <span class="math notranslate nohighlight">\(n\)</span> and
 <span class="math notranslate nohighlight">\(d\)</span> are changed scaled like <span class="math notranslate nohighlight">\(nd\log_2(n)\)</span>.  i.e, if an embedding
@@ -114,13 +146,30 @@ below requires 5,000 responses for <span class="math notranslate nohighlight">\(
 \cdot \log_2(40)}{30\cdot 2 \cdot \log_2(30)}\)</span> responses for the same dataset.</p>
 <p>See the <a class="reference internal" href="benchmarks/active.html#experiments"><span class="std std-ref">benchmarks on active sampling</span></a> for some
 benchmarks/landmarks on the specific number of responses required for a
-particular dataset.</p>
+particular dataset. <strong>If you think your dataset will require too many
+responses,</strong> see <a class="reference internal" href="#adaptiveconfig"><span class="std std-ref">our recommendations on active samplers</span></a>. Active samplers might be able to generate better embeddings
+with a fixed number of responses.</p>
 </section>
-<section id="what-adaptive-algorithms-are-recommended">
-<h2>What adaptive algorithms are recommended?<a class="headerlink" href="#what-adaptive-algorithms-are-recommended" title="Permalink to this headline"></a></h2>
+<section id="what-active-samplers-are-recommended">
+<span id="adaptiveconfig"></span><h2>What active samplers are recommended?<a class="headerlink" href="#what-active-samplers-are-recommended" title="Permalink to this headline"></a></h2>
 <p>Use of <a class="reference internal" href="generated/salmon.triplets.samplers.ARR.html#salmon.triplets.samplers.ARR" title="salmon.triplets.samplers.ARR"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARR</span></code></a> is most recommended.  See the
-<a class="reference internal" href="benchmarks/active.html#experiments"><span class="std std-ref">benchmarks on active sampling</span></a> for an example
-configuration and the number of responses required for that usage.</p>
+<a class="reference internal" href="benchmarks/active.html#experiments"><span class="std std-ref">benchmarks on active sampling</span></a> for an example configuration
+and the number of responses required for that usage.  The defaults of
+<a class="reference internal" href="generated/salmon.triplets.samplers.ARR.html#salmon.triplets.samplers.ARR" title="salmon.triplets.samplers.ARR"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARR</span></code></a> have been explored pretty throughly. In
+the <a class="reference internal" href="benchmarks/active.html#experiments"><span class="std std-ref">benchmarks on active sampling</span></a>, we used the default
+parameters for <a class="reference internal" href="generated/salmon.triplets.samplers.ARR.html#salmon.triplets.samplers.ARR" title="salmon.triplets.samplers.ARR"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARR</span></code></a> after exploring the
+possible values.</p>
+<p>Monitoring performance is difficult with active/adaptive algorithm; random
+sampling is a lot better. Typically, between 10% and 20% of the sampling is
+used to monitor and report performance. That means I’d recommend this partial
+configuration:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">samplers</span><span class="p">:</span>
+  <span class="nt">ARR</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
+  <span class="nt">Random</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
+<span class="nt">sampling</span><span class="p">:</span>
+  <span class="nt">probs</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="s">&quot;ARR&quot;</span><span class="p p-Indicator">:</span> <span class="nv">85</span><span class="p p-Indicator">,</span> <span class="s">&quot;Random&quot;</span><span class="p p-Indicator">:</span> <span class="nv">15</span><span class="p p-Indicator">}</span>
+</pre></div>
+</div>
 </section>
 <section id="can-i-choose-a-different-machine">
 <h2>Can I choose a different machine?<a class="headerlink" href="#can-i-choose-a-different-machine" title="Permalink to this headline"></a></h2>
@@ -141,23 +190,49 @@ least 4 cores for two algorithms.</p>
 <h2>How do I see the Dask dashboard?<a class="headerlink" href="#how-do-i-see-the-dask-dashboard" title="Permalink to this headline"></a></h2>
 <p>Look at port 8787 if you want more information on how jobs are scheduled. If on
 EC2, this will require some port forwarding to your own machine:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ssh -i key.pem -L <span class="m">7787</span>:localhost:8787 ubuntu@34.222.199.114
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ssh -i key.pem -L <span class="m">7787</span>:localhost:8787 ubuntu@<span class="o">[</span>EC2 public DNS or IP<span class="o">]</span>
 <span class="c1"># visit http://localhost:7787 in the browser to see Salmon&#39;s Dask dashboard</span>
 </pre></div>
 </div>
 <p>If desired, it is possible to open port 8787 on the Amazon EC2 machine. If that
 action is taken, it is recommended to only allow a specific IP to view that
 port.</p>
+</section>
+<section id="how-do-i-customize-the-participant-unique-identifier-aka-puid">
+<h2>How do I customize the participant unique identifier aka “puid”?<a class="headerlink" href="#how-do-i-customize-the-participant-unique-identifier-aka-puid" title="Permalink to this headline"></a></h2>
+<p>Visiting <code class="docutils literal notranslate"><span class="pre">http://[url]:8421/?puid=foobar</span></code> will set that the participant UID
+to be <code class="docutils literal notranslate"><span class="pre">foobar</span></code>.</p>
+</section>
+<section id="how-do-i-use-https-with-salmon">
+<h2>How do I use HTTPS with Salmon?<a class="headerlink" href="#how-do-i-use-https-with-salmon" title="Permalink to this headline"></a></h2>
+<p>HTTP is how web servers communicate; HTTPS protects that communication from
+third parties.</p>
+<p>Some crowdsourcing services require HTTPS. There are to ways to provide these
+crowdsourcing services an HTTPS URL:</p>
+<ol class="arabic simple">
+<li><p>Redirect to Salmon from an HTTPS page.</p></li>
+<li><p>Set up a <a class="reference external" href="https://en.wikipedia.org/wiki/TLS_termination_proxy">TLS termination proxy</a>.</p></li>
+</ol>
+<p>Option (1) is a lot easier because various hosting services support HTTPS
+(e.g., <a class="reference external" href="https://docs.github.com/en/pages/getting-started-with-github-pages/securing-your-github-pages-site-with-https">GitHub Pages</a> and <a class="reference external" href="https://docs.gitlab.com/ee/user/project/pages/custom_domains_ssl_tls_certification/">GitLab Pages</a> support HTTPS for custom domains).
+Hosting a <a class="reference external" href="https://www.w3docs.com/snippets/html/how-to-redirect-a-web-page-in-html.html">redirect HTML page</a> at one of these services with HTTPS will likely
+satisfy any requirements you may have.</p>
+<p>Option (2) is more complex. A good overview is at FastAPI’s page “<a class="reference external" href="https://fastapi.tiangolo.com/deployment/https/">About
+HTTPS</a>,” available at <a class="reference external" href="https://fastapi.tiangolo.com/deployment/https/">https://fastapi.tiangolo.com/deployment/https/</a>. This
+process is beyond scope for this project. <a class="footnote-reference brackets" href="#f" id="id4">3</a></p>
 <dl class="footnote brackets">
-<dt class="label" id="id3"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dt class="label" id="id5"><span class="brackets"><a class="fn-backref" href="#id2">1</a></span></dt>
 <dd><p>“Low-dimensional embedding using adaptively selected ordinal data.”
 Jamieson and Nowak. 2011. Allerton Conference on Communication, Control, and
 Computing. <a class="reference external" href="https://homes.cs.washington.edu/~jamieson/resources/activeMDS.pdf">https://homes.cs.washington.edu/~jamieson/resources/activeMDS.pdf</a></p>
 </dd>
-<dt class="label" id="id4"><span class="brackets"><a class="fn-backref" href="#id2">2</a></span></dt>
+<dt class="label" id="id6"><span class="brackets"><a class="fn-backref" href="#id3">2</a></span></dt>
 <dd><p>“Finite sample prediction and recovery bounds for ordinal embedding.”
 Jain, Jamieson and Nowak. 2016. NeurIPS.
 <a class="reference external" href="https://nowak.ece.wisc.edu/ordinal_embedding.pdf">https://nowak.ece.wisc.edu/ordinal_embedding.pdf</a></p>
+</dd>
+<dt class="label" id="f"><span class="brackets"><a class="fn-backref" href="#id4">3</a></span></dt>
+<dd><p>though the package <a class="reference external" href="https://github.com/FiloSottile/mkcert">mkcert</a> might help.</p>
 </dd>
 </dl>
 </section>
@@ -167,8 +242,8 @@ Jain, Jamieson and Nowak. 2016. NeurIPS.
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="generated/salmon.triplets.samplers.GNMDS.html" class="btn btn-neutral float-left" title="salmon.triplets.samplers.GNMDS" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="benchmarks/server.html" class="btn btn-neutral float-right" title="Concurrent Users" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="offline.html" class="btn btn-neutral float-left" title="Generating embeddings offline" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api.html" class="btn btn-neutral float-right" title="API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

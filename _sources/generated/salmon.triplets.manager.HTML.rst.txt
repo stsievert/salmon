@@ -1,0 +1,6 @@
+﻿salmon.triplets.manager.HTML
+============================
+
+.. currentmodule:: salmon.triplets.manager
+
+.. autopydantic_settings:: HTML

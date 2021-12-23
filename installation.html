@@ -4,9 +4,10 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Installation &mdash; Salmon v0.6.1rc8+10.gdcb0d17 documentation</title>
+  <title>Installation &mdash; Salmon v0.9.0rc3 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/autodoc_pydantic.css" type="text/css" />
       <link rel="stylesheet" href="_static/basic.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
@@ -19,7 +20,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Starting an experiment" href="getting-started.html" />
+    <link rel="next" title="Getting started" href="getting-started.html" />
     <link rel="prev" title="Welcome to Salmon’s documentation!" href="index.html" /> 
 </head>
 
@@ -47,17 +48,19 @@
 <li class="toctree-l2"><a class="reference internal" href="#troubleshooting">Troubleshooting</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#i-can-t-access-salmon-s-url">I can’t access Salmon’s URL</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#i-can-t-find-salmon-s-ami">I can’t find Salmon’s AMI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#restoring-from-a-backup-didn-t-work">Restoring from a backup didn’t work</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#the-docker-machines-aren-t-launching">The Docker machines aren’t launching</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Starting an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="init.html">Experiment initialization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="samplers.html">Sampler configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="monitoring.html">Experiment monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="offline.html">Generating embeddings offline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="algorithms.html">Algorithm configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Benchmarks</span></p>
 <ul>
@@ -86,7 +89,7 @@
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
       <li>Installation</li>
       <li class="wy-breadcrumbs-aside">
-              <a href="https://github.com/stsievert/salmon/blob/master/source/installation.rst" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/stsievert/salmon/blob/master/docs/source/installation.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
   </ul>
   <hr/>
@@ -98,7 +101,7 @@
 <span id="id1"></span><h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline"></a></h1>
 <p>This pages details how to get Salmon running, either on EC2 or locally on your
 machine. After you get Salmon running, detail on how to launch experiments in
-<a class="reference internal" href="getting-started.html#getting-started"><span class="std std-ref">Starting an experiment</span></a>.</p>
+<a class="reference internal" href="getting-started.html#getting-started"><span class="std std-ref">Getting started</span></a>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>See the <a class="reference internal" href="#troubleshooting">Troubleshooting</a> section if you’re having difficulties with either
@@ -174,7 +177,7 @@ you left the machine running.</p>
 </div>
 </section>
 <section id="local-machine">
-<h2>Local machine<a class="headerlink" href="#local-machine" title="Permalink to this headline"></a></h2>
+<span id="local-install"></span><h2>Local machine<a class="headerlink" href="#local-machine" title="Permalink to this headline"></a></h2>
 <p>This process is meant for developers. To launch, first download the code.  It’s
 possible to download <a class="reference external" href="https://github.com/stsievert/salmon/archive/refs/heads/master.zip">a ZIP file of Salmon’s source</a>, or if Git is installed,
 to run this command:</p>
@@ -203,7 +206,16 @@ but it will reduce the number of times required to run <code class="docutils lit
 not require a username/password.</p>
 </section>
 <section id="troubleshooting">
-<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline"></a></h2>
+<span id="id2"></span><h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline"></a></h2>
+<p>See <a class="reference internal" href="faq.html#faq"><span class="std std-ref">FAQ</span></a> for more general questions.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Please include the version in any bug reports or feature requests.  The
+version number should look something like <code class="docutils literal notranslate"><span class="pre">v0.4.1</span></code>. It can be found at
+<code class="docutils literal notranslate"><span class="pre">http://[url]:8421/docs</span></code> or in the downloaded experiment file (found at
+<code class="docutils literal notranslate"><span class="pre">http://[url]:8421/download</span></code> which has a filename like
+<code class="docutils literal notranslate"><span class="pre">exp-2021-05-20T07:31-salmon-v0.4.1.rdb</span></code>).</p>
+</div>
 <section id="i-can-t-access-salmon-s-url">
 <h3>I can’t access Salmon’s URL<a class="headerlink" href="#i-can-t-access-salmon-s-url" title="Permalink to this headline"></a></h3>
 <p>Try using <code class="docutils literal notranslate"><span class="pre">http://</span></code> instead of <code class="docutils literal notranslate"><span class="pre">https://</span></code>.  By default, EC2 does not
@@ -215,6 +227,50 @@ support HTTPS, and some browsers use HTTPS automatically.</p>
 right of the Amazon EC2 interface.</p>
 <p>The Salmon AMI has been created in the <code class="docutils literal notranslate"><span class="pre">us-west-2</span></code> region, and EC2 AMIs are
 only available in the regions they’re created in.</p>
+</section>
+<section id="restoring-from-a-backup-didn-t-work">
+<span id="restorefrombackupfaq"></span><h3>Restoring from a backup didn’t work<a class="headerlink" href="#restoring-from-a-backup-didn-t-work" title="Permalink to this headline"></a></h3>
+<p>That’s perhaps expected depending on how much Salmon has changed. Launching
+from EC2 always downloads the latest version of Salmon, which may not work with
+your backup file.</p>
+<p>Let’s follow this process to restore your backup with the correct version of Salmon:</p>
+<ol class="arabic simple">
+<li><p>Get the correct version of Salmon.</p></li>
+<li><p>Launch a Salmon server.</p></li>
+<li><p>Restore.</p></li>
+</ol>
+<p>First, let’s get the right version of Salmon:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ <span class="c1"># Get right version of Salmon</span>
+$ git clone https://github.com/stsievert/salmon.git
+$ <span class="nb">cd</span> salmon
+$ git checkout v0.7.0  <span class="c1"># from .rdb filename; will take the form &quot;vA.B.C&quot; or &quot;vA.B.CrcD&quot;</span>
+</pre></div>
+</div>
+<p>Second, let’s launch Salmon (following the same process as in
+<a class="reference internal" href="#local-install"><span class="std std-ref">Local machine</span></a>).</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ docker-compose up  <span class="c1"># takes a while</span>
+$ <span class="c1"># visit http://[url]:8421/init and re-upload file</span>
+</pre></div>
+</div>
+<p>Finally, let’s follow the instructions provided, which for Salmon v0.7.0 are
+below:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ <span class="c1"># Now, let&#39;s follow the directions Salmon gave:</span>
+$ docker-compose stop<span class="p">;</span> docker-compose start
+$ docker-compose logs -f
+$ <span class="c1"># visit http://[ur]:8421/dashboard</span>
+</pre></div>
+</div>
+<p>Salmon follows <a class="reference external" href="https://semver.org/">semantic software versioning</a>. If the version string in the
+.rdb file takes the form <code class="docutils literal notranslate"><span class="pre">vA.B.C</span></code>, then:</p>
+<ul class="simple">
+<li><p>The backup is guaranteed to work if <a class="reference external" href="https://github.com/stsievert/salmon/releases">the latest release</a> has version
+<code class="docutils literal notranslate"><span class="pre">vA.B.C</span></code>.</p></li>
+<li><p>The backup will almost certainly work if <a class="reference external" href="https://github.com/stsievert/salmon/releases">the latest release</a> has version
+<code class="docutils literal notranslate"><span class="pre">vA.B.*</span></code>.</p></li>
+<li><p>The backup <cite>might</cite> work if <a class="reference external" href="https://github.com/stsievert/salmon/releases">the latest release</a> has version <code class="docutils literal notranslate"><span class="pre">vA.*.*</span></code>.</p></li>
+</ul>
+<p>Uploading backup files when <cite>relevant</cite> “backwards incompatible” software
+changes are made, which should be encoded in the release notes.</p>
 </section>
 <section id="the-docker-machines-aren-t-launching">
 <h3>The Docker machines aren’t launching<a class="headerlink" href="#the-docker-machines-aren-t-launching" title="Permalink to this headline"></a></h3>
@@ -232,7 +288,7 @@ yourself (but it’s not feasible).</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="index.html" class="btn btn-neutral float-left" title="Welcome to Salmon’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="getting-started.html" class="btn btn-neutral float-right" title="Starting an experiment" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="getting-started.html" class="btn btn-neutral float-right" title="Getting started" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

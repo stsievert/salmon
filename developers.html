@@ -4,9 +4,10 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Developing algorithms &mdash; Salmon v0.6.1rc8+10.gdcb0d17 documentation</title>
+  <title>Developing algorithms &mdash; Salmon v0.9.0rc3 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/autodoc_pydantic.css" type="text/css" />
       <link rel="stylesheet" href="_static/basic.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
@@ -41,12 +42,13 @@
               <p class="caption" role="heading"><span class="caption-text">Usage</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Starting an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="init.html">Experiment initialization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="samplers.html">Sampler configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="monitoring.html">Experiment monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="offline.html">Generating embeddings offline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="algorithms.html">Algorithm configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Benchmarks</span></p>
 <ul>
@@ -79,7 +81,7 @@
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
       <li>Developing algorithms</li>
       <li class="wy-breadcrumbs-aside">
-              <a href="https://github.com/stsievert/salmon/blob/master/source/developers.rst" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/stsievert/salmon/blob/master/docs/source/developers.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
   </ul>
   <hr/>
@@ -107,6 +109,10 @@ saved in the database, and popped when a user requests a query.</p></li>
 </div></blockquote>
 </li>
 </ol>
+<p>Use of <code class="docutils literal notranslate"><span class="pre">get_queries</span></code> is strongly recommended. Then Salmon’s backend relies on
+Dask, which allows for higher throughput (more concurrent users). <code class="docutils literal notranslate"><span class="pre">get_query</span></code>
+uses a single worker process, so it may get overloaded with a moderate number
+of concurrent users.</p>
 <p>For complete documentation, see <a class="reference internal" href="api.html#alg-api"><span class="std std-ref">API</span></a>. In short, your algorithm should
 be a class that implement <code class="docutils literal notranslate"><span class="pre">get_query</span></code> and <code class="docutils literal notranslate"><span class="pre">process_answers</span></code>.</p>
 <p>After you have developed these functions, look at other algorithms in
@@ -114,7 +120,7 @@ be a class that implement <code class="docutils literal notranslate"><span class
 to figure out inheritance details. In short, the following details are
 important:</p>
 <ul class="simple">
-<li><p><strong>Inheriting from</strong> <code class="xref py py-class docutils literal notranslate"><span class="pre">Runner</span></code>, which enables Salmon
+<li><p><strong>Inheriting from</strong> <code class="xref py py-class docutils literal notranslate"><span class="pre">Sampler</span></code>, which enables Salmon
 to work with custom algorithms.</p></li>
 <li><p><strong>Accepting an</strong> <code class="docutils literal notranslate"><span class="pre">ident:</span> <span class="pre">str</span></code> keyword argument in <code class="docutils literal notranslate"><span class="pre">__init__</span></code> <strong>and
 passing that argument to</strong> <code class="docutils literal notranslate"><span class="pre">super().__init__</span></code>. (<code class="docutils literal notranslate"><span class="pre">ident</span></code> is passed to all
@@ -129,13 +135,11 @@ on a new machine.</p></li>
 <li><p><strong>Ensure query searches are fast enough.</strong> The user will be waiting if
 thousands of users come to Salmon and deplete all the searched queries.</p></li>
 </ul>
-<p>It’s not a strong requirement, but I would encourage both <code class="docutils literal notranslate"><span class="pre">process_answers</span></code>
-and <code class="docutils literal notranslate"><span class="pre">get_queries</span></code> to be quick and complete in about a second each.</p>
 </section>
 <section id="debugging">
 <h2>Debugging<a class="headerlink" href="#debugging" title="Permalink to this headline"></a></h2>
 <p>Let’s say you’ve integrated most of your algorithm into
-<a class="reference internal" href="generated/salmon.backend.sampler.Runner.html#salmon.backend.sampler.Runner" title="salmon.backend.sampler.Runner"><code class="xref py py-class docutils literal notranslate"><span class="pre">Runner</span></code></a>. Now, you’d like to make sure everything is
+<a class="reference internal" href="generated/salmon.backend.sampler.Sampler.html#salmon.backend.sampler.Sampler" title="salmon.backend.sampler.Sampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sampler</span></code></a>. Now, you’d like to make sure everything is
 working properly.</p>
 <p>This script will help:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">salmon.triplets.samplers</span> <span class="kn">import</span> <span class="n">STE</span>
