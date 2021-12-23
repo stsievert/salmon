@@ -167,10 +167,10 @@ def test_saves_state(server):
     sleep(0.1)
 
     this_dir = Path(__file__).absolute().parent
-    assert this_dir.exists()
     root = this_dir.parent
-    assert (root / "salmon.yml").exists()
-    dump = this_dir / "salmon" / "_out" / "dump.rdb"
+    dump_dir = this_dir / "salmon" / "_out"
+    assert dump_dir.exists()
+    dump = dump_dir / "dump.rdb"
     assert not dump.exists()
     exp = this_dir / "data" / "exp.yaml"
 
@@ -186,17 +186,16 @@ def test_saves_state(server):
     assert dump.exists()
 
     # Clear all dump files; reset state
-    dir = Path(__file__).absolute().parent.parent / "out"
-    dump_files = list(dir.glob("*.rdb"))
+    dump_files = list(dump_dir.glob("*.rdb"))
     for d in dump_files:
         d.unlink()
-    files = [f.name for f in dir.glob("*.rdb")]
+    files = [f.name for f in dump_dir.glob("*.rdb")]
     assert len(files) == 0
 
     # Make sure saved resetting saves experiment state
     before_reset = datetime.now()
     server.delete("/reset?force=1", timeout=20)
-    files = [f.name for f in dir.glob("*.rdb")]
+    files = [f.name for f in dump_dir.glob("*.rdb")]
     assert len(files) == 1
     written = datetime.strptime(files[0], "dump-%Y-%m-%dT%H:%M.rdb")
     assert isinstance(written, datetime)
