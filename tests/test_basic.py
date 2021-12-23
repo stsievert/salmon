@@ -165,7 +165,7 @@ def test_saves_state(server):
     server.authorize()
     server.delete("/reset?force=1", timeout=20)
     sleep(0.1)
-    dump = Path(__file__).absolute().parent.parent / "salmon" / "logs" / "dump.rdb"
+    dump = Path(__file__).absolute().parent.parent / "salmon" / "_out" / "dump.rdb"
     assert not dump.exists()
     exp = Path(__file__).parent / "data" / "exp.yaml"
 
@@ -201,7 +201,7 @@ def test_saves_state(server):
 
 def test_download_restore(server):
     server.authorize()
-    dump = Path(__file__).absolute().parent.parent / "out" / "dump.rdb"
+    dump = Path(__file__).absolute().parent.parent / "salmon" / "_out" / "dump.rdb"
     assert not dump.exists()
     exp = Path(__file__).parent / "data" / "exp.yaml"
     server.post("/init_exp", data={"exp": exp.read_text()})
