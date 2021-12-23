@@ -165,9 +165,14 @@ def test_saves_state(server):
     server.authorize()
     server.delete("/reset?force=1", timeout=20)
     sleep(0.1)
-    dump = Path(__file__).absolute().parent.parent / "salmon" / "_out" / "dump.rdb"
+
+    this_dir = Path(__file__).absolute().parent
+    assert this_dir.exists()
+    root = this_dir.parent
+    assert (root / "salmon.yml").exists()
+    dump = this_dir / "salmon" / "_out" / "dump.rdb"
     assert not dump.exists()
-    exp = Path(__file__).parent / "data" / "exp.yaml"
+    exp = this_dir / "data" / "exp.yaml"
 
     server.authorize()
     server.post("/init_exp", data={"exp": exp.read_text()})
@@ -175,6 +180,9 @@ def test_saves_state(server):
         q = server.get("/query").json()
         ans = {"winner": random.choice([q["left"], q["right"]]), "puid": str(k), **q}
         server.post("/answer", data=ans)
+    r = server.get("/dashboard")
+    assert r.status_code == 200
+    sleep(0.1)
     assert dump.exists()
 
     # Clear all dump files; reset state
