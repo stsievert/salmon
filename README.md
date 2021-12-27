@@ -1,8 +1,12 @@
 ## Salmon
-<a href="https://github.com/stsievert/salmon/actions">
-  <img src="https://github.com/stsievert/salmon/actions/workflows/test.yml/badge.svg" alt="Test status badge" />
-</a><a href="https://github.com/stsievert/salmon/actions">
-  <img src="https://github.com/stsievert/salmon/actions/workflows/docs.yml/badge.svg" alt="Documentation status badge" />
+<a href="https://github.com/stsievert/salmon/actions/workflows/test.yml">
+ <img src="https://github.com/stsievert/salmon/actions/workflows/test.yml/badge.svg?branch=master" />
+</a>
+<a href="https://github.com/stsievert/salmon/actions/workflows/test_offline.yml">
+  <img src="https://github.com/stsievert/salmon/actions/workflows/test_offline.yml/badge.svg?branch=master" />
+</a>
+<a href="https://github.com/stsievert/salmon/actions/workflows/docs.yml">
+  <img src="https://github.com/stsievert/salmon/actions/workflows/docs.yml/badge.svg?branch=master" />
 </a>
 
 Salmon is a tool for efficiently generating ordinal embeddings. It relies on
