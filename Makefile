@@ -18,10 +18,10 @@ watch: FORCE
 	docker-compose logs -f
 
 clean: FORCE
-	rm -f creds.json
-	rm -f out/dump*.rdb
-	rm -f out/salmon*.log
-	rm -f out/redis.csv
+	rm -f salmon/_out/*.json
+	rm -f salmon/_out/dump*.rdb
+	rm -f salmon/_out/salmon*.log
+	rm -f salmon/_out/redis.csv
 
 paper: FORCE
 	# from https://joss.readthedocs.io/en/latest/submitting.html#docker

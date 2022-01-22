@@ -28,7 +28,7 @@ services:
     expose:
       - 6379
     volumes:
-      - "./out:/data:rw"
+      - "./salmon/_out:/data:rw"
     command: /bin/sh -c "chmod -v 777 /data && redis-server --loadmodule /usr/lib/redis/modules/rejson.so"
     # redis-server command from https://hub.docker.com/r/redislabs/rejson/dockerfile
     #

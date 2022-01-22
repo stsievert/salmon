@@ -45,8 +45,10 @@ rj = Client(host="redis", port=6379, decode_responses=True)
 logger = get_logger(__name__)
 DIR = pathlib.Path(__file__).absolute().parent
 ROOT_DIR = DIR.parent.parent
+OUT_DIR = DIR.parent / "_out"
+assert OUT_DIR.exists(), str(OUT_DIR)
 
-CREDS_FILE = ROOT_DIR / "creds.json"
+CREDS_FILE = OUT_DIR / "creds.json"
 EXPECTED_PWORD = "331a5156c7f0a529ed1de8d9aba35da95655c341df0ca0bbb2b69b3be319ecf0"
 
 
@@ -507,7 +509,7 @@ def reset(
     logger.warning(
         f"Authorized reset, force=True. Removing creds.json to creds-{now}.json"
     )
-    CREDS_FILE.rename(ROOT_DIR / f"creds-{now}.json")
+    CREDS_FILE.rename(OUT_DIR / f"creds-{now}.json")
     assert not CREDS_FILE.exists()
 
     return HTMLResponse("This Salmon server has been reset to it's initial state.")
@@ -570,8 +572,9 @@ def _reset(timeout: float = 5):
 
     now = datetime.now().isoformat()[: 10 + 6]
 
-    save_dir = ROOT_DIR / "salmon" / "_out"
+    save_dir = OUT_DIR
     files = [f.name for f in save_dir.glob("*")]
+    logger.warning(f"save_dir = {str(save_dir)}")
     logger.warning(f"dump_rdb in files? {'dump.rdb' in files}")
     if "dump.rdb" in files:
         logger.warning(f"Moving dump.rdb to dump-{now}.rdb")
@@ -894,8 +897,7 @@ async def get_logs(request: Request, authorized: bool = Depends(_authorize)):
     logger.info("Getting logs")
 
     items = {"request": request}
-    log_dir = ROOT_DIR / "salmon" / "_out"
-    files = log_dir.glob("*.log")
+    files = OUT_DIR.glob("*.log")
     out = {}
     for file in files:
         with open(str(file), "r") as f:
@@ -941,7 +943,7 @@ async def download(request: Request, authorized: bool = Depends(_authorize)):
     headers = {
         "Content-Disposition": f'attachment; filename="exp-{fname}-salmon-{version}.rdb"'
     }
-    return FileResponse(str(ROOT_DIR / "out" / "dump.rdb"), headers=headers)
+    return FileResponse(str(OUT_DIR / "dump.rdb"), headers=headers)
 
 
 @app.post("/restore", tags=["private"])
@@ -961,7 +963,7 @@ async def restore(
        compose up` or "Actions > Instance state > Reboot" on Amazon EC2.
 
     """
-    with open(str(ROOT_DIR / "out" / "dump.rdb"), "wb") as f:
+    with open(str(OUT_DIR / "dump.rdb"), "wb") as f:
         f.write(rdb)
     msg = dedent(
         """

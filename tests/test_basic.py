@@ -180,9 +180,9 @@ def test_saves_state(server):
         q = server.get("/query").json()
         ans = {"winner": random.choice([q["left"], q["right"]]), "puid": str(k), **q}
         server.post("/answer", data=ans)
-    #  r = server.get("/dashboard")
-    #  assert r.status_code == 200
-    sleep(0.1)
+    r = server.get("/dashboard")
+    assert r.status_code == 200
+    sleep(1)
     assert dump.exists()
 
     # Clear all dump files; reset state
