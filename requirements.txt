@@ -1,0 +1,39 @@
+numpy>=1.18.0
+scipy
+pandas>=1.0.1
+Cython
+scikit-learn
+dask>=2021.02.0
+distributed>=2021.02.0
+lz4
+blosc
+cytoolz
+ujson
+torch # cpuonly
+pyyaml
+ipykernel  # to run this environ in jupyter (required for viz)
+# nb_conda_kernels
+altair
+seaborn
+fastapi[all]
+rejson
+httpx
+aiofiles
+skorch>=0.8.0
+pyarrow
+fastparquet
+dask-ml
+bokeh==2.0.1  # because templates/dashboard.html requires this version
+cloudpickle
+jinja2
+redis==3.5.*  # https://github.com/RedisJSON/redisjson-py/issues/67
+matplotlib
+gunicorn
+python-multipart  # optional dep required by gunicorn
+starlette-prometheus
+sphinx>=4.0.0
+numpydoc
+sphinx_rtd_theme
+pytest
+jupyter-server-proxy  # to view Dask dashboard
+autodoc_pydantic  # to show config docs

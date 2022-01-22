@@ -2,10 +2,11 @@
 
 from distutils.core import setup
 from os.path import exists
+from glob import glob
 
 import versioneer
 
-with open("offline.txt", "r") as f:
+with open("requirements.txt", "r") as f:
     install_requires = [r for r in f.read().split("\n") if r]
 
 packages = [
@@ -31,8 +32,9 @@ setup(
     packages=packages,
     install_requires=install_requires,
     tests_require=["pytest"],
-    python_requires=">=3.8.*",
+    python_requires="==3.8.*",
     long_description=long_description,
+    #  data_files=[("html_static", glob("salmon/frontend/static"))],
     classifiers=[
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.8",
