@@ -37,3 +37,7 @@ up:
 down:
 	# scp -r $(DNS):~/salmon/examples/queries-searched/data-score-probs cluster-data-score-probs
 	scp -r $(DNS):~/salmon/examples/queries-searched/data cluster-data-score-probs
+
+paper: FORCE
+	docker run --rm --volume $(PWD)/paper:/data --user $(id -u):$(id -g) --env JOURNAL=joss openjournals/paperdraft
+
