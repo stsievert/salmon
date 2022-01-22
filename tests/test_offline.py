@@ -6,9 +6,16 @@ import pandas as pd
 import pytest
 from sklearn.model_selection import train_test_split
 
-import salmon
 from salmon.triplets.offline import OfflineEmbedding
 from salmon.triplets.samplers import TSTE
+
+
+def test_salmon_import():
+    """ This test makes sure that no errors are raised on import
+    (non-existant directories, etc)"""
+    import salmon
+
+    return True
 
 
 def test_score_predict_basic():
