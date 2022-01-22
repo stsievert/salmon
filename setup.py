@@ -32,7 +32,7 @@ setup(
     packages=packages,
     install_requires=install_requires,
     tests_require=["pytest"],
-    python_requires="==3.8.*",
+    python_requires=">=3.8.*",
     long_description=long_description,
     #  data_files=[("html_static", glob("salmon/frontend/static"))],
     classifiers=[
