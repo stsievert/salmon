@@ -6,7 +6,8 @@ from glob import glob
 
 import versioneer
 
-with open("requirements.txt", "r") as f:
+#  breakpoint()
+with open("./requirements.txt", "r") as f:
     install_requires = [r for r in f.read().split("\n") if r]
 
 packages = [
@@ -34,7 +35,7 @@ setup(
     tests_require=["pytest"],
     python_requires=">=3.8.*",
     long_description=long_description,
-    #  data_files=[("html_static", glob("salmon/frontend/static"))],
+    data_files=[("requirements", ["requirements.txt"])],
     classifiers=[
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.8",
