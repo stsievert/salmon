@@ -1,5 +1,6 @@
 import logging
 from typing import List, Tuple
+import random
 
 import numpy as np
 
@@ -42,11 +43,18 @@ class RoundRobin(Sampler):
         self.d = d
         self.answers = []
         self.counter = 0
+
+        self.order = None
         super().__init__(ident=ident)
 
-    def get_query(self) -> Query:
-        head = self.counter % self.n
-        a, b = np.random.choice(self.n, size=2, replace=False)
+    def get_query(self) -> Tuple[Query, float]:
+        if (self.order is None) or (self.counter % self.n == 0):
+            self.order = list(range(self.n))
+            np.random.shuffle(self.order)
+
+        head = self.order[self.counter % self.n]
+        targets = list(set(range(self.n)) - {head})
+        a, b = np.random.choice(list(targets), size=2, replace=False)
         self.counter += 1
         score = max(abs(head - a), abs(head - b))
         return {"head": int(head), "left": int(a), "right": int(b)}, float(score)

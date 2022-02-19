@@ -1,6 +1,10 @@
 import random
 from time import sleep
 import pytest
+import yaml
+from pathlib import Path
+
+import pandas as pd
 
 from .utils import LogError, logs, server
 
@@ -53,3 +57,38 @@ def test_validation_sampling(server, logs):
         assert len(set(round_order)) == n_val
     same_order = [round_orders[0] != order for order in round_orders[1:]]
     assert sum(same_order) in [len(same_order), len(same_order) - 1]
+
+
+def test_round_robin(server, logs):
+
+    exp = Path(__file__).parent / "data" / "round-robin.yaml"
+
+    with open(exp, "r") as f:
+        config = yaml.load(f, Loader=yaml.SafeLoader)
+    n = len(config["targets"])
+    n_repeat = 4
+
+    with logs:
+        server.authorize()
+        server.post("/init_exp", data={"exp": exp.read_text()})
+        for k in range(n_repeat * n):
+            print(k)
+            q = server.get("/query").json()
+
+            ans = {"winner": random.choice([q["left"], q["right"]]), "puid": "foo", **q}
+            server.post("/answer", json=ans)
+            sleep(0.05)
+
+        r = server.get("/responses")
+        df = pd.DataFrame(r.json())
+        assert set(df["head"].unique()) == set(range(n))
+        heads = list(df["head"])
+        rounds_heads = [heads[k * n : (k + 1) * n] for k in range(n_repeat)]
+
+        # Make sure every head is asked in every round
+        for heads in rounds_heads:
+            assert len(set(heads)) == n
+
+        # Make sure round order always shuffled
+        orders = [hash(tuple(heads)) for heads in rounds_heads]
+        assert len(set(orders)) == len(orders)

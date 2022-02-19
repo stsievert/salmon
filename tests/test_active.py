@@ -154,30 +154,3 @@ def test_active_basics(server, logs):
         assert (df["score"] <= 1).all()
         algs = df.sampler.unique()
         assert set(algs) == {"TSTE", "ARR", "CKL", "tste2", "GNMDS"}
-
-
-def test_round_robin(server, logs):
-    exp = Path(__file__).parent / "data" / "round-robin.yaml"
-
-    with open(exp, "r") as f:
-        config = yaml.load(f, Loader=yaml.SafeLoader)
-    n = len(config["targets"])
-
-    with logs:
-        server.authorize()
-        server.post("/init_exp", data={"exp": exp.read_text()})
-        for k in range(2 * n):
-            print(k)
-            q = server.get("/query").json()
-
-            ans = {"winner": random.choice([q["left"], q["right"]]), "puid": "foo", **q}
-            server.post("/answer", json=ans)
-            sleep(0.1)
-
-        r = server.get("/responses")
-        df = pd.DataFrame(r.json())
-        assert set(df["head"].unique()) == set(range(11))
-        diffs = np.abs(df["head"].diff().unique())
-        assert {int(d) for d in diffs if not np.isnan(d)}.issubset({0, 1, 10})
-        diffs = diffs.astype(int)
-        assert (diffs == 0).sum() <= 2  # make sure zeros don't happen too often
