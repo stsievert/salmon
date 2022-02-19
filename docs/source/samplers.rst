@@ -81,7 +81,7 @@ The defaults and complete details are in
 :class:`~salmon.triplets.manager.Config`.
 
 Multiple samplers of the same name
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If two samplers with different purposes want to be used, the key ``class`` is
 used to specify which type of sampler should be used:
@@ -197,3 +197,52 @@ configuration:
      Random: {}
      ARR:
        module: "TSTE"
+
+.. _valconfig:
+
+Validation sampler
+^^^^^^^^^^^^^^^^^^
+
+*Note: generating validation queries will likely require two uploads of your
+experiment and resetting Salmon*
+
+The indices for :class:`~salmon.triplets.samplers.Validation` are indices of
+the target list, which is available at ``http://[url]:8421/config``. This code
+generates the list:
+
+.. code-block:: python
+
+   >>> import yaml
+   >>> from pathlib import Path
+   >>> # config.yaml from http://[url]:8421/config
+   >>> config = yaml.safe_load(Path("config.yaml").open())
+   >>>
+   >>> # Items will be selected from this list
+   >>> config["targets"]
+   ['soccer', 'skiing', 'curling', 'skating', 'hockey']
+
+In this case, if you wanted to ask the query "is skating more similar to hockey or curling?", you would specify:
+
+.. code-block:: python
+
+   Validation(..., queries=[(2, 3, 4)])
+
+Let's check that these are the right indices:
+
+.. code-block:: python
+
+   >>> targets[2]
+   'curling'
+   >>> targets[3]
+   'skating'
+   >>> targets[4]
+   'hockey'
+
+If the YAML configuration file, indices are specified as below:
+
+.. code-block:: yaml
+
+   samplers:
+     Validation: queries: [[2, 3, 4], [1, 0, 3]]
+     # (if asking the above query and
+     # a query with head "skiing" and feet "soccer" and "skating".

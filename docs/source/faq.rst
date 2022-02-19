@@ -92,7 +92,6 @@ configuration:
    sampling:
      probs: {"ARR": 85, "Random": 15}
 
-
 Can I choose a different machine?
 ---------------------------------
 
@@ -108,6 +107,15 @@ updating. Generally, the number of cores should be ``3 * n_algs``. This isn't a
 strict guideline; only 2 out of the 3 tasks take significant amounts of time.
 Using ``2 * n_algs`` will work at a small performance hit; we recommend at
 least 4 cores for two algorithms.
+
+How do I ask an obvious question to every user?
+-----------------------------------------------
+
+Use the validation sampler. See :ref:`alg-config` and the :ref:`valconfig`
+section.
+
+A list of obvious/fixed questions is likely appropriate so users do not see the
+same query repeatedly.
 
 How do I see the Dask dashboard?
 --------------------------------
