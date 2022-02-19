@@ -34,13 +34,23 @@ Experimentalist
 7. Don't click the big blue button yet. Continue to the rules page, and add
    these rules:
 
-.. image:: imgs/networking-rule.png
-   :width: 80%
-   :align: center
+   .. image:: imgs/networking-rule.png
+      :width: 80%
+      :align: center
 
-The AMI will take about 15 minutes to initialize. After that's done, Salmon
-will be available at ``http://[url]:8421``. For example, ``[url]`` might be
-the Amazon public DNS or public IP.
+8. Now, click the big blue button! (The AMI will take about 15 minutes to initialize)
+9. Keep your "key pair" in a safe place. The key pair typically has a ``.pem``
+   extension.
+
+.. warning::
+
+   **Don't lose your key pair!**
+   Without the key pair, the Salmon developers will be severely limited in the
+   help they can provide.
+
+The AMI initialization is done (which takes about 15 minutes), Salmon will be
+available at ``http://[url]:8421``. For example, ``[url]`` might be the Amazon
+public DNS or public IP.
 
 .. code::
 
