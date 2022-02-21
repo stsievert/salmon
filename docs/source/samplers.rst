@@ -214,7 +214,8 @@ generates the list:
 
    >>> import yaml
    >>> from pathlib import Path
-   >>> # config.yaml from http://[url]:8421/config
+   >>> # config.yaml from [1], copy/pasted into text file named "config.yaml"
+   >>> # [1]:http://[url]:8421/config
    >>> config = yaml.safe_load(Path("config.yaml").open())
    >>>
    >>> # Items will be selected from this list

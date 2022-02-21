@@ -79,6 +79,28 @@ For example, that may be
 
    http://ec2-52-204-122-132.compute-1.amazonaws.com:8421/init
 
+.. note::
+
+   Generally, I've found it useful to send out URLs I control to
+   crowdsourcing users via an `HTML redirect`_.  Using an HTML redirect
+   means that I have more flexibility around the URL, and can handle many
+   use cases: launching a new machine and replacing it, restarting it, or
+   the machine dies unexpectedly.
+
+   One method to do this is to use `GitHub Pages`_ (which allows creating a
+   URL like ``https://foo.github.io`` if your GitHub username is ``foo``)
+   then creating the HTML redirection file above (copy/pasting the shown
+   text into ``bar.html``). Then, users can visit
+   ``https://foo.github.io/bar.html`` to be redirected.
+
+   As an example, the URL https://nextml.org/captioncontest currently
+   redirects to
+   https://s3.us-west-2.amazonaws.com/mlnow-newyorker/captioncontest_s3.html.
+   I would send out the URL ``https://nextml.org/captioncontest`` to users
+
+.. _HTML redirect: https://www.w3docs.com/snippets/html/how-to-redirect-a-web-page-in-html.html
+.. _GitHub Pages: https://pages.github.com/
+
 Typically, paid services like Mechantical Turk are used to recruit
 crowdsourcing participants. Reddit and email have been used for unpaid
 recruitment.

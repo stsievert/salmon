@@ -38,7 +38,7 @@ Experimentalist
       :width: 80%
       :align: center
 
-8. Now, click the big blue button! (The AMI will take about 15 minutes to initialize)
+8. Now, click the big blue button! (The AMI will take between 15 and 30 minutes to initialize)
 9. Keep your "key pair" in a safe place. The key pair typically has a ``.pem``
    extension.
 
