@@ -237,6 +237,14 @@ class Config(BaseSettings):
 
     Full documentation is below.
 
+    .. note::
+
+       ``sampler_per_user`` and ``detail`` only affect the HTML page
+       shown to the user. They do not affect the backend code executed.
+       They are not grouped with :class:`~salmon.triplets.manager.HTML`
+       because they do affect the responses (at least when using
+       Salmon's default config and not writing a custom query page).
+
     """
 
     targets: Optional[Union[int, List[str]]] = Field(
