@@ -45,7 +45,7 @@ class Sampling(BaseSettings):
        sampling:
          common: {"d": 2}
          probs: {"random": 100}
-         samplers_per_user: 1
+         samplers_per_user: 0
 
     """
 
@@ -71,6 +71,50 @@ class Sampling(BaseSettings):
         ``samplers_per_user=1`` means any user only sees queries generated
         from one sampler, and ``sampler_per_user=0`` means the user sees a
         new sampler every query""",
+    )
+    details: Dict[int, Any] = Field(
+        {},
+        description="""Different options for a deterministic choice of samplers. Each dictionary in this list should have one key:
+
+        - ``sampler``, which reflects which sampler receives the
+          responses)
+
+        Optional keys include:
+
+        - ``query``, which is a list of length 3 indicating the target
+          indices appear in the query.
+
+        For example, this YAML will ensure the 1st and 4th query the
+        crowdsourcing user sees will be from :
+
+        .. code-block:: yaml
+
+          targets: [zero, one, two, three, four, five, six]
+          # ^ list of (textual) targets; target "zero" has index 0 and
+          # is targets[0] in Python
+
+          samplers:
+            RoundRobin: {}
+            Validation: {}
+            valid2:
+              class: Validation
+              n_queries: 3
+
+          html:
+            max_queries: 4
+
+          sampling:
+            probs: {RoundRobin: 100, Validation: 0}
+            details:
+              1: {sampler: "Validation", query: [1, 2, 3]}
+              4: {sampler: "valid2"}
+
+        In this case, the crowdsourcing user will see the following:
+
+        * First query they see: head=`"one"`, feet=`"two"` and `"three"`.
+        * The fourth query they see (also the last query): one of three
+          (random) static queries.
+        """,
     )
 
 
@@ -266,6 +310,64 @@ class Config(BaseSettings):
             )
             s2 = self.sampling.probs
             raise ValueError(msg.format(s2, sum(s2.values())))
+
+        if len(self.sampling.details):
+            details = self.sampling.details
+            if not all("sampler" in v for v in details.values()):
+                bad_items = [v for v in details.items() if "sampler" not in v]
+                msg = (
+                    "Specify the key `sampler` for each element of "
+                    "`sampling.details`. Received items {} without a key "
+                    "'sampler'"
+                )
+                raise ValueError(msg.format(bad_items))
+            details_samplers = set([v["sampler"] for v in details.values()])
+            samplers = set(self.samplers.keys())
+            if not details_samplers.issubset(samplers):
+                msg = (
+                    "Each sampler specified in sampling.details must be "
+                    "created in samplers. In sampling.details, received  "
+                    "key(s) {} which is not a subset of the samplers={}"
+                )
+                raise ValueError(msg.format(details_samplers, samplers))
+            if any(not isinstance(d.get("query", []), list) for d in details.values()):
+                bad_queries = {k: q.get("query", []) for k, q in details.items()}
+                bad_queries = {
+                    k: v for k, v in bad_queries.items() if not isinstance(v, list)
+                }
+                msg = (
+                    "Not all `query` keys in sampling.details are lists. "
+                    "Bad elements are {} "
+                    "(show with {{num_queries_shown: supplied_query}}"
+                )
+                raise ValueError(msg.format(bad_queries))
+            lengths = {len(d.get("query", [1, 2, 3])) for d in details.values()}
+            if lengths != {3}:
+                bad_queries = {k: q.get("query", [1, 2, 3]) for k, q in details.items()}
+                bad_queries = {k: v for k, v in bad_queries.items() if len(v) != 3}
+                msg = (
+                    "Not all `query` keys in sampling.details have length 3. "
+                    "Bad elements are {} "
+                    "(show with {{num_queries_shown: supplied_query}}"
+                )
+                raise ValueError(msg.format(bad_queries))
+            queries = {k: d.get("query", []) for k, d in details.items()}
+            n_targets = -1 + (
+                len(self.targets) if isinstance(self.targets, list) else self.targets
+            )
+            bad_queries = {
+                k: q
+                for k, q in queries.items()
+                if not (0 <= min(q) <= max(q) <= n_targets)
+            }
+            if len(bad_queries):
+                msg = (
+                    "Some target indices in the for sampling.details."
+                    "query are too large. Shown in the form of"
+                    "{{num_queries_shown: supplied_query}}, they are {}. "
+                    "\n\n(reminder: here, Salmon/Python uses 0-based indexing, not 1-based indexing)"
+                )
+                raise ValueError(msg.format(bad_queries))
 
     def _warn(self, config):
         # TODO: deprecate

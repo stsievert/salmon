@@ -127,6 +127,7 @@ async def get_query_page(request: Request, puid: str=""):
         "targets": exp_config["targets"],
         "samplers_per_user": exp_config["sampling"]["samplers_per_user"],
         "urls": urls,
+        "details": exp_config["sampling"]["details"],
         "html": exp_config["html"],
     }
     items.update(request=request)
@@ -134,7 +135,8 @@ async def get_query_page(request: Request, puid: str=""):
 
 
 @app.get("/query", tags=["public"])
-async def get_query(ident="") -> Dict[str, Union[int, str, float]]:
+async def get_query(sampler="") -> Dict[str, Union[int, str, float]]:
+    ident = sampler
     if ident == "":
         idents = rj.jsonget("samplers")
         probs = rj.jsonget("sampling_probs")
