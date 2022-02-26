@@ -517,8 +517,12 @@ def reset(
     logger.warning(
         f"Authorized reset, force=True. Removing creds.json to creds-{now}.json"
     )
-    CREDS_FILE.rename(ROOT_DIR / f"creds-{now}.json")
-    assert not CREDS_FILE.exists()
+    try:
+        CREDS_FILE.rename(ROOT_DIR / f"creds-{now}.json")
+    except:
+        pass
+    finally:
+        assert not CREDS_FILE.exists()
 
     return HTMLResponse("This Salmon server has been reset to it's initial state.")
 
