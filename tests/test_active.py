@@ -28,12 +28,12 @@ def test_samplers_per_user(server, logs):
         config = yaml.load(f, Loader=yaml.SafeLoader)
     samplers = list(config["samplers"].keys())
 
-    ident = random.choice(samplers)
+    sampler = random.choice(samplers)
     with logs:
         server.authorize()
         server.post("/init_exp", data={"exp": str(exp2)})
         for k in range(len(samplers) * 2):
-            q = server.get(f"/query?ident={ident}").json()
+            q = server.get(f"/query?sampler={sampler}").json()
             ans = {"winner": random.choice([q["left"], q["right"]]), "puid": "foo", **q}
             server.post("/answer", json=ans)
             sleep(0.1)
