@@ -108,14 +108,53 @@ strict guideline; only 2 out of the 3 tasks take significant amounts of time.
 Using ``2 * n_algs`` will work at a small performance hit; we recommend at
 least 4 cores for two algorithms.
 
-How do I ask an obvious question to every user?
------------------------------------------------
+How do I ask the same question to every user?
+---------------------------------------------
 
-Use the validation sampler. See :ref:`alg-config` and the :ref:`valconfig`
-section.
+Two answers:
 
-A list of obvious/fixed questions is likely appropriate so users do not see the
-same query repeatedly.
+1. **Do you care about seeing how difficult the problem is?** Then using the
+   :class:`~salmon.triplets.samplers.Validation` is likely appropriate. You can
+   specify a list of queries, or generating ``n_queries`` random queries. See
+   :ref:`alg-config` and the :ref:`valconfig` section.
+2. **Do you care about evaluating crowdsourcing participant quality?** See
+   below for a detailed answer about ``sampling.details`` (also documented in :class:`~salmon.triplets.manager.Sampling`).
+
+Let's say you want to collect data from three samplers: an active sampler for
+training, a random sampler for testing and a validation sampler to see measure
+each participant's attention (e.g., "are they blindly clicking answers?").
+
+That sampling is possible through this partial config:
+
+.. code-block:: yaml
+
+   samplers:
+     ARR: {}  # generating the embedding
+     Random: {}  # testing the embedding
+     Validation: {}  # measure of human quality
+
+   sampling:
+     probs: {ARR: 80, Random: 20, Validation: 0}
+
+     details:
+       1: {sampler: Validation, query: [0, 1, 2]}
+       10: {sampler: Validation, query: [0, 1, 2]}
+
+   targets: [zero, one, two, three, four]
+   # targets are indexed by Python. Each target above is a textual representation
+   # of the index. For index 0 in sampling.details.query will
+   # show the user ``targets[0] == "zero"``.
+
+    html:
+      max_queries: 10
+
+With this ``init.yaml``, the crowdsourcing participant will see the same query
+at the beginning and end (both the 1st and 10th query they see). It will have
+head `"zero"` and feet `"one"` and `"two"`.
+
+More detail on the target indexing is in
+:class:`~salmon.triplets.samplers.Validation`. This same example with more
+detail is shown in :class:`~salmon.triplets.manager.Sampling`.
 
 How do I see the Dask dashboard?
 --------------------------------
