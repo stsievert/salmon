@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FAQ &mdash; Salmon v0.9.1rc1 documentation</title>
+  <title>FAQ &mdash; Salmon v0.9.1rc2 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/autodoc_pydantic.css" type="text/css" />
@@ -54,7 +54,8 @@
 <li class="toctree-l2"><a class="reference internal" href="#how-many-responses-will-be-needed">How many responses will be needed?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#what-active-samplers-are-recommended">What active samplers are recommended?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#can-i-choose-a-different-machine">Can I choose a different machine?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#how-do-i-ask-about-a-fixed-set-of-questions">How do I ask about a fixed set of questions?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-do-i-ask-specific-questions">How do I ask specific questions?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-do-i-specify-when-samplers-are-used">How do I specify when samplers are used?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#how-do-i-ask-every-crowdsourcing-user-exactly-the-same-questions">How do I ask every crowdsourcing user exactly the same questions?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#how-do-i-see-the-dask-dashboard">How do I see the Dask dashboard?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#how-do-i-customize-the-participant-unique-identifier-aka-puid">How do I customize the participant unique identifier aka “puid”?</a></li>
@@ -188,29 +189,54 @@ strict guideline; only 2 out of the 3 tasks take significant amounts of time.
 Using <code class="docutils literal notranslate"><span class="pre">2</span> <span class="pre">*</span> <span class="pre">n_algs</span></code> will work at a small performance hit; we recommend at
 least 4 cores for two algorithms.</p>
 </section>
-<section id="how-do-i-ask-about-a-fixed-set-of-questions">
-<h2>How do I ask about a fixed set of questions?<a class="headerlink" href="#how-do-i-ask-about-a-fixed-set-of-questions" title="Permalink to this headline"></a></h2>
-<p>By using <a class="reference internal" href="generated/salmon.triplets.samplers.Validation.html#salmon.triplets.samplers.Validation" title="salmon.triplets.samplers.Validation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Validation</span></code></a>.  You can specify a list
-of queries, or generating <code class="docutils literal notranslate"><span class="pre">n_queries</span></code> random queries. See <a class="reference internal" href="samplers.html#alg-config"><span class="std std-ref">Sampler configuration</span></a>
-and the <a class="reference internal" href="samplers.html#valconfig"><span class="std std-ref">Validation sampler</span></a> section.</p>
+<section id="how-do-i-ask-specific-questions">
+<span id="specificquestion"></span><h2>How do I ask specific questions?<a class="headerlink" href="#how-do-i-ask-specific-questions" title="Permalink to this headline"></a></h2>
+<p>It’s possible to configure what queries get shown to the crowdsourcing user
+with two methods:</p>
+<ol class="arabic">
+<li><p>By using <a class="reference internal" href="generated/salmon.triplets.samplers.Validation.html#salmon.triplets.samplers.Validation" title="salmon.triplets.samplers.Validation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Validation</span></code></a>.  You can specify a
+list of queries, or generate <code class="docutils literal notranslate"><span class="pre">n_queries</span></code> random queries. See
+<a class="reference internal" href="samplers.html#alg-config"><span class="std std-ref">Sampler configuration</span></a> and the <a class="reference internal" href="samplers.html#valconfig"><span class="std std-ref">Validation sampler</span></a> section.</p></li>
+<li><p>By specifying <a class="reference internal" href="generated/salmon.triplets.manager.Sampling.html#salmon.triplets.manager.Sampling" title="salmon.triplets.manager.Sampling"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sampling</span></code></a>’s <code class="docutils literal notranslate"><span class="pre">query</span></code> field.
+This allows showing users specific queries at specific times.  e.g., “for
+the first query the user sees, show them a query with [these objects].”</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Example: <a class="reference internal" href="samplers.html#valdetail"><span class="std std-ref">Sampling detail</span></a></p></li>
+<li><p>Example: the documentation for
+<a class="reference internal" href="generated/salmon.triplets.manager.Sampling.html#salmon.triplets.manager.Sampling" title="salmon.triplets.manager.Sampling"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sampling</span></code></a>.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ol>
+</section>
+<section id="how-do-i-specify-when-samplers-are-used">
+<span id="whichsampler"></span><h2>How do I specify when samplers are used?<a class="headerlink" href="#how-do-i-specify-when-samplers-are-used" title="Permalink to this headline"></a></h2>
+<p>Controlling when or how often samplers get used is possible with two methods:</p>
+<ol class="arabic simple">
+<li><p>By setting the <code class="docutils literal notranslate"><span class="pre">probs</span></code> field in
+<a class="reference internal" href="generated/salmon.triplets.manager.Sampling.html#salmon.triplets.manager.Sampling" title="salmon.triplets.manager.Sampling"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sampling</span></code></a>. If the YAML specifies
+<code class="docutils literal notranslate"><span class="pre">sampling.probs:</span> <span class="pre">{&quot;ARR&quot;:</span> <span class="pre">80,</span> <span class="pre">&quot;Random&quot;:</span> <span class="pre">20}</span></code>, the <code class="docutils literal notranslate"><span class="pre">Random</span></code> sampler will
+be used 20% of the time.</p></li>
+<li><p>By setting the <code class="docutils literal notranslate"><span class="pre">detail</span></code> field in
+<a class="reference internal" href="generated/salmon.triplets.manager.Sampling.html#salmon.triplets.manager.Sampling" title="salmon.triplets.manager.Sampling"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sampling</span></code></a>. This will ensure that the query
+is generated by a specific sampler (or which sampler will receive the answer
+if the query is pre-specified in your <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code> per
+“<a class="reference internal" href="#specificquestion"><span class="std std-ref">How do I ask specific questions?</span></a>”).</p></li>
+</ol>
+<p>When <code class="docutils literal notranslate"><span class="pre">sampling.probs</span></code> is specified in your <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code>, Salmon serves a
+query to a user with a certain <em>probability.</em> This can pose difficulties if you
+want to ask <em>exactly</em> <span class="math notranslate nohighlight">\(N\)</span> questions to each crowdsourcing participant.
+Specifying <code class="docutils literal notranslate"><span class="pre">sampling.details</span></code> in your <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code> will work around this and
+allow configuring the details of particular queries.</p>
 </section>
 <section id="how-do-i-ask-every-crowdsourcing-user-exactly-the-same-questions">
 <h2>How do I ask every crowdsourcing user exactly the same questions?<a class="headerlink" href="#how-do-i-ask-every-crowdsourcing-user-exactly-the-same-questions" title="Permalink to this headline"></a></h2>
-<p>Two options:</p>
-<ul class="simple">
-<li><p>One question? Use <a class="reference internal" href="generated/salmon.triplets.samplers.Validation.html#salmon.triplets.samplers.Validation" title="salmon.triplets.samplers.Validation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Validation</span></code></a>. There’s an
-example in <a class="reference internal" href="samplers.html#valconfig"><span class="std std-ref">Validation sampler</span></a>.</p></li>
-<li><p>More than one question? Specify <code class="docutils literal notranslate"><span class="pre">sampling.details</span></code> (which is documented in
-<a class="reference internal" href="generated/salmon.triplets.manager.Sampling.html#salmon.triplets.manager.Sampling" title="salmon.triplets.manager.Sampling"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sampling</span></code></a>).</p></li>
-</ul>
-<p><code class="docutils literal notranslate"><span class="pre">sampling.details</span></code> allows customizing the following:</p>
-<ul class="simple">
-<li><p>For any query, the sampler the user receives</p></li>
-<li><p>For any query, the query that the user answers.</p></li>
-</ul>
-<p>Any combination of these can be specified. An example is in <a class="reference internal" href="samplers.html#valdetail"><span class="std std-ref">Sampling detail</span></a>,
-and the documentation for <a class="reference internal" href="generated/salmon.triplets.manager.Sampling.html#salmon.triplets.manager.Sampling" title="salmon.triplets.manager.Sampling"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sampling</span></code></a> has
-another example.</p>
+<p>By specifying both the <code class="docutils literal notranslate"><span class="pre">sampler</span></code> key and the <code class="docutils literal notranslate"><span class="pre">query</span></code> key in
+<a class="reference internal" href="generated/salmon.triplets.manager.Sampling.html#salmon.triplets.manager.Sampling" title="salmon.triplets.manager.Sampling"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sampling</span></code></a>’s <code class="docutils literal notranslate"><span class="pre">detail</span></code> field. The answers to
+the questions “<a class="reference internal" href="#whichsampler"><span class="std std-ref">How do I specify when samplers are used?</span></a>” and “<a class="reference internal" href="#specificquestion"><span class="std std-ref">How do I ask specific questions?</span></a>” are relevant.</p>
+<p>An example is in “<a class="reference internal" href="samplers.html#valdetail"><span class="std std-ref">Sampling detail</span></a>”, delegated to the <a class="reference internal" href="samplers.html#alg-config"><span class="std std-ref">Sampler configuration</span></a> page
+because the target indexing in “<a class="reference internal" href="samplers.html#valconfig"><span class="std std-ref">Validation sampler</span></a>” is relevant.</p>
 </section>
 <section id="how-do-i-see-the-dask-dashboard">
 <h2>How do I see the Dask dashboard?<a class="headerlink" href="#how-do-i-see-the-dask-dashboard" title="Permalink to this headline"></a></h2>
