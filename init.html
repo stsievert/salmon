@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Experiment initialization &mdash; Salmon v0.9.0 documentation</title>
+  <title>Experiment initialization &mdash; Salmon v0.9.1rc1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/autodoc_pydantic.css" type="text/css" />
@@ -113,12 +113,12 @@ described in <a class="reference internal" href="#yaml-plus-zip"><span class="st
 the specification <a class="reference external" href="https://learnxinyminutes.com/docs/yaml/">https://learnxinyminutes.com/docs/yaml/</a>. To see if your YAML
 is valid, go to <a class="reference external" href="https://yamlchecker.com/">https://yamlchecker.com/</a>.  Here’s an example <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code> YAML
 file for initialization:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: init.yaml</span>
-<span class="nt">targets</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;l&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;&lt;i&gt;kildow&lt;/i&gt;&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;t&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;&lt;i&gt;ligety&lt;/i&gt;&quot;</span><span class="p p-Indicator">]</span>  <span class="c1"># or uploaded via ZIP file</span>
-<span class="nt">html</span><span class="p">:</span>
-  <span class="nt">instructions</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Select the item on the bottom most similar to the item on the top.</span>
-  <span class="nt">debrief</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Thanks! Use the participant ID below in Mechnical Turk.</span>
-  <span class="nt">max_queries</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">100</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: init.yaml</span><span class="w"></span>
+<span class="nt">targets</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;l&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;&lt;i&gt;kildow&lt;/i&gt;&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;t&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;&lt;i&gt;ligety&lt;/i&gt;&quot;</span><span class="p p-Indicator">]</span><span class="w">  </span><span class="c1"># or uploaded via ZIP file</span><span class="w"></span>
+<span class="nt">html</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">instructions</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Select the item on the bottom most similar to the item on the top.</span><span class="w"></span>
+<span class="w">  </span><span class="nt">debrief</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Thanks! Use the participant ID below in Mechnical Turk.</span><span class="w"></span>
+<span class="w">  </span><span class="nt">max_queries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span><span class="w"></span>
 </pre></div>
 </div>
 <p>This file will initialize a basic experiment. By default, Salmon will do the
@@ -137,17 +137,17 @@ not be what you want. Relevant FAQs:</p>
 <p>The defaults for instructions/debrief can be found in
 <a class="reference internal" href="generated/salmon.triplets.manager.HTML.html#salmon.triplets.manager.HTML" title="salmon.triplets.manager.HTML"><code class="xref py py-class docutils literal notranslate"><span class="pre">HTML</span></code></a>. To do anything fancier, additional
 configuration is required. Here’s a basic example:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: init.yaml</span>
-<span class="nt">targets</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;l&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;&lt;i&gt;kildow&lt;/i&gt;&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;t&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;&lt;i&gt;ligety&lt;/i&gt;&quot;</span><span class="p p-Indicator">]</span>  <span class="c1"># or uploaded via ZIP file</span>
-<span class="nt">html</span><span class="p">:</span>
-  <span class="nt">max_queries</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">100</span>
-<span class="nt">samplers</span><span class="p">:</span>
-  <span class="nt">ARR</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="s">&quot;random_state&quot;</span><span class="p p-Indicator">:</span> <span class="nv">42</span><span class="p p-Indicator">}</span>
-  <span class="nt">Random</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
-<span class="nt">sampling</span><span class="p">:</span>
-  <span class="nt">probs</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="s">&quot;ARR&quot;</span><span class="p p-Indicator">:</span> <span class="nv">85</span><span class="p p-Indicator">,</span> <span class="s">&quot;Random&quot;</span><span class="p p-Indicator">:</span> <span class="nv">15</span><span class="p p-Indicator">}</span>
-  <span class="nt">common</span><span class="p">:</span>
-    <span class="nt">d</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">3</span>  <span class="c1"># embed into 3 dimensions for all active samplers</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: init.yaml</span><span class="w"></span>
+<span class="nt">targets</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;l&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;&lt;i&gt;kildow&lt;/i&gt;&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;t&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;&lt;i&gt;ligety&lt;/i&gt;&quot;</span><span class="p p-Indicator">]</span><span class="w">  </span><span class="c1"># or uploaded via ZIP file</span><span class="w"></span>
+<span class="nt">html</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">max_queries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span><span class="w"></span>
+<span class="nt">samplers</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">ARR</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="s">&quot;random_state&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">42</span><span class="p p-Indicator">}</span><span class="w"></span>
+<span class="w">  </span><span class="nt">Random</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w"></span>
+<span class="nt">sampling</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">probs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="s">&quot;ARR&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">85</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;Random&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">15</span><span class="p p-Indicator">}</span><span class="w"></span>
+<span class="w">  </span><span class="nt">common</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">d</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w">  </span><span class="c1"># embed into 3 dimensions for all active samplers</span><span class="w"></span>
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">samplers</span></code> controls which methods get to choose queries, and <code class="docutils literal notranslate"><span class="pre">sampling</span></code>
@@ -178,13 +178,13 @@ specify the <code class="docutils literal notranslate"><span class="pre">targets
 the targets in the ZIP file.  Let’s walk through two examples, both with
 uploading a bunch of images with skiers. Both cases will use this <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code>
 file:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: init.yaml</span>
-<span class="nt">html</span><span class="p">:</span>
-  <span class="nt">instructions</span><span class="p">:</span> <span class="p p-Indicator">&gt;</span>  <span class="c1"># multi-line YAML string</span>
-      <span class="no">Select the &lt;i&gt;comparison&lt;/i&gt; item on the bottom that</span>
-      <span class="no">is most similar to the &lt;i&gt;target&lt;/i&gt; item on the top.</span>
-  <span class="nt">debrief</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;b&gt;Thanks!&lt;/b&gt; Use the participant ID below in Mechanical Turk.</span>
-  <span class="nt">max_queries</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">100</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: init.yaml</span><span class="w"></span>
+<span class="nt">html</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">instructions</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span><span class="w">  </span><span class="c1"># multi-line YAML string</span><span class="w"></span>
+<span class="w">      </span><span class="no">Select the &lt;i&gt;comparison&lt;/i&gt; item on the bottom that</span><span class="w"></span>
+<span class="w">      </span><span class="no">is most similar to the &lt;i&gt;target&lt;/i&gt; item on the top.</span><span class="w"></span>
+<span class="w">  </span><span class="nt">debrief</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;b&gt;Thanks!&lt;/b&gt; Use the participant ID below in Mechanical Turk.</span><span class="w"></span>
+<span class="w">  </span><span class="nt">max_queries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span><span class="w"></span>
 </pre></div>
 </div>
 <div class="admonition note">

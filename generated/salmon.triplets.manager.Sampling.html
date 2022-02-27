@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>salmon.triplets.manager.Sampling &mdash; Salmon v0.9.0 documentation</title>
+  <title>salmon.triplets.manager.Sampling &mdash; Salmon v0.9.1rc1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/autodoc_pydantic.css" type="text/css" />
@@ -99,7 +99,7 @@
              
   <section id="salmon-triplets-manager-sampling">
 <h1>salmon.triplets.manager.Sampling<a class="headerlink" href="#salmon-triplets-manager-sampling" title="Permalink to this headline"></a></h1>
-<dl class="py pydantic_settings">
+<dl class="py class pydantic_settings">
 <dt class="sig sig-object py" id="salmon.triplets.manager.Sampling">
 <em class="property"><span class="pre">pydantic</span> <span class="pre">settings</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">salmon.triplets.manager.</span></span><span class="sig-name descname"><span class="pre">Sampling</span></span><a class="headerlink" href="#salmon.triplets.manager.Sampling" title="Permalink to this definition"></a></dt>
 <dd><p>Settings to configure how more than two samplers are used.</p>
@@ -108,84 +108,136 @@ exception is <code class="docutils literal notranslate"><span class="pre">common
 initialization and will likely be optional arguments for
 <a class="reference internal" href="salmon.triplets.samplers.Adaptive.html#salmon.triplets.samplers.Adaptive" title="salmon.triplets.samplers.Adaptive"><code class="xref py py-class docutils literal notranslate"><span class="pre">Adaptive</span></code></a>.</p>
 <p>The default config represented as a YAML file:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">sampling</span><span class="p">:</span>
-  <span class="nt">common</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="s">&quot;d&quot;</span><span class="p p-Indicator">:</span> <span class="nv">2</span><span class="p p-Indicator">}</span>
-  <span class="nt">probs</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="s">&quot;random&quot;</span><span class="p p-Indicator">:</span> <span class="nv">100</span><span class="p p-Indicator">}</span>
-  <span class="nt">samplers_per_user</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">sampling</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">common</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="s">&quot;d&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">2</span><span class="p p-Indicator">}</span><span class="w"></span>
+<span class="w">  </span><span class="nt">probs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="s">&quot;random&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">100</span><span class="p p-Indicator">}</span><span class="w"></span>
+<span class="w">  </span><span class="nt">samplers_per_user</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span><span class="w"></span>
 </pre></div>
 </div>
 <p><details  class="autodoc_pydantic_collapsable_json">
-<summary>Show JSON schema</summary><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-   <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Sampling&quot;</span><span class="p">,</span>
-   <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Settings to configure how more than two samplers are used.\n\nThese settings are used in the HTML but are not stylistic. The\nexception is ``common``, which is passed to every ``sampler`` during\ninitialization and will likely be optional arguments for\n:class:`~salmon.triplets.samplers.Adaptive`.\n\nThe default config represented as a YAML file:\n\n.. code-block:: yaml\n\n   sampling:\n     common: {\&quot;d\&quot;: 2}\n     probs: {\&quot;random\&quot;: 100}\n     samplers_per_user: 1&quot;</span><span class="p">,</span>
-   <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
-   <span class="nt">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
-      <span class="nt">&quot;common&quot;</span><span class="p">:</span> <span class="p">{</span>
-         <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Common&quot;</span><span class="p">,</span>
-         <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Arguments to pass to every sampler for initialization (likely\n        values for :class:`~salmon.triplets.samplers.Adaptive`; note that\n        values for ``n`` and ``ident`` are already specified). Any\n        values specified in this field will be overwritten by\n        sampler-specific arguments.&quot;</span><span class="p">,</span>
-         <span class="nt">&quot;default&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;d&quot;</span><span class="p">:</span> <span class="mi">2</span>
-         <span class="p">},</span>
-         <span class="nt">&quot;env_names&quot;</span><span class="p">:</span> <span class="s2">&quot;{&#39;common&#39;}&quot;</span><span class="p">,</span>
-         <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span>
-      <span class="p">},</span>
-      <span class="nt">&quot;probs&quot;</span><span class="p">:</span> <span class="p">{</span>
-         <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Probs&quot;</span><span class="p">,</span>
-         <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;The percentage to sample each ``sampler`` when given the\n        opportunity (which depends on ``samplers_per_user``). The percentages\n        in this sampler must add up to 100.\n        If not specified (default), choose each sampler with equal\n        probability.&quot;</span><span class="p">,</span>
-         <span class="nt">&quot;env_names&quot;</span><span class="p">:</span> <span class="s2">&quot;{&#39;probs&#39;}&quot;</span><span class="p">,</span>
-         <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
-         <span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span>
-         <span class="p">}</span>
-      <span class="p">},</span>
-      <span class="nt">&quot;samplers_per_user&quot;</span><span class="p">:</span> <span class="p">{</span>
-         <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Samplers Per User&quot;</span><span class="p">,</span>
-         <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;The number of samplers to assign to each user. Setting\n        ``samplers_per_user=1`` means any user only sees queries generated\n        from one sampler, and ``sampler_per_user=0`` means the user sees a\n        new sampler every query&quot;</span><span class="p">,</span>
-         <span class="nt">&quot;default&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-         <span class="nt">&quot;env_names&quot;</span><span class="p">:</span> <span class="s2">&quot;{&#39;samplers_per_user&#39;}&quot;</span><span class="p">,</span>
-         <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span>
-      <span class="p">}</span>
-   <span class="p">},</span>
-   <span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span> <span class="kc">false</span>
-<span class="p">}</span>
+<summary>Show JSON schema</summary><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<span class="w">   </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Sampling&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">   </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Settings to configure how more than two samplers are used.\n\nThese settings are used in the HTML but are not stylistic. The\nexception is ``common``, which is passed to every ``sampler`` during\ninitialization and will likely be optional arguments for\n:class:`~salmon.triplets.samplers.Adaptive`.\n\nThe default config represented as a YAML file:\n\n.. code-block:: yaml\n\n   sampling:\n     common: {\&quot;d\&quot;: 2}\n     probs: {\&quot;random\&quot;: 100}\n     samplers_per_user: 0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">   </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">   </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;common&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Common&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Arguments to pass to every sampler for initialization (likely\n        values for :class:`~salmon.triplets.samplers.Adaptive`; note that\n        values for ``n`` and ``ident`` are already specified). Any\n        values specified in this field will be overwritten by\n        sampler-specific arguments.&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="nt">&quot;d&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="w"></span>
+<span class="w">         </span><span class="p">},</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;env_names&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{&#39;common&#39;}&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="w"></span>
+<span class="w">      </span><span class="p">},</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;probs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Probs&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The percentage to sample each ``sampler`` when given the\n        opportunity (which depends on ``samplers_per_user``). The percentages\n        in this sampler must add up to 100.\n        If not specified (default), choose each sampler with equal\n        probability.&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;env_names&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{&#39;probs&#39;}&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integer&quot;</span><span class="w"></span>
+<span class="w">         </span><span class="p">}</span><span class="w"></span>
+<span class="w">      </span><span class="p">},</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;samplers_per_user&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Samplers Per User&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The number of samplers to assign to each user. Setting\n        ``samplers_per_user=1`` means any user only sees queries generated\n        from one sampler, and ``sampler_per_user=0`` means the user sees a\n        new sampler every query&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;env_names&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{&#39;samplers_per_user&#39;}&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integer&quot;</span><span class="w"></span>
+<span class="w">      </span><span class="p">},</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;details&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Details&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Different options for a deterministic choice of samplers. Each dictionary in this list should have one key:\n\n        - ``sampler``, which reflects which sampler receives the\n          responses)\n\n        Optional keys include:\n\n        - ``query``, which is a list of length 3 indicating the target\n          indices appear in the query.\n\n        For example, this YAML will ensure the 1st and 4th query the\n        crowdsourcing user sees will be from :\n\n        .. code-block:: yaml\n\n          targets: [zero, one, two, three, four, five, six]\n          # ^ list of (textual) targets; target \&quot;zero\&quot; has index 0 and\n          # is targets[0] in Python\n\n          samplers:\n            RoundRobin: {}\n            Validation: {}\n            valid2:\n              class: Validation\n              n_queries: 3\n\n          html:\n            max_queries: 4\n\n          sampling:\n            probs: {RoundRobin: 100, Validation: 0}\n            details:\n              1: {sampler: \&quot;Validation\&quot;, query: [1, 2, 3]}\n              4: {sampler: \&quot;valid2\&quot;}\n\n        In this case, the crowdsourcing user will see the following:\n\n        * First query they see: head=`\&quot;one\&quot;`, feet=`\&quot;two\&quot;` and `\&quot;three\&quot;`.\n        * The fourth query they see (also the last query): one of three\n          (random) static queries.\n        &quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;env_names&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{&#39;details&#39;}&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="w"></span>
+<span class="w">      </span><span class="p">}</span><span class="w"></span>
+<span class="w">   </span><span class="p">},</span><span class="w"></span>
+<span class="w">   </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
 </details></p><dl class="field-list simple">
 <dt class="field-odd">Fields</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="#salmon.triplets.manager.Sampling.common" title="salmon.triplets.manager.Sampling.common"><code class="xref py py-obj docutils literal notranslate"><span class="pre">common</span> <span class="pre">(Dict[str,</span> <span class="pre">Any])</span></code></a></p></li>
+<li><p><a class="reference internal" href="#salmon.triplets.manager.Sampling.details" title="salmon.triplets.manager.Sampling.details"><code class="xref py py-obj docutils literal notranslate"><span class="pre">details</span> <span class="pre">(Dict[int,</span> <span class="pre">Any])</span></code></a></p></li>
 <li><p><a class="reference internal" href="#salmon.triplets.manager.Sampling.probs" title="salmon.triplets.manager.Sampling.probs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">probs</span> <span class="pre">(Optional[Dict[str,</span> <span class="pre">int]])</span></code></a></p></li>
 <li><p><a class="reference internal" href="#salmon.triplets.manager.Sampling.samplers_per_user" title="salmon.triplets.manager.Sampling.samplers_per_user"><code class="xref py py-obj docutils literal notranslate"><span class="pre">samplers_per_user</span> <span class="pre">(int)</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
-<dl class="py pydantic_field">
+<dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="salmon.triplets.manager.Sampling.common">
 <em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">common</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'d':</span> <span class="pre">2}</span></em><a class="headerlink" href="#salmon.triplets.manager.Sampling.common" title="Permalink to this definition"></a></dt>
 <dd><p>Arguments to pass to every sampler for initialization (likely
-        values for <a class="reference internal" href="salmon.triplets.samplers.Adaptive.html#salmon.triplets.samplers.Adaptive" title="salmon.triplets.samplers.Adaptive"><code class="xref py py-class docutils literal notranslate"><span class="pre">Adaptive</span></code></a>; note that
-        values for <code class="docutils literal notranslate"><span class="pre">n</span></code> and <code class="docutils literal notranslate"><span class="pre">ident</span></code> are already specified). Any
-        values specified in this field will be overwritten by
-        sampler-specific arguments.</p>
+values for <a class="reference internal" href="salmon.triplets.samplers.Adaptive.html#salmon.triplets.samplers.Adaptive" title="salmon.triplets.samplers.Adaptive"><code class="xref py py-class docutils literal notranslate"><span class="pre">Adaptive</span></code></a>; note that
+values for <code class="docutils literal notranslate"><span class="pre">n</span></code> and <code class="docutils literal notranslate"><span class="pre">ident</span></code> are already specified). Any
+values specified in this field will be overwritten by
+sampler-specific arguments.</p>
 </dd></dl>
 
-<dl class="py pydantic_field">
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="salmon.triplets.manager.Sampling.details">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">details</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#salmon.triplets.manager.Sampling.details" title="Permalink to this definition"></a></dt>
+<dd><p>Different options for a deterministic choice of samplers. Each dictionary in this list should have one key:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">sampler</span></code>, which reflects which sampler receives the
+responses)</p></li>
+</ul>
+<p>Optional keys include:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">query</span></code>, which is a list of length 3 indicating the target
+indices appear in the query.</p></li>
+</ul>
+<p>For example, this YAML will ensure the 1st and 4th query the
+crowdsourcing user sees will be from :</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">targets</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">zero</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">one</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">two</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">three</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">four</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">five</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">six</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="c1"># ^ list of (textual) targets; target &quot;zero&quot; has index 0 and</span><span class="w"></span>
+<span class="c1"># is targets[0] in Python</span><span class="w"></span>
+
+<span class="nt">samplers</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">RoundRobin</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w"></span>
+<span class="w">  </span><span class="nt">Validation</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w"></span>
+<span class="w">  </span><span class="nt">valid2</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Validation</span><span class="w"></span>
+<span class="w">    </span><span class="nt">n_queries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w"></span>
+
+<span class="nt">html</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">max_queries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span><span class="w"></span>
+
+<span class="nt">sampling</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">probs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">RoundRobin</span><span class="p">:</span><span class="w"> </span><span class="nv">100</span><span class="p p-Indicator">,</span><span class="nt"> Validation</span><span class="p">:</span><span class="w"> </span><span class="nv">0</span><span class="p p-Indicator">}</span><span class="w"></span>
+<span class="w">  </span><span class="nt">details</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">1</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">sampler</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Validation&quot;</span><span class="p p-Indicator">,</span><span class="nt"> query</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">2</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">3</span><span class="p p-Indicator">]}</span><span class="w"></span>
+<span class="w">    </span><span class="nt">4</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">sampler</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;valid2&quot;</span><span class="p p-Indicator">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>In this case, the crowdsourcing user will see the following:</p>
+<ul class="simple">
+<li><p>First query they see: head=`”one”<cite>, feet=</cite>”two”` and <cite>“three”</cite>.</p></li>
+<li><p>The fourth query they see (also the last query): one of three
+(random) static queries.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="salmon.triplets.manager.Sampling.probs">
 <em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">probs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#salmon.triplets.manager.Sampling.probs" title="Permalink to this definition"></a></dt>
 <dd><p>The percentage to sample each <code class="docutils literal notranslate"><span class="pre">sampler</span></code> when given the
-        opportunity (which depends on <code class="docutils literal notranslate"><span class="pre">samplers_per_user</span></code>). The percentages
-        in this sampler must add up to 100.
-        If not specified (default), choose each sampler with equal
-        probability.</p>
+opportunity (which depends on <code class="docutils literal notranslate"><span class="pre">samplers_per_user</span></code>). The percentages
+in this sampler must add up to 100.
+If not specified (default), choose each sampler with equal
+probability.</p>
 </dd></dl>
 
-<dl class="py pydantic_field">
+<dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="salmon.triplets.manager.Sampling.samplers_per_user">
 <em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">samplers_per_user</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#salmon.triplets.manager.Sampling.samplers_per_user" title="Permalink to this definition"></a></dt>
 <dd><p>The number of samplers to assign to each user. Setting
-        <code class="docutils literal notranslate"><span class="pre">samplers_per_user=1</span></code> means any user only sees queries generated
-        from one sampler, and <code class="docutils literal notranslate"><span class="pre">sampler_per_user=0</span></code> means the user sees a
-        new sampler every query</p>
+<code class="docutils literal notranslate"><span class="pre">samplers_per_user=1</span></code> means any user only sees queries generated
+from one sampler, and <code class="docutils literal notranslate"><span class="pre">sampler_per_user=0</span></code> means the user sees a
+new sampler every query</p>
 </dd></dl>
 
 </dd></dl>

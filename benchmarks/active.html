@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Active sampling &mdash; Salmon v0.9.0 documentation</title>
+  <title>Active sampling &mdash; Salmon v0.9.1rc1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/autodoc_pydantic.css" type="text/css" />
@@ -159,10 +159,10 @@ the same workflow a data scientists would:</p>
 number of responses available or the sampling method used. <a class="footnote-reference brackets" href="#shuffle" id="id7">5</a> Unless
 explicitly mentioned, let’s compare random and active
 sampling with these <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code> configurations:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">d</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">2</span>
-<span class="nt">samplers</span><span class="p">:</span>
-  <span class="nt">ARR</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt">random_state</span><span class="p">:</span> <span class="nv">42</span><span class="p p-Indicator">}</span>  <span class="c1"># active or adaptive sampling</span>
-  <span class="nt">Random</span><span class="p">:</span> <span class="p p-Indicator">{}</span>  <span class="c1"># random sampling</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">d</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w"></span>
+<span class="nt">samplers</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">ARR</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">random_state</span><span class="p">:</span><span class="w"> </span><span class="nv">42</span><span class="p p-Indicator">}</span><span class="w">  </span><span class="c1"># active or adaptive sampling</span><span class="w"></span>
+<span class="w">  </span><span class="nt">Random</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w">  </span><span class="c1"># random sampling</span><span class="w"></span>
 </pre></div>
 </div>
 <p>The “ARR” stands for “asynchronous round robin” and creates an instance of

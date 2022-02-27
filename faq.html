@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FAQ &mdash; Salmon v0.9.0 documentation</title>
+  <title>FAQ &mdash; Salmon v0.9.1rc1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/autodoc_pydantic.css" type="text/css" />
@@ -54,6 +54,8 @@
 <li class="toctree-l2"><a class="reference internal" href="#how-many-responses-will-be-needed">How many responses will be needed?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#what-active-samplers-are-recommended">What active samplers are recommended?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#can-i-choose-a-different-machine">Can I choose a different machine?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-do-i-ask-about-a-fixed-set-of-questions">How do I ask about a fixed set of questions?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-do-i-ask-every-crowdsourcing-user-exactly-the-same-questions">How do I ask every crowdsourcing user exactly the same questions?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#how-do-i-see-the-dask-dashboard">How do I see the Dask dashboard?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#how-do-i-customize-the-participant-unique-identifier-aka-puid">How do I customize the participant unique identifier aka “puid”?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#how-do-i-use-https-with-salmon">How do I use HTTPS with Salmon?</a></li>
@@ -163,11 +165,11 @@ possible values.</p>
 sampling is a lot better. Typically, between 10% and 20% of the sampling is
 used to monitor and report performance. That means I’d recommend this partial
 configuration:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">samplers</span><span class="p">:</span>
-  <span class="nt">ARR</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
-  <span class="nt">Random</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
-<span class="nt">sampling</span><span class="p">:</span>
-  <span class="nt">probs</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="s">&quot;ARR&quot;</span><span class="p p-Indicator">:</span> <span class="nv">85</span><span class="p p-Indicator">,</span> <span class="s">&quot;Random&quot;</span><span class="p p-Indicator">:</span> <span class="nv">15</span><span class="p p-Indicator">}</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">samplers</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">ARR</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w"></span>
+<span class="w">  </span><span class="nt">Random</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w"></span>
+<span class="nt">sampling</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">probs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="s">&quot;ARR&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">85</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;Random&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">15</span><span class="p p-Indicator">}</span><span class="w"></span>
 </pre></div>
 </div>
 </section>
@@ -185,6 +187,30 @@ updating. Generally, the number of cores should be <code class="docutils literal
 strict guideline; only 2 out of the 3 tasks take significant amounts of time.
 Using <code class="docutils literal notranslate"><span class="pre">2</span> <span class="pre">*</span> <span class="pre">n_algs</span></code> will work at a small performance hit; we recommend at
 least 4 cores for two algorithms.</p>
+</section>
+<section id="how-do-i-ask-about-a-fixed-set-of-questions">
+<h2>How do I ask about a fixed set of questions?<a class="headerlink" href="#how-do-i-ask-about-a-fixed-set-of-questions" title="Permalink to this headline"></a></h2>
+<p>By using <a class="reference internal" href="generated/salmon.triplets.samplers.Validation.html#salmon.triplets.samplers.Validation" title="salmon.triplets.samplers.Validation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Validation</span></code></a>.  You can specify a list
+of queries, or generating <code class="docutils literal notranslate"><span class="pre">n_queries</span></code> random queries. See <a class="reference internal" href="samplers.html#alg-config"><span class="std std-ref">Sampler configuration</span></a>
+and the <a class="reference internal" href="samplers.html#valconfig"><span class="std std-ref">Validation sampler</span></a> section.</p>
+</section>
+<section id="how-do-i-ask-every-crowdsourcing-user-exactly-the-same-questions">
+<h2>How do I ask every crowdsourcing user exactly the same questions?<a class="headerlink" href="#how-do-i-ask-every-crowdsourcing-user-exactly-the-same-questions" title="Permalink to this headline"></a></h2>
+<p>Two options:</p>
+<ul class="simple">
+<li><p>One question? Use <a class="reference internal" href="generated/salmon.triplets.samplers.Validation.html#salmon.triplets.samplers.Validation" title="salmon.triplets.samplers.Validation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Validation</span></code></a>. There’s an
+example in <a class="reference internal" href="samplers.html#valconfig"><span class="std std-ref">Validation sampler</span></a>.</p></li>
+<li><p>More than one question? Specify <code class="docutils literal notranslate"><span class="pre">sampling.details</span></code> (which is documented in
+<a class="reference internal" href="generated/salmon.triplets.manager.Sampling.html#salmon.triplets.manager.Sampling" title="salmon.triplets.manager.Sampling"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sampling</span></code></a>).</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">sampling.details</span></code> allows customizing the following:</p>
+<ul class="simple">
+<li><p>For any query, the sampler the user receives</p></li>
+<li><p>For any query, the query that the user answers.</p></li>
+</ul>
+<p>Any combination of these can be specified. An example is in <a class="reference internal" href="samplers.html#valdetail"><span class="std std-ref">Sampling detail</span></a>,
+and the documentation for <a class="reference internal" href="generated/salmon.triplets.manager.Sampling.html#salmon.triplets.manager.Sampling" title="salmon.triplets.manager.Sampling"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sampling</span></code></a> has
+another example.</p>
 </section>
 <section id="how-do-i-see-the-dask-dashboard">
 <h2>How do I see the Dask dashboard?<a class="headerlink" href="#how-do-i-see-the-dask-dashboard" title="Permalink to this headline"></a></h2>

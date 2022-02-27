@@ -92,7 +92,6 @@ configuration:
    sampling:
      probs: {"ARR": 85, "Random": 15}
 
-
 Can I choose a different machine?
 ---------------------------------
 
@@ -108,6 +107,32 @@ updating. Generally, the number of cores should be ``3 * n_algs``. This isn't a
 strict guideline; only 2 out of the 3 tasks take significant amounts of time.
 Using ``2 * n_algs`` will work at a small performance hit; we recommend at
 least 4 cores for two algorithms.
+
+How do I ask about a fixed set of questions?
+--------------------------------------------
+
+By using :class:`~salmon.triplets.samplers.Validation`.  You can specify a list
+of queries, or generating ``n_queries`` random queries. See :ref:`alg-config`
+and the :ref:`valconfig` section.
+
+How do I ask every crowdsourcing user exactly the same questions?
+-----------------------------------------------------------------
+
+Two options:
+
+* One question? Use :class:`~salmon.triplets.samplers.Validation`. There's an
+  example in :ref:`valconfig`.
+* More than one question? Specify ``sampling.details`` (which is documented in
+  :class:`~salmon.triplets.manager.Sampling`).
+
+``sampling.details`` allows customizing the following:
+
+* For any query, the sampler the user receives
+* For any query, the query that the user answers.
+
+Any combination of these can be specified. An example is in :ref:`valdetail`,
+and the documentation for :class:`~salmon.triplets.manager.Sampling` has
+another example.
 
 How do I see the Dask dashboard?
 --------------------------------

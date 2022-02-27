@@ -10,11 +10,10 @@ similarities:
    :width: 300px
    :align: center
 
-These queries are interesting because they provide some relative similarity
-structure: a response might indicate that objects :math:`h` and :math:`a` are
-more similar than objects :math:`h` and :math:`b` as determined by humans and
-the instructions they are given. For example, these triplet queries have been
-used by psychologists to determine what facial emotions human find similar:
+These queries provide a relative similarity measure: a response indicates that
+object :math:`a` is closer to object :math:`b` than object :math:`c` as
+determined by humans. For example, these triplet queries have been used by
+psychologists to determine what facial emotions human find similar:
 
 .. image:: imgs/face-embedding.png
    :width: 500px
@@ -23,11 +22,19 @@ used by psychologists to determine what facial emotions human find similar:
 Only distance is relevant in this embedding, not the vertical/horizontal axes.
 However, if you look closely, you can see two axes: positivity and intensity.
 
-Salmon provides efficient methods for collecting these triplet queries. For
-example, Salmon can generate an accurate embedding from only 2,800 responses in
-certain use cases. For the same use case, other approaches might require 5,500
-responses. More detail is in the :ref:`benchmarks on active sampling
-<experiments>`.
+**Salmon provides efficient methods for collecting these triplet queries.**
+Typically, generating the embeddings above requires far too many human responses.
+Salmon provides the ability to generate the same embeddings with fewer human
+responses – in our experiments, about 1,000 queries are required to reach a
+particular quality level instead of about 3,000 queries. If you're paying for
+each human response (say on Mechanical Turk), this means that collecting
+responses will be reduced by a factor of 3 when compared with naive methods of
+collecting triplet queries.
+
+If you'd like to report bugs/issues, or improve Salmon please see `Salmon's
+contribution guide`_.
+
+.. _Salmon's contribution guide: https://github.com/stsievert/salmon/blob/master/CONTRIBUTING.md
 
 Users
 =====
