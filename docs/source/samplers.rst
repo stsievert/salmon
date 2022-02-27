@@ -244,7 +244,10 @@ If the YAML configuration file, indices are specified as below:
 .. code-block:: yaml
 
    samplers:
-     Validation: queries: [[2, 3, 4], [1, 0, 3]]
+     Validation:
+       queries:
+         - [2, 3, 4],
+         - [1, 0, 3]
      # (if asking the above query and
      # a query with head "skiing" and feet "soccer" and "skating".
 
@@ -252,6 +255,7 @@ If the YAML configuration file, indices are specified as below:
 
 Sampling detail
 ^^^^^^^^^^^^^^^
+
 Let's say you want to collect data from three samplers: an active sampler for
 training, a random sampler for testing and a validation sampler to see measure
 each participant's attention (e.g., "are they blindly clicking answers?").
@@ -282,7 +286,7 @@ That sampling is possible through this partial config:
 
 With this ``init.yaml``, the crowdsourcing participant will see the same query
 at the beginning and end (both the 1st and 10th query they see). It will have
-head `"zero"` and feet `"one"` and `"two"`.
+head ``"zero"`` and feet ``"one"`` and ``"two"``.
 
 More detail on the target indexing is in :ref:`valconfig` and
 :class:`~salmon.triplets.samplers.Validation`. Another example is in
