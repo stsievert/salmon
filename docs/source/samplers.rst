@@ -247,3 +247,43 @@ If the YAML configuration file, indices are specified as below:
      Validation: queries: [[2, 3, 4], [1, 0, 3]]
      # (if asking the above query and
      # a query with head "skiing" and feet "soccer" and "skating".
+
+.. _valdetail:
+
+Sampling detail
+^^^^^^^^^^^^^^^
+Let's say you want to collect data from three samplers: an active sampler for
+training, a random sampler for testing and a validation sampler to see measure
+each participant's attention (e.g., "are they blindly clicking answers?").
+
+That sampling is possible through this partial config:
+
+.. code-block:: yaml
+
+   samplers:
+     ARR: {}  # generating the embedding
+     Random: {}  # testing the embedding
+     Validation: {}  # measure of human quality
+
+   sampling:
+     probs: {ARR: 80, Random: 20, Validation: 0}
+
+     details:
+       1: {sampler: Validation, query: [0, 1, 2]}
+       10: {sampler: Validation, query: [0, 1, 2]}
+
+   targets: [zero, one, two, three, four]
+   # targets are indexed by Python. Each target above is a textual representation
+   # of the index. For index 0 in sampling.details.query will
+   # show the user ``targets[0] == "zero"``.
+
+    html:
+      max_queries: 10
+
+With this ``init.yaml``, the crowdsourcing participant will see the same query
+at the beginning and end (both the 1st and 10th query they see). It will have
+head `"zero"` and feet `"one"` and `"two"`.
+
+More detail on the target indexing is in :ref:`valconfig` and
+:class:`~salmon.triplets.samplers.Validation`. Another example is in
+:class:`~salmon.triplets.manager.Sampling`.
