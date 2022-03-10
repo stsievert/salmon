@@ -246,7 +246,7 @@ If the YAML configuration file, indices are specified as below:
    samplers:
      Validation:
        queries:
-         - [2, 3, 4],
+         - [2, 3, 4]
          - [1, 0, 3]
      # (if asking the above query and
      # a query with head "skiing" and feet "soccer" and "skating".

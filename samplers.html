@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sampler configuration &mdash; Salmon v0.9.1rc2 documentation</title>
+  <title>Sampler configuration &mdash; Salmon v0.9.1rc3 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/autodoc_pydantic.css" type="text/css" />
@@ -297,13 +297,13 @@ generates the list:</p>
 </pre></div>
 </div>
 <p>If the YAML configuration file, indices are specified as below:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span>samplers:
-  Validation:
-    queries:
-      - [2, 3, 4],
-      - [1, 0, 3]
-  # (if asking the above query and
-  # a query with head &quot;skiing&quot; and feet &quot;soccer&quot; and &quot;skating&quot;.
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">samplers</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">Validation</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">queries</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">2</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">3</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">4</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">3</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">  </span><span class="c1"># (if asking the above query and</span><span class="w"></span>
+<span class="w">  </span><span class="c1"># a query with head &quot;skiing&quot; and feet &quot;soccer&quot; and &quot;skating&quot;.</span><span class="w"></span>
 </pre></div>
 </div>
 </section>
