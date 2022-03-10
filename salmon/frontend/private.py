@@ -298,25 +298,25 @@ async def _get_config(exp: bytes, targets: bytes) -> Dict[str, Any]:
     logger.warning(f"exp = {exp}")
     logger.warning(f"user_config = {user_config}")
 
+    if targets:
+        fnames = _extract_zipfile(targets)
+        logger.info("fnames = %s", fnames)
+        if len(fnames) == 1 and ".csv" in fnames[0].suffixes:
+            T = _format_targets(fnames[0])
+        else:
+            T = [_format_target(f) for f in fnames]
+    elif isinstance(user_config["targets"], int):
+        T = [str(x) for x in range(user_config["targets"])]
+    else:
+        T = [str(x) for x in user_config["targets"]]
+    user_config["targets"] = T
+
     c = Config()  # defaults already encoded
     c = c.parse(user_config)
     config = c.dict()
 
     logger.warning(config["sampling"]["probs"])
     logger.warning(config["samplers"])
-
-    if targets:
-        fnames = _extract_zipfile(targets)
-        logger.info("fnames = %s", fnames)
-        if len(fnames) == 1 and ".csv" in fnames[0].suffixes:
-            config["targets"] = _format_targets(fnames[0])
-        else:
-            targets = [_format_target(f) for f in fnames]
-            config["targets"] = targets
-    elif isinstance(config["targets"], int):
-        config["targets"] = [str(x) for x in range(config["targets"])]
-    else:
-        config["targets"] = [str(x) for x in config["targets"]]
 
     config["n"] = len(config["targets"])
     logger.info("initializing experinment with %s", config)

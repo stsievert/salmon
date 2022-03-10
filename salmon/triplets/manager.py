@@ -3,9 +3,12 @@ from copy import deepcopy
 from datetime import datetime, timedelta
 from textwrap import dedent
 from typing import Any, Dict, List, Optional, Union
+import logging
 
 import numpy as np
 from pydantic import BaseModel, BaseSettings, Field, validator
+
+logger = logging.getLogger(__name__)
 
 
 class Answer(BaseModel):
@@ -346,6 +349,7 @@ class Config(BaseSettings):
                 )
                 raise ValueError(msg.format(bad_queries))
             queries = {k: d.get("query", []) for k, d in details.items()}
+            logger.warning("targets = %s", self.targets)
             n_targets = -1 + (
                 len(self.targets) if isinstance(self.targets, list) else self.targets
             )
