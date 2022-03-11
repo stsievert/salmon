@@ -3,6 +3,7 @@ __MACOSX
 dask-worker-space
 salmon/_out/dump*rdb
 salmon/_out/*.csv
+creds-*.json
 salmon/out/*.log
 out/dump*rdb
 out/*.csv
