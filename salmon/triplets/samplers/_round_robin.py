@@ -1,7 +1,7 @@
 import logging
-from typing import List, Tuple
 import random
 from copy import deepcopy
+from typing import List, Tuple
 
 import numpy as np
 
