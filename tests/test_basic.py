@@ -47,7 +47,7 @@ def test_basics(server, logs):
         q = server.get("/query").json()
         ans = {"winner": random.choice([q["left"], q["right"]]), "puid": puid, **q}
         answers.append(ans)
-        sleep(100e-3)
+        sleep(10e-3)
         ans["response_time"] = time() - _start
         server.post("/answer", data=ans)
 
@@ -84,6 +84,8 @@ def test_basics(server, logs):
         "datetime_received",
         "sampler",
         "score",
+        "puid_num_responses",
+        "num_responses",
     }
     assert (df["winner"] != df["loser"]).all()
     assert ((df["winner"] == df["left"]) | (df["winner"] == df["right"])).all()
@@ -113,6 +115,8 @@ def test_basics(server, logs):
     assert "Embedding dimension: 2" in r.text
     assert "Number of targets: 6" in r.text
     assert "Samplers: [&#39;random&#39;]" in r.text  # &#39; is HTML for the apostrophe
+
+    assert (df["num_responses"] == (np.arange(len(df)) + 1)).all()
 
 
 def test_bad_file_upload(server):

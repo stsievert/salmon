@@ -142,12 +142,13 @@ def reset():
 
 
 @app.get("/query/{ident}")
-def get_query(ident: str):
+def get_query(ident: str, puid: str=""):
     global SAMPLERS
     alg = SAMPLERS[ident]
     if hasattr(alg, "get_query"):
         try:
-            q, score = alg.get_query()
+            kwargs = dict() if not puid else dict(puid=puid)
+            q, score = alg.get_query(**kwargs)
             logger.debug("q, score = %s, %s", q, score)
         except Exception as e:
             logger.exception(e)

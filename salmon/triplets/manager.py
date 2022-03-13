@@ -1,5 +1,6 @@
 import random
 from copy import deepcopy
+from collections import defaultdict
 from datetime import datetime, timedelta
 from textwrap import dedent
 from typing import Any, Dict, List, Optional, Union
@@ -181,6 +182,15 @@ class HTML(BaseSettings):
         description="""Wheter to allow using the arrow keys as input.  Specifying
         ``arrow_keys=True`` might allow bad input (though there is a delay of
         200ms between queries).""",
+    )
+    query_params: List[str] = Field(
+        ["puid"],
+        description="""A list of flags to include in the params to /query.
+        The default is ``query_params=['puid']``, which hits the endpoint
+        ``/query?puid=foo`` if the participant's UID is ``foo``. Developers
+        writing custom query pages might be interested in customizing this
+        value.
+        """,
     )
 
 
@@ -401,8 +411,12 @@ def deserialize_query(serialized_query: str) -> Dict[str, int]:
 def get_responses(answers: List[Dict[str, Any]], targets, start_time=0):
     start = start_time
     out = []
+
+    user_responses = defaultdict(int)
     for datum in answers:
         out.append(datum)
+        puid = datum["puid"]
+        user_responses[puid] += 1
         datetime_received = timedelta(seconds=datum["time_received"]) + datetime(
             1970, 1, 1
         )
@@ -418,6 +432,8 @@ def get_responses(answers: List[Dict[str, Any]], targets, start_time=0):
             "time_received_since_start": datum["time_received"] - start,
             "datetime_received": datetime_received.isoformat(),
             "start_time": start_time,
+            "puid_num_responses": user_responses[puid],
+            "num_responses": sum(user_responses.values()),
         }
         out[-1].update({**idxs, **names, **meta})
     return out

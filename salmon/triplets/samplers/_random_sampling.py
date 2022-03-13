@@ -52,7 +52,7 @@ class Random(Sampler):
                 raise ValueError(msg.format(bad_vals, n))
         super().__init__(ident=ident)
 
-    def get_query(self) -> Tuple[Query, Optional[float]]:
+    def get_query(self, **kwargs) -> Tuple[Query, Optional[float]]:
         h, a, b = _get_query(self.targets)
         query = {"head": int(h), "left": int(a), "right": int(b)}
         return query, -9999

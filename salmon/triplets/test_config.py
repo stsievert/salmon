@@ -37,6 +37,7 @@ def test_defaults():
             "css": "",
             "max_queries": 50,
             "arrow_keys": True,
+            "query_params": ["puid"],
         },
         "samplers": {"random": {"class": "Random"}},
         "sampling": {

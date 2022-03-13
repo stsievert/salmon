@@ -153,6 +153,7 @@ var num_queries = 0;  // queries submitted
 var show_queries = getTime();
 var samplers_per_user = {{ samplers_per_user }};
 var sampling_details = {{ details | safe }};
+var query_params = {{ html['query_params'] | safe }};
 
 async function send(winner, id) {
   setTimeout(function() {
@@ -228,6 +229,9 @@ function getquery(){
       // here samplers is defined because num_queries > 0
       // (so defined in response by /query)
     var endpoint = "/query?sampler=" + sampler;
+  }
+  if (query_params.includes("puid")){
+    endpoint = "/query?puid=" + puid;
   }
 
   if (query_key in sampling_details) {

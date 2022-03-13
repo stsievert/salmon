@@ -135,21 +135,25 @@ async def get_query_page(request: Request, puid: str=""):
 
 
 @app.get("/query", tags=["public"])
-async def get_query(sampler="") -> Dict[str, Union[int, str, float]]:
-    ident = sampler
-    if ident == "":
-        idents = rj.jsonget("samplers")
+async def get_query(sampler="", puid="") -> Dict[str, Union[int, str, float]]:
+    if sampler == "":
+        samplers = rj.jsonget("samplers")
         probs = rj.jsonget("sampling_probs")
 
-        idx = np.random.choice(len(idents), p=probs)
-        ident = idents[idx]
+        idx = np.random.choice(len(samplers), p=probs)
+        sampler = samplers[idx]
 
-    r = httpx.get(f"http://localhost:8400/query/{ident}")
+    host = f"http://localhost:8400"
+    endpoint = f"/query/{sampler}"
+    if puid:
+        endpoint = endpoint + f"?puid={puid}"
+
+    r = httpx.get(host + endpoint)
     if r.status_code == 200:
         logger.info(f"query r={r}")
         return r.json()
 
-    key = f"alg-{ident}-queries"
+    key = f"alg-{sampler}-queries"
     logger.info(f"zpopmax'ing {key}")
     queries = rj.zpopmax(key)
     if len(queries):
@@ -160,7 +164,7 @@ async def get_query(sampler="") -> Dict[str, Union[int, str, float]]:
         q = manager.random_query(config["n"])
         score = -9999
 
-    return {"sampler": ident, "score": score, **q}
+    return {"sampler": sampler, "score": score, **q}
 
 
 @app.post("/answer", tags=["public"])

@@ -68,7 +68,7 @@ class RoundRobin(Sampler):
 
         super().__init__(ident=ident)
 
-    def get_query(self) -> Tuple[Query, float]:
+    def get_query(self, **kwargs) -> Tuple[Query, float]:
         if (self.order is None) or (self.counter % len(self.targets) == 0):
             self.order = deepcopy(self.targets)
             np.random.shuffle(self.order)
@@ -87,3 +87,25 @@ class RoundRobin(Sampler):
         rj = self.redis_client()
         rj.jsonset(f"stopped-{self.ident}", Path("."), True)
         return None
+
+
+class RoundRobinPerUser(RoundRobin):
+    """
+    Rotate through "heads" in each query (just like
+    :class:`~salmon.triplets.samplers.RoundRobin`) for each user.
+    """
+    def __init__(self, *args, **kwargs):
+        self.rr_args = args
+        self.rr_kwargs = kwargs
+        self.samplers = {}  # puid to roundrobing
+
+        super().__init__(*args, **kwargs)
+
+    def get_query(self, puid: str = "") -> Tuple[Query, float]:
+        logger.warning(f"puid = {puid}")
+        if puid not in self.samplers:
+            self.samplers[puid] = RoundRobin(*self.rr_args, **self.rr_kwargs)
+        return self.samplers[puid].get_query()
+
+    def process_answers(self, ans: List[Answer]):
+        return self, True

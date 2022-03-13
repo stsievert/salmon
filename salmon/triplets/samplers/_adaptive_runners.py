@@ -118,7 +118,7 @@ class Adaptive(Sampler):
             **kwargs,
         }
 
-    def get_query(self) -> Tuple[Optional[Dict[str, int]], Optional[float]]:
+    def get_query(self, **kwargs) -> Tuple[Optional[Dict[str, int]], Optional[float]]:
         """Randomly select a query where there are few responses"""
         if self.meta["num_ans"] <= self.R * self.n:
             head, left, right = _random_query(self.n)
@@ -472,8 +472,8 @@ class SRR(ARR):
     def get_queries(self, *args, **kwargs):
         return [], [], {}
 
-    def get_query(self):
-        q, score = super().get_query()
+    def get_query(self, **kwargs):
+        q, score = super().get_query(**kwargs)
         if q is not None:
             return q, score
 

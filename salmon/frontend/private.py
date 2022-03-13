@@ -632,6 +632,7 @@ async def get_responses(
     start = rj.jsonget("start_time")
     responses = await _get_responses()
     json_responses = await _format_responses(responses, targets, start)
+
     if json:
         return JSONResponse(
             json_responses,

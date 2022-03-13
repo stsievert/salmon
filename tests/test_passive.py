@@ -92,3 +92,30 @@ def test_round_robin(server, logs):
         # Make sure round order always shuffled
         orders = [hash(tuple(heads)) for heads in rounds_heads]
         assert len(set(orders)) == len(orders)
+
+
+def test_round_robin_per_user(server):
+    N = 5
+    R = 2
+    config = {"targets": N, "samplers": {"RoundRobinPerUser": {}}}
+    server.authorize()
+    server.post("/init_exp", data={"exp": config})
+
+    # Ordering in this nested for loop is important
+    # (users need to alternately request queries for valid test of per-user RR)
+    for k in range(R * N):
+        for puid in ["u1", "u2"]:
+            q = server.get(f"/query?puid={puid}").json()
+            winner = random.choice([q["left"], q["right"]])
+            server.post("/answer", json={"winner": winner, "puid": puid, **q})
+    r = server.get("/responses")
+    df = pd.DataFrame(r.json())
+    assert set(df["puid"].unique()) == {"u1", "u2"}
+    df["test_user_responses"] = (1 + df["num_responses"]) // 2
+    assert (df["puid_num_responses"] == df["test_user_responses"]).all()
+    heads = df.pivot(values="head", columns="puid", index="puid_num_responses")
+
+    for puid in heads.columns:
+        for r in range(R):
+            one_round = heads[puid].iloc[r * N : (r + 1) * N]
+            assert set(one_round.values) == set(range(N))
