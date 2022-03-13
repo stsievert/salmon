@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>salmon.triplets.manager.HTML &mdash; Salmon v0.9.1rc4 documentation</title>
+  <title>salmon.triplets.manager.HTML &mdash; Salmon v0.10.0rc1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/autodoc_pydantic.css" type="text/css" />
@@ -160,6 +160,18 @@
 <span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"></span>
 <span class="w">         </span><span class="nt">&quot;env_names&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{&#39;arrow_keys&#39;}&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;boolean&quot;</span><span class="w"></span>
+<span class="w">      </span><span class="p">},</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;query_params&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Query Params&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;A list of flags to include in the params to /query.\n        The default is ``query_params=[&#39;puid&#39;]``, which hits the endpoint\n        ``/query?puid=foo`` if the participant&#39;s UID is ``foo``. Developers\n        writing custom query pages might be interested in customizing this\n        value.\n        &quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"></span>
+<span class="w">            </span><span class="s2">&quot;puid&quot;</span><span class="w"></span>
+<span class="w">         </span><span class="p">],</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;env_names&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{&#39;query_params&#39;}&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;array&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="w"></span>
+<span class="w">         </span><span class="p">}</span><span class="w"></span>
 <span class="w">      </span><span class="p">}</span><span class="w"></span>
 <span class="w">   </span><span class="p">}</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
@@ -178,6 +190,7 @@
 <li><p><a class="reference internal" href="#salmon.triplets.manager.HTML.debrief" title="salmon.triplets.manager.HTML.debrief"><code class="xref py py-obj docutils literal notranslate"><span class="pre">debrief</span> <span class="pre">(str)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#salmon.triplets.manager.HTML.instructions" title="salmon.triplets.manager.HTML.instructions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">instructions</span> <span class="pre">(str)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#salmon.triplets.manager.HTML.max_queries" title="salmon.triplets.manager.HTML.max_queries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max_queries</span> <span class="pre">(int)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#salmon.triplets.manager.HTML.query_params" title="salmon.triplets.manager.HTML.query_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_params</span> <span class="pre">(List[str])</span></code></a></p></li>
 <li><p><a class="reference internal" href="#salmon.triplets.manager.HTML.skip_button" title="salmon.triplets.manager.HTML.skip_button"><code class="xref py py-obj docutils literal notranslate"><span class="pre">skip_button</span> <span class="pre">(bool)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#salmon.triplets.manager.HTML.title" title="salmon.triplets.manager.HTML.title"><code class="xref py py-obj docutils literal notranslate"><span class="pre">title</span> <span class="pre">(str)</span></code></a></p></li>
 </ul>
@@ -218,6 +231,16 @@ this message.</p>
 <dd><p>The number of queries that the user will answer before
 seeing the <code class="docutils literal notranslate"><span class="pre">debrief</span></code> message). Set <code class="docutils literal notranslate"><span class="pre">max_queries=0</span></code> or
 <code class="docutils literal notranslate"><span class="pre">max_queries=-1</span></code> to ask unlimited queries.</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="salmon.triplets.manager.HTML.query_params">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">query_params</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['puid']</span></em><a class="headerlink" href="#salmon.triplets.manager.HTML.query_params" title="Permalink to this definition"></a></dt>
+<dd><p>A list of flags to include in the params to /query.
+The default is <code class="docutils literal notranslate"><span class="pre">query_params=['puid']</span></code>, which hits the endpoint
+<code class="docutils literal notranslate"><span class="pre">/query?puid=foo</span></code> if the participant’s UID is <code class="docutils literal notranslate"><span class="pre">foo</span></code>. Developers
+writing custom query pages might be interested in customizing this
+value.</p>
 </dd></dl>
 
 <dl class="py attribute pydantic_field">

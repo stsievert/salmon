@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>salmon.triplets.samplers.RoundRobin &mdash; Salmon v0.9.1rc4 documentation</title>
+  <title>salmon.triplets.samplers.RoundRobin &mdash; Salmon v0.10.0rc1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/autodoc_pydantic.css" type="text/css" />
@@ -20,7 +20,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="salmon.triplets.samplers.Validation" href="salmon.triplets.samplers.Validation.html" />
+    <link rel="next" title="salmon.triplets.samplers.RoundRobinPerUser" href="salmon.triplets.samplers.RoundRobinPerUser.html" />
     <link rel="prev" title="salmon.triplets.samplers.Random" href="salmon.triplets.samplers.Random.html" /> 
 </head>
 
@@ -57,6 +57,7 @@
 <li class="toctree-l3 current"><a class="reference internal" href="../api.html#passive-algorithms">Passive Algorithms</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="salmon.triplets.samplers.Random.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.samplers</span></code>.Random</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.samplers</span></code>.RoundRobin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="salmon.triplets.samplers.RoundRobinPerUser.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.samplers</span></code>.RoundRobinPerUser</a></li>
 <li class="toctree-l4"><a class="reference internal" href="salmon.triplets.samplers.Validation.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.samplers</span></code>.Validation</a></li>
 </ul>
 </li>
@@ -106,11 +107,11 @@
 <h1><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.samplers</span></code>.RoundRobin<a class="headerlink" href="#salmon-triplets-samplers-roundrobin" title="Permalink to this headline"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="salmon.triplets.samplers.RoundRobin">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">salmon.triplets.samplers.</span></span><span class="sig-name descname"><span class="pre">RoundRobin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ident</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.samplers.RoundRobin" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">salmon.triplets.samplers.</span></span><span class="sig-name descname"><span class="pre">RoundRobin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ident</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targets</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.samplers.RoundRobin" title="Permalink to this definition"></a></dt>
 <dd><p>Let the head of the triplet query rotate through the available items while choosing the bottom two items randomly.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="salmon.triplets.samplers.RoundRobin.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ident</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.samplers.RoundRobin.__init__" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ident</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targets</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.samplers.RoundRobin.__init__" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
@@ -118,7 +119,7 @@
 </dd>
 <dt><strong>ident</strong><span class="classifier">str</span></dt><dd><p>Identifier of the algorithm</p>
 </dd>
-<dt><strong>allowable</strong><span class="classifier">Optional[List[int]]</span></dt><dd><p>The allowable indexes to ask about.</p>
+<dt><strong>targets</strong><span class="classifier">Optional[List[int]]</span></dt><dd><p>The allowable indexes to ask about.</p>
 </dd>
 </dl>
 </dd>
@@ -134,7 +135,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="salmon.triplets.samplers.Random.html" class="btn btn-neutral float-left" title="salmon.triplets.samplers.Random" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="salmon.triplets.samplers.Validation.html" class="btn btn-neutral float-right" title="salmon.triplets.samplers.Validation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="salmon.triplets.samplers.RoundRobinPerUser.html" class="btn btn-neutral float-right" title="salmon.triplets.samplers.RoundRobinPerUser" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
