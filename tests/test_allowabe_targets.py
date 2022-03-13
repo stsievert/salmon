@@ -8,8 +8,8 @@ from .utils import server
 
 
 @pytest.mark.parametrize("sampler", ["RoundRobin", "Random"])
-def test_allowable(sampler, server):
-    samplers = {sampler: {"allowable": [0, 2, 4]}, "Test": {"class": "Random"}}
+def test_targets(sampler, server):
+    samplers = {sampler: {"targets": [0, 2, 4]}, "Test": {"class": "Random"}}
     config = {"samplers": samplers, "targets": 5}
     server.authorize()
     server.post("/init_exp", data={"exp": config})
@@ -29,40 +29,40 @@ def test_allowable(sampler, server):
 
 
 @pytest.mark.parametrize("sampler", ["RoundRobin", "Random"])
-def test_allowable_too_large(sampler, server):
-    samplers = {sampler: {"allowable": [0, 2, 5]}}
+def test_targets_too_large(sampler, server):
+    samplers = {sampler: {"targets": [0, 2, 5]}}
     config = {"samplers": samplers, "targets": 5}
     server.authorize()
     r = server.post("/init_exp", data={"exp": config}, error=True)
     assert r.status_code == 500
-    assert "At least one allowable target is too large" in r.text
+    assert "At least one targets target is too large" in r.text
 
 
 @pytest.mark.parametrize("sampler", ["RoundRobin", "Random"])
-def test_allowable_wrong_type(sampler, server):
-    samplers = {sampler: {"allowable": 0}}
+def test_targets_wrong_type(sampler, server):
+    samplers = {sampler: {"targets": 0}}
     config = {"samplers": samplers, "targets": 5}
     server.authorize()
     r = server.post("/init_exp", data={"exp": config}, error=True)
     assert r.status_code == 500
-    assert "Specify a list for allowable. Got" in r.text
+    assert "Specify a list for targets. Got" in r.text
 
 
 @pytest.mark.parametrize("sampler", ["RoundRobin", "Random"])
-def test_allowable_not_integers(sampler, server):
-    samplers = {sampler: {"allowable": [0.1, 0.2, 0.3]}}
+def test_targets_not_integers(sampler, server):
+    samplers = {sampler: {"targets": [0.1, 0.2, 0.3]}}
     config = {"samplers": samplers, "targets": 5}
     server.authorize()
     r = server.post("/init_exp", data={"exp": config}, error=True)
     assert r.status_code == 500
-    assert "Not all items in allowable are integers" in r.text
+    assert "Not all items in targets are integers" in r.text
 
 
 @pytest.mark.parametrize("sampler", ["RoundRobin", "Random"])
-def test_allowable_too_small(sampler, server):
-    samplers = {sampler: {"allowable": [0, 1]}}
+def test_targets_too_small(sampler, server):
+    samplers = {sampler: {"targets": [0, 1]}}
     config = {"samplers": samplers, "targets": 5}
     server.authorize()
     r = server.post("/init_exp", data={"exp": config}, error=True)
     assert r.status_code == 500
-    assert "Specify at least 3 allowable items. Got" in r.text
+    assert "Specify at least 3 targets items. Got" in r.text
