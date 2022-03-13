@@ -1,10 +1,10 @@
 import random
-from time import sleep
-import pytest
-import yaml
 from pathlib import Path
+from time import sleep
 
 import pandas as pd
+import pytest
+import yaml
 
 from .utils import LogError, logs, server
 
@@ -97,7 +97,7 @@ def test_round_robin(server, logs):
 def test_round_robin_per_user(server):
     N = 5
     R = 2
-    config = {"targets": N, "samplers": {"RoundRobinPerUser": {}}}
+    config = {"targets": N, "samplers": {"UserRoundRobin": {}}}
     server.authorize()
     server.post("/init_exp", data={"exp": config})
 

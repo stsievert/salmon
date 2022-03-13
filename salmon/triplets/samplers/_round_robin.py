@@ -89,7 +89,7 @@ class RoundRobin(Sampler):
         return None
 
 
-class RoundRobinPerUser(RoundRobin):
+class UserRoundRobin(RoundRobin):
     """
     Rotate through "heads" in each query (just like
     :class:`~salmon.triplets.samplers.RoundRobin`) for each user.
