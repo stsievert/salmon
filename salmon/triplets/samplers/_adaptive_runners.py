@@ -125,7 +125,9 @@ class Adaptive(Sampler):
             return {"head": int(head), "left": int(left), "right": int(right)}, -9999
         return None, -9999
 
-    def get_queries(self, num=None, stop=None) -> Tuple[List[Query], List[float], dict]:
+    def get_queries(
+        self, num=None, stop=None, **kwargs
+    ) -> Tuple[List[Query], List[float], dict]:
         """Get and score many queries."""
         ret_queries = []
         ret_scores = []
