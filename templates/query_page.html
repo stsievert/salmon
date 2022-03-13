@@ -246,11 +246,9 @@ function getquery(){
     right = target_idx[1];
     left = target_idx[2];
     if (Math.random() < 0.5){
-      console.log("in swap, left, right = " + left + " " + right)
       var _tmp = right;
       right = left;
       left = _tmp;
-      console.log("in swap2, left, right = " + left + " " + right)
     }
     score = -9999;
     sampler = sampler;
