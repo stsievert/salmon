@@ -1,7 +1,0 @@
-﻿:mod:`salmon.triplets.samplers`.RoundRobinPerUser
-========================================================
-
-.. currentmodule:: salmon.triplets.samplers
-
-.. autoclass:: RoundRobinPerUser
-   :members: __init__

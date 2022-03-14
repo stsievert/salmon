@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>API &mdash; Salmon v0.10.0rc1 documentation</title>
+  <title>API &mdash; Salmon v0.10.0rc2 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/autodoc_pydantic.css" type="text/css" />
@@ -65,7 +65,6 @@
 <li class="toctree-l3"><a class="reference internal" href="#passive-algorithms">Passive Algorithms</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="generated/salmon.triplets.samplers.Random.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.samplers</span></code>.Random</a></li>
 <li class="toctree-l4"><a class="reference internal" href="generated/salmon.triplets.samplers.RoundRobin.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.samplers</span></code>.RoundRobin</a></li>
-<li class="toctree-l4"><a class="reference internal" href="generated/salmon.triplets.samplers.RoundRobinPerUser.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.samplers</span></code>.RoundRobinPerUser</a></li>
 <li class="toctree-l4"><a class="reference internal" href="generated/salmon.triplets.samplers.Validation.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.samplers</span></code>.Validation</a></li>
 </ul>
 </li>
@@ -202,10 +201,7 @@ uses <code class="docutils literal notranslate"><span class="pre">Sampler.run</s
 <tr class="row-even"><td><p><a class="reference internal" href="generated/salmon.triplets.samplers.RoundRobin.html#salmon.triplets.samplers.RoundRobin" title="salmon.triplets.samplers.RoundRobin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.triplets.samplers.RoundRobin</span></code></a>(n[, d, ...])</p></td>
 <td><p>Let the head of the triplet query rotate through the available items while choosing the bottom two items randomly.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/salmon.triplets.samplers.RoundRobinPerUser.html#salmon.triplets.samplers.RoundRobinPerUser" title="salmon.triplets.samplers.RoundRobinPerUser"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.triplets.samplers.RoundRobinPerUser</span></code></a>(...)</p></td>
-<td><p>Rotate through &quot;heads&quot; in each query (just like <a class="reference internal" href="generated/salmon.triplets.samplers.RoundRobin.html#salmon.triplets.samplers.RoundRobin" title="salmon.triplets.samplers.RoundRobin"><code class="xref py py-class docutils literal notranslate"><span class="pre">RoundRobin</span></code></a>) for each user.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/salmon.triplets.samplers.Validation.html#salmon.triplets.samplers.Validation" title="salmon.triplets.samplers.Validation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.triplets.samplers.Validation</span></code></a>(n[, d, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/salmon.triplets.samplers.Validation.html#salmon.triplets.samplers.Validation" title="salmon.triplets.samplers.Validation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">salmon.triplets.samplers.Validation</span></code></a>(n[, d, ...])</p></td>
 <td><p>Ask about the same queries repeatedly</p></td>
 </tr>
 </tbody>
