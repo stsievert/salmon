@@ -26,7 +26,7 @@ def _score_query(q: Tuple[int, int, int]) -> float:
     return float(score)
 
 
-class RoundRobin(Sampler):
+class _RoundRobin(Sampler):
     """
     Let the head of the triplet query rotate through the available items while choosing the bottom two items randomly.
     """
@@ -89,10 +89,11 @@ class RoundRobin(Sampler):
         return None
 
 
-class UserRoundRobin(RoundRobin):
+class RoundRobin(_RoundRobin):
     """
-    Rotate through "heads" in each query (just like
-    :class:`~salmon.triplets.samplers.RoundRobin`) for each user.
+    Let the head of the triplet query rotate through the available items while choosing
+    the bottom two items randomly. This class is user specific if the
+    ``/query?puid=foo`` endpoint is hit.
     """
     def __init__(self, *args, **kwargs):
         self.rr_args = args
@@ -102,9 +103,8 @@ class UserRoundRobin(RoundRobin):
         super().__init__(*args, **kwargs)
 
     def get_query(self, puid: str = "") -> Tuple[Query, float]:
-        logger.warning(f"puid = {puid}")
         if puid not in self.samplers:
-            self.samplers[puid] = RoundRobin(*self.rr_args, **self.rr_kwargs)
+            self.samplers[puid] = _RoundRobin(*self.rr_args, **self.rr_kwargs)
         return self.samplers[puid].get_query()
 
     def process_answers(self, ans: List[Answer]):

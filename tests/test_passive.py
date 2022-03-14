@@ -97,7 +97,7 @@ def test_round_robin(server, logs):
 def test_round_robin_per_user(server):
     N = 5
     R = 2
-    config = {"targets": N, "samplers": {"UserRoundRobin": {}}}
+    config = {"targets": N, "samplers": {"RoundRobin": {}}}
     server.authorize()
     server.post("/init_exp", data={"exp": config})
 
