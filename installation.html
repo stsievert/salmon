@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Installation &mdash; Salmon v0.9.1rc5 documentation</title>
+  <title>Installation &mdash; Salmon v0.9.1rc6 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/autodoc_pydantic.css" type="text/css" />
@@ -128,12 +128,22 @@ sampling).</p></li>
 </div></blockquote>
 </li>
 <li><p>Don’t click the big blue button yet. Continue to the rules page, and add
-these rules:</p></li>
-</ol>
+these rules:</p>
 <a class="reference internal image-reference" href="_images/networking-rule.png"><img alt="_images/networking-rule.png" class="align-center" src="_images/networking-rule.png" style="width: 80%;" /></a>
-<p>The AMI will take about 15 minutes to initialize. After that’s done, Salmon
-will be available at <code class="docutils literal notranslate"><span class="pre">http://[url]:8421</span></code>. For example, <code class="docutils literal notranslate"><span class="pre">[url]</span></code> might be
-the Amazon public DNS or public IP.</p>
+</li>
+<li><p>Now, click the big blue button! (The AMI will take between 15 and 30 minutes to initialize)</p></li>
+<li><p>Keep your “key pair” in a safe place. The key pair typically has a <code class="docutils literal notranslate"><span class="pre">.pem</span></code>
+extension.</p></li>
+</ol>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><strong>Don’t lose your key pair!</strong>
+Without the key pair, the Salmon developers will be severely limited in the
+help they can provide.</p>
+</div>
+<p>The AMI initialization is done (which takes about 15 minutes), Salmon will be
+available at <code class="docutils literal notranslate"><span class="pre">http://[url]:8421</span></code>. For example, <code class="docutils literal notranslate"><span class="pre">[url]</span></code> might be the Amazon
+public DNS or public IP.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">ec2</span><span class="o">-</span><span class="mi">35</span><span class="o">-</span><span class="mi">164</span><span class="o">-</span><span class="mi">240</span><span class="o">-</span><span class="mf">184.</span><span class="n">us</span><span class="o">-</span><span class="n">west</span><span class="o">-</span><span class="mf">2.</span><span class="n">compute</span><span class="o">.</span><span class="n">amazonaws</span><span class="o">.</span><span class="n">com</span><span class="p">:</span><span class="mi">8421</span><span class="o">/</span><span class="n">foo</span>
 </pre></div>
 </div>

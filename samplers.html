@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sampler configuration &mdash; Salmon v0.9.1rc5 documentation</title>
+  <title>Sampler configuration &mdash; Salmon v0.9.1rc6 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/autodoc_pydantic.css" type="text/css" />
@@ -51,7 +51,11 @@
 <li class="toctree-l3"><a class="reference internal" href="#initialization-arguments">Initialization arguments</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#example">Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#example">Example</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#validation-sampler">Validation sampler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sampling-detail">Sampling detail</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="monitoring.html">Experiment monitoring</a></li>
@@ -261,6 +265,82 @@ configuration:</p>
 <span class="w">    </span><span class="nt">module</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;TSTE&quot;</span><span class="w"></span>
 </pre></div>
 </div>
+<section id="validation-sampler">
+<span id="valconfig"></span><h3>Validation sampler<a class="headerlink" href="#validation-sampler" title="Permalink to this headline"></a></h3>
+<p><em>Note: generating validation queries will likely require two uploads of your
+experiment and resetting Salmon</em></p>
+<p>The indices for <a class="reference internal" href="generated/salmon.triplets.samplers.Validation.html#salmon.triplets.samplers.Validation" title="salmon.triplets.samplers.Validation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Validation</span></code></a> are indices of
+the target list, which is available at <code class="docutils literal notranslate"><span class="pre">http://[url]:8421/config</span></code>. This code
+generates the list:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">yaml</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># config.yaml from [1], copy/pasted into text file named &quot;config.yaml&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># [1]:http://[url]:8421/config</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;config.yaml&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">())</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Items will be selected from this list</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;targets&quot;</span><span class="p">]</span>
+<span class="go">[&#39;soccer&#39;, &#39;skiing&#39;, &#39;curling&#39;, &#39;skating&#39;, &#39;hockey&#39;]</span>
+</pre></div>
+</div>
+<p>In this case, if you wanted to ask the query “is skating more similar to hockey or curling?”, you would specify:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Validation</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">queries</span><span class="o">=</span><span class="p">[(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)])</span>
+</pre></div>
+</div>
+<p>Let’s check that these are the right indices:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">targets</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+<span class="go">&#39;curling&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">targets</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+<span class="go">&#39;skating&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">targets</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+<span class="go">&#39;hockey&#39;</span>
+</pre></div>
+</div>
+<p>If the YAML configuration file, indices are specified as below:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">samplers</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">Validation</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">queries</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">2</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">3</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">4</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">3</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">  </span><span class="c1"># (if asking the above query and</span><span class="w"></span>
+<span class="w">  </span><span class="c1"># a query with head &quot;skiing&quot; and feet &quot;soccer&quot; and &quot;skating&quot;.</span><span class="w"></span>
+</pre></div>
+</div>
+</section>
+<section id="sampling-detail">
+<span id="valdetail"></span><h3>Sampling detail<a class="headerlink" href="#sampling-detail" title="Permalink to this headline"></a></h3>
+<p>Let’s say you want to collect data from three samplers: an active sampler for
+training, a random sampler for testing and a validation sampler to see measure
+each participant’s attention (e.g., “are they blindly clicking answers?”).</p>
+<p>That sampling is possible through this partial config:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">samplers</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">ARR</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w">  </span><span class="c1"># generating the embedding</span><span class="w"></span>
+<span class="w">  </span><span class="nt">Random</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w">  </span><span class="c1"># testing the embedding</span><span class="w"></span>
+<span class="w">  </span><span class="nt">Validation</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w">  </span><span class="c1"># measure of human quality</span><span class="w"></span>
+
+<span class="nt">sampling</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">probs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">ARR</span><span class="p">:</span><span class="w"> </span><span class="nv">80</span><span class="p p-Indicator">,</span><span class="nt"> Random</span><span class="p">:</span><span class="w"> </span><span class="nv">20</span><span class="p p-Indicator">,</span><span class="nt"> Validation</span><span class="p">:</span><span class="w"> </span><span class="nv">0</span><span class="p p-Indicator">}</span><span class="w"></span>
+
+<span class="w">  </span><span class="nt">details</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">1</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">sampler</span><span class="p">:</span><span class="w"> </span><span class="nv">Validation</span><span class="p p-Indicator">,</span><span class="nt"> query</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">2</span><span class="p p-Indicator">]}</span><span class="w"></span>
+<span class="w">    </span><span class="nt">10</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">sampler</span><span class="p">:</span><span class="w"> </span><span class="nv">Validation</span><span class="p p-Indicator">,</span><span class="nt"> query</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">2</span><span class="p p-Indicator">]}</span><span class="w"></span>
+
+<span class="nt">targets</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">zero</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">one</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">two</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">three</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">four</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="c1"># targets are indexed by Python. Each target above is a textual representation</span><span class="w"></span>
+<span class="c1"># of the index. For index 0 in sampling.details.query will</span><span class="w"></span>
+<span class="c1"># show the user ``targets[0] == &quot;zero&quot;``.</span><span class="w"></span>
+
+<span class="w"> </span><span class="nt">html</span><span class="p">:</span><span class="w"></span>
+<span class="w">   </span><span class="nt">max_queries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span><span class="w"></span>
+</pre></div>
+</div>
+<p>With this <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code>, the crowdsourcing participant will see the same query
+at the beginning and end (both the 1st and 10th query they see). It will have
+head <code class="docutils literal notranslate"><span class="pre">&quot;zero&quot;</span></code> and feet <code class="docutils literal notranslate"><span class="pre">&quot;one&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;two&quot;</span></code>.</p>
+<p>More detail on the target indexing is in <a class="reference internal" href="#valconfig"><span class="std std-ref">Validation sampler</span></a> and
+<a class="reference internal" href="generated/salmon.triplets.samplers.Validation.html#salmon.triplets.samplers.Validation" title="salmon.triplets.samplers.Validation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Validation</span></code></a>. Another example is in
+<a class="reference internal" href="generated/salmon.triplets.manager.Sampling.html#salmon.triplets.manager.Sampling" title="salmon.triplets.manager.Sampling"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sampling</span></code></a>.</p>
+</section>
 </section>
 </section>
 

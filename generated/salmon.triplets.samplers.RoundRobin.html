@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>salmon.triplets.samplers.RoundRobin &mdash; Salmon v0.9.1rc5 documentation</title>
+  <title>salmon.triplets.samplers.RoundRobin &mdash; Salmon v0.9.1rc6 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/autodoc_pydantic.css" type="text/css" />
@@ -106,17 +106,21 @@
 <h1><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.triplets.samplers</span></code>.RoundRobin<a class="headerlink" href="#salmon-triplets-samplers-roundrobin" title="Permalink to this headline"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="salmon.triplets.samplers.RoundRobin">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">salmon.triplets.samplers.</span></span><span class="sig-name descname"><span class="pre">RoundRobin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ident</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.samplers.RoundRobin" title="Permalink to this definition"></a></dt>
-<dd><p>Let the head of the triplet query rotate through the available items while choosing the bottom two items randomly.</p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">salmon.triplets.samplers.</span></span><span class="sig-name descname"><span class="pre">RoundRobin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.samplers.RoundRobin" title="Permalink to this definition"></a></dt>
+<dd><p>Let the head of the triplet query rotate through the available items while choosing
+the bottom two items randomly. This class is user specific if the
+<code class="docutils literal notranslate"><span class="pre">/query?puid=foo</span></code> endpoint is hit.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="salmon.triplets.samplers.RoundRobin.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ident</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.samplers.RoundRobin.__init__" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.triplets.samplers.RoundRobin.__init__" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>n</strong><span class="classifier">int</span></dt><dd><p>Number of objects</p>
 </dd>
 <dt><strong>ident</strong><span class="classifier">str</span></dt><dd><p>Identifier of the algorithm</p>
+</dd>
+<dt><strong>targets</strong><span class="classifier">Optional[List[int]]</span></dt><dd><p>The allowable indexes to ask about.</p>
 </dd>
 </dl>
 </dd>
