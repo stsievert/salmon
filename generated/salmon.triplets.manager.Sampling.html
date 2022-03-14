@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>salmon.triplets.manager.Sampling &mdash; Salmon v0.10.0rc2 documentation</title>
+  <title>salmon.triplets.manager.Sampling &mdash; Salmon v0.9.1rc5 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/autodoc_pydantic.css" type="text/css" />
@@ -107,11 +107,17 @@
 exception is <code class="docutils literal notranslate"><span class="pre">common</span></code>, which is passed to every <code class="docutils literal notranslate"><span class="pre">sampler</span></code> during
 initialization and will likely be optional arguments for
 <a class="reference internal" href="salmon.triplets.samplers.Adaptive.html#salmon.triplets.samplers.Adaptive" title="salmon.triplets.samplers.Adaptive"><code class="xref py py-class docutils literal notranslate"><span class="pre">Adaptive</span></code></a>.</p>
-<p>The default configuration is specified completely below, which is rendered into a YAML file in <a class="reference external" href="https://github.com/stsievert/salmon/blob/master/examples/default.yaml">an example</a>.</p>
+<p>The default config represented as a YAML file:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">sampling</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">common</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="s">&quot;d&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">2</span><span class="p p-Indicator">}</span><span class="w"></span>
+<span class="w">  </span><span class="nt">probs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="s">&quot;random&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">100</span><span class="p p-Indicator">}</span><span class="w"></span>
+<span class="w">  </span><span class="nt">samplers_per_user</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
+</pre></div>
+</div>
 <p><details  class="autodoc_pydantic_collapsable_json">
 <summary>Show JSON schema</summary><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
 <span class="w">   </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Sampling&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">   </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Settings to configure how more than two samplers are used.\n\nThese settings are used in the HTML but are not stylistic. The\nexception is ``common``, which is passed to every ``sampler`` during\ninitialization and will likely be optional arguments for\n:class:`~salmon.triplets.samplers.Adaptive`.\n\nThe default configuration is specified completely below, which is rendered into a YAML file in `an example`_.\n\n.. _an example: https://github.com/stsievert/salmon/blob/master/examples/default.yaml&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">   </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Settings to configure how more than two samplers are used.\n\nThese settings are used in the HTML but are not stylistic. The\nexception is ``common``, which is passed to every ``sampler`` during\ninitialization and will likely be optional arguments for\n:class:`~salmon.triplets.samplers.Adaptive`.\n\nThe default config represented as a YAML file:\n\n.. code-block:: yaml\n\n   sampling:\n     common: {\&quot;d\&quot;: 2}\n     probs: {\&quot;random\&quot;: 100}\n     samplers_per_user: 1&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">   </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">   </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;common&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -138,13 +144,6 @@ initialization and will likely be optional arguments for
 <span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"></span>
 <span class="w">         </span><span class="nt">&quot;env_names&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{&#39;samplers_per_user&#39;}&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integer&quot;</span><span class="w"></span>
-<span class="w">      </span><span class="p">},</span><span class="w"></span>
-<span class="w">      </span><span class="nt">&quot;details&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Details&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Different options for a deterministic choice of samplers.\n\n        This dictionary is of the form ``{query_shown_to_user: options}``. The\n        ``options`` is a dictionary with up to two keys:\n\n        - ``sampler`` (required), which reflects which sampler receives the\n          responses)\n\n        - ``query`` (optional), which is a list of length 3 indicating the target\n          indices appear in the query.\n\n        For example, this YAML will ensure the 1st and 10th query the\n        crowdsourcing user sees will be from:\n\n        .. code-block:: yaml\n\n          targets: [zero, one, two, three, four, five, six]\n          # ^ list of (textual) targets; target \&quot;zero\&quot; has index 0 and\n          # is targets[0] in Python\n\n          samplers:\n            ARR: {}\n            Validation: {}\n            valid2:\n              class: Validation\n              n_queries: 3\n\n          sampling:\n            probs: {ARR: 100, Validation: 0, valid2: 0}\n            details:\n              # Each key \&quot;n\&quot; is the n-th query the user sees\n              # So here the 1st and 10th queries the user sees is customized\n              1: {sampler: \&quot;Validation\&quot;, query: [0, 2, 3]}\n              10: {sampler: \&quot;valid2\&quot;}\n\n          html:\n            # ask 10 queries according to \&quot;sampling.probs\&quot;.\n            # The probabilistic sampling will be overriden by sampling.details\n            max_queries: 10\n\n        In this case, the crowdsourcing user will see the following:\n\n        * 1st query shown will have head \&quot;zero\&quot;, and feet \&quot;two\&quot; and \&quot;three\&quot;.\n        * Queries 2 and 9 will be generated by the :class:`~salmon.triplets.samplers.ARR` sampler.\n        * The 10th query they see (also the last query): one of three\n          (random) fixed/static queries.\n\n        The sampler ``valid2`` will receive answers to 3 fixed/static queries,\n        and the ``Validation`` sampler will receive answers to the query\n        ``[0, 2, 3]``.\n        &quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span><span class="w"></span>
-<span class="w">         </span><span class="nt">&quot;env_names&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{&#39;details&#39;}&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="w"></span>
 <span class="w">      </span><span class="p">}</span><span class="w"></span>
 <span class="w">   </span><span class="p">},</span><span class="w"></span>
 <span class="w">   </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w"></span>
@@ -155,7 +154,6 @@ initialization and will likely be optional arguments for
 <dt class="field-odd">Fields</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="#salmon.triplets.manager.Sampling.common" title="salmon.triplets.manager.Sampling.common"><code class="xref py py-obj docutils literal notranslate"><span class="pre">common</span> <span class="pre">(Dict[str,</span> <span class="pre">Any])</span></code></a></p></li>
-<li><p><a class="reference internal" href="#salmon.triplets.manager.Sampling.details" title="salmon.triplets.manager.Sampling.details"><code class="xref py py-obj docutils literal notranslate"><span class="pre">details</span> <span class="pre">(Dict[int,</span> <span class="pre">Any])</span></code></a></p></li>
 <li><p><a class="reference internal" href="#salmon.triplets.manager.Sampling.probs" title="salmon.triplets.manager.Sampling.probs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">probs</span> <span class="pre">(Optional[Dict[str,</span> <span class="pre">int]])</span></code></a></p></li>
 <li><p><a class="reference internal" href="#salmon.triplets.manager.Sampling.samplers_per_user" title="salmon.triplets.manager.Sampling.samplers_per_user"><code class="xref py py-obj docutils literal notranslate"><span class="pre">samplers_per_user</span> <span class="pre">(int)</span></code></a></p></li>
 </ul>
@@ -169,57 +167,6 @@ values for <a class="reference internal" href="salmon.triplets.samplers.Adaptive
 values for <code class="docutils literal notranslate"><span class="pre">n</span></code> and <code class="docutils literal notranslate"><span class="pre">ident</span></code> are already specified). Any
 values specified in this field will be overwritten by
 sampler-specific arguments.</p>
-</dd></dl>
-
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="salmon.triplets.manager.Sampling.details">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">details</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#salmon.triplets.manager.Sampling.details" title="Permalink to this definition"></a></dt>
-<dd><p>Different options for a deterministic choice of samplers.</p>
-<p>This dictionary is of the form <code class="docutils literal notranslate"><span class="pre">{query_shown_to_user:</span> <span class="pre">options}</span></code>. The
-<code class="docutils literal notranslate"><span class="pre">options</span></code> is a dictionary with up to two keys:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">sampler</span></code> (required), which reflects which sampler receives the
-responses)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">query</span></code> (optional), which is a list of length 3 indicating the target
-indices appear in the query.</p></li>
-</ul>
-<p>For example, this YAML will ensure the 1st and 10th query the
-crowdsourcing user sees will be from:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">targets</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">zero</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">one</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">two</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">three</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">four</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">five</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">six</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="c1"># ^ list of (textual) targets; target &quot;zero&quot; has index 0 and</span><span class="w"></span>
-<span class="c1"># is targets[0] in Python</span><span class="w"></span>
-
-<span class="nt">samplers</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">ARR</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w"></span>
-<span class="w">  </span><span class="nt">Validation</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w"></span>
-<span class="w">  </span><span class="nt">valid2</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Validation</span><span class="w"></span>
-<span class="w">    </span><span class="nt">n_queries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w"></span>
-
-<span class="nt">sampling</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">probs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">ARR</span><span class="p">:</span><span class="w"> </span><span class="nv">100</span><span class="p p-Indicator">,</span><span class="nt"> Validation</span><span class="p">:</span><span class="w"> </span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="nt"> valid2</span><span class="p">:</span><span class="w"> </span><span class="nv">0</span><span class="p p-Indicator">}</span><span class="w"></span>
-<span class="w">  </span><span class="nt">details</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="c1"># Each key &quot;n&quot; is the n-th query the user sees</span><span class="w"></span>
-<span class="w">    </span><span class="c1"># So here the 1st and 10th queries the user sees is customized</span><span class="w"></span>
-<span class="w">    </span><span class="nt">1</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">sampler</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Validation&quot;</span><span class="p p-Indicator">,</span><span class="nt"> query</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">2</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">3</span><span class="p p-Indicator">]}</span><span class="w"></span>
-<span class="w">    </span><span class="nt">10</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">sampler</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;valid2&quot;</span><span class="p p-Indicator">}</span><span class="w"></span>
-
-<span class="nt">html</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="c1"># ask 10 queries according to &quot;sampling.probs&quot;.</span><span class="w"></span>
-<span class="w">  </span><span class="c1"># The probabilistic sampling will be overriden by sampling.details</span><span class="w"></span>
-<span class="w">  </span><span class="nt">max_queries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span><span class="w"></span>
-</pre></div>
-</div>
-<p>In this case, the crowdsourcing user will see the following:</p>
-<ul class="simple">
-<li><p>1st query shown will have head “zero”, and feet “two” and “three”.</p></li>
-<li><p>Queries 2 and 9 will be generated by the <a class="reference internal" href="salmon.triplets.samplers.ARR.html#salmon.triplets.samplers.ARR" title="salmon.triplets.samplers.ARR"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARR</span></code></a> sampler.</p></li>
-<li><p>The 10th query they see (also the last query): one of three
-(random) fixed/static queries.</p></li>
-</ul>
-<p>The sampler <code class="docutils literal notranslate"><span class="pre">valid2</span></code> will receive answers to 3 fixed/static queries,
-and the <code class="docutils literal notranslate"><span class="pre">Validation</span></code> sampler will receive answers to the query
-<code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">2,</span> <span class="pre">3]</span></code>.</p>
 </dd></dl>
 
 <dl class="py attribute pydantic_field">

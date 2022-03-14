@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>salmon.triplets.manager.HTML &mdash; Salmon v0.10.0rc2 documentation</title>
+  <title>salmon.triplets.manager.HTML &mdash; Salmon v0.9.1rc5 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/autodoc_pydantic.css" type="text/css" />
@@ -103,13 +103,22 @@
 <dt class="sig sig-object py" id="salmon.triplets.manager.HTML">
 <em class="property"><span class="pre">pydantic</span> <span class="pre">settings</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">salmon.triplets.manager.</span></span><span class="sig-name descname"><span class="pre">HTML</span></span><a class="headerlink" href="#salmon.triplets.manager.HTML" title="Permalink to this definition"></a></dt>
 <dd><p>Stylistic settings to configure the HTML page.</p>
-<p>The default configuration is specified completely below, which is rendered into a YAML file in <a class="reference external" href="https://github.com/stsievert/salmon/blob/master/examples/default.yaml">an example</a>.</p>
+<p>The default configuration in YAML:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">html</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">instructions</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Please select the &lt;i&gt;comparison&lt;/i&gt; item that is most similar to the &lt;i&gt;target&lt;/i&gt; item.</span><span class="w"></span>
+<span class="w">  </span><span class="nt">debrief</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;b&gt;Thanks!&lt;/b&gt;</span><span class="nv"> </span><span class="s">Please</span><span class="nv"> </span><span class="s">use</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">participant</span><span class="nv"> </span><span class="s">ID</span><span class="nv"> </span><span class="s">below.&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">skip_button</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
+<span class="w">  </span><span class="nt">css</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">max_queries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span><span class="w"></span>
+<span class="w">  </span><span class="nt">arrow_keys</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+</pre></div>
+</div>
 <p>Arbitrary keys are allowed in this class
 (which might allow for customization on the HTML page).</p>
 <p><details  class="autodoc_pydantic_collapsable_json">
 <summary>Show JSON schema</summary><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
 <span class="w">   </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;HTML&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">   </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Stylistic settings to configure the HTML page.\n\nThe default configuration is specified completely below, which is rendered into a YAML file in `an example`_.\n\n.. _an example: https://github.com/stsievert/salmon/blob/master/examples/default.yaml\n\nArbitrary keys are allowed in this class\n(which might allow for customization on the HTML page).&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">   </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Stylistic settings to configure the HTML page.\n\nThe default configuration in YAML:\n\n.. code-block:: yaml\n\n   html:\n     instructions: Please select the &lt;i&gt;comparison&lt;/i&gt; item that is most similar to the &lt;i&gt;target&lt;/i&gt; item.\n     debrief: \&quot;&lt;b&gt;Thanks!&lt;/b&gt; Please use the participant ID below.\&quot;\n     skip_button: false\n     css: \&quot;\&quot;\n     max_queries: 50\n     arrow_keys: true\n\nArbitrary keys are allowed in this class\n(which might allow for customization on the HTML page).&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">   </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">   </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -160,18 +169,6 @@
 <span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"></span>
 <span class="w">         </span><span class="nt">&quot;env_names&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{&#39;arrow_keys&#39;}&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;boolean&quot;</span><span class="w"></span>
-<span class="w">      </span><span class="p">},</span><span class="w"></span>
-<span class="w">      </span><span class="nt">&quot;query_params&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Query Params&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;A list of flags to include in the params to /query.\n        The default is ``query_params=[&#39;puid&#39;]``, which hits the endpoint\n        ``/query?puid=foo`` if the participant&#39;s UID is ``foo``. Developers\n        writing custom query pages might be interested in customizing this\n        value.\n        &quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"></span>
-<span class="w">            </span><span class="s2">&quot;puid&quot;</span><span class="w"></span>
-<span class="w">         </span><span class="p">],</span><span class="w"></span>
-<span class="w">         </span><span class="nt">&quot;env_names&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{&#39;query_params&#39;}&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;array&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">         </span><span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="w"></span>
-<span class="w">         </span><span class="p">}</span><span class="w"></span>
 <span class="w">      </span><span class="p">}</span><span class="w"></span>
 <span class="w">   </span><span class="p">}</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
@@ -190,7 +187,6 @@
 <li><p><a class="reference internal" href="#salmon.triplets.manager.HTML.debrief" title="salmon.triplets.manager.HTML.debrief"><code class="xref py py-obj docutils literal notranslate"><span class="pre">debrief</span> <span class="pre">(str)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#salmon.triplets.manager.HTML.instructions" title="salmon.triplets.manager.HTML.instructions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">instructions</span> <span class="pre">(str)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#salmon.triplets.manager.HTML.max_queries" title="salmon.triplets.manager.HTML.max_queries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max_queries</span> <span class="pre">(int)</span></code></a></p></li>
-<li><p><a class="reference internal" href="#salmon.triplets.manager.HTML.query_params" title="salmon.triplets.manager.HTML.query_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_params</span> <span class="pre">(List[str])</span></code></a></p></li>
 <li><p><a class="reference internal" href="#salmon.triplets.manager.HTML.skip_button" title="salmon.triplets.manager.HTML.skip_button"><code class="xref py py-obj docutils literal notranslate"><span class="pre">skip_button</span> <span class="pre">(bool)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#salmon.triplets.manager.HTML.title" title="salmon.triplets.manager.HTML.title"><code class="xref py py-obj docutils literal notranslate"><span class="pre">title</span> <span class="pre">(str)</span></code></a></p></li>
 </ul>
@@ -231,16 +227,6 @@ this message.</p>
 <dd><p>The number of queries that the user will answer before
 seeing the <code class="docutils literal notranslate"><span class="pre">debrief</span></code> message). Set <code class="docutils literal notranslate"><span class="pre">max_queries=0</span></code> or
 <code class="docutils literal notranslate"><span class="pre">max_queries=-1</span></code> to ask unlimited queries.</p>
-</dd></dl>
-
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="salmon.triplets.manager.HTML.query_params">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">query_params</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['puid']</span></em><a class="headerlink" href="#salmon.triplets.manager.HTML.query_params" title="Permalink to this definition"></a></dt>
-<dd><p>A list of flags to include in the params to /query.
-The default is <code class="docutils literal notranslate"><span class="pre">query_params=['puid']</span></code>, which hits the endpoint
-<code class="docutils literal notranslate"><span class="pre">/query?puid=foo</span></code> if the participant’s UID is <code class="docutils literal notranslate"><span class="pre">foo</span></code>. Developers
-writing custom query pages might be interested in customizing this
-value.</p>
 </dd></dl>
 
 <dl class="py attribute pydantic_field">

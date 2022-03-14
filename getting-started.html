@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Getting started &mdash; Salmon v0.10.0rc2 documentation</title>
+  <title>Getting started &mdash; Salmon v0.9.1rc5 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/autodoc_pydantic.css" type="text/css" />
@@ -154,23 +154,6 @@ which is at “<a class="reference internal" href="monitoring.html#exp-monitorin
 For example, that may be</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">ec2</span><span class="o">-</span><span class="mi">52</span><span class="o">-</span><span class="mi">204</span><span class="o">-</span><span class="mi">122</span><span class="o">-</span><span class="mf">132.</span><span class="n">compute</span><span class="o">-</span><span class="mf">1.</span><span class="n">amazonaws</span><span class="o">.</span><span class="n">com</span><span class="p">:</span><span class="mi">8421</span><span class="o">/</span><span class="n">init</span>
 </pre></div>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Generally, I’ve found it useful to send out URLs I control to
-crowdsourcing users via an <a class="reference external" href="https://www.w3docs.com/snippets/html/how-to-redirect-a-web-page-in-html.html">HTML redirect</a>.  Using an HTML redirect
-means that I have more flexibility around the URL, and can handle many
-use cases: launching a new machine and replacing it, restarting it, or
-the machine dies unexpectedly.</p>
-<p>One method to do this is to use <a class="reference external" href="https://pages.github.com/">GitHub Pages</a> (which allows creating a
-URL like <code class="docutils literal notranslate"><span class="pre">https://foo.github.io</span></code> if your GitHub username is <code class="docutils literal notranslate"><span class="pre">foo</span></code>)
-then creating the HTML redirection file above (copy/pasting the shown
-text into <code class="docutils literal notranslate"><span class="pre">bar.html</span></code>). Then, users can visit
-<code class="docutils literal notranslate"><span class="pre">https://foo.github.io/bar.html</span></code> to be redirected.</p>
-<p>As an example, the URL <a class="reference external" href="https://nextml.org/captioncontest">https://nextml.org/captioncontest</a> currently
-redirects to
-<a class="reference external" href="https://s3.us-west-2.amazonaws.com/mlnow-newyorker/captioncontest_s3.html">https://s3.us-west-2.amazonaws.com/mlnow-newyorker/captioncontest_s3.html</a>.
-I would send out the URL <code class="docutils literal notranslate"><span class="pre">https://nextml.org/captioncontest</span></code> to users</p>
 </div>
 <p>Typically, paid services like Mechantical Turk are used to recruit
 crowdsourcing participants. Reddit and email have been used for unpaid
