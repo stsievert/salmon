@@ -69,12 +69,17 @@ class _RoundRobin(Sampler):
         super().__init__(ident=ident)
 
     def get_query(self, **kwargs) -> Tuple[Query, float]:
-        if (self.order is None) or (self.counter % len(self.targets) == 0):
+        if self.order is None:
             self.order = deepcopy(self.targets)
+
+        idx = self.counter % len(self.order)
+        logger.warning("idx=%s", idx)
+        if idx == 0:
             np.random.shuffle(self.order)
 
-        head = self.order[self.counter % len(self.order)]
-        kids = list(set(self.targets) - {head})
+        head = self.order[idx]
+
+        kids = set(self.targets) - {head}
         a, b = np.random.choice(list(kids), size=2, replace=False)
         self.counter += 1
         score = max(abs(head - a), abs(head - b))
