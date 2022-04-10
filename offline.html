@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Generating embeddings offline &mdash; Salmon v0.9.1rc8 documentation</title>
+  <title>Generating embeddings offline &mdash; Salmon v0.10.0rc0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/autodoc_pydantic.css" type="text/css" />
@@ -49,7 +49,11 @@
 <li class="toctree-l1"><a class="reference internal" href="monitoring.html">Experiment monitoring</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Generating embeddings offline</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#downloading-responses">Downloading responses</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#install-salmon">Install Salmon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#install-salmon">Install Salmon</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#option-1-using-pip">Option 1: Using pip</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#option-2-using-conda">Option 2: Using conda</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#generate-embeddings">Generate embeddings</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#embedding-visualization">Embedding visualization</a></li>
 </ul>
@@ -112,23 +116,29 @@ clicking the link on the dashboard (as mentioned in <a class="reference internal
 </section>
 <section id="install-salmon">
 <h2>Install Salmon<a class="headerlink" href="#install-salmon" title="Permalink to this headline"></a></h2>
-<p>This section has two dependencies:</p>
+<p>There are two options to install Salmon for offline embeddings.</p>
+<section id="option-1-using-pip">
+<h3>Option 1: Using pip<a class="headerlink" href="#option-1-using-pip" title="Permalink to this headline"></a></h3>
+<p>This option is recommended to generate embeddings offline.
+This option requires <code class="docutils literal notranslate"><span class="pre">pip</span></code>, a Python package manager. It’s available through
+<a class="reference external" href="https://www.anaconda.com/products/distribution#Downloads">Anaconda</a> and <a class="reference external" href="https://docs.conda.io/en/latest/miniconda.html">Miniconda</a>.</p>
 <ol class="arabic simple">
-<li><p>Git for the <code class="docutils literal notranslate"><span class="pre">git</span></code> command. <a class="reference external" href="https://git-scm.com/book/en/v2/Getting-Started-Installing-Git">Git-SCM</a> has a good installation guide.</p></li>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">conda</span></code> package manager, available through Anaconda with their
-<a class="reference external" href="https://www.anaconda.com/products/distribution#Downloads">Anaconda Python Distribution</a> or their (much smaller) <a class="reference external" href="https://docs.conda.io/en/latest/miniconda.html">Miniconda</a>.</p></li>
+<li><p>Run the command <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">salmon</span></code>.</p></li>
 </ol>
-<p>To install Salmon, these commands should be run:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/stsievert/salmon
-$ <span class="nb">cd</span> salmon
-$
-$ <span class="c1"># latest release (/tag in git parlance)</span>
-$ <span class="nv">latestRelease</span><span class="o">=</span><span class="k">$(</span>git describe --tags <span class="sb">`</span>git rev-list --tags --max-count<span class="o">=</span><span class="m">1</span><span class="sb">`</span><span class="k">)</span>
-$ git checkout <span class="nv">$latestRelease</span>
-$
-$ conda env create -f salmon.yml
+</section>
+<section id="option-2-using-conda">
+<h3>Option 2: Using conda<a class="headerlink" href="#option-2-using-conda" title="Permalink to this headline"></a></h3>
+<p>This option is required for a complete installation.
+This option requires <code class="docutils literal notranslate"><span class="pre">conda</span></code>, a Anaconda’s Python package manager. It’s
+available through <a class="reference external" href="https://www.anaconda.com/products/distribution#Downloads">Anaconda</a> and <a class="reference external" href="https://docs.conda.io/en/latest/miniconda.html">Miniconda</a>.</p>
+<ol class="arabic simple">
+<li><p>Download <a class="reference external" href="https://github.com/stsievert/salmon/releases/latest">the latest release of Salmon</a>, and unpack the <cite>.zip</cite> or <cite>.tar.gz</cite>
+file.</p></li>
+<li><p>Navigate to the directory in the shell/terminal and run these commands:</p></li>
+</ol>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ conda env create -f salmon.yml
 $ conda activate salmon
-<span class="o">(</span>salmon<span class="o">)</span> $ pip install -e .
+<span class="o">(</span>salmon<span class="o">)</span> $ pip install .
 </pre></div>
 </div>
 <p>These commands should be run in your favorite terminal. On macOS, that might
@@ -139,6 +149,7 @@ be Terminal.app.</p>
 be your terminal prompt; leave it out when copy and pasting into the
 terminal.</p>
 </div>
+</section>
 </section>
 <section id="generate-embeddings">
 <h2>Generate embeddings<a class="headerlink" href="#generate-embeddings" title="Permalink to this headline"></a></h2>

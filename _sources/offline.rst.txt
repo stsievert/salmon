@@ -23,30 +23,36 @@ clicking the link on the dashboard (as mentioned in :ref:`exp-monitoring`).
 Install Salmon
 --------------
 
-This section has two dependencies:
+There are two options to install Salmon for offline embeddings.
 
-1. Git for the ``git`` command. `Git-SCM`_ has a good installation guide.
-2. The ``conda`` package manager, available through Anaconda with their
-   `Anaconda Python Distribution`_ or their (much smaller) `Miniconda`_.
+Option 1: Using pip
+^^^^^^^^^^^^^^^^^^^
+This option is recommended to generate embeddings offline.
+This option requires ``pip``, a Python package manager. It's available through
+`Anaconda`_ and `Miniconda`_.
 
-.. _Anaconda Python Distribution: https://www.anaconda.com/products/distribution#Downloads
-.. _Miniconda: https://docs.conda.io/en/latest/miniconda.html
-.. _Git-SCM: https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
 
-To install Salmon, these commands should be run:
+1. Run the command ``pip install salmon``.
+
+Option 2: Using conda
+^^^^^^^^^^^^^^^^^^^^^
+This option is required for a complete installation.
+This option requires ``conda``, a Anaconda's Python package manager. It's
+available through `Anaconda`_ and `Miniconda`_.
+
+1. Download `the latest release of Salmon`_, and unpack the `.zip` or `.tar.gz`
+   file.
+2. Navigate to the directory in the shell/terminal and run these commands:
 
 .. code-block:: shell
 
-   $ git clone https://github.com/stsievert/salmon
-   $ cd salmon
-   $
-   $ # latest release (/tag in git parlance)
-   $ latestRelease=$(git describe --tags `git rev-list --tags --max-count=1`)
-   $ git checkout $latestRelease
-   $
    $ conda env create -f salmon.yml
    $ conda activate salmon
-   (salmon) $ pip install -e .
+   (salmon) $ pip install .
+
+.. _the latest release of Salmon: https://github.com/stsievert/salmon/releases/latest
+.. _Anaconda: https://www.anaconda.com/products/distribution#Downloads
+.. _Miniconda: https://docs.conda.io/en/latest/miniconda.html
 
 These commands should be run in your favorite terminal. On macOS, that might
 be Terminal.app.
