@@ -23,26 +23,36 @@ clicking the link on the dashboard (as mentioned in :ref:`exp-monitoring`).
 Install Salmon
 --------------
 
-Using pip (recommended for *offline* embeddings):
+There are two options to install Salmon for offline embeddings.
+
+Option 1: Using pip
+^^^^^^^^^^^^^^^^^^^
+This option is recommended to generate embeddings offline.
+This option requires ``pip``, a Python package manager. It's available through
+`Anaconda`_ and `Miniconda`_.
+
+
+1. Run the command ``pip install salmon``.
+
+Option 2: Using conda
+^^^^^^^^^^^^^^^^^^^^^
+This option is required for a complete installation.
+This option requires ``conda``, a Anaconda's Python package manager. It's
+available through `Anaconda`_ and `Miniconda`_.
+
+1. Download `the latest release of Salmon`_, and unpack the `.zip` or `.tar.gz`
+   file.
+2. Navigate to the directory in the shell/terminal and run these commands:
 
 .. code-block:: shell
 
-   $ pip install salmon
-
-Using conda (recommended for the complete installation):
-
-.. code-block:: shell
-
-   $ git clone https://github.com/stsievert/salmon
-   $ cd salmon
-   $
-   $ # latest release (/tag in git parlance)
-   $ latestRelease=$(git describe --tags `git rev-list --tags --max-count=1`)
-   $ git checkout $latestRelease
-   $
    $ conda env create -f salmon.yml
    $ conda activate salmon
-   (salmon) $ pip install -e .
+   (salmon) $ pip install .
+
+.. _the latest release of Salmon: https://github.com/stsievert/salmon/releases/latest
+.. _Anaconda: https://www.anaconda.com/products/distribution#Downloads
+.. _Miniconda: https://docs.conda.io/en/latest/miniconda.html
 
 Generate embeddings
 -------------------
