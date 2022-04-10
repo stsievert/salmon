@@ -5,7 +5,7 @@ import scipy.spatial
 import torch
 from sklearn.utils import check_random_state
 
-from .. import gram_utils
+from salmon.triplets.samplers.adaptive.search import gram_utils
 
 
 @pytest.mark.parametrize("n", [10, 20, 40])

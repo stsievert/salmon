@@ -23,6 +23,14 @@ clicking the link on the dashboard (as mentioned in :ref:`exp-monitoring`).
 Install Salmon
 --------------
 
+Using pip (recommended for *offline* embeddings):
+
+.. code-block:: shell
+
+   $ pip install salmon
+
+Using conda (recommended for the complete installation):
+
 .. code-block:: shell
 
    $ git clone https://github.com/stsievert/salmon

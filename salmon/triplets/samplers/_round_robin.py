@@ -3,8 +3,8 @@ from typing import List, Tuple
 
 import numpy as np
 
-from ...backend.sampler import Path, Sampler
-from .utils import Answer, Query
+from salmon.backend.sampler import Path, Sampler
+from salmon.triplets.samplers.utils import Answer, Query
 
 logger = logging.getLogger(__name__)
 

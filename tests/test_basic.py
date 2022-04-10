@@ -14,6 +14,7 @@ import pytest
 import yaml
 
 from salmon.triplets.manager import Config
+
 from .utils import LogError, logs, server
 
 
@@ -164,9 +165,14 @@ def test_saves_state(server):
     server.authorize()
     server.delete("/reset?force=1", timeout=20)
     sleep(0.1)
-    dump = Path(__file__).absolute().parent.parent / "out" / "dump.rdb"
+
+    this_dir = Path(__file__).absolute().parent
+    root = this_dir.parent
+    dump_dir = root / "salmon" / "_out"
+    assert dump_dir.exists()
+    dump = dump_dir / "dump.rdb"
     assert not dump.exists()
-    exp = Path(__file__).parent / "data" / "exp.yaml"
+    exp = this_dir / "data" / "exp.yaml"
 
     server.authorize()
     server.post("/init_exp", data={"exp": exp.read_text()})
@@ -174,20 +180,22 @@ def test_saves_state(server):
         q = server.get("/query").json()
         ans = {"winner": random.choice([q["left"], q["right"]]), "puid": str(k), **q}
         server.post("/answer", data=ans)
+    r = server.get("/dashboard")
+    assert r.status_code == 200
+    sleep(1)
     assert dump.exists()
 
     # Clear all dump files; reset state
-    dir = Path(__file__).absolute().parent.parent / "out"
-    dump_files = list(dir.glob("*.rdb"))
+    dump_files = list(dump_dir.glob("*.rdb"))
     for d in dump_files:
         d.unlink()
-    files = [f.name for f in dir.glob("*.rdb")]
+    files = [f.name for f in dump_dir.glob("*.rdb")]
     assert len(files) == 0
 
     # Make sure saved resetting saves experiment state
     before_reset = datetime.now()
     server.delete("/reset?force=1", timeout=20)
-    files = [f.name for f in dir.glob("*.rdb")]
+    files = [f.name for f in dump_dir.glob("*.rdb")]
     assert len(files) == 1
     written = datetime.strptime(files[0], "dump-%Y-%m-%dT%H:%M.rdb")
     assert isinstance(written, datetime)
@@ -200,7 +208,7 @@ def test_saves_state(server):
 
 def test_download_restore(server):
     server.authorize()
-    dump = Path(__file__).absolute().parent.parent / "out" / "dump.rdb"
+    dump = Path(__file__).absolute().parent.parent / "salmon" / "_out" / "dump.rdb"
     assert not dump.exists()
     exp = Path(__file__).parent / "data" / "exp.yaml"
     server.post("/init_exp", data={"exp": exp.read_text()})

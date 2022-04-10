@@ -26,10 +26,10 @@ def get_logger(name):
     ph.setLevel(LEVEL)
     handlers.append(ph)
 
-    ROOT_DIR = Path(__file__).absolute().parent.parent
-
-    out = ROOT_DIR / "out" / f"{name}.log"
-    assert out.parent.exists()
+    SRC = Path(__file__).absolute().parent
+    assert SRC.is_dir()  # points to salmon/ source directory
+    assert (SRC / "_out").exists(), str(SRC / "_out")
+    out = SRC / "_out" / f"{name}.log"
 
     fh = logging.FileHandler(str(out))
     fh.setLevel(LEVEL)

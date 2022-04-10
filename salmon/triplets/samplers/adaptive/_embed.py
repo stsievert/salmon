@@ -13,11 +13,10 @@ from skorch.utils import is_dataset
 from torch.nn.modules.loss import _Loss
 from torch.utils.data import TensorDataset
 
+from salmon.triplets.samplers.adaptive.search import gram_utils, score
 from salmon.utils import get_logger
 
 logger = get_logger(__name__)
-
-from .search import gram_utils, score
 
 
 class Reduce:

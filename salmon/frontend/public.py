@@ -17,9 +17,9 @@ from starlette.staticfiles import StaticFiles
 from starlette.templating import Jinja2Templates
 from starlette_prometheus import PrometheusMiddleware, metrics
 
-from ..triplets import manager
-from ..utils import get_logger
-from .utils import ServerException, image_url, sha256
+from salmon.frontend.utils import ServerException, image_url, sha256
+from salmon.triplets import manager
+from salmon.utils import get_logger
 
 logger = get_logger(__name__)
 
@@ -73,13 +73,7 @@ async def _ensure_initialized():
     if "exp_config" not in rj:
         raise ServerException("No data has been uploaded")
     exp_config = await _get_config()
-    expected_keys = [
-        "targets",
-        "samplers",
-        "n",
-        "sampling",
-        "html"
-    ]
+    expected_keys = ["targets", "samplers", "n", "sampling", "html"]
     html_keys = [
         "instructions",
         "max_queries",
@@ -95,7 +89,7 @@ async def _ensure_initialized():
         missing = set(expected_keys) - set(exp_config)
     if "html" in exp_config and not set(html_keys).issubset(set(exp_config["html"])):
         err = True
-        extra = set()#exp_config["html"]) - set(expected_keys)
+        extra = set()  # exp_config["html"]) - set(expected_keys)
         missing = set(expected_keys) - set(exp_config["html"])
     if err:
         msg = (
@@ -110,7 +104,7 @@ async def _ensure_initialized():
 
 
 @app.get("/", tags=["public"])
-async def get_query_page(request: Request, puid: str=""):
+async def get_query_page(request: Request, puid: str = ""):
     """
     Load the query page and present a "triplet query".
     """
@@ -183,7 +177,7 @@ async def process_answer(ans: manager.Answer):
     ident = d["sampler"]
     logger.warning(f"answer received: {d}")
     rj.jsonarrappend(f"alg-{ident}-answers", root, d)
-        # on backend,  key = f"alg-{self.ident}-answers"
+    # on backend,  key = f"alg-{self.ident}-answers"
     rj.jsonarrappend("all-responses", root, d)
     last_save = rj.lastsave()
 

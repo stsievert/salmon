@@ -1,6 +1,6 @@
 from time import sleep
 
-from ._adaptive_runners import TSTE
+from salmon.triplets.samplers._adaptive_runners import TSTE
 
 
 class Test(TSTE):

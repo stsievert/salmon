@@ -10,6 +10,14 @@ from salmon.triplets.offline import OfflineEmbedding
 from salmon.triplets.samplers import TSTE
 
 
+def test_salmon_import():
+    """ This test makes sure that no errors are raised on import
+    (non-existant directories, etc)"""
+    import salmon
+
+    return True
+
+
 def test_score_predict_basic():
     """Test the interface for score/predict"""
     n = 10

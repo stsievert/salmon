@@ -5,8 +5,7 @@ from typing import List, Optional, Tuple
 import numpy as np
 
 from salmon.backend.sampler import DaskClient, Path, Sampler, root
-
-from .utils import Answer, Query
+from salmon.triplets.samplers.utils import Answer, Query
 
 logger = logging.getLogger(__name__)
 

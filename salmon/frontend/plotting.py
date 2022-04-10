@@ -14,7 +14,7 @@ from bokeh.models import (ColumnDataSource, Grid, ImageURL, Legend, LinearAxis,
 from bokeh.palettes import brewer, d3
 from bokeh.plotting import figure, show
 
-from .utils import get_logger, image_url
+from salmon.frontend.utils import get_logger, image_url
 
 logger = get_logger(__name__)
 

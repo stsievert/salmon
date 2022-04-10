@@ -9,7 +9,7 @@ from zipfile import ZipFile
 import pandas as pd
 from fastapi import HTTPException
 
-from ..utils import get_logger
+from salmon.utils import get_logger
 
 logger = get_logger(__name__)
 

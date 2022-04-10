@@ -166,4 +166,3 @@ process is beyond scope for this project. [#f]_
    https://nowak.ece.wisc.edu/ordinal_embedding.pdf
 
 .. [#f] though the package `mkcert`_ might help.
-

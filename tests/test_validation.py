@@ -1,5 +1,6 @@
 import random
 from time import sleep
+
 import pytest
 
 from .utils import LogError, logs, server
