@@ -32,7 +32,17 @@ This option requires ``pip``, a Python package manager. It's available through
 `Anaconda`_ and `Miniconda`_.
 
 
-1. Run the command ``pip install salmon``.
+1. Run the command ``pip install salmon-triplets``.
+2. Run the command below in Python to verify that the installation worked successfully:
+
+.. code-block:: python
+
+   import salmon.triplets.offline
+
+.. note::
+
+   This package installs a Python package named ``salmon`` despite being
+   named "salmon-triplets" on PyPI.
 
 Option 2: Using conda
 ^^^^^^^^^^^^^^^^^^^^^
