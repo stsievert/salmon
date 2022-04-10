@@ -23,7 +23,7 @@ embeddings. It relies on "active" machine learning algorithms to choose the
 most informative queries for humans to answer."""
 
 setup(
-    name="salmon",
+    name="salmon-triplets",
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
     description="Efficient crowdsourcing for ordinal embeddings",
