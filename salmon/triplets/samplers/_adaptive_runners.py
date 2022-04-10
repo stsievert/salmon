@@ -11,12 +11,11 @@ import pandas as pd
 import torch.optim
 
 import salmon.triplets.samplers.adaptive as adaptive
+from salmon.backend.sampler import Sampler
 from salmon.triplets.samplers._random_sampling import \
     _get_query as _random_query
 from salmon.triplets.samplers.adaptive import InfoGainScorer, UncertaintyScorer
 from salmon.utils import get_logger
-
-from ...backend.sampler import Sampler
 
 logger = get_logger(__name__)
 

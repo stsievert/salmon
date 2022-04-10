@@ -8,7 +8,7 @@ import numpy.linalg as LA
 import torch
 
 try:
-    from . import gram_utils
+    from salmon.triplets.samplers.adaptive.search import gram_utils
 except:
     import gram_utils
 

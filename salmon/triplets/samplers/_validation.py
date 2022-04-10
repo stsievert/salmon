@@ -3,9 +3,10 @@ import random
 
 import numpy as np
 
-from ...backend.sampler import Path
-from ._round_robin import RoundRobin, _get_query, _score_query
-from .utils import Answer, Query
+from salmon.backend.sampler import Path
+from salmon.triplets.samplers._round_robin import (RoundRobin, _get_query,
+                                                   _score_query)
+from salmon.triplets.samplers.utils import Answer, Query
 
 logger = logging.getLogger(__name__)
 
@@ -13,8 +14,10 @@ logger = logging.getLogger(__name__)
 def _random_query(n: int):
     return np.random.choice(n, size=3, replace=False).tolist()
 
+
 class Validation(RoundRobin):
     """Ask about the same queries repeatedly"""
+
     def __init__(self, n, d=2, n_queries=20, queries=None, ident=""):
         """
         This sampler asks the same questions repeatedly, useful to evaluate

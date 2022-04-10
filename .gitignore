@@ -4,6 +4,9 @@ dask-worker-space
 salmon/_out/dump*rdb
 salmon/_out/*.csv
 creds-*.json
+salmon/out/dump*rdb
+salmon/out/*.csv
+salmon/_out
 salmon/out/*.log
 out/dump*rdb
 out/*.csv

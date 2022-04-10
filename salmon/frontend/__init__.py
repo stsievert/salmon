@@ -1,2 +1,2 @@
-from .private import *
-from .public import app
+from salmon.frontend.private import *
+from salmon.frontend.public import app
