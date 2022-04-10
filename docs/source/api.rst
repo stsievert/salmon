@@ -65,7 +65,6 @@ Passive Algorithms
 
    salmon.triplets.samplers.Random
    salmon.triplets.samplers.RoundRobin
-   salmon.triplets.samplers.RoundRobinPerUser
    salmon.triplets.samplers.Validation
 
 Active Algorithms
