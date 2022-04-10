@@ -23,6 +23,18 @@ clicking the link on the dashboard (as mentioned in :ref:`exp-monitoring`).
 Install Salmon
 --------------
 
+This section has two dependencies:
+
+1. Git for the ``git`` command. `Git-SCM`_ has a good installation guide.
+2. The ``conda`` package manager, available through Anaconda with their
+   `Anaconda Python Distribution`_ or their (much smaller) `Miniconda`_.
+
+.. _Anaconda Python Distribution: https://www.anaconda.com/products/distribution#Downloads
+.. _Miniconda: https://docs.conda.io/en/latest/miniconda.html
+.. _Git-SCM: https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
+
+To install Salmon, these commands should be run:
+
 .. code-block:: shell
 
    $ git clone https://github.com/stsievert/salmon
@@ -36,10 +48,19 @@ Install Salmon
    $ conda activate salmon
    (salmon) $ pip install -e .
 
+These commands should be run in your favorite terminal. On macOS, that might
+be Terminal.app.
+
+.. note::
+
+   The commands above are (\*nix) shell commands. The ``$`` is intended to
+   be your terminal prompt; leave it out when copy and pasting into the
+   terminal.
+
 Generate embeddings
 -------------------
 
-This code will generate an embedding:
+This Python code will generate an embedding:
 
 .. code-block:: python
 
@@ -54,7 +75,7 @@ This code will generate an embedding:
    d = 2  # embed into 2 dimensions
 
    X_train, X_test = train_test_split(X, random_state=42, test_size=0.2)
-   model = OfflineEmbedding(n=n, d=d)
+   model = OfflineEmbedding(n=n, d=d, max_epochs=500_000)
    model.initialize(X_train, embedding=em.to_numpy())
 
    model.fit(X_train, X_test)
@@ -63,7 +84,7 @@ This code will generate an embedding:
    model.history_  # to view information on how well train/test performed
 
 Some customization can be done with ``model.history_``; it may not be necessary
-to train for 400,000 epochs. ``model.history_`` will include validation and
+to train for 500,000 epochs. ``model.history_`` will include validation and
 training scores, which might help limit the number of epochs.
 
 Documentation for :class:`~salmon.triplets.offline.OfflineEmbedding` is

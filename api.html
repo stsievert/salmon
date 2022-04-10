@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>API &mdash; Salmon v0.9.1rc7 documentation</title>
+  <title>API &mdash; Salmon v0.9.1rc8 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/autodoc_pydantic.css" type="text/css" />
@@ -123,7 +123,7 @@
 <span id="alg-api"></span><span id="id1"></span><h1>API<a class="headerlink" href="#api" title="Permalink to this headline"></a></h1>
 <section id="configuration">
 <h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline"></a></h2>
-<table class="longtable docutils align-default">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -135,7 +135,7 @@
 </tbody>
 </table>
 <p>This configuration has two optional components:</p>
-<table class="longtable docutils align-default">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -154,7 +154,7 @@
 <h2>Offline embeddings<a class="headerlink" href="#offline-embeddings" title="Permalink to this headline"></a></h2>
 <p>This class can be used to create embeddings from a set of downloaded responses
 from Salmon:</p>
-<table class="longtable docutils align-default">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -171,7 +171,7 @@ from Salmon:</p>
 <p>These classes are used to collect responses with Salmon. They can be configured
 using <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code> as mentioned in <a class="reference internal" href="samplers.html#alg-config"><span class="std std-ref">Sampler configuration</span></a>. They all conform to the
 following API:</p>
-<table class="longtable docutils align-default">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -189,7 +189,7 @@ uses <code class="docutils literal notranslate"><span class="pre">Sampler.run</s
 <p>Every class below inherits from <a class="reference internal" href="generated/salmon.backend.sampler.Sampler.html#salmon.backend.sampler.Sampler" title="salmon.backend.sampler.Sampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sampler</span></code></a>.</p>
 <section id="passive-algorithms">
 <h3>Passive Algorithms<a class="headerlink" href="#passive-algorithms" title="Permalink to this headline"></a></h3>
-<table class="longtable docutils align-default">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -210,7 +210,7 @@ uses <code class="docutils literal notranslate"><span class="pre">Sampler.run</s
 <section id="active-algorithms">
 <h3>Active Algorithms<a class="headerlink" href="#active-algorithms" title="Permalink to this headline"></a></h3>
 <p>Every active algorithm inherits from one class:</p>
-<table class="longtable docutils align-default">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -224,7 +224,7 @@ uses <code class="docutils literal notranslate"><span class="pre">Sampler.run</s
 <p>The class <a class="reference internal" href="generated/salmon.triplets.samplers.Adaptive.html#salmon.triplets.samplers.Adaptive" title="salmon.triplets.samplers.Adaptive"><code class="xref py py-class docutils literal notranslate"><span class="pre">Adaptive</span></code></a> runs the adaptive algorithm
 and depends on <a class="reference internal" href="generated/salmon.triplets.samplers.adaptive.Embedding.html#salmon.triplets.samplers.adaptive.Embedding" title="salmon.triplets.samplers.adaptive.Embedding"><code class="xref py py-class docutils literal notranslate"><span class="pre">Embedding</span></code></a> for
 optimization:</p>
-<table class="longtable docutils align-default">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -239,7 +239,7 @@ optimization:</p>
 optimizer.</p>
 <p>Then, all of these classes inherit from
 <a class="reference internal" href="generated/salmon.triplets.samplers.Adaptive.html#salmon.triplets.samplers.Adaptive" title="salmon.triplets.samplers.Adaptive"><code class="xref py py-class docutils literal notranslate"><span class="pre">Adaptive</span></code></a>:</p>
-<table class="longtable docutils align-default">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />

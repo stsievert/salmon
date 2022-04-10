@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Generating embeddings offline &mdash; Salmon v0.9.1rc7 documentation</title>
+  <title>Generating embeddings offline &mdash; Salmon v0.9.1rc8 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/autodoc_pydantic.css" type="text/css" />
@@ -112,6 +112,13 @@ clicking the link on the dashboard (as mentioned in <a class="reference internal
 </section>
 <section id="install-salmon">
 <h2>Install Salmon<a class="headerlink" href="#install-salmon" title="Permalink to this headline"></a></h2>
+<p>This section has two dependencies:</p>
+<ol class="arabic simple">
+<li><p>Git for the <code class="docutils literal notranslate"><span class="pre">git</span></code> command. <a class="reference external" href="https://git-scm.com/book/en/v2/Getting-Started-Installing-Git">Git-SCM</a> has a good installation guide.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">conda</span></code> package manager, available through Anaconda with their
+<a class="reference external" href="https://www.anaconda.com/products/distribution#Downloads">Anaconda Python Distribution</a> or their (much smaller) <a class="reference external" href="https://docs.conda.io/en/latest/miniconda.html">Miniconda</a>.</p></li>
+</ol>
+<p>To install Salmon, these commands should be run:</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/stsievert/salmon
 $ <span class="nb">cd</span> salmon
 $
@@ -124,10 +131,18 @@ $ conda activate salmon
 <span class="o">(</span>salmon<span class="o">)</span> $ pip install -e .
 </pre></div>
 </div>
+<p>These commands should be run in your favorite terminal. On macOS, that might
+be Terminal.app.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The commands above are (*nix) shell commands. The <code class="docutils literal notranslate"><span class="pre">$</span></code> is intended to
+be your terminal prompt; leave it out when copy and pasting into the
+terminal.</p>
+</div>
 </section>
 <section id="generate-embeddings">
 <h2>Generate embeddings<a class="headerlink" href="#generate-embeddings" title="Permalink to this headline"></a></h2>
-<p>This code will generate an embedding:</p>
+<p>This Python code will generate an embedding:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">salmon.triplets.offline</span> <span class="kn">import</span> <span class="n">OfflineEmbedding</span>
 
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;responses.csv&quot;</span><span class="p">)</span>  <span class="c1"># from dashboard</span>
@@ -139,7 +154,7 @@ $ conda activate salmon
 <span class="n">d</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># embed into 2 dimensions</span>
 
 <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">OfflineEmbedding</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="n">d</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">OfflineEmbedding</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="n">d</span><span class="p">,</span> <span class="n">max_epochs</span><span class="o">=</span><span class="mi">500_000</span><span class="p">)</span>
 <span class="n">model</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">embedding</span><span class="o">=</span><span class="n">em</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">())</span>
 
 <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">)</span>
@@ -149,7 +164,7 @@ $ conda activate salmon
 </pre></div>
 </div>
 <p>Some customization can be done with <code class="docutils literal notranslate"><span class="pre">model.history_</span></code>; it may not be necessary
-to train for 400,000 epochs. <code class="docutils literal notranslate"><span class="pre">model.history_</span></code> will include validation and
+to train for 500,000 epochs. <code class="docutils literal notranslate"><span class="pre">model.history_</span></code> will include validation and
 training scores, which might help limit the number of epochs.</p>
 <p>Documentation for <a class="reference internal" href="generated/salmon.triplets.offline.OfflineEmbedding.html#salmon.triplets.offline.OfflineEmbedding" title="salmon.triplets.offline.OfflineEmbedding"><code class="xref py py-class docutils literal notranslate"><span class="pre">OfflineEmbedding</span></code></a> is
 available on <a class="reference internal" href="api.html#api"><span class="std std-ref">API</span></a>.</p>
