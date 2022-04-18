@@ -37,12 +37,14 @@ def test_defaults():
             "css": "",
             "max_queries": 50,
             "arrow_keys": True,
+            "query_params": ["puid"],
         },
         "samplers": {"random": {"class": "Random"}},
         "sampling": {
             "common": {"d": 2},
             "probs": {"random": 100},
             "samplers_per_user": 0,
+            "details": {},
         },
     }
 
@@ -119,3 +121,66 @@ def test_probs_default():
     user_config = {"samplers": {"ARR": {}, "TSTE": {}}}
     c = Config().parse(user_config)
     assert c.sampling.probs == {"ARR": 50, "TSTE": 50}
+
+
+def test_sampling_details_no_sampler():
+    samplers = {"ARR": {}, "TSTE": {}}
+    details = {1: {"query": [1, 2, 3]}}
+    config = {"samplers": samplers, "sampling": {"details": details}}
+    with pytest.raises(
+        ValueError,
+        match="Specify the key `sampler` for each element of `sampling.details`",
+    ):
+        Config().parse(config)
+
+
+def test_sampling_details_extra_sampler():
+    samplers = {"ARR": {}, "TSTE": {}}
+    details = {1: {"sampler": "fakeARR", "query": [1, 2, 3]}}
+    config = {"samplers": samplers, "sampling": {"details": details}}
+    with pytest.raises(
+        ValueError,
+        match="Each sampler specified in sampling.details must be created in samplers",
+    ):
+        Config().parse(config)
+
+
+def test_sampling_details_bad_query_type():
+    samplers = {"ARR": {}, "TSTE": {}}
+    details = {1: {"sampler": "ARR", "query": {1: 2}}}
+    config = {"samplers": samplers, "sampling": {"details": details}}
+    with pytest.raises(
+        ValueError, match="Not all `query` keys in sampling.details are lists"
+    ):
+        Config().parse(config)
+
+
+def test_sampling_details_bad_lengths():
+    samplers = {"ARR": {}, "TSTE": {}}
+    details = {1: {"sampler": "ARR", "query": [1, 2, 3, 4]}}
+    config = {"samplers": samplers, "sampling": {"details": details}}
+    with pytest.raises(
+        ValueError, match="Not all `query` keys in sampling.details have length 3"
+    ):
+        Config().parse(config)
+
+
+def test_sampling_details_query_too_large():
+    samplers = {"ARR": {}, "TSTE": {}}
+    details = {1: {"sampler": "ARR", "query": [1, 2, 3, 4]}}
+    config = {"samplers": samplers, "sampling": {"details": details}}
+    with pytest.raises(
+        ValueError, match="Not all `query` keys in sampling.details have length 3"
+    ):
+        Config().parse(config)
+
+
+def test_sampling_details_query_too_large():
+    samplers = {"ARR": {}, "TSTE": {}}
+    details = {1: {"sampler": "ARR", "query": [10, 9, 8]}}
+    config = {"targets": 10, "samplers": samplers, "sampling": {"details": details}}
+    with pytest.raises(
+        ValueError,
+        match="Some target indices in the for sampling.details.query are too large.*\n\n.*0-based indexing",
+    ):
+        Config().parse(config)

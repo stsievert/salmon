@@ -7,6 +7,7 @@ html:
   max_queries: 50
   skip_button: false
   title: "Similarity judgements"
+  query_params: ['puid']
 samplers:
   random:
     class: Random
@@ -16,4 +17,5 @@ sampling:
   probs:
     random: 100
   samplers_per_user: 0
+  details: {}
 targets: ["actually", "required", "with", "zip", "or", "yaml"]

@@ -27,18 +27,30 @@ There are two options to install Salmon for offline embeddings.
 
 Option 1: Using pip
 ^^^^^^^^^^^^^^^^^^^
-This option is recommended to generate embeddings offline.
-This option requires ``pip``, a Python package manager. It's available through
-`Anaconda`_ and `Miniconda`_.
+
+This option is recommended to generate embeddings offline.  This option
+requires ``pip``, a Python package manager. It's available through `Anaconda`_
+and `Miniconda`_.
 
 
-1. Run the command ``pip install salmon``.
+1. Run the command ``pip install salmon-triplets``.
+2. Run the command below in Python to verify that the installation worked successfully:
+
+.. code-block:: python
+
+   import salmon.triplets.offline
+
+.. note::
+
+   This package installs a Python package named ``salmon`` despite being
+   named "salmon-triplets" on PyPI.
 
 Option 2: Using conda
 ^^^^^^^^^^^^^^^^^^^^^
-This option is required for a complete installation.
-This option requires ``conda``, a Anaconda's Python package manager. It's
-available through `Anaconda`_ and `Miniconda`_.
+
+This option is required for a complete installation.  This option requires
+``conda``, a Anaconda's Python package manager. It's available through
+`Anaconda`_ and `Miniconda`_.
 
 1. Download `the latest release of Salmon`_, and unpack the `.zip` or `.tar.gz`
    file.
@@ -46,6 +58,10 @@ available through `Anaconda`_ and `Miniconda`_.
 
 .. code-block:: shell
 
+   $ # download salmon-X.Y.Z.zip into ~/Downloads
+   $ # unzip/untar into directory `salmon`
+   $ # then navigate there in your shell/Terminal
+   $ cd ~/Downloads/salmon
    $ conda env create -f salmon.yml
    $ conda activate salmon
    (salmon) $ pip install .
@@ -54,10 +70,19 @@ available through `Anaconda`_ and `Miniconda`_.
 .. _Anaconda: https://www.anaconda.com/products/distribution#Downloads
 .. _Miniconda: https://docs.conda.io/en/latest/miniconda.html
 
+These commands should be run in your favorite terminal. On macOS, that might
+be Terminal.app.
+
+.. note::
+
+   The commands above are (\*nix) shell commands. The ``$`` is intended to
+   be your terminal prompt; leave it out when copy and pasting into the
+   terminal.
+
 Generate embeddings
 -------------------
 
-This code will generate an embedding:
+This Python code will generate an embedding:
 
 .. code-block:: python
 
@@ -72,7 +97,7 @@ This code will generate an embedding:
    d = 2  # embed into 2 dimensions
 
    X_train, X_test = train_test_split(X, random_state=42, test_size=0.2)
-   model = OfflineEmbedding(n=n, d=d)
+   model = OfflineEmbedding(n=n, d=d, max_epochs=500_000)
    model.initialize(X_train, embedding=em.to_numpy())
 
    model.fit(X_train, X_test)
@@ -81,7 +106,7 @@ This code will generate an embedding:
    model.history_  # to view information on how well train/test performed
 
 Some customization can be done with ``model.history_``; it may not be necessary
-to train for 400,000 epochs. ``model.history_`` will include validation and
+to train for 500,000 epochs. ``model.history_`` will include validation and
 training scores, which might help limit the number of epochs.
 
 Documentation for :class:`~salmon.triplets.offline.OfflineEmbedding` is

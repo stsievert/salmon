@@ -64,7 +64,7 @@ class Validation(RoundRobin):
         self._val_queries = queries
         super().__init__(n=n, d=d, ident=ident)
 
-    def get_query(self):
+    def get_query(self, **kwargs):
         idx = self.counter % len(self._val_queries)
         if idx == 0:
             random.shuffle(self._val_queries)

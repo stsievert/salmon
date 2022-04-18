@@ -1,6 +1,9 @@
 creds.yaml
 __MACOSX
 dask-worker-space
+salmon/_out/dump*rdb
+salmon/_out/*.csv
+creds-*.json
 salmon/out/dump*rdb
 salmon/out/*.csv
 salmon/_out
