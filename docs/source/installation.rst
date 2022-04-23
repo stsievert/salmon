@@ -29,7 +29,8 @@ Experimentalist
       sampling).
     * ``t3.xlarge`` is recommended for adaptive algorithms (e.g., ARR; see the
       :ref:`benchmarks on adaptive algorithm <experiments>` for more detail).
-    * (note: https://ec2instances.info/ is a great resource to check costs)
+    * Note: https://ec2instances.info/ is a great resource to check costs.
+      As of April 2022, ``t3.large`` and ``t3.xlarge`` cost about $2/day and $4/day respectively.
 
 7. Don't click the big blue button yet. Continue to the rules page, and add
    these rules:
@@ -38,7 +39,7 @@ Experimentalist
       :width: 80%
       :align: center
 
-8. Now, click the big blue button! (The AMI will take between 15 and 30 minutes to initialize)
+8. Now, click the big blue button! The AMI will probably take around 15 to initialize (but may take up to 30 minutes).
 9. Keep your "key pair" in a safe place. The key pair typically has a ``.pem``
    extension.
 
