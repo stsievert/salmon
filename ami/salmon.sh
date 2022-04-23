@@ -1,6 +1,6 @@
 # if $DIRECTORY does not exist...
 # (which happens when machine is launching for first time)
-if [ ! -d "/home/ubuntu/salmon/_depsinstalled" ]
+if [ ! -d "/home/ubuntu/salmon" ]
 then
     # Install a working copy of Salmon. This copy on this machine will not be updated
     # (if they want an update, they can start a new machine)
@@ -9,7 +9,10 @@ then
     git fetch --tags # Get new tags from remote
     latestTag=$(git describe --tags `git rev-list --tags --max-count=1`) # Get latest tag name
     git checkout $latestTag # Checkout latest tag
+fi
 
+if [ ! -f "/home/ubuntu/salmon/_deps_installed" ]
+then
     cd /home/ubuntu/salmon/ami
     sudo cp salmon.service /lib/systemd/system/
     sudo chmod u+x salmon.sh
@@ -36,7 +39,7 @@ then
     sudo chmod +x /usr/local/bin/docker-compose
 
     cd /home/ubuntu/salmon && sudo docker-compose build
-    touch /home/ubuntu/salmon/_depsinstalled
+    touch /home/ubuntu/salmon/_deps_installed
 fi
 
 sudo sh -c "bash /home/ubuntu/salmon/ami/host.sh"

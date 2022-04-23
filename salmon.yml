@@ -21,6 +21,7 @@ dependencies:
   - ipykernel  # to run this environ in jupyter (required for viz)
   - nb_conda_kernels
   - altair
+  - bokeh==2.0.1  # because templates/dashboard.html requires this version
   - pip:
     - seaborn
     - fastapi[all]
@@ -31,7 +32,6 @@ dependencies:
     - pyarrow
     - fastparquet
     - dask-ml
-    - bokeh==2.0.1  # because templates/dashboard.html requires this version
     - cloudpickle
     - jinja2
     - redis==3.5.*  # https://github.com/RedisJSON/redisjson-py/issues/67
