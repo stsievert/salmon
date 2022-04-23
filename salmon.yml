@@ -3,7 +3,6 @@ channels:
   - conda-forge
   - defaults
   - pytorch
-  - anaconda
 dependencies:
   - python==3.8.*
   - pip
@@ -18,8 +17,6 @@ dependencies:
   - python-blosc
   - cytoolz
   - ujson
-  - pytorch
-  - cpuonly
   - pyyaml
   - ipykernel  # to run this environ in jupyter (required for viz)
   - nb_conda_kernels
@@ -48,3 +45,4 @@ dependencies:
     - pytest
     - jupyter-server-proxy  # to view Dask dashboard
     - autodoc_pydantic  # to show config docs
+    - torch --extra-index-url https://download.pytorch.org/whl/cpu
