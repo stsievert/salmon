@@ -2,7 +2,7 @@ name: salmon
 channels:
   - conda-forge
   - defaults
-  - pytorch
+  - anaconda
 dependencies:
   - python==3.8.*
   - pip
