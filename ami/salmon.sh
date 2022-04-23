@@ -42,10 +42,14 @@ sudo sh -c "bash /home/ubuntu/salmon/ami/host.sh"
 cd /home/ubuntu/salmon && sudo docker-compose up
 
 # Instructions for deploying to EC2: https://askubuntu.com/questions/919054/how-do-i-run-a-single-command-at-startup-using-systemd
+
+## Initialize service
 # sudo cp salmon.service /lib/systemd/system/
 # sudo chmod u+x salmon.sh
-# sudo systemctl start salmon
 # sudo systemctl enable salmon
+#
+## Start service
+# sudo systemctl start salmon
 #
 ## View logs with
 # systemctl -l status salmon --lines 2000
