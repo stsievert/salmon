@@ -21,7 +21,7 @@ Experimentalist
 2. Select the "Oregon" region (or ``us-west-2``) in the upper right.
 3. Go to Amazon EC2.
 4. Launch a new instance (the big blue button or square orange button).
-5. Select AMI ``ami-0e3134e3437ec5b85`` titled "Salmon". It appears in
+5. Select AMI ``ami-029c9e0a2503bbd5d`` titled "Salmon". It appears in
    Community AMIs after searching "Salmon".
 6. Select an appropriate instance type.
 
@@ -29,7 +29,8 @@ Experimentalist
       sampling).
     * ``t3.xlarge`` is recommended for adaptive algorithms (e.g., ARR; see the
       :ref:`benchmarks on adaptive algorithm <experiments>` for more detail).
-    * (note: https://ec2instances.info/ is a great resource to check costs)
+    * Note: https://ec2instances.info/ is a great resource to check costs.
+      As of April 2022, ``t3.large`` and ``t3.xlarge`` cost about $2/day and $4/day respectively.
 
 7. Don't click the big blue button yet. Continue to the rules page, and add
    these rules:
@@ -38,7 +39,7 @@ Experimentalist
       :width: 80%
       :align: center
 
-8. Now, click the big blue button! (The AMI will take between 15 and 30 minutes to initialize)
+8. Now, click the big blue button! The AMI will probably take around 15 to initialize (but may take up to 30 minutes).
 9. Keep your "key pair" in a safe place. The key pair typically has a ``.pem``
    extension.
 

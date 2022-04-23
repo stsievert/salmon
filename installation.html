@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Installation &mdash; Salmon v0.10.0rc5 documentation</title>
+  <title>Installation &mdash; Salmon v0.10.0rc6 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/autodoc_pydantic.css" type="text/css" />
@@ -114,7 +114,7 @@ of the processes below.</p>
 <li><p>Select the “Oregon” region (or <code class="docutils literal notranslate"><span class="pre">us-west-2</span></code>) in the upper right.</p></li>
 <li><p>Go to Amazon EC2.</p></li>
 <li><p>Launch a new instance (the big blue button or square orange button).</p></li>
-<li><p>Select AMI <code class="docutils literal notranslate"><span class="pre">ami-0e3134e3437ec5b85</span></code> titled “Salmon”. It appears in
+<li><p>Select AMI <code class="docutils literal notranslate"><span class="pre">ami-029c9e0a2503bbd5d</span></code> titled “Salmon”. It appears in
 Community AMIs after searching “Salmon”.</p></li>
 <li><p>Select an appropriate instance type.</p>
 <blockquote>
@@ -123,7 +123,8 @@ Community AMIs after searching “Salmon”.</p></li>
 sampling).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">t3.xlarge</span></code> is recommended for adaptive algorithms (e.g., ARR; see the
 <a class="reference internal" href="benchmarks/active.html#experiments"><span class="std std-ref">benchmarks on adaptive algorithm</span></a> for more detail).</p></li>
-<li><p>(note: <a class="reference external" href="https://ec2instances.info/">https://ec2instances.info/</a> is a great resource to check costs)</p></li>
+<li><p>Note: <a class="reference external" href="https://ec2instances.info/">https://ec2instances.info/</a> is a great resource to check costs.
+As of April 2022, <code class="docutils literal notranslate"><span class="pre">t3.large</span></code> and <code class="docutils literal notranslate"><span class="pre">t3.xlarge</span></code> cost about $2/day and $4/day respectively.</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -131,7 +132,7 @@ sampling).</p></li>
 these rules:</p>
 <a class="reference internal image-reference" href="_images/networking-rule.png"><img alt="_images/networking-rule.png" class="align-center" src="_images/networking-rule.png" style="width: 80%;" /></a>
 </li>
-<li><p>Now, click the big blue button! (The AMI will take between 15 and 30 minutes to initialize)</p></li>
+<li><p>Now, click the big blue button! The AMI will probably take around 15 to initialize (but may take up to 30 minutes).</p></li>
 <li><p>Keep your “key pair” in a safe place. The key pair typically has a <code class="docutils literal notranslate"><span class="pre">.pem</span></code>
 extension.</p></li>
 </ol>

@@ -27,9 +27,10 @@ There are two options to install Salmon for offline embeddings.
 
 Option 1: Using pip
 ^^^^^^^^^^^^^^^^^^^
-This option is recommended to generate embeddings offline.
-This option requires ``pip``, a Python package manager. It's available through
-`Anaconda`_ and `Miniconda`_.
+
+This option is recommended to generate embeddings offline.  This option
+requires ``pip``, a Python package manager. It's available through `Anaconda`_
+and `Miniconda`_.
 
 
 1. Run the command ``pip install salmon-triplets``.
@@ -46,9 +47,10 @@ This option requires ``pip``, a Python package manager. It's available through
 
 Option 2: Using conda
 ^^^^^^^^^^^^^^^^^^^^^
-This option is required for a complete installation.
-This option requires ``conda``, a Anaconda's Python package manager. It's
-available through `Anaconda`_ and `Miniconda`_.
+
+This option is required for a complete installation.  This option requires
+``conda``, a Anaconda's Python package manager. It's available through
+`Anaconda`_ and `Miniconda`_.
 
 1. Download `the latest release of Salmon`_, and unpack the `.zip` or `.tar.gz`
    file.
@@ -56,6 +58,10 @@ available through `Anaconda`_ and `Miniconda`_.
 
 .. code-block:: shell
 
+   $ # download salmon-X.Y.Z.zip into ~/Downloads
+   $ # unzip/untar into directory `salmon`
+   $ # then navigate there in your shell/Terminal
+   $ cd ~/Downloads/salmon
    $ conda env create -f salmon.yml
    $ conda activate salmon
    (salmon) $ pip install .

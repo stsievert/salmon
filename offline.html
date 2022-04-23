@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Generating embeddings offline &mdash; Salmon v0.10.0rc5 documentation</title>
+  <title>Generating embeddings offline &mdash; Salmon v0.10.0rc6 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/autodoc_pydantic.css" type="text/css" />
@@ -119,9 +119,9 @@ clicking the link on the dashboard (as mentioned in <a class="reference internal
 <p>There are two options to install Salmon for offline embeddings.</p>
 <section id="option-1-using-pip">
 <h3>Option 1: Using pip<a class="headerlink" href="#option-1-using-pip" title="Permalink to this headline"></a></h3>
-<p>This option is recommended to generate embeddings offline.
-This option requires <code class="docutils literal notranslate"><span class="pre">pip</span></code>, a Python package manager. It’s available through
-<a class="reference external" href="https://www.anaconda.com/products/distribution#Downloads">Anaconda</a> and <a class="reference external" href="https://docs.conda.io/en/latest/miniconda.html">Miniconda</a>.</p>
+<p>This option is recommended to generate embeddings offline.  This option
+requires <code class="docutils literal notranslate"><span class="pre">pip</span></code>, a Python package manager. It’s available through <a class="reference external" href="https://www.anaconda.com/products/distribution#Downloads">Anaconda</a>
+and <a class="reference external" href="https://docs.conda.io/en/latest/miniconda.html">Miniconda</a>.</p>
 <ol class="arabic simple">
 <li><p>Run the command <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">salmon-triplets</span></code>.</p></li>
 <li><p>Run the command below in Python to verify that the installation worked successfully:</p></li>
@@ -137,15 +137,19 @@ named “salmon-triplets” on PyPI.</p>
 </section>
 <section id="option-2-using-conda">
 <h3>Option 2: Using conda<a class="headerlink" href="#option-2-using-conda" title="Permalink to this headline"></a></h3>
-<p>This option is required for a complete installation.
-This option requires <code class="docutils literal notranslate"><span class="pre">conda</span></code>, a Anaconda’s Python package manager. It’s
-available through <a class="reference external" href="https://www.anaconda.com/products/distribution#Downloads">Anaconda</a> and <a class="reference external" href="https://docs.conda.io/en/latest/miniconda.html">Miniconda</a>.</p>
+<p>This option is required for a complete installation.  This option requires
+<code class="docutils literal notranslate"><span class="pre">conda</span></code>, a Anaconda’s Python package manager. It’s available through
+<a class="reference external" href="https://www.anaconda.com/products/distribution#Downloads">Anaconda</a> and <a class="reference external" href="https://docs.conda.io/en/latest/miniconda.html">Miniconda</a>.</p>
 <ol class="arabic simple">
 <li><p>Download <a class="reference external" href="https://github.com/stsievert/salmon/releases/latest">the latest release of Salmon</a>, and unpack the <cite>.zip</cite> or <cite>.tar.gz</cite>
 file.</p></li>
 <li><p>Navigate to the directory in the shell/terminal and run these commands:</p></li>
 </ol>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ conda env create -f salmon.yml
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ <span class="c1"># download salmon-X.Y.Z.zip into ~/Downloads</span>
+$ <span class="c1"># unzip/untar into directory `salmon`</span>
+$ <span class="c1"># then navigate there in your shell/Terminal</span>
+$ <span class="nb">cd</span> ~/Downloads/salmon
+$ conda env create -f salmon.yml
 $ conda activate salmon
 <span class="o">(</span>salmon<span class="o">)</span> $ pip install .
 </pre></div>
