@@ -21,7 +21,7 @@ Experimentalist
 2. Select the "Oregon" region (or ``us-west-2``) in the upper right.
 3. Go to Amazon EC2.
 4. Launch a new instance (the big blue button or square orange button).
-5. Select AMI ``ami-0e3134e3437ec5b85`` titled "Salmon". It appears in
+5. Select AMI ``ami-029c9e0a2503bbd5d`` titled "Salmon". It appears in
    Community AMIs after searching "Salmon".
 6. Select an appropriate instance type.
 
