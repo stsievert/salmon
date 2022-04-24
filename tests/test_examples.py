@@ -30,7 +30,7 @@ def test_defaults_config(server):
     r = server.post("/init_exp", data={"exp": {"targets": targets}})
     assert r.status_code == 200
     defaults = server.get("/config").json()
-    rendered = yaml.load((EG_DIR / "default.yaml").open())
+    rendered = yaml.safe_load((EG_DIR / "default.yaml").read_text())
     assert defaults == rendered
 
 
