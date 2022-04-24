@@ -93,6 +93,12 @@ To start using Salmon, these endpoints will be available:
    logs when contacting the Salmon developers. They'd also appreciate it if
    you left the machine running.
 
+.. note::
+
+   The storage required for Salmon is 128GB. According to `Amazon's EBS
+   pricing`_, that costs about $10/month (in April 2022).
+
+.. _Amazon's EBS pricing: https://aws.amazon.com/ebs/pricing/
 
 .. _list of Salmon releases: https://github.com/stsievert/salmon/releases
 
