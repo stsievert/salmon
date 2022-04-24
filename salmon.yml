@@ -11,8 +11,8 @@ dependencies:
   - pandas>=1.0.1
   - Cython
   - scikit-learn
-  - dask>=2021.02.0
-  - distributed>=2021.02.0
+  - dask>=2022.04.0
+  - distributed>=2022.04.0
   - lz4
   - python-blosc
   - cytoolz
