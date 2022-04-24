@@ -11,8 +11,9 @@ dependencies:
   - pandas>=1.0.1
   - Cython
   - scikit-learn
-  - dask>=2022.04.0
-  - distributed>=2022.04.0
+  - dask>=2021.02.0
+  - distributed>=2021.02.0
+  - click >= 6.6, <= 8.0.4  # https://github.com/dask/distributed/pull/6014
   - lz4
   - python-blosc
   - cytoolz
