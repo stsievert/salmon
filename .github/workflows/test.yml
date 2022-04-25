@@ -1,4 +1,4 @@
-name: Tests (complete)
+name: Tests (complete w/ conda)
 
 on:
   push:

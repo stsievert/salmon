@@ -25,6 +25,7 @@ sudo sh -c "echo 'vm.swappiness=10' >> /etc/sysctl.conf "
 
 # From https://stackoverflow.com/questions/44800633/how-to-disable-transparent-huge-pages-thp-in-ubuntu-16-04lts
 sudo echo "    Making sure THP is disabled..."
+sudo apt update
 sudo apt install -y hugepages
 sudo hugeadm --thp-never
 sudo /bin/sed -i '$i /usr/bin/hugeadm --thp-never' /etc/rc.local
