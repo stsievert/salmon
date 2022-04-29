@@ -21,8 +21,11 @@ Experimentalist
 2. Select the "Oregon" region (or ``us-west-2``) in the upper right.
 3. Go to Amazon EC2.
 4. Launch a new instance (the big blue button or square orange button).
-5. Select AMI ``ami-029c9e0a2503bbd5d`` titled "Salmon". It appears in
-   Community AMIs after searching "Salmon".
+5. Select AMI ``ami-07d9e17b8dea4da43`` titled "Salmon".
+
+    * Note: the AMI appears in Community AMIs after searching "Salmon"
+      (only in the Oregon/``us-west-2`` region!).
+
 6. Select an appropriate instance type.
 
     * ``t3.large`` is recommended for passive algorithms (i.e, random
