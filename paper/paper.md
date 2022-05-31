@@ -1,5 +1,5 @@
 ---
-title: 'Efficient Crowdsourcing for Relative Similarity Judgments'
+title: 'Efficiently Collecting Relative Similarity Judgments from Humans'
 tags:
   - crowdsourcing
   - active machine learning
