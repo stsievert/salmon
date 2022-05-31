@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Installation &mdash; Salmon v0.10.0rc9 documentation</title>
+  <title>Installation &mdash; Salmon v1.0.0rc1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/autodoc_pydantic.css" type="text/css" />
@@ -16,6 +16,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -98,7 +99,7 @@
            <div itemprop="articleBody">
              
   <section id="installation">
-<span id="id1"></span><h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline"></a></h1>
+<span id="id1"></span><h1>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h1>
 <p>This pages details how to get Salmon running, either on EC2 or locally on your
 machine. After you get Salmon running, detail on how to launch experiments in
 <a class="reference internal" href="getting-started.html#getting-started"><span class="std std-ref">Getting started</span></a>.</p>
@@ -108,7 +109,7 @@ machine. After you get Salmon running, detail on how to launch experiments in
 of the processes below.</p>
 </div>
 <section id="experimentalist">
-<h2>Experimentalist<a class="headerlink" href="#experimentalist" title="Permalink to this headline"></a></h2>
+<h2>Experimentalist<a class="headerlink" href="#experimentalist" title="Permalink to this heading"></a></h2>
 <ol class="arabic">
 <li><p>Sign into Amazon AWS (<a class="reference external" href="http://aws.amazon.com/">http://aws.amazon.com/</a>)</p></li>
 <li><p>Select the “Oregon” region (or <code class="docutils literal notranslate"><span class="pre">us-west-2</span></code>) in the upper right.</p></li>
@@ -134,20 +135,36 @@ As of April 2022, <code class="docutils literal notranslate"><span class="pre">t
 </ul>
 </div></blockquote>
 </li>
-<li><p>Don’t click the big blue button yet. Continue to the rules page, and add
-these rules:</p>
-<a class="reference internal image-reference" href="_images/networking-rule.png"><img alt="_images/networking-rule.png" class="align-center" src="_images/networking-rule.png" style="width: 80%;" /></a>
-</li>
-<li><p>Now, click the big blue button! The AMI will probably take around 15 to initialize (but may take up to 30 minutes).</p></li>
-<li><p>Keep your “key pair” in a safe place. The key pair typically has a <code class="docutils literal notranslate"><span class="pre">.pem</span></code>
-extension.</p></li>
-</ol>
-<div class="admonition warning">
+<li><p>Create a key pair.</p>
+<blockquote>
+<div><div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p><strong>Don’t lose your key pair!</strong>
-Without the key pair, the Salmon developers will be severely limited in the
-help they can provide.</p>
+Without the key pair, the Salmon developers will be severely
+limited in the help they can provide.</p>
 </div>
+</div></blockquote>
+</li>
+<li><p>Don’t click the big orange button yet. Continue to the rules page, and add
+these rules:</p>
+<blockquote>
+<div><ol class="arabic">
+<li><p>In the networking interface box, check the HTTP and HTTP boxes
+and select the “edit” button:</p>
+<a class="reference internal image-reference" href="_images/network-http-rules.png"><img alt="_images/network-http-rules.png" class="align-center" src="_images/network-http-rules.png" style="width: 80%;" /></a>
+</li>
+<li><p>After hitting “edit”, scroll down to “add security group rule”
+and open port 8421 to <code class="docutils literal notranslate"><span class="pre">0.0.0.0/0</span></code> (aka anyone).</p>
+<a class="reference internal image-reference" href="_images/network-rule.png"><img alt="_images/network-rule.png" class="align-center" src="_images/network-rule.png" style="width: 80%;" /></a>
+</li>
+</ol>
+</div></blockquote>
+</li>
+<li><p>Now, click the big orange button! The AMI will probably take around
+15 to initialize (but may take up to 30 minutes).</p></li>
+<li><p>Keep your “key pair” in a safe place. The key pair typically has a
+<code class="docutils literal notranslate"><span class="pre">.pem</span></code> extension.</p></li>
+</ol>
 <p>The AMI initialization is done (which takes about 15 minutes), Salmon will be
 available at <code class="docutils literal notranslate"><span class="pre">http://[url]:8421</span></code>. For example, <code class="docutils literal notranslate"><span class="pre">[url]</span></code> might be the Amazon
 public DNS or public IP.</p>
@@ -199,7 +216,7 @@ pricing</a>, that costs about $10/month (in April 2022).</p>
 </div>
 </section>
 <section id="local-machine">
-<span id="local-install"></span><h2>Local machine<a class="headerlink" href="#local-machine" title="Permalink to this headline"></a></h2>
+<span id="local-install"></span><h2>Local machine<a class="headerlink" href="#local-machine" title="Permalink to this heading"></a></h2>
 <p>This process is meant for developers. To launch, first download the code.  It’s
 possible to download <a class="reference external" href="https://github.com/stsievert/salmon/archive/refs/heads/master.zip">a ZIP file of Salmon’s source</a>, or if Git is installed,
 to run this command:</p>
@@ -228,7 +245,7 @@ but it will reduce the number of times required to run <code class="docutils lit
 not require a username/password.</p>
 </section>
 <section id="troubleshooting">
-<span id="id2"></span><h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline"></a></h2>
+<span id="id2"></span><h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this heading"></a></h2>
 <p>See <a class="reference internal" href="faq.html#faq"><span class="std std-ref">FAQ</span></a> for more general questions.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -239,19 +256,19 @@ version number should look something like <code class="docutils literal notransl
 <code class="docutils literal notranslate"><span class="pre">exp-2021-05-20T07:31-salmon-v0.4.1.rdb</span></code>).</p>
 </div>
 <section id="i-can-t-access-salmon-s-url">
-<h3>I can’t access Salmon’s URL<a class="headerlink" href="#i-can-t-access-salmon-s-url" title="Permalink to this headline"></a></h3>
+<h3>I can’t access Salmon’s URL<a class="headerlink" href="#i-can-t-access-salmon-s-url" title="Permalink to this heading"></a></h3>
 <p>Try using <code class="docutils literal notranslate"><span class="pre">http://</span></code> instead of <code class="docutils literal notranslate"><span class="pre">https://</span></code>.  By default, EC2 does not
 support HTTPS, and some browsers use HTTPS automatically.</p>
 </section>
 <section id="i-can-t-find-salmon-s-ami">
-<h3>I can’t find Salmon’s AMI<a class="headerlink" href="#i-can-t-find-salmon-s-ami" title="Permalink to this headline"></a></h3>
+<h3>I can’t find Salmon’s AMI<a class="headerlink" href="#i-can-t-find-salmon-s-ami" title="Permalink to this heading"></a></h3>
 <p>Are you in EC2’s Oregon region, <code class="docutils literal notranslate"><span class="pre">us-west-2</span></code>? That can be changed in the upper
 right of the Amazon EC2 interface.</p>
 <p>The Salmon AMI has been created in the <code class="docutils literal notranslate"><span class="pre">us-west-2</span></code> region, and EC2 AMIs are
 only available in the regions they’re created in.</p>
 </section>
 <section id="restoring-from-a-backup-didn-t-work">
-<span id="restorefrombackupfaq"></span><h3>Restoring from a backup didn’t work<a class="headerlink" href="#restoring-from-a-backup-didn-t-work" title="Permalink to this headline"></a></h3>
+<span id="restorefrombackupfaq"></span><h3>Restoring from a backup didn’t work<a class="headerlink" href="#restoring-from-a-backup-didn-t-work" title="Permalink to this heading"></a></h3>
 <p>That’s perhaps expected depending on how much Salmon has changed. Launching
 from EC2 always downloads the latest version of Salmon, which may not work with
 your backup file.</p>
@@ -295,7 +312,7 @@ $ <span class="c1"># visit http://[ur]:8421/dashboard</span>
 changes are made, which should be encoded in the release notes.</p>
 </section>
 <section id="the-docker-machines-aren-t-launching">
-<h3>The Docker machines aren’t launching<a class="headerlink" href="#the-docker-machines-aren-t-launching" title="Permalink to this headline"></a></h3>
+<h3>The Docker machines aren’t launching<a class="headerlink" href="#the-docker-machines-aren-t-launching" title="Permalink to this heading"></a></h3>
 <p>Are you using the command <code class="docutils literal notranslate"><span class="pre">docker-compose</span> <span class="pre">up</span></code> to launch Salmon? The command
 <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">build</span> <span class="pre">.</span></code> doesn’t work.</p>
 <p>Salmon requires a Redis docker machine and certain directories/ports being

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Active sampling &mdash; Salmon v0.10.0rc9 documentation</title>
+  <title>Active sampling &mdash; Salmon v1.0.0rc1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/autodoc_pydantic.css" type="text/css" />
@@ -16,6 +16,7 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
         <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
@@ -100,7 +101,7 @@
            <div itemprop="articleBody">
              
   <section id="active-sampling">
-<span id="experiments"></span><h1>Active sampling<a class="headerlink" href="#active-sampling" title="Permalink to this headline"></a></h1>
+<span id="experiments"></span><h1>Active sampling<a class="headerlink" href="#active-sampling" title="Permalink to this heading"></a></h1>
 <p>Experimentalists often ask <strong>“how many responses should I collect with
 Mechanical Turk?”</strong> It’d be nice to obtain high quality embeddings with few
 human responses, both to reduce expenses and to ask informative questions for
@@ -139,7 +140,7 @@ quality scales like <span class="math notranslate nohighlight">\(nd\log_2(n)\)</
 For more detail, see the FAQ “<a class="reference internal" href="../faq.html#faq-n-responses"><span class="std std-ref">How many responses will be needed?</span></a>.”</p>
 </div>
 <section id="setup">
-<h2>Setup<a class="headerlink" href="#setup" title="Permalink to this headline"></a></h2>
+<h2>Setup<a class="headerlink" href="#setup" title="Permalink to this heading"></a></h2>
 <p>To illustrate the difference between random and active sampling, let’s run some
 experiments with the “alien eggs” dataset.  For <span class="math notranslate nohighlight">\(n=30\)</span> objects, that
 dataset looks like the following:</p>
@@ -176,7 +177,7 @@ For complete details, see <a class="reference external" href="https://github.com
 </div>
 </section>
 <section id="baseline">
-<span id="exp-baseline"></span><h2>Baseline<a class="headerlink" href="#baseline" title="Permalink to this headline"></a></h2>
+<span id="exp-baseline"></span><h2>Baseline<a class="headerlink" href="#baseline" title="Permalink to this heading"></a></h2>
 <p>First, let’s run a basic experiment, one that will very closely mirror prior
 work: <a class="footnote-reference brackets" href="#id16" id="id8">2</a> let’s take the <span class="math notranslate nohighlight">\(n= 30\)</span> objects above and embed them into
 <span class="math notranslate nohighlight">\(d=2\)</span> dimensions. To mirror their setup, let’s develop a noise model from
@@ -188,7 +189,7 @@ responses are required to reach a particular accuracy:</p>
 “nearest neighbor accuracy” as “is the true nearest neighbor one of the three
 closest objects?” <a class="footnote-reference brackets" href="#id16" id="id9">2</a> (the reason for the <code class="docutils literal notranslate"><span class="pre">*</span></code> in the title). <a class="footnote-reference brackets" href="#accuracy" id="id10">7</a></p>
 <section id="embedding-quality">
-<h3>Embedding quality<a class="headerlink" href="#embedding-quality" title="Permalink to this headline"></a></h3>
+<h3>Embedding quality<a class="headerlink" href="#embedding-quality" title="Permalink to this heading"></a></h3>
 <p>Experimentalist often cares about the underlying structure more than the
 accuracy. To start, let’s assume that there’s no clear relationship between
 items. Then, this visualization is most appropriate for the embeddings of
@@ -206,7 +207,7 @@ the embedding is rotated, or how the axes are scaled.</p>
 </section>
 </section>
 <section id="number-of-targets">
-<h2>Number of targets<a class="headerlink" href="#number-of-targets" title="Permalink to this headline"></a></h2>
+<h2>Number of targets<a class="headerlink" href="#number-of-targets" title="Permalink to this heading"></a></h2>
 <p>Users of Salmon frequently have a variable number of target items. For example,
 they might be asking about colors – a continuous space, so they can easily
 change the “number of targets.” So, <strong>how does the number of targets influence
@@ -224,7 +225,7 @@ plots.</span><a class="headerlink" href="#id20" title="Permalink to this image">
 </figcaption>
 </figure>
 <section id="id11">
-<h3>Embedding quality<a class="headerlink" href="#id11" title="Permalink to this headline"></a></h3>
+<h3>Embedding quality<a class="headerlink" href="#id11" title="Permalink to this heading"></a></h3>
 <p>Here’s the underlying embeddings for <span class="math notranslate nohighlight">\(n = 180\)</span> for various accuracy
 levels on <em>simulated</em> human responses:</p>
 <a class="reference internal image-reference" href="../_images/embeddings-n=180.svg"><img alt="../_images/embeddings-n=180.svg" class="align-center" src="../_images/embeddings-n=180.svg" width="100%" /></a>
@@ -250,7 +251,7 @@ high quality embedding in this simulation.</p>
 </section>
 </section>
 <section id="response-rate">
-<h2>Response rate<a class="headerlink" href="#response-rate" title="Permalink to this headline"></a></h2>
+<h2>Response rate<a class="headerlink" href="#response-rate" title="Permalink to this heading"></a></h2>
 <p>One detail has been swept under the rug: the rate at which Salmon received
 responses. There would be no gain from adaptive algorithms if all 10,000
 responses were received in 1 second. In fact, the response rate above is

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>API &mdash; Salmon v0.10.0rc9 documentation</title>
+  <title>API &mdash; Salmon v1.0.0rc1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/autodoc_pydantic.css" type="text/css" />
@@ -16,6 +16,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -120,9 +121,9 @@
            <div itemprop="articleBody">
              
   <section id="api">
-<span id="alg-api"></span><span id="id1"></span><h1>API<a class="headerlink" href="#api" title="Permalink to this headline"></a></h1>
+<span id="alg-api"></span><span id="id1"></span><h1>API<a class="headerlink" href="#api" title="Permalink to this heading"></a></h1>
 <section id="configuration">
-<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline"></a></h2>
+<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this heading"></a></h2>
 <table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -151,7 +152,7 @@
 </table>
 </section>
 <section id="offline-embeddings">
-<h2>Offline embeddings<a class="headerlink" href="#offline-embeddings" title="Permalink to this headline"></a></h2>
+<h2>Offline embeddings<a class="headerlink" href="#offline-embeddings" title="Permalink to this heading"></a></h2>
 <p>This class can be used to create embeddings from a set of downloaded responses
 from Salmon:</p>
 <table class="autosummary longtable docutils align-default">
@@ -167,7 +168,7 @@ from Salmon:</p>
 </table>
 </section>
 <section id="samplers">
-<h2>Samplers<a class="headerlink" href="#samplers" title="Permalink to this headline"></a></h2>
+<h2>Samplers<a class="headerlink" href="#samplers" title="Permalink to this heading"></a></h2>
 <p>These classes are used to collect responses with Salmon. They can be configured
 using <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code> as mentioned in <a class="reference internal" href="samplers.html#alg-config"><span class="std std-ref">Sampler configuration</span></a>. They all conform to the
 following API:</p>
@@ -188,7 +189,7 @@ you want to customize the running of the algorithm. By default, the algorithm
 uses <code class="docutils literal notranslate"><span class="pre">Sampler.run</span></code> to run the algorithm.</p>
 <p>Every class below inherits from <a class="reference internal" href="generated/salmon.backend.sampler.Sampler.html#salmon.backend.sampler.Sampler" title="salmon.backend.sampler.Sampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sampler</span></code></a>.</p>
 <section id="passive-algorithms">
-<h3>Passive Algorithms<a class="headerlink" href="#passive-algorithms" title="Permalink to this headline"></a></h3>
+<h3>Passive Algorithms<a class="headerlink" href="#passive-algorithms" title="Permalink to this heading"></a></h3>
 <table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -208,7 +209,7 @@ uses <code class="docutils literal notranslate"><span class="pre">Sampler.run</s
 </table>
 </section>
 <section id="active-algorithms">
-<h3>Active Algorithms<a class="headerlink" href="#active-algorithms" title="Permalink to this headline"></a></h3>
+<h3>Active Algorithms<a class="headerlink" href="#active-algorithms" title="Permalink to this heading"></a></h3>
 <p>Every active algorithm inherits from one class:</p>
 <table class="autosummary longtable docutils align-default">
 <colgroup>

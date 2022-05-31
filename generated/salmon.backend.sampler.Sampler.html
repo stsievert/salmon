@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>salmon.backend.sampler.Sampler &mdash; Salmon v0.10.0rc9 documentation</title>
+  <title>salmon.backend.sampler.Sampler &mdash; Salmon v1.0.0rc1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/autodoc_pydantic.css" type="text/css" />
@@ -16,6 +16,7 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -98,7 +99,7 @@
            <div itemprop="articleBody">
              
   <section id="salmon-backend-sampler-sampler">
-<h1><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.backend.sampler</span></code>.Sampler<a class="headerlink" href="#salmon-backend-sampler-sampler" title="Permalink to this headline"></a></h1>
+<h1><code class="xref py py-mod docutils literal notranslate"><span class="pre">salmon.backend.sampler</span></code>.Sampler<a class="headerlink" href="#salmon-backend-sampler-sampler" title="Permalink to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="salmon.backend.sampler.Sampler">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">salmon.backend.sampler.</span></span><span class="sig-name descname"><span class="pre">Sampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ident</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.backend.sampler.Sampler" title="Permalink to this definition"></a></dt>
@@ -166,13 +167,13 @@ in the database.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="salmon.backend.sampler.Sampler.clear_queries">
-<span class="sig-name descname"><span class="pre">clear_queries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">rejson.client.Client</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#salmon.backend.sampler.Sampler.clear_queries" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">clear_queries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Client</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#salmon.backend.sampler.Sampler.clear_queries" title="Permalink to this definition"></a></dt>
 <dd><p>Clear all queries that this sampler has posted from the database.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="salmon.backend.sampler.Sampler.get_answers">
-<span class="sig-name descname"><span class="pre">get_answers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">rejson.client.Client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">salmon.backend.sampler.Answer</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#salmon.backend.sampler.Sampler.get_answers" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_answers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Answer</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#salmon.backend.sampler.Sampler.get_answers" title="Permalink to this definition"></a></dt>
 <dd><p>Get all answers the frontend has received.</p>
 </dd></dl>
 
@@ -193,7 +194,7 @@ dashboard or with an HTTP get request.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="salmon.backend.sampler.Sampler.post_queries">
-<span class="sig-name descname"><span class="pre">post_queries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">queries</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">salmon.backend.sampler.Query</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scores</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">rejson.client.Client</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">done</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#salmon.backend.sampler.Sampler.post_queries" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">post_queries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">queries</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Query</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scores</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Client</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">done</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#salmon.backend.sampler.Sampler.post_queries" title="Permalink to this definition"></a></dt>
 <dd><p>Post scored queries to the database.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -217,7 +218,7 @@ dashboard or with an HTTP get request.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="salmon.backend.sampler.Sampler.process_answers">
-<span class="sig-name descname"><span class="pre">process_answers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">answers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">salmon.backend.sampler.Answer</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.backend.sampler.Sampler.process_answers" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">process_answers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">answers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Answer</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.backend.sampler.Sampler.process_answers" title="Permalink to this definition"></a></dt>
 <dd><p>Process answers.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -239,7 +240,7 @@ dashboard or with an HTTP get request.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="salmon.backend.sampler.Sampler.redis_client">
-<span class="sig-name descname"><span class="pre">redis_client</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">decode_responses</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">rejson.client.Client</span></span></span><a class="headerlink" href="#salmon.backend.sampler.Sampler.redis_client" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">redis_client</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">decode_responses</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Client</span></span></span><a class="headerlink" href="#salmon.backend.sampler.Sampler.redis_client" title="Permalink to this definition"></a></dt>
 <dd><p>Get the database (/Redis client)</p>
 </dd></dl>
 
@@ -252,7 +253,7 @@ this function is called.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="salmon.backend.sampler.Sampler.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">distributed.client.Client</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.backend.sampler.Sampler.run" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Client</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#salmon.backend.sampler.Sampler.run" title="Permalink to this definition"></a></dt>
 <dd><p>Run the algorithm.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -278,7 +279,7 @@ this function should return if
 
 <dl class="py method">
 <dt class="sig sig-object py" id="salmon.backend.sampler.Sampler.serialize_query">
-<span class="sig-name descname"><span class="pre">serialize_query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">salmon.backend.sampler.Query</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#salmon.backend.sampler.Sampler.serialize_query" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">serialize_query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Query</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#salmon.backend.sampler.Sampler.serialize_query" title="Permalink to this definition"></a></dt>
 <dd><p>Serialize a query (so it can go in the database).</p>
 </dd></dl>
 

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FAQ &mdash; Salmon v0.10.0rc9 documentation</title>
+  <title>FAQ &mdash; Salmon v1.0.0rc1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/autodoc_pydantic.css" type="text/css" />
@@ -16,6 +16,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
@@ -100,7 +101,7 @@
            <div itemprop="articleBody">
              
   <section id="faq">
-<span id="id1"></span><h1>FAQ<a class="headerlink" href="#faq" title="Permalink to this headline"></a></h1>
+<span id="id1"></span><h1>FAQ<a class="headerlink" href="#faq" title="Permalink to this heading"></a></h1>
 <p>Also relevant is the <a class="reference internal" href="installation.html#troubleshooting"><span class="std std-ref">Troubleshooting</span></a>, which goes over some (blocking)
 difficulties while launching.</p>
 <div class="admonition note">
@@ -112,7 +113,7 @@ version number should look something like <code class="docutils literal notransl
 <code class="docutils literal notranslate"><span class="pre">exp-2021-05-20T07:31-salmon-v0.4.1.rdb</span></code>).</p>
 </div>
 <section id="when-should-i-use-random-active-sampling">
-<span id="random-vs-active"></span><h2>When should I use random/active sampling?<a class="headerlink" href="#when-should-i-use-random-active-sampling" title="Permalink to this headline"></a></h2>
+<span id="random-vs-active"></span><h2>When should I use random/active sampling?<a class="headerlink" href="#when-should-i-use-random-active-sampling" title="Permalink to this heading"></a></h2>
 <p>Rule of thumb:</p>
 <ul class="simple">
 <li><p>Use random sampling for simple problems when not many responses are required
@@ -129,7 +130,7 @@ sampler, and doesn’t require any user configuration. Tips on how to use active
 samplers are in <a class="reference internal" href="#adaptiveconfig"><span class="std std-ref">What active samplers are recommended?</span></a>.</p>
 </section>
 <section id="how-many-responses-will-be-needed">
-<span id="faq-n-responses"></span><h2>How many responses will be needed?<a class="headerlink" href="#how-many-responses-will-be-needed" title="Permalink to this headline"></a></h2>
+<span id="faq-n-responses"></span><h2>How many responses will be needed?<a class="headerlink" href="#how-many-responses-will-be-needed" title="Permalink to this heading"></a></h2>
 <p>Depends on the targets used, and how humans respond. Let’s say there are
 <span class="math notranslate nohighlight">\(n\)</span> targets that are being embedded into <span class="math notranslate nohighlight">\(d\)</span> dimensions. At most,
 we can provide bounds on how many responses you’ll need:</p>
@@ -154,7 +155,7 @@ responses,</strong> see <a class="reference internal" href="#adaptiveconfig"><sp
 with a fixed number of responses.</p>
 </section>
 <section id="what-active-samplers-are-recommended">
-<span id="adaptiveconfig"></span><h2>What active samplers are recommended?<a class="headerlink" href="#what-active-samplers-are-recommended" title="Permalink to this headline"></a></h2>
+<span id="adaptiveconfig"></span><h2>What active samplers are recommended?<a class="headerlink" href="#what-active-samplers-are-recommended" title="Permalink to this heading"></a></h2>
 <p>Use of <a class="reference internal" href="generated/salmon.triplets.samplers.ARR.html#salmon.triplets.samplers.ARR" title="salmon.triplets.samplers.ARR"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARR</span></code></a> is most recommended.  See the
 <a class="reference internal" href="benchmarks/active.html#experiments"><span class="std std-ref">benchmarks on active sampling</span></a> for an example configuration
 and the number of responses required for that usage.  The defaults of
@@ -175,7 +176,7 @@ configuration:</p>
 </div>
 </section>
 <section id="can-i-choose-a-different-machine">
-<h2>Can I choose a different machine?<a class="headerlink" href="#can-i-choose-a-different-machine" title="Permalink to this headline"></a></h2>
+<h2>Can I choose a different machine?<a class="headerlink" href="#can-i-choose-a-different-machine" title="Permalink to this heading"></a></h2>
 <p>All of our experiments are run with <code class="docutils literal notranslate"><span class="pre">t3.xlarge</span></code> instances. If you want to
 choose a different machine, ensure that is has the following:</p>
 <ul class="simple">
@@ -190,7 +191,7 @@ Using <code class="docutils literal notranslate"><span class="pre">2</span> <spa
 least 4 cores for two algorithms.</p>
 </section>
 <section id="how-do-i-ask-specific-questions">
-<span id="specificquestion"></span><h2>How do I ask specific questions?<a class="headerlink" href="#how-do-i-ask-specific-questions" title="Permalink to this headline"></a></h2>
+<span id="specificquestion"></span><h2>How do I ask specific questions?<a class="headerlink" href="#how-do-i-ask-specific-questions" title="Permalink to this heading"></a></h2>
 <p>It’s possible to configure what queries get shown to the crowdsourcing user
 with two methods:</p>
 <ol class="arabic">
@@ -212,7 +213,7 @@ query the user sees, show them a query with [these objects].”</p>
 </ol>
 </section>
 <section id="how-do-i-specify-when-samplers-are-used">
-<span id="whichsampler"></span><h2>How do I specify when samplers are used?<a class="headerlink" href="#how-do-i-specify-when-samplers-are-used" title="Permalink to this headline"></a></h2>
+<span id="whichsampler"></span><h2>How do I specify when samplers are used?<a class="headerlink" href="#how-do-i-specify-when-samplers-are-used" title="Permalink to this heading"></a></h2>
 <p>Controlling when or how often samplers get used is possible with two methods:</p>
 <ol class="arabic simple">
 <li><p>By setting the <code class="docutils literal notranslate"><span class="pre">probs</span></code> key in <a class="reference internal" href="generated/salmon.triplets.manager.Sampling.html#salmon.triplets.manager.Sampling" title="salmon.triplets.manager.Sampling"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sampling</span></code></a>.
@@ -231,7 +232,7 @@ Specifying <code class="docutils literal notranslate"><span class="pre">sampling
 allow configuring the details of particular queries.</p>
 </section>
 <section id="how-do-i-ask-every-crowdsourcing-user-exactly-the-same-questions">
-<h2>How do I ask every crowdsourcing user exactly the same questions?<a class="headerlink" href="#how-do-i-ask-every-crowdsourcing-user-exactly-the-same-questions" title="Permalink to this headline"></a></h2>
+<h2>How do I ask every crowdsourcing user exactly the same questions?<a class="headerlink" href="#how-do-i-ask-every-crowdsourcing-user-exactly-the-same-questions" title="Permalink to this heading"></a></h2>
 <p>By specifying both the <code class="docutils literal notranslate"><span class="pre">sampler</span></code> key and the <code class="docutils literal notranslate"><span class="pre">query</span></code> key in
 <a class="reference internal" href="generated/salmon.triplets.manager.Sampling.html#salmon.triplets.manager.Sampling" title="salmon.triplets.manager.Sampling"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sampling</span></code></a>’s <code class="docutils literal notranslate"><span class="pre">detail</span></code> field. The answers to
 the questions “<a class="reference internal" href="#whichsampler"><span class="std std-ref">How do I specify when samplers are used?</span></a>” and “<a class="reference internal" href="#specificquestion"><span class="std std-ref">How do I ask specific questions?</span></a>” are relevant.</p>
@@ -239,7 +240,7 @@ the questions “<a class="reference internal" href="#whichsampler"><span class=
 because the target indexing in “<a class="reference internal" href="samplers.html#valconfig"><span class="std std-ref">Validation sampler</span></a>” is relevant.</p>
 </section>
 <section id="how-do-i-see-the-dask-dashboard">
-<h2>How do I see the Dask dashboard?<a class="headerlink" href="#how-do-i-see-the-dask-dashboard" title="Permalink to this headline"></a></h2>
+<h2>How do I see the Dask dashboard?<a class="headerlink" href="#how-do-i-see-the-dask-dashboard" title="Permalink to this heading"></a></h2>
 <p>Look at port 8787 if you want more information on how jobs are scheduled. If on
 EC2, this will require some port forwarding to your own machine:</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ssh -i key.pem -L <span class="m">7787</span>:localhost:8787 ubuntu@<span class="o">[</span>EC2 public DNS or IP<span class="o">]</span>
@@ -251,12 +252,12 @@ action is taken, it is recommended to only allow a specific IP to view that
 port.</p>
 </section>
 <section id="how-do-i-customize-the-participant-unique-identifier-aka-puid">
-<h2>How do I customize the participant unique identifier aka “puid”?<a class="headerlink" href="#how-do-i-customize-the-participant-unique-identifier-aka-puid" title="Permalink to this headline"></a></h2>
+<h2>How do I customize the participant unique identifier aka “puid”?<a class="headerlink" href="#how-do-i-customize-the-participant-unique-identifier-aka-puid" title="Permalink to this heading"></a></h2>
 <p>Visiting <code class="docutils literal notranslate"><span class="pre">http://[url]:8421/?puid=foobar</span></code> will set that the participant UID
 to be <code class="docutils literal notranslate"><span class="pre">foobar</span></code>.</p>
 </section>
 <section id="how-do-i-use-https-with-salmon">
-<h2>How do I use HTTPS with Salmon?<a class="headerlink" href="#how-do-i-use-https-with-salmon" title="Permalink to this headline"></a></h2>
+<h2>How do I use HTTPS with Salmon?<a class="headerlink" href="#how-do-i-use-https-with-salmon" title="Permalink to this heading"></a></h2>
 <p>HTTP is how web servers communicate; HTTPS protects that communication from
 third parties.</p>
 <p>Some crowdsourcing services require HTTPS. There are to ways to provide these

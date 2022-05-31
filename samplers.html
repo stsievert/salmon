@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sampler configuration &mdash; Salmon v0.10.0rc9 documentation</title>
+  <title>Sampler configuration &mdash; Salmon v1.0.0rc1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/autodoc_pydantic.css" type="text/css" />
@@ -16,6 +16,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -99,7 +100,7 @@
            <div itemprop="articleBody">
              
   <section id="sampler-configuration">
-<span id="alg-config"></span><span id="adaptive-config"></span><h1>Sampler configuration<a class="headerlink" href="#sampler-configuration" title="Permalink to this headline"></a></h1>
+<span id="alg-config"></span><span id="adaptive-config"></span><h1>Sampler configuration<a class="headerlink" href="#sampler-configuration" title="Permalink to this heading"></a></h1>
 <p>There are many queries to ask about in triplet embedding tasks. Most of these
 queries aren’t useful; chances are most queries will have obvious answers and
 won’t improve the embedding much.</p>
@@ -128,7 +129,7 @@ collecting responses?</strong> Use <code class="docutils literal notranslate"><s
 </div>
 <p>Now, let’s go over how to configure different samplers and an example.</p>
 <section id="file-structure">
-<h2>File structure<a class="headerlink" href="#file-structure" title="Permalink to this headline"></a></h2>
+<h2>File structure<a class="headerlink" href="#file-structure" title="Permalink to this heading"></a></h2>
 <p>Part of a <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code> configuration file might look like this:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: init.yaml</span><span class="w"></span>
 <span class="nt">samplers</span><span class="p">:</span><span class="w"></span>
@@ -169,7 +170,7 @@ one user who visits Salmon.</p></li>
 The defaults and complete details are in
 <a class="reference internal" href="generated/salmon.triplets.manager.Config.html#salmon.triplets.manager.Config" title="salmon.triplets.manager.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a>.</p>
 <section id="multiple-samplers-of-the-same-name">
-<h3>Multiple samplers of the same name<a class="headerlink" href="#multiple-samplers-of-the-same-name" title="Permalink to this headline"></a></h3>
+<h3>Multiple samplers of the same name<a class="headerlink" href="#multiple-samplers-of-the-same-name" title="Permalink to this heading"></a></h3>
 <p>If two samplers with different purposes want to be used, the key <code class="docutils literal notranslate"><span class="pre">class</span></code> is
 used to specify which type of sampler should be used:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: init.yaml</span><span class="w"></span>
@@ -188,7 +189,7 @@ used to specify which type of sampler should be used:</p>
 </div>
 </section>
 <section id="initialization-arguments">
-<h3>Initialization arguments<a class="headerlink" href="#initialization-arguments" title="Permalink to this headline"></a></h3>
+<h3>Initialization arguments<a class="headerlink" href="#initialization-arguments" title="Permalink to this heading"></a></h3>
 <p>Arguments inside each key are passed to the sampler. For example,</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: init.yaml</span><span class="w"></span>
 <span class="nt">samplers</span><span class="p">:</span><span class="w"></span>
@@ -234,7 +235,7 @@ the docstring of <a class="reference internal" href="generated/salmon.triplets.s
 </section>
 </section>
 <section id="example">
-<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline"></a></h2>
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this heading"></a></h2>
 <p>Let’s start out with a simple <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code> file, one suited for random
 sampling.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">targets</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;obj1&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;obj2&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;foo&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;bar&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;foobar!&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
@@ -266,7 +267,7 @@ configuration:</p>
 </pre></div>
 </div>
 <section id="validation-sampler">
-<span id="valconfig"></span><h3>Validation sampler<a class="headerlink" href="#validation-sampler" title="Permalink to this headline"></a></h3>
+<span id="valconfig"></span><h3>Validation sampler<a class="headerlink" href="#validation-sampler" title="Permalink to this heading"></a></h3>
 <p><em>Note: generating validation queries will likely require two uploads of your
 experiment and resetting Salmon</em></p>
 <p>The indices for <a class="reference internal" href="generated/salmon.triplets.samplers.Validation.html#salmon.triplets.samplers.Validation" title="salmon.triplets.samplers.Validation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Validation</span></code></a> are indices of
@@ -308,7 +309,7 @@ generates the list:</p>
 </div>
 </section>
 <section id="sampling-detail">
-<span id="valdetail"></span><h3>Sampling detail<a class="headerlink" href="#sampling-detail" title="Permalink to this headline"></a></h3>
+<span id="valdetail"></span><h3>Sampling detail<a class="headerlink" href="#sampling-detail" title="Permalink to this heading"></a></h3>
 <p>Let’s say you want to collect data from three samplers: an active sampler for
 training, a random sampler for testing and a validation sampler to see measure
 each participant’s attention (e.g., “are they blindly clicking answers?”).</p>

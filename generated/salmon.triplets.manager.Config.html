@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>salmon.triplets.manager.Config &mdash; Salmon v0.10.0rc9 documentation</title>
+  <title>salmon.triplets.manager.Config &mdash; Salmon v1.0.0rc1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/autodoc_pydantic.css" type="text/css" />
@@ -16,6 +16,7 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -98,7 +99,7 @@
            <div itemprop="articleBody">
              
   <section id="salmon-triplets-manager-config">
-<h1>salmon.triplets.manager.Config<a class="headerlink" href="#salmon-triplets-manager-config" title="Permalink to this headline"></a></h1>
+<h1>salmon.triplets.manager.Config<a class="headerlink" href="#salmon-triplets-manager-config" title="Permalink to this heading"></a></h1>
 <dl class="py class pydantic_settings">
 <dt class="sig sig-object py" id="salmon.triplets.manager.Config">
 <em class="property"><span class="pre">pydantic</span> <span class="pre">settings</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">salmon.triplets.manager.</span></span><span class="sig-name descname"><span class="pre">Config</span></span><a class="headerlink" href="#salmon.triplets.manager.Config" title="Permalink to this definition"></a></dt>
@@ -345,7 +346,7 @@ Salmon’s default config and not writing a custom query page).</p>
 </dl>
 <dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="salmon.triplets.manager.Config.html">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">html</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="salmon.triplets.manager.HTML.html#salmon.triplets.manager.HTML" title="salmon.triplets.manager.HTML"><span class="pre">salmon.triplets.manager.HTML</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">HTML(title='Similarity</span> <span class="pre">judgements',</span> <span class="pre">instructions='Please</span> <span class="pre">select</span> <span class="pre">the</span> <span class="pre">&lt;i&gt;comparison&lt;/i&gt;</span> <span class="pre">item</span> <span class="pre">that</span> <span class="pre">is</span> <span class="pre">most</span> <span class="pre">similar</span> <span class="pre">to</span> <span class="pre">the</span> <span class="pre">&lt;i&gt;target&lt;/i&gt;</span> <span class="pre">item.',</span> <span class="pre">debrief='&lt;b&gt;Thanks!&lt;/b&gt;</span> <span class="pre">Please</span> <span class="pre">use</span> <span class="pre">the</span> <span class="pre">participant</span> <span class="pre">ID</span> <span class="pre">below.',</span> <span class="pre">skip_button=False,</span> <span class="pre">css='',</span> <span class="pre">max_queries=50,</span> <span class="pre">arrow_keys=True,</span> <span class="pre">query_params=['puid'])</span></em><a class="headerlink" href="#salmon.triplets.manager.Config.html" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">html</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="salmon.triplets.manager.HTML.html#salmon.triplets.manager.HTML" title="salmon.triplets.manager.HTML"><span class="pre">HTML</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">HTML(title='Similarity</span> <span class="pre">judgements',</span> <span class="pre">instructions='Please</span> <span class="pre">select</span> <span class="pre">the</span> <span class="pre">&lt;i&gt;comparison&lt;/i&gt;</span> <span class="pre">item</span> <span class="pre">that</span> <span class="pre">is</span> <span class="pre">most</span> <span class="pre">similar</span> <span class="pre">to</span> <span class="pre">the</span> <span class="pre">&lt;i&gt;target&lt;/i&gt;</span> <span class="pre">item.',</span> <span class="pre">debrief='&lt;b&gt;Thanks!&lt;/b&gt;</span> <span class="pre">Please</span> <span class="pre">use</span> <span class="pre">the</span> <span class="pre">participant</span> <span class="pre">ID</span> <span class="pre">below.',</span> <span class="pre">skip_button=False,</span> <span class="pre">css='',</span> <span class="pre">max_queries=50,</span> <span class="pre">arrow_keys=True,</span> <span class="pre">query_params=['puid'])</span></em><a class="headerlink" href="#salmon.triplets.manager.Config.html" title="Permalink to this definition"></a></dt>
 <dd><p>Stylistic settings to configure the HTML page.
 See <a class="reference internal" href="salmon.triplets.manager.HTML.html#salmon.triplets.manager.HTML" title="salmon.triplets.manager.HTML"><code class="xref py py-class docutils literal notranslate"><span class="pre">HTML</span></code></a> for more detail.</p>
 </dd></dl>
@@ -360,7 +361,7 @@ customization, and <a class="reference internal" href="../benchmarks/active.html
 
 <dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="salmon.triplets.manager.Config.sampling">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sampling</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="salmon.triplets.manager.Sampling.html#salmon.triplets.manager.Sampling" title="salmon.triplets.manager.Sampling"><span class="pre">salmon.triplets.manager.Sampling</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Sampling(common={'d':</span> <span class="pre">2},</span> <span class="pre">probs=None,</span> <span class="pre">samplers_per_user=0,</span> <span class="pre">details={})</span></em><a class="headerlink" href="#salmon.triplets.manager.Config.sampling" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sampling</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="salmon.triplets.manager.Sampling.html#salmon.triplets.manager.Sampling" title="salmon.triplets.manager.Sampling"><span class="pre">Sampling</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Sampling(common={'d':</span> <span class="pre">2},</span> <span class="pre">probs=None,</span> <span class="pre">samplers_per_user=0,</span> <span class="pre">details={})</span></em><a class="headerlink" href="#salmon.triplets.manager.Config.sampling" title="Permalink to this definition"></a></dt>
 <dd><p>Settings to configure how more than two samplers are
 used. See <a class="reference internal" href="salmon.triplets.manager.Sampling.html#salmon.triplets.manager.Sampling" title="salmon.triplets.manager.Sampling"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sampling</span></code></a> for more detail.</p>
 </dd></dl>

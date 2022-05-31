@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Getting started &mdash; Salmon v0.10.0rc9 documentation</title>
+  <title>Getting started &mdash; Salmon v1.0.0rc1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/autodoc_pydantic.css" type="text/css" />
@@ -16,6 +16,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -93,7 +94,7 @@
            <div itemprop="articleBody">
              
   <section id="getting-started">
-<span id="id1"></span><h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline"></a></h1>
+<span id="id1"></span><h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this heading"></a></h1>
 <p>Launching an experiment to crowdsourcing participants requires following this
 process:</p>
 <ol class="arabic simple">
@@ -104,7 +105,7 @@ process:</p>
 <li><p>Sending the URL <code class="docutils literal notranslate"><span class="pre">http://[url]:8421/</span></code> to crowdsourcing participants.</p></li>
 </ol>
 <section id="initialization-page">
-<h2>Initialization page<a class="headerlink" href="#initialization-page" title="Permalink to this headline"></a></h2>
+<h2>Initialization page<a class="headerlink" href="#initialization-page" title="Permalink to this heading"></a></h2>
 <p>By default, Salmon does not support HTTPS. Make sure the URL begins with
 <code class="docutils literal notranslate"><span class="pre">http://</span></code>, not <code class="docutils literal notranslate"><span class="pre">https://</span></code>. For example, the URL you visit may look like:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">ec2</span><span class="o">-</span><span class="mi">52</span><span class="o">-</span><span class="mi">204</span><span class="o">-</span><span class="mi">122</span><span class="o">-</span><span class="mf">132.</span><span class="n">compute</span><span class="o">-</span><span class="mf">1.</span><span class="n">amazonaws</span><span class="o">.</span><span class="n">com</span><span class="p">:</span><span class="mi">8421</span><span class="o">/</span><span class="n">init</span>
@@ -112,7 +113,7 @@ process:</p>
 </div>
 </section>
 <section id="username-password">
-<h2>Username/password<a class="headerlink" href="#username-password" title="Permalink to this headline"></a></h2>
+<h2>Username/password<a class="headerlink" href="#username-password" title="Permalink to this heading"></a></h2>
 <p>When visiting <code class="docutils literal notranslate"><span class="pre">http://[url]:8421/init</span></code>, first, type a username/password and
 hit “create user.”</p>
 <div class="admonition warning">
@@ -128,7 +129,7 @@ the dashboard and download the received responses.</p>
 </div>
 </section>
 <section id="experiment-initialization">
-<h2>Experiment initialization<a class="headerlink" href="#experiment-initialization" title="Permalink to this headline"></a></h2>
+<h2>Experiment initialization<a class="headerlink" href="#experiment-initialization" title="Permalink to this heading"></a></h2>
 <p>Hit the back button to visit <code class="docutils literal notranslate"><span class="pre">http://[url]:8421/init</span></code> again after after a
 user has been successfully created. Now, let’s launch an experiment! There are
 three options:</p>
@@ -149,7 +150,7 @@ which is at “<a class="reference internal" href="monitoring.html#exp-monitorin
 <a class="reference internal image-reference" href="_images/query_page.png"><img alt="_images/query_page.png" class="align-center" src="_images/query_page.png" style="width: 500px;" /></a>
 </section>
 <section id="send-the-url-to-participants">
-<h2>Send the URL to participants<a class="headerlink" href="#send-the-url-to-participants" title="Permalink to this headline"></a></h2>
+<h2>Send the URL to participants<a class="headerlink" href="#send-the-url-to-participants" title="Permalink to this heading"></a></h2>
 <p>The URL to send to the crowdsourcing participants is <code class="docutils literal notranslate"><span class="pre">http://[url]:8421/</span></code>.
 For example, that may be</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">ec2</span><span class="o">-</span><span class="mi">52</span><span class="o">-</span><span class="mi">204</span><span class="o">-</span><span class="mi">122</span><span class="o">-</span><span class="mf">132.</span><span class="n">compute</span><span class="o">-</span><span class="mf">1.</span><span class="n">amazonaws</span><span class="o">.</span><span class="n">com</span><span class="p">:</span><span class="mi">8421</span><span class="o">/</span><span class="n">init</span>

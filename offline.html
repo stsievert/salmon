@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Generating embeddings offline &mdash; Salmon v0.10.0rc9 documentation</title>
+  <title>Generating embeddings offline &mdash; Salmon v1.0.0rc1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/autodoc_pydantic.css" type="text/css" />
@@ -16,6 +16,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -97,7 +98,7 @@
            <div itemprop="articleBody">
              
   <section id="generating-embeddings-offline">
-<h1>Generating embeddings offline<a class="headerlink" href="#generating-embeddings-offline" title="Permalink to this headline"></a></h1>
+<h1>Generating embeddings offline<a class="headerlink" href="#generating-embeddings-offline" title="Permalink to this heading"></a></h1>
 <p>Salmon is good at asking useful questions to crowdsourcing participants.</p>
 <p>These responses should be used to create an embedding <em>offline.</em> Yes, Salmon
 has to generate an embedding to determine which questions are useful… but
@@ -110,15 +111,15 @@ embedding:</p>
 <li><p>Generate embedding.</p></li>
 </ol>
 <section id="downloading-responses">
-<h2>Downloading responses<a class="headerlink" href="#downloading-responses" title="Permalink to this headline"></a></h2>
+<h2>Downloading responses<a class="headerlink" href="#downloading-responses" title="Permalink to this heading"></a></h2>
 <p>Download the responses, either by visiting <code class="docutils literal notranslate"><span class="pre">http://[url]:8421/responses</span></code> or
 clicking the link on the dashboard (as mentioned in <a class="reference internal" href="monitoring.html#exp-monitoring"><span class="std std-ref">Experiment monitoring</span></a>).</p>
 </section>
 <section id="install-salmon">
-<h2>Install Salmon<a class="headerlink" href="#install-salmon" title="Permalink to this headline"></a></h2>
+<h2>Install Salmon<a class="headerlink" href="#install-salmon" title="Permalink to this heading"></a></h2>
 <p>There are two options to install Salmon for offline embeddings.</p>
 <section id="option-1-using-pip">
-<h3>Option 1: Using pip<a class="headerlink" href="#option-1-using-pip" title="Permalink to this headline"></a></h3>
+<h3>Option 1: Using pip<a class="headerlink" href="#option-1-using-pip" title="Permalink to this heading"></a></h3>
 <p>This option is recommended to generate embeddings offline.  This option
 requires <code class="docutils literal notranslate"><span class="pre">pip</span></code>, a Python package manager. It’s available through <a class="reference external" href="https://www.anaconda.com/products/distribution#Downloads">Anaconda</a>
 and <a class="reference external" href="https://docs.conda.io/en/latest/miniconda.html">Miniconda</a>.</p>
@@ -126,17 +127,17 @@ and <a class="reference external" href="https://docs.conda.io/en/latest/minicond
 <li><p>Run the command <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">salmon-triplets</span></code>.</p></li>
 <li><p>Run the command below in Python to verify that the installation worked successfully:</p></li>
 </ol>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">salmon.triplets.offline</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">salmon.triplets.offline</span> <span class="kn">import</span> <span class="n">OfflineEmbedding</span>
 </pre></div>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>This package installs a Python package named <code class="docutils literal notranslate"><span class="pre">salmon</span></code> despite being
-named “salmon-triplets” on PyPI.</p>
+<p>This package named “salmon-triplets” on PyPI installs a Python package
+named <code class="docutils literal notranslate"><span class="pre">salmon</span></code>.</p>
 </div>
 </section>
 <section id="option-2-using-conda">
-<h3>Option 2: Using conda<a class="headerlink" href="#option-2-using-conda" title="Permalink to this headline"></a></h3>
+<h3>Option 2: Using conda<a class="headerlink" href="#option-2-using-conda" title="Permalink to this heading"></a></h3>
 <p>This option is required for a complete installation.  This option requires
 <code class="docutils literal notranslate"><span class="pre">conda</span></code>, a Anaconda’s Python package manager. It’s available through
 <a class="reference external" href="https://www.anaconda.com/products/distribution#Downloads">Anaconda</a> and <a class="reference external" href="https://docs.conda.io/en/latest/miniconda.html">Miniconda</a>.</p>
@@ -165,7 +166,7 @@ terminal.</p>
 </section>
 </section>
 <section id="generate-embeddings">
-<h2>Generate embeddings<a class="headerlink" href="#generate-embeddings" title="Permalink to this headline"></a></h2>
+<h2>Generate embeddings<a class="headerlink" href="#generate-embeddings" title="Permalink to this heading"></a></h2>
 <p>This Python code will generate an embedding:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">salmon.triplets.offline</span> <span class="kn">import</span> <span class="n">OfflineEmbedding</span>
 
@@ -194,7 +195,7 @@ training scores, which might help limit the number of epochs.</p>
 available on <a class="reference internal" href="api.html#api"><span class="std std-ref">API</span></a>.</p>
 </section>
 <section id="embedding-visualization">
-<h2>Embedding visualization<a class="headerlink" href="#embedding-visualization" title="Permalink to this headline"></a></h2>
+<h2>Embedding visualization<a class="headerlink" href="#embedding-visualization" title="Permalink to this heading"></a></h2>
 <p>The HTML for each target alongside the embedding coordinates is available from
 the dashboard by downloading the “embeddings” file (or visiting
 <code class="docutils literal notranslate"><span class="pre">[url]:8421/embeddings</span></code>. This will give a CSV with the HTML for each target,
