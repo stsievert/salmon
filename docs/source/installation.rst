@@ -35,22 +35,35 @@ Experimentalist
     * Note: https://ec2instances.info/ is a great resource to check costs.
       As of April 2022, ``t3.large`` and ``t3.xlarge`` cost about $2/day and $4/day respectively.
 
-7. Don't click the big blue button yet. Continue to the rules page, and add
+7. Create a key pair.
+
+    .. warning::
+
+       **Don't lose your key pair!**
+       Without the key pair, the Salmon developers will be severely
+       limited in the help they can provide.
+
+8. Don't click the big orange button yet. Continue to the rules page, and add
    these rules:
 
-   .. image:: imgs/networking-rule.png
-      :width: 80%
-      :align: center
+    1. In the networking interface box, check the HTTP and HTTP boxes
+       and select the "edit" button:
 
-8. Now, click the big blue button! The AMI will probably take around 15 to initialize (but may take up to 30 minutes).
-9. Keep your "key pair" in a safe place. The key pair typically has a ``.pem``
-   extension.
+       .. image:: imgs/network-http-rules.png
+          :width: 80%
+          :align: center
 
-.. warning::
+    2. After hitting "edit", scroll down to "add security group rule"
+       and open port 8421 to ``0.0.0.0/0`` (aka anyone).
 
-   **Don't lose your key pair!**
-   Without the key pair, the Salmon developers will be severely limited in the
-   help they can provide.
+       .. image:: imgs/network-rule.png
+          :width: 80%
+          :align: center
+
+9. Now, click the big orange button! The AMI will probably take around
+   15 to initialize (but may take up to 30 minutes).
+10. Keep your "key pair" in a safe place. The key pair typically has a
+    ``.pem`` extension.
 
 The AMI initialization is done (which takes about 15 minutes), Salmon will be
 available at ``http://[url]:8421``. For example, ``[url]`` might be the Amazon
