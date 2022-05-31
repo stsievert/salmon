@@ -16,7 +16,6 @@ humans to answer.
 See the documentation for more detail: https://docs.stsievert.com/salmon/
 
 ### Running Salmon offline
-
 Visit the documentation at https://docs.stsievert.com/salmon/offline.html.
 Briefly, this should work:
 

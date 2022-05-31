@@ -38,12 +38,12 @@ and `Miniconda`_.
 
 .. code-block:: python
 
-   import salmon.triplets.offline
+   from salmon.triplets.offline import OfflineEmbedding
 
 .. note::
 
-   This package installs a Python package named ``salmon`` despite being
-   named "salmon-triplets" on PyPI.
+   This package named "salmon-triplets" on PyPI installs a Python package
+   named ``salmon``.
 
 Option 2: Using conda
 ^^^^^^^^^^^^^^^^^^^^^
