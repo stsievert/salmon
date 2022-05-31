@@ -23,13 +23,13 @@ Only distance is relevant in this embedding, not the vertical/horizontal axes.
 However, if you look closely, you can see two axes: positivity and intensity.
 
 **Salmon provides efficient methods for collecting these triplet queries.**
-Typically, generating the embeddings above requires far too many human responses.
-Salmon provides the ability to generate the same embeddings with fewer human
-responses – in our experiments, about 1,000 queries are required to reach a
-particular quality level instead of about 3,000 queries. If you're paying for
-each human response (say on Mechanical Turk), this means that collecting
-responses will be reduced by a factor of 3 when compared with naive methods of
-collecting triplet queries.
+Typically, generating the embeddings above requires far too many human
+responses. Salmon provides the ability to generate the same embeddings with
+fewer human responses – in our experiments, about 1,000 queries are required to
+reach a particular quality level instead of about 3,000 queries. If you're
+paying for each human response (say on Mechanical Turk), this means that
+collecting responses will be reduced by a factor of 3 when compared with
+naive methods of collecting triplet queries.
 
 If you'd like to report bugs/issues, or improve Salmon please see `Salmon's
 contribution guide`_.
@@ -39,10 +39,9 @@ contribution guide`_.
 Users
 =====
 
-Salmon is currently being actively used by several psychologists at the
-University of Wisconsin--Madison. It has seen serious interest from the Air
-Force Research Lab, and a psychologist at Louisiana State University and
-Canada's Western University.
+Salmon is currently being actively used by pyschologists from the University
+of Wisconsin--Madison, and has seen some user from pyschologists at the
+Louisiana State University and Canada's Western University.
 
 .. toctree::
    :maxdepth: 2

@@ -1,5 +1,5 @@
 ---
-title: 'Salmon: Efficient Crowdsourcing for Relative Similarity Judgments'
+title: 'Efficient Crowdsourcing for Relative Similarity Judgments'
 tags:
   - crowdsourcing
   - active machine learning
@@ -20,7 +20,7 @@ bibliography: paper.bib
 
 Social scientists often investigate human reasoning by collecting relative
 similarity judgements with crowdsourcing services. However, this often requires
-too many human responses to be practical for larger experiments. To address
+too many human responses to be practical for large experiments. To address
 this problem, we introduce software called Salmon, which
 makes intelligent
 choices on query selection (aka active machine learning or adaptive sampling) while
@@ -37,7 +37,7 @@ item $h$?" These queries work well with human working memory limitations, and ha
 successfully to characterize human perceived similarity between faces
 [@faceverification], vehicles [@vehicles] and shoes [@tackl].
 
-Experimentalists required an inordinate number of human responses (about
+Typically, experimentalists require an inordinate number of human responses (about
 10,000) to produce an accurate embedding when making a similarity map in
 $d=2$ dimensions of $n = 50$ chemistry molecules [@chem].
 The number of human responses required will change like scale like
@@ -45,7 +45,7 @@ $\mathcal{O}(nd\log n)$, which means that asking about $n=100$ molecules for $d=
 
 Many "active machine learning" methods have been proposed to reduce the number
 of queries required [@ckl; @ste]. These show gains, at least offline when
-computation is not a limitation [@erkle]. However, the online deployment of
+computation is not a limitation. However, the online deployment of
 these algorithms has posed more challenges [@next].
 
 # Related work
@@ -55,13 +55,13 @@ audiences include SMART [@smart], NEXT [@next] and Microsoft's Multiworld Testin
 related work, NEXT is capable of serving triplet queries to crowdsourcing
 participants [@next]. In this work the authors concluded that "there is no
 evidence for gains from adaptive sampling." However, other work has found gains from
-adaptive sampling in offline computation [@tackl].
+adaptive sampling when computation is not a priority [@tackl].
 
-Several active algorithms for triplet embedding have been developed[@ckl;
+Several active algorithms for triplet embedding have been developed [@ckl;
 @ste]. These algorithms require searching queries and fitting the responses to
 the underlying noise model. With a naive computation, scoring a single query requires $\mathcal{O}(nd)$
-floating point operations (FLOPs), and the embedding requires significant
-computation [@soe; @ma2019fast].
+floating point operations (FLOPs), and the embedding typically requires significant
+computation [@soe; @ma2019fast], though some work has been done to reduce the amount of computation [@erkle].
 
 # Salmon
 
@@ -72,7 +72,7 @@ Salmon's main design goals are below:
 3. Allow experimentalists to easily achieve both items above.
 
 One method to achieve goal (2) above is to use an active machine learning
-(ML) sampling algorithm. This task required consideration of how to create a
+(ML) sampling algorithm. This task requires considering how to create a
 responsive query page with a
 service to run active ML algorithms. The result is a frontend server that
 *serves* queries and *receives* answers, and a backend server that *searches*
@@ -88,13 +88,13 @@ To the best of the author's knowledge, this is a novel achievement in the crowds
 
 Goal (1) is aided by the fact that Salmon integrates a popular deep learning
 framework, PyTorch [@pytorch]. This allows for easy customization of the
-underlying optimization method, including by the experimentalist managing
-Salmon and during generation of offline embeddings.
+underlying optimization method during both online and offline computation, including by the experimentalist managing
+Salmon if so desired.
 
 Goal (3) is enabled by a relatively simple launch through Amazon AWS using Amazon Machine Images (AMIs). The AMI for Salmon[^ami] 
 pulls the latest release of Salmon from GitHub and then launches Salmon. After some other tasks (e.g., opening ports, etc), Salmon is ready be launched. Salmon requires fairly minimal computational resources; all the experiments and simulation were performed with `t3.xlarge` Amazon EC2 instance, which has 4 cores, 16GB of memory and costs about $3.98 per day.
 
-Once launched, Salmon can launch an experiment with stimuli consisting of text, image, video or HTML strings. It provides a mechanism to monitor an ongoing experiment, which includes the following information:
+After launch, Salmon can start an experiment with stimuli consisting of text, images, video or HTML strings. It provides a mechanism to monitor an ongoing experiment, which includes the following information:
 
 * Basic experiment statistics (e.g., number of unique users, launch date)
 * Server performance (e.g., processing time for different endpoints, rate responses received)
@@ -102,9 +102,8 @@ Once launched, Salmon can launch an experiment with stimuli consisting of text, 
 * Embedding visualization
 * List of targets.
 
-In addition, Salmon provides links to download the responses, embeddings, and configuration. Additionally, Salmon supports experiment persistence through downloading and uploading experiments.
-
-The embedding that Salmon generated can be downloaded, at least if active samplers are used. Salmon can be used offline to generate the embeddings from the downloaded responses.
+In addition, Salmon provides links to download the responses and configuration. Salmon also supports experiment persistence through downloading and uploading experiments.
+The embedding that Salmon generates can be downloaded, at least if active samplers are used. Regardless of the sampler used, Salmon can be used to generate the embeddings offline from the downloaded responses.
 
 [^ami]:Details are at [https://docs.stsievert.com/salmon/installation][in]
 
@@ -112,9 +111,8 @@ The embedding that Salmon generated can be downloaded, at least if active sample
 
 # Uses
 
-Salmon has been used by several groups, including psychologists at UW--Madison
-to measure player perceived similarity between video games and by psychologists
-at Louisiana State University.
+Salmon has been used by several groups, including psychologists at UW--Madison,
+and Louisiana State University.
 
 # Acknowledgments
 
