@@ -678,11 +678,14 @@ async def get_embeddings(
     for s in samplers:
         try:
             embeddings[s] = await get_model(s)
-        except:
+        except Exception as e:
+            logger.exception(e)
             pass
     if len(embeddings) == 0:
         raise ServerException(
-            f"No model has been created for any sampler in {samplers}"
+            f"No model has been created for any sampler in {samplers} "
+            "(expected if these are all passive samplers (i.e., Random, "
+            "Validation, RoundRobin)"
         )
     dfs = {
         alg: _fmt_embedding(model["embedding"], targets, alg=alg)
