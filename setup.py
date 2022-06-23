@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from distutils.core import setup
+from setuptools import find_packages
 from os.path import exists
 from glob import glob
 
@@ -10,13 +11,8 @@ import versioneer
 with open("./requirements.txt", "r") as f:
     install_requires = [r for r in f.read().split("\n") if r]
 
-packages = [
-    "salmon",
-    "salmon.frontend",
-    "salmon.backend",
-    "salmon.triplets",
-    "salmon._out",
-]
+packages = find_packages(where='.', exclude=['tests'])
+
 
 long_description = """Salmon is a tool for efficiently generating ordinal
 embeddings. It relies on "active" machine learning algorithms to choose the
