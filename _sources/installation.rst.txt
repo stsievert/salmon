@@ -28,6 +28,7 @@ Experimentalist
 
 6. Select an appropriate instance type.
 
+    * Salmon requires at least 2GB of memory and 1 CPU.
     * ``t3.large`` is recommended for passive algorithms (i.e, random
       sampling).
     * ``t3.xlarge`` is recommended for adaptive algorithms (e.g., ARR; see the
@@ -194,7 +195,6 @@ right of the Amazon EC2 interface.
 
 The Salmon AMI has been created in the ``us-west-2`` region, and EC2 AMIs are
 only available in the regions they're created in.
-
 
 .. _restorefrombackupfaq:
 
