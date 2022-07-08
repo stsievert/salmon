@@ -93,7 +93,7 @@ def test_active_queries_generated(server, sampler, logs):
         server.authorize()
         server.post("/init_exp", data={"exp": config})
         n_active_queries = 0
-        for k in range(6 * n + 1):
+        for k in range(10 * n + 1):
             q = server.get("/query").json()
 
             ans = random.choice([q["left"], q["right"]])
@@ -109,7 +109,7 @@ def test_active_queries_generated(server, sampler, logs):
                 sleep(1)
                 break
 
-            sleep(100e-3)
+            sleep(200e-3)
             if k % n == 0:
                 sleep(1)
 
