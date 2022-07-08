@@ -83,12 +83,18 @@ def test_active_queries_generated(server, sampler, logs):
     # test is designed to make sure no unexpected errors are thrown in
     # active portion (not that it generates a good embedding)
 
+    # tests ARR to make sure active scores are generated;
+    # tests Random to make sure that's not a false positive and
+    # random queries are properly identifies
+
     n = 6
     config = {
         "targets": [_ for _ in range(n)],
         "samplers": {sampler: {}},
-        "sampling": {"common": {"d": 1, "R": 1}},
+        "sampling": {},
     }
+    if sampler != "Random":
+        config["sampling"]["common"] = {"d": 1, "R": 1}
     with logs:
         server.authorize()
         server.post("/init_exp", data={"exp": config})
@@ -97,7 +103,7 @@ def test_active_queries_generated(server, sampler, logs):
             q = server.get("/query").json()
             query = "random" if q["score"] == -9999 else "active"
             if query == "active":
-                active_queries = True
+                active_queries_generated = True
                 break
 
             sleep(200e-3)
