@@ -1,4 +1,9 @@
 # Triplet dataset
+
+This dataset is mentioned in "Active Perceptual Similarity Modeling with
+Auxiliary Information" by Eric Heim, Matthew Berger, Lee Seversky and Milos
+Hauskrecht (https://arxiv.org/abs/1511.02254).
+
 Files:
 
 * `all_triplets.csv`: raw MTurk responses.
@@ -14,9 +19,7 @@ From email with Matthew Berger:
 ```
 From: Scott Sievert <stsievert@wisc.edu>
 Subject: Re: Zappos triplet dataset
-Date: Tuesday, March 27, 2018 at 1:17:14 PM Central Daylight Time
 To: Matthew Berger <matthew.sh.berger@gmail.com>
-CC: ROBERT D NOWAK <rdnowak@wisc.edu>, eric@cs.pitt.edu, lee.seversky@us.af.mil, milos@cs.pitt.edu
 
 Hi Scott,
 
