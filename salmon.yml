@@ -18,7 +18,6 @@ dependencies:
   - python-blosc
   - cytoolz
   - ujson
-  - pyyaml
   - ipykernel  # to run this environ in jupyter (required for viz)
   - nb_conda_kernels
   - altair
@@ -27,6 +26,7 @@ dependencies:
   - sphinx_rtd_theme
   - sphinx>=4.0.0
   - pip:
+    - pyyaml
     - seaborn
     - fastapi[all]
     - rejson
