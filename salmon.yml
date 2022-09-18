@@ -3,6 +3,7 @@ channels:
   - conda-forge
   - defaults
   - anaconda
+  - bokeh
 dependencies:
   - python==3.8.*
   - pip
