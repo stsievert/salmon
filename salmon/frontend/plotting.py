@@ -217,7 +217,6 @@ async def _get_server_metrics():
     bad_endpoints = [
         "/favicon.ico",
         "/metrics",
-        "/metrics",
         "/api/v1/query",
         "/static",
         "/init_exp",

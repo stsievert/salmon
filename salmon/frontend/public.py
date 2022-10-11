@@ -15,7 +15,7 @@ from rejson import Client, Path
 from starlette.requests import Request
 from starlette.staticfiles import StaticFiles
 from starlette.templating import Jinja2Templates
-from starlette_prometheus import PrometheusMiddleware, metrics
+#from starlette_prometheus import PrometheusMiddleware, metrics
 
 from salmon.frontend.utils import ServerException, image_url, sha256
 from salmon.triplets import manager
@@ -57,8 +57,8 @@ app = FastAPI(
     on_startup=[start_algs],
     on_shutdown=[stop_algs],
 )
-app.add_middleware(PrometheusMiddleware)
-app.add_route("/metrics/", metrics)
+# app.add_middleware(PrometheusMiddleware)
+# app.add_route("/metrics/", metrics)
 
 pkg_dir = pathlib.Path(__file__).absolute().parent
 app.mount("/static", StaticFiles(directory=str(pkg_dir / "static")), name="static")
