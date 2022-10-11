@@ -157,6 +157,24 @@ If you make changes to this code, run these commands:
 	$ docker-compose build
 	$ docker-compose up
 
+If you want to log into the Docker container, execute these commands:
+
+.. code:: shell
+
+   $ docker ps  # to get list of running conatiners
+   CONTAINER ID   IMAGE             ... [more info]  ...  NAMES
+   08b96fbcc4c3   salmon_server     ... [more info]  ...  salmon_server_1
+   57cb3b7652d9   redislabs/rejson  ... [more info]  ...  salmon_redis_1
+   $ docker exec -it 08b96fbcc4c3 /bin/bash
+   (base) root@08b96fbcc4c3:/salmon# conda activate salmon
+   (salmon) root@08b96fbcc4c3:/salmon#
+
+.. note::
+
+   This is an alternative way to install Salmon's dependencies. If you create a
+   file in the Docker container in ``/salmon``, it will also be written to
+   ``/path/to/salmon`` on your local machine.
+
 If you run the command ``export SALMON_DEBUG=1``, the Salmon server will watch
 for changes in the source and re-launch as necessary. This won't be perfect,
 but it will reduce the number of times required to run ``docker-compose {stop,
