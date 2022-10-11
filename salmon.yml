@@ -47,3 +47,4 @@ dependencies:
     - jupyter-server-proxy  # to view Dask dashboard
     - autodoc_pydantic  # to show config docs
     - torch --extra-index-url https://download.pytorch.org/whl/cpu
+    - starlette_exporter
