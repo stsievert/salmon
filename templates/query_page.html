@@ -64,7 +64,7 @@
 <body>
 <div class="container">
   <div class="outline justify-content-center">
-    {{html['element_top']}}
+    {{html['element_top'] | safe}}
     <div class="row justify-content-center">
         <br>
         <p id="instructions">{{html['instructions'] | safe}}</p>
@@ -73,7 +73,7 @@
     <div class="row justify-content-center" id="target-text">
       <p>Target:</p>
     </div>
-    {{html['element_middle']}}
+    {{html['element_middle'] | safe}}
     <div class="row justify-content-center">
       <div class="col-lg-10 justify-content-center center cell head" id="q-head">
       </div>
@@ -95,11 +95,11 @@
         </div>
       </div>
     {% endif %}
-    {{html['element_bottom']}}
+    {{html['element_bottom'] | safe}}
   </div>
 </div>
 
-{{html['element_standalone']}}
+{{html['element_standalone'] | safe}}
 
 <div class="container">
   <div class="outline justify-content-center">
@@ -370,7 +370,7 @@ document.onkeydown = function checkKey(e) {
 </script>
 
 <script>
-{{html['js']}}
+{{html['js'] | safe}}
 </script>
 
 </html>
