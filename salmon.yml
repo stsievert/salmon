@@ -42,7 +42,6 @@ dependencies:
     - matplotlib
     - gunicorn
     - python-multipart  # optional dep required by gunicorn
-    - starlette-prometheus
     - numpydoc
     - pytest
     - jupyter-server-proxy  # to view Dask dashboard

@@ -30,7 +30,6 @@ redis==3.5.*  # https://github.com/RedisJSON/redisjson-py/issues/67
 matplotlib
 gunicorn
 python-multipart  # optional dep required by gunicorn
-starlette-prometheus
 sphinx>=4.0.0
 numpydoc
 sphinx_rtd_theme

@@ -35,26 +35,26 @@ services:
     # https://github.com/docker/compose/issues/3270
     # also https://github.com/boot2docker/boot2docker/issues/1083#issuecomment-151380687
 
-    # redismonitor:
-    #   user: root
-    #   build: docker/redismonitor
-    #   ports:
-    #     - "7381:7389"
-    #   volumes:
-    #     - "./out:/logs:rw"
-    #   logging:
-    #     driver: none
+  # redismonitor:
+  #   user: root
+  #   build: docker/redismonitor
+  #   ports:
+  #     - "7381:7389"
+  #   volumes:
+  #     - "./out:/logs:rw"
+  #   logging:
+  #     driver: none
 
-  prom:
-    image: prom/prometheus
-    expose:
-      - 9090
-    volumes:
-      - ./docker/prom:/etc/prometheus
-        #  granfna:
-        #    image: grafana/grafana
-        #    ports:
-        #      - "3000:3000"
+  # prom:
+  #   image: prom/prometheus
+  #   expose:
+  #     - 9090
+  #   volumes:
+  #     - ./docker/prom:/etc/prometheus
+  #       #  granfna:
+  #       #    image: grafana/grafana
+  #       #    ports:
+  #       #      - "3000:3000"
 
 # To get bash on one of these machines:
 # docker exec -it <containerIdOrName> bash
