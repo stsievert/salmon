@@ -31,3 +31,8 @@ html:
       background-color: #cce;
       color: #220;
     }
+  element_top: "<div></div>"
+  element_middle: "<div></div>"
+  element_bottom: "<div></div>"
+  element_standalone: "<div></div>"
+  js: "console.log('custom js');"
