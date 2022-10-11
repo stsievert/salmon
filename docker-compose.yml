@@ -45,16 +45,17 @@ services:
   #   logging:
   #     driver: none
 
-  # prom:
-  #   image: prom/prometheus
-  #   expose:
-  #     - 9090
-  #   volumes:
-  #     - ./docker/prom:/etc/prometheus
-  #       #  granfna:
-  #       #    image: grafana/grafana
-  #       #    ports:
-  #       #      - "3000:3000"
+  prom:
+    image: prom/prometheus
+    expose:
+      - 9090
+    volumes:
+      - ./docker/prom:/etc/prometheus
+
+  #  granfna:
+  #    image: grafana/grafana
+  #    ports:
+  #      - "3000:3000"
 
 # To get bash on one of these machines:
 # docker exec -it <containerIdOrName> bash
