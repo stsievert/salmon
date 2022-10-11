@@ -51,6 +51,8 @@ Louisiana State University and Canada's Western University.
    getting-started
    init
    samplers
+   frontend
+   deploying
    monitoring
    offline
    faq
