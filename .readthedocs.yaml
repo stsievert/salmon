@@ -26,7 +26,7 @@ formats:
 # Optionally declare the Python requirements required to build your docs
 python:
    install:
-   - numpydoc
+   - requirements: docs/requirements.txt
 
 conda:
   environment: salmon.yml
