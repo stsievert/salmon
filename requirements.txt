@@ -38,3 +38,4 @@ jupyter-server-proxy  # to view Dask dashboard
 autodoc_pydantic  # to show config docs
 ipywidgets  # https://github.com/stsievert/salmon/issues/140
 starlette_exporter
+-e .
