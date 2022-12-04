@@ -10,14 +10,15 @@ from pathlib import Path
 from queue import SimpleQueue as Queue
 from typing import List
 
-LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO")
-
 
 def get_logger(name):
     # Config from https://docs.python-guide.org/writing/logging/ and
     # https://docs.python-guide.org/writing/logging/
     logger = logging.getLogger(name)
+    DEBUG = int(os.environ.get("SALMON_DEBUG", "0"))
+    LOG_LEVEL = "DEBUG" if DEBUG else "INFO"
     LEVEL = getattr(logging, LOG_LEVEL)
+
     formatter = logging.Formatter("%(asctime)s %(name)s %(levelname)s: %(message)s")
     handlers = []
 

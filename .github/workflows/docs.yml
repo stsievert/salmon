@@ -35,6 +35,12 @@ jobs:
       run: |
         cd docs
         make html
+        zip build/html/salmon-html-docs.zip build/html/* build/html/**/*
+    - name: Build backup docs
+      run: |
+        cd docs
+        make latexpdf
+        mv build/latexpdf/salmon.pdf build/html/salmon.pdf
     - name: Upload docs to gh-pages branch
       uses: peaceiris/actions-gh-pages@v3
       with:
