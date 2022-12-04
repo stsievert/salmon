@@ -38,13 +38,14 @@ jobs:
       run: |
         cd docs
         make html
-        zip build/html/salmon-html-docs.zip build/html/* build/html/**/*
+        cd build/html && zip salmon-html-docs.zip build/html/* build/html/**/* && cd ../..
+        cd ..
     - name: Build backup docs
       run: |
         cd docs
         sudo apt-get install -y texmaker latexmk
         make latexpdf
-        mv build/latexpdf/salmon.pdf build/html/salmon.pdf
+        mv build/latex/salmon.pdf build/html/salmon.pdf
     - name: Upload docs to gh-pages branch
       uses: peaceiris/actions-gh-pages@v3
       with:
