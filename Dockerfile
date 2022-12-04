@@ -4,8 +4,8 @@ RUN apt-get update
 RUN apt-get install -y gcc cmake g++
 RUN conda -V
 
-COPY salmon.yml /salmon/salmon.yml
-RUN conda env create -f /salmon/salmon.yml
+COPY salmon.lock.yml /salmon/salmon.lock.yml
+RUN conda env create -f /salmon/salmon.lock.yml
 
 VOLUME /salmon
 VOLUME /data

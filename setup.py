@@ -13,7 +13,6 @@ with open("./requirements.txt", "r") as f:
 
 packages = find_packages(where='.', exclude=['tests'])
 
-
 long_description = """Salmon is a tool for efficiently generating ordinal
 embeddings. It relies on "active" machine learning algorithms to choose the
 most informative queries for humans to answer."""
@@ -29,11 +28,12 @@ setup(
     packages=packages,
     install_requires=install_requires,
     tests_require=["pytest"],
-    python_requires=">=3.8.*",
+    python_requires=">=3.8",
     long_description=long_description,
     data_files=[("requirements", ["requirements.txt"])],
     classifiers=[
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
     ],
 )
