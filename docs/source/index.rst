@@ -32,7 +32,8 @@ collecting responses will be reduced by a factor of 3 when compared with
 naive methods of collecting triplet queries.
 
 If you'd like to report bugs/issues, or improve Salmon please see `Salmon's
-contribution guide`_.
+contribution guide`_. The list of dependicies and their licenses is available
+at :ref:`deps`.
 
 .. _Salmon's contribution guide: https://github.com/stsievert/salmon/blob/master/CONTRIBUTING.md
 
@@ -71,6 +72,7 @@ Louisiana State University and Canada's Western University.
 
    adaptive
    developers
+   deps
 
 
 Indices and tables
@@ -79,3 +81,6 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+
+
