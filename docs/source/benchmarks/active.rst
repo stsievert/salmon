@@ -116,7 +116,7 @@ accuracy. To start, let's assume that there's no clear relationship between
 items. Then, this visualization is most appropriate for the embeddings of
 particular accuracies:
 
-.. image:: imgs/embeddings-n=30-colorless.svg
+.. image:: imgs/embeddings-n=30-colorless.png
    :width: 90%
    :align: center
 
@@ -124,7 +124,7 @@ These embeddings are remarkably simple, and have a clear and known
 relationship. Because of that, let's show the embeddings with colors from now
 on:
 
-.. image:: imgs/embeddings-n=30.svg
+.. image:: imgs/embeddings-n=30.png
    :width: 95%
    :align: center
 
@@ -162,7 +162,7 @@ Embedding quality
 Here's the underlying embeddings for :math:`n = 180` for various accuracy
 levels on *simulated* human responses:
 
-.. image:: imgs/embeddings-n=180.svg
+.. image:: imgs/embeddings-n=180.png
    :width: 100%
    :align: center
 
