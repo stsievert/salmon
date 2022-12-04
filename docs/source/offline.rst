@@ -63,6 +63,7 @@ This option is required for a complete installation.  This option requires
    $ # then navigate there in your shell/Terminal
    $ cd ~/Downloads/salmon
    $ conda env create -f salmon.yml
+   $ # conda env create -f salmon.yml.lock  # if the above gives you trouble
    $ conda activate salmon
    (salmon) $ pip install .
 
