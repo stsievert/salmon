@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Experiment initialization &mdash; Salmon v1.0.0rc5 documentation</title>
+  <title>Experiment initialization &mdash; Salmon  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/autodoc_pydantic.css" type="text/css" />
@@ -57,6 +57,8 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="samplers.html">Sampler configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="frontend.html">Frontend customization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deploying.html">Deploying</a></li>
 <li class="toctree-l1"><a class="reference internal" href="monitoring.html">Experiment monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="offline.html">Generating embeddings offline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
@@ -71,6 +73,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="adaptive.html">Adaptive algorithms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="developers.html">Developing algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deps.html">Dependencies</a></li>
 </ul>
 
         </div>
@@ -86,8 +89,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Experiment initialization</li>
+      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">Experiment initialization</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/stsievert/salmon/blob/master/docs/source/init.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -135,9 +138,11 @@ not be what you want. Relevant FAQs:</p>
 <li><p>Ask 50 questions before showing the participant ID.</p></li>
 <li><p>Embed into <span class="math notranslate nohighlight">\(d=2\)</span> dimensions if active samplers are specified.</p></li>
 </ul>
-<p>The defaults for instructions/debrief can be found in
-<a class="reference internal" href="generated/salmon.triplets.manager.HTML.html#salmon.triplets.manager.HTML" title="salmon.triplets.manager.HTML"><code class="xref py py-class docutils literal notranslate"><span class="pre">HTML</span></code></a>. To do anything fancier, additional
-configuration is required. Here’s a basic example:</p>
+<p>More documentation on customizing these fields can be found in
+<a class="reference internal" href="samplers.html#alg-config"><span class="std std-ref">Sampler configuration</span></a> and <a class="reference internal" href="frontend.html#frontendcustomization"><span class="std std-ref">Frontend customization</span></a>, and the defaults for
+instructions/debrief can be found in <a class="reference internal" href="generated/salmon.triplets.manager.HTML.html#salmon.triplets.manager.HTML" title="salmon.triplets.manager.HTML"><code class="xref py py-class docutils literal notranslate"><span class="pre">HTML</span></code></a>. To
+do anything fancier, additional configuration is required. Here’s a basic
+example:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: init.yaml</span><span class="w"></span>
 <span class="nt">targets</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;l&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;&lt;i&gt;kildow&lt;/i&gt;&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;t&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;&lt;i&gt;ligety&lt;/i&gt;&quot;</span><span class="p p-Indicator">]</span><span class="w">  </span><span class="c1"># or uploaded via ZIP file</span><span class="w"></span>
 <span class="nt">html</span><span class="p">:</span><span class="w"></span>
@@ -153,7 +158,7 @@ configuration is required. Here’s a basic example:</p>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">samplers</span></code> controls which methods get to choose queries, and <code class="docutils literal notranslate"><span class="pre">sampling</span></code>
 controls how multiple samplers interact (i.e., how should a sampler be chosen?)
-Some more details can be found at <a class="reference internal" href="samplers.html#alg-config"><span class="std std-ref">Sampler configuration</span></a>.</p>
+More documentation can be found at <a class="reference internal" href="samplers.html#alg-config"><span class="std std-ref">Sampler configuration</span></a>.</p>
 <p>Complete details on the YAML file are at at
 <a class="reference internal" href="generated/salmon.triplets.manager.Config.html#salmon.triplets.manager.Config" title="salmon.triplets.manager.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a>. Examples of these files are in
 <a class="reference external" href="https://github.com/stsievert/salmon/tree/master/examples">salmon/examples</a>. A complete example is available at

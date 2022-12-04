@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>salmon.triplets.manager.HTML &mdash; Salmon v1.0.0rc5 documentation</title>
+  <title>salmon.triplets.manager.HTML &mdash; Salmon  documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/autodoc_pydantic.css" type="text/css" />
@@ -47,6 +47,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../getting-started.html">Getting started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../init.html">Experiment initialization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../samplers.html">Sampler configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../frontend.html">Frontend customization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../deploying.html">Deploying</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../monitoring.html">Experiment monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../offline.html">Generating embeddings offline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq.html">FAQ</a></li>
@@ -71,6 +73,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../adaptive.html">Adaptive algorithms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../developers.html">Developing algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../deps.html">Dependencies</a></li>
 </ul>
 
         </div>
@@ -86,9 +89,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../api.html">API</a> &raquo;</li>
-      <li>salmon.triplets.manager.HTML</li>
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API</a></li>
+      <li class="breadcrumb-item active">salmon.triplets.manager.HTML</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/stsievert/salmon/blob/master/docs/source/generated/salmon.triplets.manager.HTML.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -173,6 +176,41 @@
 <span class="w">         </span><span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="w"></span>
 <span class="w">         </span><span class="p">}</span><span class="w"></span>
+<span class="w">      </span><span class="p">},</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;js&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Js&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;JavaScript to include in standalone ``&lt;script&gt;`` tag&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;env_names&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{&#39;js&#39;}&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="w"></span>
+<span class="w">      </span><span class="p">},</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;element_top&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Element Top&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Custom HTML to include at top of page&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;env_names&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{&#39;element_top&#39;}&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="w"></span>
+<span class="w">      </span><span class="p">},</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;element_middle&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Element Middle&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Custom HTML to include in middle of page (between target and comparisons)&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;env_names&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{&#39;element_middle&#39;}&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="w"></span>
+<span class="w">      </span><span class="p">},</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;element_bottom&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Element Bottom&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Custom HTML to include at top of page (above footer)&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;env_names&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{&#39;element_bottom&#39;}&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="w"></span>
+<span class="w">      </span><span class="p">},</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;element_standalone&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Element Standalone&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Custom HTML to include as a standalone element, only\n        encased in the ``head`` tag.\n        &quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;env_names&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{&#39;element_standalone&#39;}&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="w"></span>
 <span class="w">      </span><span class="p">}</span><span class="w"></span>
 <span class="w">   </span><span class="p">}</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
@@ -189,7 +227,12 @@
 <li><p><a class="reference internal" href="#salmon.triplets.manager.HTML.arrow_keys" title="salmon.triplets.manager.HTML.arrow_keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arrow_keys</span> <span class="pre">(bool)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#salmon.triplets.manager.HTML.css" title="salmon.triplets.manager.HTML.css"><code class="xref py py-obj docutils literal notranslate"><span class="pre">css</span> <span class="pre">(str)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#salmon.triplets.manager.HTML.debrief" title="salmon.triplets.manager.HTML.debrief"><code class="xref py py-obj docutils literal notranslate"><span class="pre">debrief</span> <span class="pre">(str)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#salmon.triplets.manager.HTML.element_bottom" title="salmon.triplets.manager.HTML.element_bottom"><code class="xref py py-obj docutils literal notranslate"><span class="pre">element_bottom</span> <span class="pre">(str)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#salmon.triplets.manager.HTML.element_middle" title="salmon.triplets.manager.HTML.element_middle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">element_middle</span> <span class="pre">(str)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#salmon.triplets.manager.HTML.element_standalone" title="salmon.triplets.manager.HTML.element_standalone"><code class="xref py py-obj docutils literal notranslate"><span class="pre">element_standalone</span> <span class="pre">(str)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#salmon.triplets.manager.HTML.element_top" title="salmon.triplets.manager.HTML.element_top"><code class="xref py py-obj docutils literal notranslate"><span class="pre">element_top</span> <span class="pre">(str)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#salmon.triplets.manager.HTML.instructions" title="salmon.triplets.manager.HTML.instructions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">instructions</span> <span class="pre">(str)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#salmon.triplets.manager.HTML.js" title="salmon.triplets.manager.HTML.js"><code class="xref py py-obj docutils literal notranslate"><span class="pre">js</span> <span class="pre">(str)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#salmon.triplets.manager.HTML.max_queries" title="salmon.triplets.manager.HTML.max_queries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max_queries</span> <span class="pre">(int)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#salmon.triplets.manager.HTML.query_params" title="salmon.triplets.manager.HTML.query_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_params</span> <span class="pre">(List[str])</span></code></a></p></li>
 <li><p><a class="reference internal" href="#salmon.triplets.manager.HTML.skip_button" title="salmon.triplets.manager.HTML.skip_button"><code class="xref py py-obj docutils literal notranslate"><span class="pre">skip_button</span> <span class="pre">(bool)</span></code></a></p></li>
@@ -221,9 +264,40 @@ this message.</p>
 </dd></dl>
 
 <dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="salmon.triplets.manager.HTML.element_bottom">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">element_bottom</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#salmon.triplets.manager.HTML.element_bottom" title="Permalink to this definition"></a></dt>
+<dd><p>Custom HTML to include at top of page (above footer)</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="salmon.triplets.manager.HTML.element_middle">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">element_middle</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#salmon.triplets.manager.HTML.element_middle" title="Permalink to this definition"></a></dt>
+<dd><p>Custom HTML to include in middle of page (between target and comparisons)</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="salmon.triplets.manager.HTML.element_standalone">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">element_standalone</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#salmon.triplets.manager.HTML.element_standalone" title="Permalink to this definition"></a></dt>
+<dd><p>Custom HTML to include as a standalone element, only
+encased in the <code class="docutils literal notranslate"><span class="pre">head</span></code> tag.</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="salmon.triplets.manager.HTML.element_top">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">element_top</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#salmon.triplets.manager.HTML.element_top" title="Permalink to this definition"></a></dt>
+<dd><p>Custom HTML to include at top of page</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="salmon.triplets.manager.HTML.instructions">
 <em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">instructions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Please</span> <span class="pre">select</span> <span class="pre">the</span> <span class="pre">&lt;i&gt;comparison&lt;/i&gt;</span> <span class="pre">item</span> <span class="pre">that</span> <span class="pre">is</span> <span class="pre">most</span> <span class="pre">similar</span> <span class="pre">to</span> <span class="pre">the</span> <span class="pre">&lt;i&gt;target&lt;/i&gt;</span> <span class="pre">item.'</span></em><a class="headerlink" href="#salmon.triplets.manager.HTML.instructions" title="Permalink to this definition"></a></dt>
 <dd><p>The instructions the user sees above each query.</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="salmon.triplets.manager.HTML.js">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">js</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#salmon.triplets.manager.HTML.js" title="Permalink to this definition"></a></dt>
+<dd><p>JavaScript to include in standalone <code class="docutils literal notranslate"><span class="pre">&lt;script&gt;</span></code> tag</p>
 </dd></dl>
 
 <dl class="py attribute pydantic_field">

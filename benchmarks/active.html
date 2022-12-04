@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Active sampling &mdash; Salmon v1.0.0rc5 documentation</title>
+  <title>Active sampling &mdash; Salmon  documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/autodoc_pydantic.css" type="text/css" />
@@ -48,6 +48,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../getting-started.html">Getting started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../init.html">Experiment initialization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../samplers.html">Sampler configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../frontend.html">Frontend customization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../deploying.html">Deploying</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../monitoring.html">Experiment monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../offline.html">Generating embeddings offline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq.html">FAQ</a></li>
@@ -74,6 +76,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../adaptive.html">Adaptive algorithms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../developers.html">Developing algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../deps.html">Dependencies</a></li>
 </ul>
 
         </div>
@@ -89,8 +92,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Active sampling</li>
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">Active sampling</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/stsievert/salmon/blob/master/docs/source/benchmarks/active.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -194,11 +197,11 @@ closest objects?” <a class="footnote-reference brackets" href="#id16" id="id9"
 accuracy. To start, let’s assume that there’s no clear relationship between
 items. Then, this visualization is most appropriate for the embeddings of
 particular accuracies:</p>
-<a class="reference internal image-reference" href="../_images/embeddings-n=30-colorless.svg"><img alt="../_images/embeddings-n=30-colorless.svg" class="align-center" src="../_images/embeddings-n=30-colorless.svg" width="90%" /></a>
+<a class="reference internal image-reference" href="../_images/embeddings-n=30-colorless.png"><img alt="../_images/embeddings-n=30-colorless.png" class="align-center" src="../_images/embeddings-n=30-colorless.png" style="width: 90%;" /></a>
 <p>These embeddings are remarkably simple, and have a clear and known
 relationship. Because of that, let’s show the embeddings with colors from now
 on:</p>
-<a class="reference internal image-reference" href="../_images/embeddings-n=30.svg"><img alt="../_images/embeddings-n=30.svg" class="align-center" src="../_images/embeddings-n=30.svg" width="95%" /></a>
+<a class="reference internal image-reference" href="../_images/embeddings-n=30.png"><img alt="../_images/embeddings-n=30.png" class="align-center" src="../_images/embeddings-n=30.png" style="width: 95%;" /></a>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Only relative distances matter in these embeddings. It doesn’t matter how
@@ -228,7 +231,7 @@ plots.</span><a class="headerlink" href="#id20" title="Permalink to this image">
 <h3>Embedding quality<a class="headerlink" href="#id11" title="Permalink to this heading"></a></h3>
 <p>Here’s the underlying embeddings for <span class="math notranslate nohighlight">\(n = 180\)</span> for various accuracy
 levels on <em>simulated</em> human responses:</p>
-<a class="reference internal image-reference" href="../_images/embeddings-n=180.svg"><img alt="../_images/embeddings-n=180.svg" class="align-center" src="../_images/embeddings-n=180.svg" width="100%" /></a>
+<a class="reference internal image-reference" href="../_images/embeddings-n=180.png"><img alt="../_images/embeddings-n=180.png" class="align-center" src="../_images/embeddings-n=180.png" style="width: 100%;" /></a>
 <p>“Test accuracy: 80%” means “80% accurate on simulated human responses not used
 for training.” The local accuracy gets much better as accuracy increases. To
 visualize the structure of the underlying embedding, let’s look at the

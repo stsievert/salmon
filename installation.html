@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Installation &mdash; Salmon v1.0.0rc5 documentation</title>
+  <title>Installation &mdash; Salmon  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/autodoc_pydantic.css" type="text/css" />
@@ -58,6 +58,8 @@
 <li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="init.html">Experiment initialization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="samplers.html">Sampler configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="frontend.html">Frontend customization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deploying.html">Deploying</a></li>
 <li class="toctree-l1"><a class="reference internal" href="monitoring.html">Experiment monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="offline.html">Generating embeddings offline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
@@ -72,6 +74,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="adaptive.html">Adaptive algorithms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="developers.html">Developing algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deps.html">Dependencies</a></li>
 </ul>
 
         </div>
@@ -87,8 +90,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Installation</li>
+      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">Installation</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/stsievert/salmon/blob/master/docs/source/installation.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -237,6 +240,22 @@ $ <span class="c1"># visit http://localhost:8421/init or http://localhost:8421/d
 $ docker-compose build
 $ docker-compose up
 </pre></div>
+</div>
+<p>If you want to log into the Docker container, execute these commands:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ docker ps  <span class="c1"># to get list of running conatiners</span>
+CONTAINER ID   IMAGE             ... <span class="o">[</span>more info<span class="o">]</span>  ...  NAMES
+08b96fbcc4c3   salmon_server     ... <span class="o">[</span>more info<span class="o">]</span>  ...  salmon_server_1
+57cb3b7652d9   redislabs/rejson  ... <span class="o">[</span>more info<span class="o">]</span>  ...  salmon_redis_1
+$ docker <span class="nb">exec</span> -it 08b96fbcc4c3 /bin/bash
+<span class="o">(</span>base<span class="o">)</span> root@08b96fbcc4c3:/salmon# conda activate salmon
+<span class="o">(</span>salmon<span class="o">)</span> root@08b96fbcc4c3:/salmon#
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This is an alternative way to install Salmon’s dependencies. If you create a
+file in the Docker container in <code class="docutils literal notranslate"><span class="pre">/salmon</span></code>, it will also be written to
+<code class="docutils literal notranslate"><span class="pre">/path/to/salmon</span></code> on your local machine.</p>
 </div>
 <p>If you run the command <code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">SALMON_DEBUG=1</span></code>, the Salmon server will watch
 for changes in the source and re-launch as necessary. This won’t be perfect,

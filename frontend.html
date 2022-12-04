@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Frontend customization &mdash; Salmon  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/autodoc_pydantic.css" type="text/css" />
+      <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Deploying" href="deploying.html" />
+    <link rel="prev" title="Sampler configuration" href="samplers.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #494646" >
+            <a href="index.html">
+            <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Usage</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="init.html">Experiment initialization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="samplers.html">Sampler configuration</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Frontend customization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#custom-html">Custom HTML</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#css-styling">CSS Styling</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="deploying.html">Deploying</a></li>
+<li class="toctree-l1"><a class="reference internal" href="monitoring.html">Experiment monitoring</a></li>
+<li class="toctree-l1"><a class="reference internal" href="offline.html">Generating embeddings offline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Benchmarks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="benchmarks/server.html">Concurrent Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarks/active.html">Active sampling</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Algorithm Developers</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="adaptive.html">Adaptive algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developers.html">Developing algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deps.html">Dependencies</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #494646" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Salmon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">Frontend customization</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/stsievert/salmon/blob/master/docs/source/frontend.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="frontend-customization">
+<span id="frontendcustomization"></span><h1>Frontend customization<a class="headerlink" href="#frontend-customization" title="Permalink to this heading"></a></h1>
+<section id="custom-html">
+<h2>Custom HTML<a class="headerlink" href="#custom-html" title="Permalink to this heading"></a></h2>
+<p>As mentioned in the <a class="reference internal" href="generated/salmon.triplets.manager.HTML.html#salmon.triplets.manager.HTML" title="salmon.triplets.manager.HTML"><code class="xref py py-class docutils literal notranslate"><span class="pre">HTML</span></code></a>, it’s possible to
+include custom HTML in the query page by customizing the <code class="docutils literal notranslate"><span class="pre">element_top</span></code>,
+<code class="docutils literal notranslate"><span class="pre">element_middle</span></code>, <code class="docutils literal notranslate"><span class="pre">element_bottom</span></code> and <code class="docutils literal notranslate"><span class="pre">element_standalone</span></code> fields. You’ll probably have to look
+at <a class="reference external" href="https://github.com/stsievert/salmon/blob/master/templates/query_page.html">query_page.html</a> to see exactly the custom HTML elements are inserted.</p>
+<p>For example, if you wanted to wanted to include a button with the showing “Skip
+this question” and didn’t want to set <code class="docutils literal notranslate"><span class="pre">html.skip_button</span> <span class="pre">=</span> <span class="pre">true</span></code>, you could
+follow this example:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">html</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="c1"># skip_button: true  # a much easier way to include the HTML code below!</span><span class="w"></span>
+<span class="w">  </span><span class="nt">element_bottom</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span><span class="w"></span>
+<span class="w">    </span><span class="no">&lt;div class=&quot;d-flex align-items-end flex-column&quot;&gt;</span><span class="w"></span>
+<span class="w">      </span><span class="no">&lt;div id=&quot;skip-button&quot; style=&quot;padding: 30px; padding-right: 60px;&quot;&gt;</span><span class="w"></span>
+<span class="w">        </span><span class="no">&lt;button type=&quot;button&quot; class=&quot;btn btn-outline-secondary btn-sm&quot; data-html=&quot;true&quot;</span><span class="w"></span>
+<span class="w">                </span><span class="no">onclick=&quot;getquery()&quot; data-toggle=&quot;tooltip&quot; data-placement=&quot;top&quot;</span><span class="w"></span>
+<span class="w">            </span><span class="no">title=&quot;Skip questions only if you know &lt;em&gt;nothing&lt;/em&gt; about the items shown.&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="no">&gt;Skip this question&lt;/button&gt;</span><span class="w"></span>
+<span class="w">      </span><span class="no">&lt;/div&gt;</span><span class="w"></span>
+<span class="w">    </span><span class="no">&lt;/div&gt;</span><span class="w"></span>
+</pre></div>
+</div>
+<p>A much easier way to get this is to set <code class="docutils literal notranslate"><span class="pre">html.skip_button</span> <span class="pre">=</span> <span class="pre">true</span></code> in
+<code class="docutils literal notranslate"><span class="pre">init.yml</span></code>.</p>
+</section>
+<section id="css-styling">
+<h2>CSS Styling<a class="headerlink" href="#css-styling" title="Permalink to this heading"></a></h2>
+<p>As mentioned in the <a class="reference internal" href="generated/salmon.triplets.manager.HTML.html#salmon.triplets.manager.HTML" title="salmon.triplets.manager.HTML"><code class="xref py py-class docutils literal notranslate"><span class="pre">HTML</span></code></a>, it’s possible to
+customize the CSS by including a CSS field in the YAML file. For example, let’s
+say you were asking about the similarity of different colors, and wanted the
+background to be dark to provide better contrast. This YAML block in
+<code class="docutils literal notranslate"><span class="pre">init.yml</span></code> would implement that:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">html</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">instructions</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Which of the comparison colors is most similar to the target color?</span><span class="w"></span>
+<span class="w">  </span><span class="nt">debrief</span><span class="p">:</span><span class="w"> </span><span class="nt">Thanks! Please enter this participant ID in the assignment. max_queries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span><span class="w">  </span><span class="c1"># about 2.94 minutes for 100 queries</span><span class="w"></span>
+<span class="w">  </span><span class="nt">arrow_keys</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span><span class="w"></span>
+<span class="w">  </span><span class="nt">css</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span><span class="w"></span>
+<span class="w">    </span><span class="no">body {</span><span class="w"></span>
+<span class="w">      </span><span class="no">background-color: #414141;</span><span class="w"></span>
+<span class="w">      </span><span class="no">color: #ddd;</span><span class="w"></span>
+<span class="w">    </span><span class="no">}</span><span class="w"></span>
+<span class="w">    </span><span class="no">.answer {</span><span class="w"></span>
+<span class="w">      </span><span class="no">background-color: #595959;</span><span class="w"></span>
+<span class="w">      </span><span class="no">border-color: #bbb;</span><span class="w"></span>
+<span class="w">    </span><span class="no">}</span><span class="w"></span>
+<span class="w">    </span><span class="no">.head {</span><span class="w"></span>
+<span class="w">      </span><span class="no">background-color: #505050;</span><span class="w"></span>
+<span class="w">      </span><span class="no">border-color: #000;</span><span class="w"></span>
+<span class="w">    </span><span class="no">}</span><span class="w"></span>
+<span class="w">    </span><span class="no">.debrief {</span><span class="w"></span>
+<span class="w">      </span><span class="no">color: #000;</span><span class="w"></span>
+<span class="w">    </span><span class="no">}</span><span class="w"></span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="samplers.html" class="btn btn-neutral float-left" title="Sampler configuration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="deploying.html" class="btn btn-neutral float-right" title="Deploying" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, Scott Sievert.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

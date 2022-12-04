@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Welcome to Salmon’s documentation! &mdash; Salmon v1.0.0rc5 documentation</title>
+  <title>Welcome to Salmon’s documentation! &mdash; Salmon  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/autodoc_pydantic.css" type="text/css" />
@@ -47,6 +47,8 @@
 <li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="init.html">Experiment initialization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="samplers.html">Sampler configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="frontend.html">Frontend customization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deploying.html">Deploying</a></li>
 <li class="toctree-l1"><a class="reference internal" href="monitoring.html">Experiment monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="offline.html">Generating embeddings offline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
@@ -61,6 +63,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="adaptive.html">Adaptive algorithms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="developers.html">Developing algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deps.html">Dependencies</a></li>
 </ul>
 
         </div>
@@ -76,8 +79,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
-      <li>Welcome to Salmon’s documentation!</li>
+      <li><a href="#" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">Welcome to Salmon’s documentation!</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/stsievert/salmon/blob/master/docs/source/index.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -110,7 +113,8 @@ paying for each human response (say on Mechanical Turk), this means that
 collecting responses will be reduced by a factor of 3 when compared with
 naive methods of collecting triplet queries.</p>
 <p>If you’d like to report bugs/issues, or improve Salmon please see <a class="reference external" href="https://github.com/stsievert/salmon/blob/master/CONTRIBUTING.md">Salmon’s
-contribution guide</a>.</p>
+contribution guide</a>. The list of dependicies and their licenses is available
+at <a class="reference internal" href="deps.html#deps"><span class="std std-ref">Dependencies</span></a>.</p>
 </section>
 <section id="users">
 <h1>Users<a class="headerlink" href="#users" title="Permalink to this heading"></a></h1>
@@ -144,6 +148,12 @@ Louisiana State University and Canada’s Western University.</p>
 <li class="toctree-l2"><a class="reference internal" href="samplers.html#example">Example</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="frontend.html">Frontend customization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="frontend.html#custom-html">Custom HTML</a></li>
+<li class="toctree-l2"><a class="reference internal" href="frontend.html#css-styling">CSS Styling</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="deploying.html">Deploying</a></li>
 <li class="toctree-l1"><a class="reference internal" href="monitoring.html">Experiment monitoring</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="monitoring.html#basic-information">Basic information</a></li>
 <li class="toctree-l2"><a class="reference internal" href="monitoring.html#server-side-timing">Server side timing</a></li>
@@ -202,6 +212,47 @@ Louisiana State University and Canada’s Western University.</p>
 <li class="toctree-l1"><a class="reference internal" href="developers.html">Developing algorithms</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="developers.html#basics">Basics</a></li>
 <li class="toctree-l2"><a class="reference internal" href="developers.html#debugging">Debugging</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="deps.html">Dependencies</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="deps.html#python">Python</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deps.html#numpy">NumPy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deps.html#scipy">SciPy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deps.html#pandas">Pandas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deps.html#cython">Cython</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deps.html#scikit-learn">Scikit-learn</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deps.html#fastapi">FastAPI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deps.html#pytorch">PyTorch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deps.html#skorch">Skorch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deps.html#altair">Altair</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deps.html#bokeh">Bokeh</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deps.html#jinja2">Jinja2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deps.html#redis-rejson">Redis, ReJSON</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deps.html#httpx">HTTPX</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deps.html#dask">Dask</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deps.html#dask-distributed">Dask Distributed</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deps.html#dask-ml">Dask-ML</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deps.html#aiofiles">aiofiles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deps.html#click">click</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deps.html#lz4">lz4</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deps.html#pythn-blosc">pythn-blosc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deps.html#cytoolz">cytoolz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deps.html#ujson">ujson</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deps.html#ipykernel">ipykernel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deps.html#nb-conda-kernels">nb_conda_kernels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deps.html#sphinx">Sphinx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deps.html#sphinx-rtd-theme">Sphinx RTD Theme</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deps.html#pyyaml">PyYAML</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deps.html#matplotlib">matplotlib</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deps.html#python-multipart">python-multipart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deps.html#numpydoc">numpydoc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deps.html#pytest">pytest</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deps.html#gunicorn">gunicorn</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deps.html#cloudpickle">cloudpickle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deps.html#jupyter-server-proxy">jupyter server proxy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deps.html#autodoc-pydantic">autodoc pydantic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deps.html#seaborn">seaborn</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deps.html#starlette-exporter">starlette_exporter</a></li>
 </ul>
 </li>
 </ul>
