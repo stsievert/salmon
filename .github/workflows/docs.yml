@@ -1,9 +1,9 @@
 name: Documentation build
 
-# on: push
-on:
-  release:
-    types: [published]
+on: push
+# on:
+#   release:
+#     types: [published]
 
 # Only run when release published (not created or edited, etc)
 # https://docs.github.com/en/actions/reference/events-that-trigger-workflows#release
@@ -39,6 +39,7 @@ jobs:
     - name: Build backup docs
       run: |
         cd docs
+        sudo apt-get install -y texmaker latexmk
         make latexpdf
         mv build/latexpdf/salmon.pdf build/html/salmon.pdf
     - name: Upload docs to gh-pages branch
