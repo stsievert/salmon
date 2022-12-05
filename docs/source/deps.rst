@@ -3,6 +3,9 @@
 Dependencies
 ============
 
+Salmon is licensed under the BSD License. Details are at
+`LICENSE.txt <https://github.com/stsievert/salmon/blob/master/LICENSE.txt>`_.
+
 Salmon depends on the libraries below. Below this list, the current license of
 each library at the time of Salmon v1.0 is included:
 
