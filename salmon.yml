@@ -15,19 +15,15 @@ dependencies:
   - dask>=2021.02.0
   - distributed>=2021.02.0
   - click >= 6.6, <= 8.0.4  # https://github.com/dask/distributed/pull/6014
-  - lz4
-  - python-blosc
-  - cytoolz
+  - lz4  # for dask
+  - python-blosc  # for dask
   - ujson
-  - ipykernel  # to run this environ in jupyter (required for viz)
-  - nb_conda_kernels
   - bokeh==2.0.1  # because templates/dashboard.html requires this version
   - jinja2<3.1.0
   - sphinx_rtd_theme
   - sphinx>=4.0.0
   - pip:
     - pyyaml
-    - seaborn
     - fastapi[all]
     - rejson
     - httpx
