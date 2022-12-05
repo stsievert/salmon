@@ -1,3 +1,5 @@
+.. _deploying:
+
 Deploying
 =========
 
@@ -20,7 +22,9 @@ I have a couple recommendations for this and similar processes:
 
 * **Host detailed instructions/etc elsewhere.** This HTML files are typically
   shown after the crowdsourcing clicks on a link and before they see Salmon.
-  For example, maybe your institution requires showing an IRB notice.
+  (e.g., for an IRB notice). It is `technically` possible to include these
+  instructions by customizing the Salmon's query page with
+  :ref:`frontendcustomization`).
 
 Hosting HTML pages is possible and relatively straighforward with `GitHub
 Pages`_, as are `URL Redirections`_.

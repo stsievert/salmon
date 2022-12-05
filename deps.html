@@ -18,6 +18,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -86,8 +87,6 @@
 <li class="toctree-l2"><a class="reference internal" href="#pythn-blosc">pythn-blosc</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#cytoolz">cytoolz</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#ujson">ujson</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#ipykernel">ipykernel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#nb-conda-kernels">nb_conda_kernels</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#sphinx">Sphinx</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#sphinx-rtd-theme">Sphinx RTD Theme</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#pyyaml">PyYAML</a></li>
@@ -99,7 +98,6 @@
 <li class="toctree-l2"><a class="reference internal" href="#cloudpickle">cloudpickle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#jupyter-server-proxy">jupyter server proxy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#autodoc-pydantic">autodoc pydantic</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#seaborn">seaborn</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#starlette-exporter">starlette_exporter</a></li>
 </ul>
 </li>
@@ -131,6 +129,8 @@
              
   <section id="dependencies">
 <span id="deps"></span><h1>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading"></a></h1>
+<p>Salmon is licensed under the BSD License. Details are at
+<a class="reference external" href="https://github.com/stsievert/salmon/blob/master/LICENSE.txt">LICENSE.txt</a>.</p>
 <p>Salmon depends on the libraries below. Below this list, the current license of
 each library at the time of Salmon v1.0 is included:</p>
 <ul class="simple">
@@ -157,8 +157,6 @@ each library at the time of Salmon v1.0 is included:</p>
 <li><p>pythn-blosc (<a class="reference external" href="https://github.com/Blosc/python-blosc/blob/main/LICENSE.txt">python-block’s license</a>)</p></li>
 <li><p>cytoolz (<a class="reference external" href="https://github.com/pytoolz/cytoolz/blob/master/LICENSE.txt">cytoolz’s license</a>)</p></li>
 <li><p>ujson (<a class="reference external" href="https://github.com/ultrajson/ultrajson/blob/main/LICENSE.txt">ujson’s license</a>)</p></li>
-<li><p>ipykernel (<a class="reference external" href="https://pypi.org/project/ipykernel/">ipykernel’s license</a>)</p></li>
-<li><p>nb_conda_kernels (<a class="reference external" href="https://github.com/Anaconda-Platform/nb_conda_kernels/blob/master/LICENSE">nb_conda_kernel’s license</a>)</p></li>
 <li><p>Sphinx (<a class="reference external" href="https://github.com/sphinx-doc/sphinx/blob/master/LICENSE">Sphinx’s license</a>)</p></li>
 <li><p>Sphinx RTD Theme (<a class="reference external" href="https://github.com/readthedocs/sphinx_rtd_theme/blob/master/LICENSE">Sphinx RTD Theme’s license</a>)</p></li>
 <li><p>PyYAML (<a class="reference external" href="https://github.com/yaml/pyyaml/blob/master/LICENSE">PyYAML’s license</a>)</p></li>
@@ -170,7 +168,6 @@ each library at the time of Salmon v1.0 is included:</p>
 <li><p>cloudpickle (<a class="reference external" href="https://github.com/cloudpipe/cloudpickle/blob/master/LICENSE">cloudpickle’s license</a>)</p></li>
 <li><p>jupyter-server-proxy (<a class="reference external" href="https://github.com/jupyterhub/jupyter-server-proxy/blob/main/LICENSE">jupyter-server-proxy’s license</a>)</p></li>
 <li><p>autodoc pydantic (<a class="reference external" href="https://github.com/mansenfranzen/autodoc_pydantic/blob/main/LICENSE">autodoc’s license</a>)</p></li>
-<li><p>seaborn (<a class="reference external" href="https://github.com/mwaskom/seaborn/blob/master/LICENSE.md">seaborn’s license</a>)</p></li>
 <li><p>starlette_exporter (<a class="reference external" href="https://github.com/stephenhillier/starlette_exporter/blob/master/LICENSE">starlette_exporter’s license</a>)</p></li>
 </ul>
 <section id="python">
@@ -1323,75 +1320,6 @@ https://opensource.apple.com/source/tcl/tcl-14/tcl/license.terms
 </pre></div>
 </div>
 </section>
-<section id="ipykernel">
-<h2>ipykernel<a class="headerlink" href="#ipykernel" title="Permalink to this heading"></a></h2>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>This project is licensed under the terms of the Modified BSD License
-(also known as New or Revised or 3-Clause BSD), as follows:
-
-- Copyright (c) 2015, IPython Development Team
-
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-
-Redistributions of source code must retain the above copyright notice, this
-list of conditions and the following disclaimer.
-
-Redistributions in binary form must reproduce the above copyright notice, this
-list of conditions and the following disclaimer in the documentation and/or
-other materials provided with the distribution.
-
-Neither the name of the IPython Development Team nor the names of its
-contributors may be used to endorse or promote products derived from this
-software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
-FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-</pre></div>
-</div>
-</section>
-<section id="nb-conda-kernels">
-<h2>nb_conda_kernels<a class="headerlink" href="#nb-conda-kernels" title="Permalink to this heading"></a></h2>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Copyright (c) 2016, Continuum Analytics, Inc. and contributors
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without modification,
-are permitted provided that the following conditions are met:
-
-* Redistributions of source code must retain the above copyright notice,
-this list of conditions and the following disclaimer.
-
-* Redistributions in binary form must reproduce the above copyright notice,
-this list of conditions and the following disclaimer in the documentation
-and/or other materials provided with the distribution.
-
-* Neither the name of Continuum Analytics nor the names of any contributors
-may be used to endorse or promote products derived from this software
-without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot;
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
-THE POSSIBILITY OF SUCH DAMAGE.
-</pre></div>
-</div>
-</section>
 <section id="sphinx">
 <h2>Sphinx<a class="headerlink" href="#sphinx" title="Permalink to this heading"></a></h2>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Unless otherwise indicated, all code in the Sphinx project is licenced under
@@ -1721,38 +1649,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-</pre></div>
-</div>
-</section>
-<section id="seaborn">
-<h2>seaborn<a class="headerlink" href="#seaborn" title="Permalink to this heading"></a></h2>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Copyright (c) 2012-2021, Michael L. Waskom
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-
-* Redistributions of source code must retain the above copyright notice, this
-  list of conditions and the following disclaimer.
-
-* Redistributions in binary form must reproduce the above copyright notice,
-  this list of conditions and the following disclaimer in the documentation
-  and/or other materials provided with the distribution.
-
-* Neither the name of the project nor the names of its
-  contributors may be used to endorse or promote products derived from
-  this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot;
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 </pre></div>
 </div>
 </section>

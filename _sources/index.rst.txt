@@ -33,7 +33,8 @@ naive methods of collecting triplet queries.
 
 If you'd like to report bugs/issues, or improve Salmon please see `Salmon's
 contribution guide`_. The list of dependicies and their licenses is available
-at :ref:`deps`.
+at :ref:`deps`. Salmon is licensed under the BSD License. Details are at
+`LICENSE.txt <https://github.com/stsievert/salmon/blob/master/LICENSE.txt>`_.
 
 .. _Salmon's contribution guide: https://github.com/stsievert/salmon/blob/master/CONTRIBUTING.md
 

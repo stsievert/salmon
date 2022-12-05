@@ -84,21 +84,10 @@ Opening this URL in the browser will show (a newer version) of this page:
    :align: center
    :width: 500px
 
-.. note::
+A couple notes:
 
-   Customizing this page is possible and detailed in :ref:`frontendcustomization`.
-
-Generally, I've found it useful to send out URLs I control to
-crowdsourcing users via an `HTML redirect`_.  Using an HTML redirect
-means that I have more flexibility around the URL, and can handle many
-use cases: launching a new machine and replacing it, restarting it, or
-the machine dies unexpectedly.
-
-One method to do this is to use `GitHub Pages`_ (which allows creating a
-URL like ``https://foo.github.io`` if your GitHub username is ``foo``)
-then creating the HTML redirection file above (copy/pasting the shown
-text into ``bar.html``). Then, users can visit
-``https://foo.github.io/bar.html`` to be redirected.
+* Customizing this page is possible and detailed in :ref:`frontendcustomization`.
+* Tips on deploying this experiments can be found at :ref:`deploying`.
 
 .. _HTML redirect: https://www.w3docs.com/snippets/html/how-to-redirect-a-web-page-in-html.html
 .. _GitHub Pages: https://pages.github.com/

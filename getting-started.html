@@ -18,6 +18,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -162,20 +163,11 @@ recruitment. In either case, that may involve a URL of this form:</p>
 </div>
 <p>Opening this URL in the browser will show (a newer version) of this page:</p>
 <a class="reference internal image-reference" href="_images/query_page.png"><img alt="_images/query_page.png" class="align-center" src="_images/query_page.png" style="width: 500px;" /></a>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Customizing this page is possible and detailed in <a class="reference internal" href="frontend.html#frontendcustomization"><span class="std std-ref">Frontend customization</span></a>.</p>
-</div>
-<p>Generally, I’ve found it useful to send out URLs I control to
-crowdsourcing users via an <a class="reference external" href="https://www.w3docs.com/snippets/html/how-to-redirect-a-web-page-in-html.html">HTML redirect</a>.  Using an HTML redirect
-means that I have more flexibility around the URL, and can handle many
-use cases: launching a new machine and replacing it, restarting it, or
-the machine dies unexpectedly.</p>
-<p>One method to do this is to use <a class="reference external" href="https://pages.github.com/">GitHub Pages</a> (which allows creating a
-URL like <code class="docutils literal notranslate"><span class="pre">https://foo.github.io</span></code> if your GitHub username is <code class="docutils literal notranslate"><span class="pre">foo</span></code>)
-then creating the HTML redirection file above (copy/pasting the shown
-text into <code class="docutils literal notranslate"><span class="pre">bar.html</span></code>). Then, users can visit
-<code class="docutils literal notranslate"><span class="pre">https://foo.github.io/bar.html</span></code> to be redirected.</p>
+<p>A couple notes:</p>
+<ul class="simple">
+<li><p>Customizing this page is possible and detailed in <a class="reference internal" href="frontend.html#frontendcustomization"><span class="std std-ref">Frontend customization</span></a>.</p></li>
+<li><p>Tips on deploying this experiments can be found at <a class="reference internal" href="deploying.html#deploying"><span class="std std-ref">Deploying</span></a>.</p></li>
+</ul>
 </section>
 </section>
 
