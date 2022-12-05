@@ -1,4 +1,4 @@
-name: Tests (complete w/ conda & salmon.lock.yml)
+name: Tests (complete w/ conda)
 
 on:
   push:
@@ -42,7 +42,7 @@ jobs:
           sudo chown -R -H -L $USER:$USER salmon docs tests
     - name: Install dependencies
       run: |
-        conda env update --file salmon.lock.yml --name base
+        conda env update --file salmon.yml --name base
     - name: Install Salmon
       run: pip install -e .
     - name: Run tests in salmon/salmon/
