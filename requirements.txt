@@ -12,7 +12,6 @@ ujson
 torch # cpuonly
 pyyaml
 altair
-seaborn
 fastapi[all]
 rejson
 httpx
