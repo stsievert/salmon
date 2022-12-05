@@ -21,7 +21,6 @@ dependencies:
   - ujson
   - ipykernel  # to run this environ in jupyter (required for viz)
   - nb_conda_kernels
-  - altair
   - bokeh==2.0.1  # because templates/dashboard.html requires this version
   - jinja2<3.1.0
   - sphinx_rtd_theme

@@ -32,8 +32,8 @@ setup(
     long_description=long_description,
     data_files=[("requirements", ["requirements.txt"])],
     classifiers=[
-        "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
+        "License :: OSI Approved :: BSD License",
+        "Topic :: Scientific/Engineering :: Artificial Intelligence",
     ],
 )
