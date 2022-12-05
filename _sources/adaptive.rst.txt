@@ -1,5 +1,5 @@
-Adaptive algorithms
-===================
+Adaptive algorithm primer
+=========================
 
 The API the must conform to below:
 

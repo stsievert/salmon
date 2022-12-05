@@ -53,8 +53,8 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Generating embeddings offline</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#downloading-responses">Downloading responses</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#install-salmon">Install Salmon</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#option-1-using-pip">Option 1: Using pip</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#option-2-using-conda">Option 2: Using conda</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-conda">Using conda</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-pip">Using pip</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#generate-embeddings">Generate embeddings</a></li>
@@ -71,7 +71,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Algorithm Developers</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="adaptive.html">Adaptive algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="adaptive.html">Adaptive algorithm primer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="developers.html">Developing algorithms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="deps.html">Dependencies</a></li>
 </ul>
@@ -119,42 +119,24 @@ embedding:</p>
 clicking the link on the dashboard (as mentioned in <a class="reference internal" href="monitoring.html#exp-monitoring"><span class="std std-ref">Experiment monitoring</span></a>).</p>
 </section>
 <section id="install-salmon">
-<h2>Install Salmon<a class="headerlink" href="#install-salmon" title="Permalink to this heading"></a></h2>
-<p>There are two options to install Salmon for offline embeddings.</p>
-<section id="option-1-using-pip">
-<h3>Option 1: Using pip<a class="headerlink" href="#option-1-using-pip" title="Permalink to this heading"></a></h3>
-<p>This option is recommended to generate embeddings offline.  This option
-requires <code class="docutils literal notranslate"><span class="pre">pip</span></code>, a Python package manager. It’s available through <a class="reference external" href="https://www.anaconda.com/products/distribution#Downloads">Anaconda</a>
-and <a class="reference external" href="https://docs.conda.io/en/latest/miniconda.html">Miniconda</a>.</p>
-<ol class="arabic simple">
-<li><p>Run the command <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">salmon-triplets</span></code>.</p></li>
-<li><p>Run the command below in Python to verify that the installation worked successfully:</p></li>
-</ol>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">salmon.triplets.offline</span> <span class="kn">import</span> <span class="n">OfflineEmbedding</span>
-</pre></div>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>This package named “salmon-triplets” on PyPI installs a Python package
-named <code class="docutils literal notranslate"><span class="pre">salmon</span></code>.</p>
-</div>
-</section>
-<section id="option-2-using-conda">
-<h3>Option 2: Using conda<a class="headerlink" href="#option-2-using-conda" title="Permalink to this heading"></a></h3>
+<span id="offlineinstall"></span><h2>Install Salmon<a class="headerlink" href="#install-salmon" title="Permalink to this heading"></a></h2>
+<p>There are two options to install Salmon for offline embeddings. <strong>Using
+``conda`` is preferred</strong> because it installs all the requirements (including
+Python 3.8, which might not be installed) and has more sophisticated conflict
+resolution than <code class="docutils literal notranslate"><span class="pre">pip</span></code>.</p>
+<section id="using-conda">
+<h3>Using conda<a class="headerlink" href="#using-conda" title="Permalink to this heading"></a></h3>
 <p>This option is required for a complete installation.  This option requires
 <code class="docutils literal notranslate"><span class="pre">conda</span></code>, a Anaconda’s Python package manager. It’s available through
 <a class="reference external" href="https://www.anaconda.com/products/distribution#Downloads">Anaconda</a> and <a class="reference external" href="https://docs.conda.io/en/latest/miniconda.html">Miniconda</a>.</p>
 <ol class="arabic simple">
-<li><p>Download <a class="reference external" href="https://github.com/stsievert/salmon/releases/latest">the latest release of Salmon</a>, and unpack the <cite>.zip</cite> or <cite>.tar.gz</cite>
-file.</p></li>
+<li><p>Download <a class="reference external" href="https://github.com/stsievert/salmon/releases/latest">the latest release of Salmon</a>.</p></li>
+<li><p>Unzip/unpack the <cite>.zip</cite> or <cite>.tar.gz</cite> file.</p></li>
 <li><p>Navigate to the directory in the shell/terminal and run these commands:</p></li>
+<li><p>Then run these commands:</p></li>
 </ol>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ <span class="c1"># download salmon-X.Y.Z.zip into ~/Downloads</span>
-$ <span class="c1"># unzip/untar into directory `salmon`</span>
-$ <span class="c1"># then navigate there in your shell/Terminal</span>
-$ <span class="nb">cd</span> ~/Downloads/salmon
-$ conda env create -f salmon.yml
-$ <span class="c1"># conda env create -f salmon.yml.lock  # if the above gives you trouble</span>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> ~/Downloads/salmon  <span class="c1"># directory just downloaded and unzipped</span>
+$ conda env create -f salmon.lock.yml
 $ conda activate salmon
 <span class="o">(</span>salmon<span class="o">)</span> $ pip install .
 </pre></div>
@@ -166,6 +148,23 @@ be Terminal.app.</p>
 <p>The commands above are (*nix) shell commands. The <code class="docutils literal notranslate"><span class="pre">$</span></code> is intended to
 be your terminal prompt; leave it out when copy and pasting into the
 terminal.</p>
+</div>
+</section>
+<section id="using-pip">
+<h3>Using pip<a class="headerlink" href="#using-pip" title="Permalink to this heading"></a></h3>
+<p>This option is recommended to generate embeddings offline.  This option
+requires <code class="docutils literal notranslate"><span class="pre">pip</span></code>, a Python package manager. It’s available through <a class="reference external" href="https://www.anaconda.com/products/distribution#Downloads">Anaconda</a>
+and <a class="reference external" href="https://docs.conda.io/en/latest/miniconda.html">Miniconda</a>.</p>
+<p>After you have the Python package manager <code class="docutils literal notranslate"><span class="pre">pip</span></code>, run these commands:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ pip install <span class="s2">&quot;salmon-triplets&quot;</span>
+$ python -c <span class="s2">&quot;from salmon.triplets.offline import OfflineEmbedding&quot;</span>
+</pre></div>
+</div>
+<p>You have successfully installed Salmon if these commands complete successfully.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This package named “salmon-triplets” on PyPI installs a Python package
+named <code class="docutils literal notranslate"><span class="pre">salmon</span></code>.</p>
 </div>
 </section>
 </section>

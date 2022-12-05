@@ -67,7 +67,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Algorithm Developers</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="adaptive.html">Adaptive algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="adaptive.html">Adaptive algorithm primer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="developers.html">Developing algorithms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="deps.html">Dependencies</a></li>
 </ul>
@@ -148,19 +148,24 @@ finished launching, you will see a couple links:</p>
 <li><p>A link to the dashboard (<code class="docutils literal notranslate"><span class="pre">http://[url]:8421/dashboard</span></code>), an example of
 which is at “<a class="reference internal" href="monitoring.html#exp-monitoring"><span class="std std-ref">Experiment monitoring</span></a>.”</p></li>
 <li><p>A link to the query page to send to crowdsourcing users
-(<code class="docutils literal notranslate"><span class="pre">http://[url]:8421/</span></code>). An (out-of-date) example:</p></li>
+(<code class="docutils literal notranslate"><span class="pre">http://[url]:8421/</span></code>).</p></li>
 </ul>
-<a class="reference internal image-reference" href="_images/query_page.png"><img alt="_images/query_page.png" class="align-center" src="_images/query_page.png" style="width: 500px;" /></a>
 </section>
 <section id="send-the-url-to-participants">
 <h2>Send the URL to participants<a class="headerlink" href="#send-the-url-to-participants" title="Permalink to this heading"></a></h2>
 <p>The URL to send to the crowdsourcing participants is <code class="docutils literal notranslate"><span class="pre">http://[url]:8421/</span></code>.
-For example, that may be</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">ec2</span><span class="o">-</span><span class="mi">52</span><span class="o">-</span><span class="mi">204</span><span class="o">-</span><span class="mi">122</span><span class="o">-</span><span class="mf">132.</span><span class="n">compute</span><span class="o">-</span><span class="mf">1.</span><span class="n">amazonaws</span><span class="o">.</span><span class="n">com</span><span class="p">:</span><span class="mi">8421</span><span class="o">/</span><span class="n">init</span>
+Typically, paid services like Mechantical Turk are used to recruit
+crowdsourcing participants. Reddit and email have been used for unpaid
+recruitment. In either case, that may involve a URL of this form:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">ec2</span><span class="o">-</span><span class="mi">52</span><span class="o">-</span><span class="mi">204</span><span class="o">-</span><span class="mi">122</span><span class="o">-</span><span class="mf">132.</span><span class="n">compute</span><span class="o">-</span><span class="mf">1.</span><span class="n">amazonaws</span><span class="o">.</span><span class="n">com</span><span class="p">:</span><span class="mi">8421</span><span class="o">/</span>
 </pre></div>
 </div>
+<p>Opening this URL in the browser will show (a newer version) of this page:</p>
+<a class="reference internal image-reference" href="_images/query_page.png"><img alt="_images/query_page.png" class="align-center" src="_images/query_page.png" style="width: 500px;" /></a>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
+<p>Customizing this page is possible and detailed in <a class="reference internal" href="frontend.html#frontendcustomization"><span class="std std-ref">Frontend customization</span></a>.</p>
+</div>
 <p>Generally, I’ve found it useful to send out URLs I control to
 crowdsourcing users via an <a class="reference external" href="https://www.w3docs.com/snippets/html/how-to-redirect-a-web-page-in-html.html">HTML redirect</a>.  Using an HTML redirect
 means that I have more flexibility around the URL, and can handle many
@@ -171,14 +176,6 @@ URL like <code class="docutils literal notranslate"><span class="pre">https://fo
 then creating the HTML redirection file above (copy/pasting the shown
 text into <code class="docutils literal notranslate"><span class="pre">bar.html</span></code>). Then, users can visit
 <code class="docutils literal notranslate"><span class="pre">https://foo.github.io/bar.html</span></code> to be redirected.</p>
-<p>As an example, the URL <a class="reference external" href="https://nextml.org/captioncontest">https://nextml.org/captioncontest</a> currently
-redirects to
-<a class="reference external" href="https://s3.us-west-2.amazonaws.com/mlnow-newyorker/captioncontest_s3.html">https://s3.us-west-2.amazonaws.com/mlnow-newyorker/captioncontest_s3.html</a>.
-I would send out the URL <code class="docutils literal notranslate"><span class="pre">https://nextml.org/captioncontest</span></code> to users</p>
-</div>
-<p>Typically, paid services like Mechantical Turk are used to recruit
-crowdsourcing participants. Reddit and email have been used for unpaid
-recruitment.</p>
 </section>
 </section>
 

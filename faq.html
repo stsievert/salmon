@@ -62,7 +62,10 @@
 <li class="toctree-l2"><a class="reference internal" href="#how-do-i-ask-every-crowdsourcing-user-exactly-the-same-questions">How do I ask every crowdsourcing user exactly the same questions?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#how-do-i-see-the-dask-dashboard">How do I see the Dask dashboard?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#how-do-i-customize-the-participant-unique-identifier-aka-puid">How do I customize the participant unique identifier aka “puid”?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#how-do-i-use-https-with-salmon">How do I use HTTPS with Salmon?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-do-i-use-https-with-salmon">How do I use HTTPS with Salmon?</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#the-docker-machines-aren-t-launching">The Docker machines aren’t launching</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
@@ -74,7 +77,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Algorithm Developers</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="adaptive.html">Adaptive algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="adaptive.html">Adaptive algorithm primer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="developers.html">Developing algorithms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="deps.html">Dependencies</a></li>
 </ul>
@@ -291,6 +294,14 @@ Jain, Jamieson and Nowak. 2016. NeurIPS.
 <dd><p>though the package <a class="reference external" href="https://github.com/FiloSottile/mkcert">mkcert</a> might help.</p>
 </dd>
 </dl>
+<section id="the-docker-machines-aren-t-launching">
+<h3>The Docker machines aren’t launching<a class="headerlink" href="#the-docker-machines-aren-t-launching" title="Permalink to this heading"></a></h3>
+<p>Are you using the command <code class="docutils literal notranslate"><span class="pre">docker-compose</span> <span class="pre">up</span></code> to launch Salmon? The command
+<code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">build</span> <span class="pre">.</span></code> doesn’t work.</p>
+<p>Salmon requires a Redis docker machine and certain directories/ports being
+available. Technically, it’s possible to build all the Docker machines
+yourself (but it’s not feasible).</p>
+</section>
 </section>
 </section>
 

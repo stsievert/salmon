@@ -45,12 +45,11 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#experimentalist">Experimentalist</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#local-machine">Local machine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#local-install">Local install</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#troubleshooting">Troubleshooting</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#i-can-t-access-salmon-s-url">I can’t access Salmon’s URL</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#i-can-t-find-salmon-s-ami">I can’t find Salmon’s AMI</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#restoring-from-a-backup-didn-t-work">Restoring from a backup didn’t work</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#the-docker-machines-aren-t-launching">The Docker machines aren’t launching</a></li>
 </ul>
 </li>
 </ul>
@@ -72,7 +71,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Algorithm Developers</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="adaptive.html">Adaptive algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="adaptive.html">Adaptive algorithm primer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="developers.html">Developing algorithms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="deps.html">Dependencies</a></li>
 </ul>
@@ -219,53 +218,12 @@ you left the machine running.</p>
 pricing</a>, that costs about $10/month (in April 2022).</p>
 </div>
 </section>
-<section id="local-machine">
-<span id="local-install"></span><h2>Local machine<a class="headerlink" href="#local-machine" title="Permalink to this heading"></a></h2>
-<p>This process is meant for developers. To launch, first download the code.  It’s
-possible to download <a class="reference external" href="https://github.com/stsievert/salmon/archive/refs/heads/master.zip">a ZIP file of Salmon’s source</a>, or if Git is installed,
-to run this command:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/stsievert/salmon.git
-</pre></div>
-</div>
-<p>Then, to launch a local version of Salmon you’ll need <a class="reference external" href="https://docs.docker.com/compose/install/">Docker Compose</a>.
-After that dependency is intalled, run the following code:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> salmon
-$ docker-compose build
-$ docker-compose up
-$ <span class="c1"># visit http://localhost:8421/init or http://localhost:8421/docs</span>
-</pre></div>
-</div>
-<p>If you make changes to this code, run these commands:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ docker-compose stop
-$ docker-compose build
-$ docker-compose up
-</pre></div>
-</div>
-<p>If you want to log into the Docker container, execute these commands:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ docker ps  <span class="c1"># to get list of running conatiners</span>
-CONTAINER ID   IMAGE             ... <span class="o">[</span>more info<span class="o">]</span>  ...  NAMES
-08b96fbcc4c3   salmon_server     ... <span class="o">[</span>more info<span class="o">]</span>  ...  salmon_server_1
-57cb3b7652d9   redislabs/rejson  ... <span class="o">[</span>more info<span class="o">]</span>  ...  salmon_redis_1
-$ docker <span class="nb">exec</span> -it 08b96fbcc4c3 /bin/bash
-<span class="o">(</span>base<span class="o">)</span> root@08b96fbcc4c3:/salmon# conda activate salmon
-<span class="o">(</span>salmon<span class="o">)</span> root@08b96fbcc4c3:/salmon#
-</pre></div>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>This is an alternative way to install Salmon’s dependencies. If you create a
-file in the Docker container in <code class="docutils literal notranslate"><span class="pre">/salmon</span></code>, it will also be written to
-<code class="docutils literal notranslate"><span class="pre">/path/to/salmon</span></code> on your local machine.</p>
-</div>
-<p>If you run the command <code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">SALMON_DEBUG=1</span></code>, the Salmon server will watch
-for changes in the source and re-launch as necessary. This won’t be perfect,
-but it will reduce the number of times required to run <code class="docutils literal notranslate"><span class="pre">docker-compose</span> <span class="pre">{stop,</span>
-<span class="pre">build,</span> <span class="pre">up}</span></code>.</p>
-<p>If you run the command <code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">SALMON_NO_AUTH=1</span></code>, the Salmon server will
-not require a username/password.</p>
+<section id="local-install">
+<span id="id2"></span><h2>Local install<a class="headerlink" href="#local-install" title="Permalink to this heading"></a></h2>
+<p>See <a class="reference internal" href="offline.html#offlineinstall"><span class="std std-ref">Install Salmon</span></a> for the process of installing locally.</p>
 </section>
 <section id="troubleshooting">
-<span id="id2"></span><h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this heading"></a></h2>
+<span id="id3"></span><h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this heading"></a></h2>
 <p>See <a class="reference internal" href="faq.html#faq"><span class="std std-ref">FAQ</span></a> for more general questions.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -289,36 +247,11 @@ only available in the regions they’re created in.</p>
 </section>
 <section id="restoring-from-a-backup-didn-t-work">
 <span id="restorefrombackupfaq"></span><h3>Restoring from a backup didn’t work<a class="headerlink" href="#restoring-from-a-backup-didn-t-work" title="Permalink to this heading"></a></h3>
-<p>That’s perhaps expected depending on how much Salmon has changed. Launching
-from EC2 always downloads the latest version of Salmon, which may not work with
-your backup file.</p>
-<p>Let’s follow this process to restore your backup with the correct version of Salmon:</p>
-<ol class="arabic simple">
-<li><p>Get the correct version of Salmon.</p></li>
-<li><p>Launch a Salmon server.</p></li>
-<li><p>Restore.</p></li>
-</ol>
-<p>First, let’s get the right version of Salmon:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ <span class="c1"># Get right version of Salmon</span>
-$ git clone https://github.com/stsievert/salmon.git
-$ <span class="nb">cd</span> salmon
-$ git checkout v0.7.0  <span class="c1"># from .rdb filename; will take the form &quot;vA.B.C&quot; or &quot;vA.B.CrcD&quot;</span>
-</pre></div>
-</div>
-<p>Second, let’s launch Salmon (following the same process as in
-<a class="reference internal" href="#local-install"><span class="std std-ref">Local machine</span></a>).</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ docker-compose up  <span class="c1"># takes a while</span>
-$ <span class="c1"># visit http://[url]:8421/init and re-upload file</span>
-</pre></div>
-</div>
-<p>Finally, let’s follow the instructions provided, which for Salmon v0.7.0 are
-below:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ <span class="c1"># Now, let&#39;s follow the directions Salmon gave:</span>
-$ docker-compose stop<span class="p">;</span> docker-compose start
-$ docker-compose logs -f
-$ <span class="c1"># visit http://[ur]:8421/dashboard</span>
-</pre></div>
-</div>
+<p>This might happen if Salmon changed between when you downloaded and tried to
+restore the experiment. Launching from EC2 always downloads the latest version
+of Salmon, which may not work with your backup file.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>Salmon follows <a class="reference external" href="https://semver.org/">semantic software versioning</a>. If the version string in the
 .rdb file takes the form <code class="docutils literal notranslate"><span class="pre">vA.B.C</span></code>, then:</p>
 <ul class="simple">
@@ -330,14 +263,36 @@ $ <span class="c1"># visit http://[ur]:8421/dashboard</span>
 </ul>
 <p>Uploading backup files when <cite>relevant</cite> “backwards incompatible” software
 changes are made, which should be encoded in the release notes.</p>
-</section>
-<section id="the-docker-machines-aren-t-launching">
-<h3>The Docker machines aren’t launching<a class="headerlink" href="#the-docker-machines-aren-t-launching" title="Permalink to this heading"></a></h3>
-<p>Are you using the command <code class="docutils literal notranslate"><span class="pre">docker-compose</span> <span class="pre">up</span></code> to launch Salmon? The command
-<code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">build</span> <span class="pre">.</span></code> doesn’t work.</p>
-<p>Salmon requires a Redis docker machine and certain directories/ports being
-available. Technically, it’s possible to build all the Docker machines
-yourself (but it’s not feasible).</p>
+</div>
+<p>So, it uploading your backup did not work (it should if the version numbers are
+correct), let’s launch the correct version of Salmon’s server on your machine. That requires this process:</p>
+<ol class="arabic simple">
+<li><p>Get the correct version of Salmon.</p></li>
+<li><p>Spin up a Salmon server.</p></li>
+<li><p>Go to <code class="docutils literal notranslate"><span class="pre">http://localhost:8421/init</span></code></p></li>
+<li><p>Upload the <code class="docutils literal notranslate"><span class="pre">.rdb</span></code> file to restore.</p></li>
+</ol>
+<p>This process is basically “launch Salmon’s server on your machine.”
+First, let’s get the right version of Salmon:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ <span class="c1"># Get right version of Salmon</span>
+$ git clone https://github.com/stsievert/salmon.git
+$ <span class="nb">cd</span> salmon
+$ git checkout v0.7.0  <span class="c1"># from .rdb filename; will take the form &quot;vA.B.C&quot; or &quot;vA.B.CrcD&quot;</span>
+</pre></div>
+</div>
+<p>Second, let’s launch Salmon:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ docker-compose up  <span class="c1"># takes a while</span>
+$ <span class="c1"># visit http://localhost:8421/init</span>
+</pre></div>
+</div>
+<p><strong>Now re-upload the file using the interface at the bottom of the screen.</strong></p>
+<p>Now Salmon will issue instructions to restart. Let’s do that:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ <span class="c1"># Now, let&#39;s follow the directions Salmon gave:</span>
+$ docker-compose stop<span class="p">;</span> docker-compose start
+$ docker-compose logs -f
+$ <span class="c1"># visit http://localhost:8421/dashboard</span>
+</pre></div>
+</div>
 </section>
 </section>
 </section>

@@ -6,50 +6,50 @@ Dependencies
 Salmon depends on the libraries below. Below this list, the current license of
 each library at the time of Salmon v1.0 is included:
 
-* Python (`license <https://docs.python.org/3/license.html>`_).
-* NumPy (`license <https://numpy.org/doc/stable/license.html>`_).
-* SciPy (`license <https://projects.scipy.org/scipylib/license.html>`_).
-* Pandas (`license <https://github.com/pandas-dev/pandas/blob/main/LICENSE>`_).
-* Cython (`license <https://github.com/cython/cython/blob/master/LICENSE.txt>`_)
-* Scikit-learn (`license <https://github.com/scikit-learn/scikit-learn/blob/main/COPYING>`_)
-* FastAPI (`license <https://github.com/tiangolo/fastapi/blob/master/LICENSE>`_)
-* PyTorch (`license <https://github.com/pytorch/pytorch/blob/master/LICENSE>`_)
-* Skorch (`license <https://github.com/skorch-dev/skorch/blob/master/LICENSE>`_)
-* Altair (`license <https://github.com/altair-viz/altair/blob/master/LICENSE>`_)
-* Bokeh (`license <https://github.com/bokeh/bokeh/blob/branch-3.0/LICENSE.txt>`_)
-* Jinja2 (`license <https://jinja.palletsprojects.com/en/3.1.x/license/>`_)
-* Redis, ReJSON (`license <https://redis.io/docs/about/license/>`_)
-* HTTPX (`license <https://github.com/encode/httpx/blob/master/LICENSE.md>`_)
-* Dask (`license <https://github.com/dask/dask/blob/main/LICENSE.txt>`_).
-* Dask Distributed (`license <https://github.com/dask/distributed/blob/main/LICENSE.txt>`_).
-* Dask-ML (`license <https://github.com/dask/dask-ml/blob/main/LICENSE.txt>`_).
-* aiofiles (`license <https://github.com/Tinche/aiofiles/blob/main/LICENSE>`_)
-* click (`license <https://github.com/pallets/click/blob/main/LICENSE.rst>`_)
-* lz4 (`license <https://github.com/lz4/lz4/blob/dev/lib/LICENSE>`_)
-* pythn-blosc (`license <https://github.com/Blosc/python-blosc/blob/main/LICENSE.txt>`_)
-* cytoolz (`license <https://github.com/pytoolz/cytoolz/blob/master/LICENSE.txt>`_)
-* ujson (`license <https://github.com/ultrajson/ultrajson/blob/main/LICENSE.txt>`_)
-* ipykernel (`license <https://pypi.org/project/ipykernel/>`_)
-* nb_conda_kernels (`license <https://github.com/Anaconda-Platform/nb_conda_kernels/blob/master/LICENSE>`_)
-* Sphinx (`license <https://github.com/sphinx-doc/sphinx/blob/master/LICENSE>`_)
-* Sphinx RTD Theme (`license <https://github.com/readthedocs/sphinx_rtd_theme/blob/master/LICENSE>`_)
-* PyYAML (`license <https://github.com/yaml/pyyaml/blob/master/LICENSE>`_)
-* matplotlib (`license <https://github.com/matplotlib/matplotlib/blob/main/LICENSE/LICENSE>`_)
-* python-multipart (`license <https://github.com/andrew-d/python-multipart/blob/master/LICENSE.txt>`_)
-* numpydoc (`license <https://github.com/numpy/numpydoc/blob/main/LICENSE.txt>`_)
-* pytest (`license <https://github.com/pytest-dev/pytest/blob/main/LICENSE>`_)
-* gunicorn (`license <https://github.com/benoitc/gunicorn/blob/master/LICENSE>`_)
-* cloudpickle (`license <https://github.com/cloudpipe/cloudpickle/blob/master/LICENSE>`_)
-* jupyter server proxy (`license <https://github.com/jupyterhub/jupyter-server-proxy/blob/main/LICENSE>`_)
-* autodoc pydantic (`license <https://github.com/mansenfranzen/autodoc_pydantic/blob/main/LICENSE>`_)
-* seaborn (`license <https://github.com/mwaskom/seaborn/blob/master/LICENSE.md>`_)
-* starlette_exporter (`license <https://github.com/stephenhillier/starlette_exporter/blob/master/LICENSE>`_)
+* Python (`Python's license <https://docs.python.org/3/license.html>`_).
+* NumPy (`NumPy's license <https://numpy.org/doc/stable/license.html>`_).
+* SciPy (`SciPy's license <https://projects.scipy.org/scipylib/license.html>`_).
+* Pandas (`Pandas's license <https://github.com/pandas-dev/pandas/blob/main/LICENSE>`_).
+* Cython (`Cython's license <https://github.com/cython/cython/blob/master/LICENSE.txt>`_)
+* Scikit-learn (`Scikit-learn's license <https://github.com/scikit-learn/scikit-learn/blob/main/COPYING>`_)
+* FastAPI (`FastAPI's license <https://github.com/tiangolo/fastapi/blob/master/LICENSE>`_)
+* PyTorch (`PyTorch's license <https://github.com/pytorch/pytorch/blob/master/LICENSE>`_)
+* Skorch (`Skorch's license <https://github.com/skorch-dev/skorch/blob/master/LICENSE>`_)
+* Altair (`Altair's license <https://github.com/altair-viz/altair/blob/master/LICENSE>`_)
+* Bokeh (`Bokeh's license <https://github.com/bokeh/bokeh/blob/branch-3.0/LICENSE.txt>`_)
+* Jinja2 (`Jinja2's license <https://jinja.palletsprojects.com/en/3.1.x/license/>`_)
+* Redis, ReJSON (`Redis's license <https://redis.io/docs/about/license/>`_)
+* HTTPX (`HTTPX's license <https://github.com/encode/httpx/blob/master/LICENSE.md>`_)
+* Dask (`Dask's license <https://github.com/dask/dask/blob/main/LICENSE.txt>`_).
+* Dask-Distributed (`Dask-Distributed's license <https://github.com/dask/distributed/blob/main/LICENSE.txt>`_).
+* Dask-ML (`Dask-ML's license <https://github.com/dask/dask-ml/blob/main/LICENSE.txt>`_).
+* aiofiles (`aiofiles's license <https://github.com/Tinche/aiofiles/blob/main/LICENSE>`_)
+* click (`click's license <https://github.com/pallets/click/blob/main/LICENSE.rst>`_)
+* lz4 (`lz4's license <https://github.com/lz4/lz4/blob/dev/lib/LICENSE>`_)
+* pythn-blosc (`python-block's license <https://github.com/Blosc/python-blosc/blob/main/LICENSE.txt>`_)
+* cytoolz (`cytoolz's license <https://github.com/pytoolz/cytoolz/blob/master/LICENSE.txt>`_)
+* ujson (`ujson's license <https://github.com/ultrajson/ultrajson/blob/main/LICENSE.txt>`_)
+* ipykernel (`ipykernel's license <https://pypi.org/project/ipykernel/>`_)
+* nb_conda_kernels (`nb_conda_kernel's license <https://github.com/Anaconda-Platform/nb_conda_kernels/blob/master/LICENSE>`_)
+* Sphinx (`Sphinx's license <https://github.com/sphinx-doc/sphinx/blob/master/LICENSE>`_)
+* Sphinx RTD Theme (`Sphinx RTD Theme's license <https://github.com/readthedocs/sphinx_rtd_theme/blob/master/LICENSE>`_)
+* PyYAML (`PyYAML's license <https://github.com/yaml/pyyaml/blob/master/LICENSE>`_)
+* matplotlib (`matplotlib's license <https://github.com/matplotlib/matplotlib/blob/main/LICENSE/LICENSE>`_)
+* python-multipart (`python-multipart's license <https://github.com/andrew-d/python-multipart/blob/master/LICENSE.txt>`_)
+* numpydoc (`numpydoc's license <https://github.com/numpy/numpydoc/blob/main/LICENSE.txt>`_)
+* pytest (`pytest's license <https://github.com/pytest-dev/pytest/blob/main/LICENSE>`_)
+* gunicorn (`gunicorn's license <https://github.com/benoitc/gunicorn/blob/master/LICENSE>`_)
+* cloudpickle (`cloudpickle's license <https://github.com/cloudpipe/cloudpickle/blob/master/LICENSE>`_)
+* jupyter-server-proxy (`jupyter-server-proxy's license <https://github.com/jupyterhub/jupyter-server-proxy/blob/main/LICENSE>`_)
+* autodoc pydantic (`autodoc's license <https://github.com/mansenfranzen/autodoc_pydantic/blob/main/LICENSE>`_)
+* seaborn (`seaborn's license <https://github.com/mwaskom/seaborn/blob/master/LICENSE.md>`_)
+* starlette_exporter (`starlette_exporter's license <https://github.com/stephenhillier/starlette_exporter/blob/master/LICENSE>`_)
 
 
 Python
 ------
 
-.. code-block:: txt
+.. code-block:: none
 
    1. This LICENSE AGREEMENT is between the Python Software Foundation ("PSF"), and
    the Individual or Organization ("Licensee") accessing and otherwise using Python
@@ -96,7 +96,7 @@ Python
 NumPy
 -----
 
-.. code-block:: txt
+.. code-block:: none
 
    Copyright (c) 2005-2022, NumPy Developers.
    All rights reserved.
@@ -133,7 +133,7 @@ NumPy
 SciPy
 -----
 
-.. code-block:: txt
+.. code-block:: none
 
    Copyright © 2001, 2002 Enthought, Inc.
    All rights reserved.
@@ -171,7 +171,7 @@ SciPy
 Pandas
 ------
 
-.. code-block:: txt
+.. code-block:: none
 
    BSD 3-Clause License
 
@@ -209,7 +209,7 @@ Pandas
 Cython
 ------
 
-.. code-block:: txt
+.. code-block:: none
 
                                     Apache License
                            Version 2.0, January 2004
@@ -392,7 +392,7 @@ Cython
 Scikit-learn
 ------------
 
-.. code-block:: txt
+.. code-block:: none
 
    BSD 3-Clause License
 
@@ -427,7 +427,7 @@ Scikit-learn
 FastAPI
 -------
 
-.. code-block:: txt
+.. code-block:: none
 
    The MIT License (MIT)
 
@@ -454,7 +454,7 @@ FastAPI
 PyTorch
 -------
 
-.. code-block:: txt
+.. code-block:: none
 
    From PyTorch:
 
@@ -537,7 +537,7 @@ PyTorch
 Skorch
 ------
 
-.. code-block:: txt
+.. code-block:: none
 
    BSD 3-Clause License
 
@@ -572,7 +572,7 @@ Skorch
 Altair
 ------
 
-.. code-block:: txt
+.. code-block:: none
 
    Copyright (c) 2015-2022, Altair Developers
    All rights reserved.
@@ -605,7 +605,7 @@ Altair
 Bokeh
 -----
 
-.. code-block:: txt
+.. code-block:: none
 
    Copyright (c) 2012 - 2022, Anaconda, Inc., and Bokeh Contributors
    All rights reserved.
@@ -639,7 +639,7 @@ Bokeh
 Jinja2
 ------
 
-.. code-block:: txt
+.. code-block:: none
 
    Copyright 2007 Pallets
 
@@ -672,7 +672,7 @@ Jinja2
 Redis, ReJSON
 -------------
 
-.. code-block:: txt
+.. code-block:: none
 
    Every file in the Redis distribution, with the exceptions of third party files
    specified in the list below, contain the following license:
@@ -705,7 +705,7 @@ Redis, ReJSON
 HTTPX
 -----
 
-.. code-block:: txt
+.. code-block:: none
 
    Copyright © 2019, [Encode OSS Ltd](https://www.encode.io/).
    All rights reserved.
@@ -739,7 +739,7 @@ HTTPX
 Dask
 ----
 
-.. code-block:: txt
+.. code-block:: none
 
    BSD 3-Clause License
 
@@ -775,7 +775,7 @@ Dask
 Dask Distributed
 ----------------
 
-.. code-block:: txt
+.. code-block:: none
 
    BSD 3-Clause License
 
@@ -811,7 +811,7 @@ Dask Distributed
 Dask-ML
 -------
 
-.. code-block:: txt
+.. code-block:: none
 
    Copyright (c) 2017, Anaconda, Inc. and contributors
    All rights reserved.
@@ -845,7 +845,7 @@ Dask-ML
 aiofiles
 --------
 
-.. code-block:: txt
+.. code-block:: none
 
    Apache License
                            Version 2.0, January 2004
@@ -1053,7 +1053,7 @@ aiofiles
 click
 -----
 
-.. code-block:: txt
+.. code-block:: none
 
    Copyright 2014 Pallets
 
@@ -1088,7 +1088,7 @@ click
 lz4
 ---
 
-.. code-block:: txt
+.. code-block:: none
 
   LZ4 Library
   Copyright (c) 2011-2020, Yann Collet
@@ -1118,7 +1118,7 @@ lz4
 pythn-blosc
 -----------
 
-.. code-block:: txt
+.. code-block:: none
 
    BSD License
 
@@ -1156,7 +1156,7 @@ pythn-blosc
 cytoolz
 -------
 
-.. code-block:: txt
+.. code-block:: none
 
    Copyright (c) 2014-2021 Erik Welch
 
@@ -1190,7 +1190,7 @@ cytoolz
 ujson
 -----
 
-.. code-block:: txt
+.. code-block:: none
 
    Developed by ESN, an Electronic Arts Inc. studio.
    Copyright (c) 2014, Electronic Arts Inc.
@@ -1231,7 +1231,7 @@ ujson
 ipykernel
 ---------
 
-.. code-block:: txt
+.. code-block:: none
 
    This project is licensed under the terms of the Modified BSD License
    (also known as New or Revised or 3-Clause BSD), as follows:
@@ -1268,7 +1268,7 @@ ipykernel
 nb_conda_kernels
 ----------------
 
-.. code-block:: txt
+.. code-block:: none
 
    Copyright (c) 2016, Continuum Analytics, Inc. and contributors
    All rights reserved.
@@ -1302,7 +1302,7 @@ nb_conda_kernels
 Sphinx
 ------
 
-.. code-block:: txt
+.. code-block:: none
 
    Unless otherwise indicated, all code in the Sphinx project is licenced under
    the two clause BSD licence below.
@@ -1338,7 +1338,7 @@ Sphinx
 Sphinx RTD Theme
 ----------------
 
-.. code-block:: txt
+.. code-block:: none
 
    The MIT License (MIT)
 
@@ -1364,7 +1364,7 @@ Sphinx RTD Theme
 PyYAML
 ------
 
-.. code-block:: txt
+.. code-block:: none
 
    Copyright (c) 2017-2021 Ingy döt Net
    Copyright (c) 2006-2016 Kirill Simonov
@@ -1390,7 +1390,7 @@ PyYAML
 matplotlib
 ----------
 
-.. code-block:: txt
+.. code-block:: none
 
 
    1. This LICENSE AGREEMENT is between the Matplotlib Development Team
@@ -1444,7 +1444,7 @@ matplotlib
 python-multipart
 ----------------
 
-.. code-block:: txt
+.. code-block:: none
 
    Copyright 2012, Andrew Dunham
 
@@ -1463,7 +1463,7 @@ python-multipart
 numpydoc
 --------
 
-.. code-block:: txt
+.. code-block:: none
 
    Copyright (C) 2008-2022 Stefan van der Walt <stefan@mentat.za.net>, Pauli Virtanen <pav@iki.fi>
 
@@ -1493,7 +1493,7 @@ numpydoc
 pytest
 ------
 
-.. code-block:: txt
+.. code-block:: none
 
    The MIT License (MIT)
 
@@ -1520,7 +1520,7 @@ pytest
 gunicorn
 --------
 
-.. code-block:: txt
+.. code-block:: none
 
    2009-2018 (c) Benoît Chesneau <benoitc@e-engura.org>
    2009-2015 (c) Paul J. Davis <paul.joseph.davis@gmail.com>
@@ -1549,7 +1549,7 @@ gunicorn
 cloudpickle
 -----------
 
-.. code-block:: txt
+.. code-block:: none
 
    This module was extracted from the `cloud` package, developed by
    PiCloud, Inc.
@@ -1587,7 +1587,7 @@ cloudpickle
 jupyter server proxy
 --------------------
 
-.. code-block:: txt
+.. code-block:: none
 
    BSD 3-Clause License
 
@@ -1622,7 +1622,7 @@ jupyter server proxy
 autodoc pydantic
 ----------------
 
-.. code-block:: txt
+.. code-block:: none
 
    MIT License
 
@@ -1649,7 +1649,7 @@ autodoc pydantic
 seaborn
 -------
 
-.. code-block:: txt
+.. code-block:: none
 
    Copyright (c) 2012-2021, Michael L. Waskom
    All rights reserved.
@@ -1683,7 +1683,7 @@ seaborn
 starlette_exporter
 ------------------
 
-.. code-block:: txt
+.. code-block:: none
 
                                  Apache License
                            Version 2.0, January 2004

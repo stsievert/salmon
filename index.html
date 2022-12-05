@@ -61,7 +61,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Algorithm Developers</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="adaptive.html">Adaptive algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="adaptive.html">Adaptive algorithm primer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="developers.html">Developing algorithms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="deps.html">Dependencies</a></li>
 </ul>
@@ -126,7 +126,7 @@ Louisiana State University and Canada’s Western University.</p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="installation.html#experimentalist">Experimentalist</a></li>
-<li class="toctree-l2"><a class="reference internal" href="installation.html#local-machine">Local machine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#local-install">Local install</a></li>
 <li class="toctree-l2"><a class="reference internal" href="installation.html#troubleshooting">Troubleshooting</a></li>
 </ul>
 </li>
@@ -208,55 +208,24 @@ Louisiana State University and Canada’s Western University.</p>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Algorithm Developers</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="adaptive.html">Adaptive algorithms</a></li>
-<li class="toctree-l1"><a class="reference internal" href="developers.html">Developing algorithms</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="developers.html#basics">Basics</a></li>
-<li class="toctree-l2"><a class="reference internal" href="developers.html#debugging">Debugging</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="deps.html">Dependencies</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="deps.html#python">Python</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deps.html#numpy">NumPy</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deps.html#scipy">SciPy</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deps.html#pandas">Pandas</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deps.html#cython">Cython</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deps.html#scikit-learn">Scikit-learn</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deps.html#fastapi">FastAPI</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deps.html#pytorch">PyTorch</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deps.html#skorch">Skorch</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deps.html#altair">Altair</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deps.html#bokeh">Bokeh</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deps.html#jinja2">Jinja2</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deps.html#redis-rejson">Redis, ReJSON</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deps.html#httpx">HTTPX</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deps.html#dask">Dask</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deps.html#dask-distributed">Dask Distributed</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deps.html#dask-ml">Dask-ML</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deps.html#aiofiles">aiofiles</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deps.html#click">click</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deps.html#lz4">lz4</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deps.html#pythn-blosc">pythn-blosc</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deps.html#cytoolz">cytoolz</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deps.html#ujson">ujson</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deps.html#ipykernel">ipykernel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deps.html#nb-conda-kernels">nb_conda_kernels</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deps.html#sphinx">Sphinx</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deps.html#sphinx-rtd-theme">Sphinx RTD Theme</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deps.html#pyyaml">PyYAML</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deps.html#matplotlib">matplotlib</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deps.html#python-multipart">python-multipart</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deps.html#numpydoc">numpydoc</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deps.html#pytest">pytest</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deps.html#gunicorn">gunicorn</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deps.html#cloudpickle">cloudpickle</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deps.html#jupyter-server-proxy">jupyter server proxy</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deps.html#autodoc-pydantic">autodoc pydantic</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deps.html#seaborn">seaborn</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deps.html#starlette-exporter">starlette_exporter</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="adaptive.html">Adaptive algorithm primer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developers.html">Developing algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deps.html">Dependencies</a></li>
 </ul>
 </div>
+<section id="other-sources">
+<h2>Other sources<a class="headerlink" href="#other-sources" title="Permalink to this heading"></a></h2>
+<p>This documentation is available at these locations:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://docs.stsievert.com/salmon/">https://docs.stsievert.com/salmon/</a>.</p></li>
+<li><p>On GitHub <a class="reference external" href="https://github.com/stsievert/salmon/raw/gh-pages/salmon.pdf">as a raw PDF</a>  (<a class="reference external" href="https://github.com/stsievert/salmon/blob/gh-pages/salmon.pdf">alternate link</a>).</p></li>
+<li><p>On GitHub as
+<a class="reference external" href="https://github.com/stsievert/salmon/archive/refs/heads/gh-pages.zip">a zipped HTML directory</a>,
+which requires unzipping the directory then opening up <code class="docutils literal notranslate"><span class="pre">index.html</span></code>.</p></li>
+</ul>
+<p>Please <a class="reference external" href="https://github.com/stsievert/salmon/issues/new">file an issue</a> if you
+can not access the documentation above.</p>
+</section>
 </section>
 <section id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this heading"></a></h1>

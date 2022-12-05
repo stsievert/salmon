@@ -22,7 +22,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Dependencies" href="deps.html" />
-    <link rel="prev" title="Adaptive algorithms" href="adaptive.html" /> 
+    <link rel="prev" title="Adaptive algorithm primer" href="adaptive.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -61,8 +61,9 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Algorithm Developers</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="adaptive.html">Adaptive algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="adaptive.html">Adaptive algorithm primer</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Developing algorithms</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#install">Install</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#basics">Basics</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#debugging">Debugging</a></li>
 </ul>
@@ -96,6 +97,51 @@
              
   <section id="developing-algorithms">
 <h1>Developing algorithms<a class="headerlink" href="#developing-algorithms" title="Permalink to this heading"></a></h1>
+<section id="install">
+<h2>Install<a class="headerlink" href="#install" title="Permalink to this heading"></a></h2>
+<p>This process is meant for developers. To launch, first download the code.  It’s
+possible to download <a class="reference external" href="https://github.com/stsievert/salmon/archive/refs/heads/master.zip">a ZIP file of Salmon’s source</a>, or if Git is installed,
+to run this command:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/stsievert/salmon.git
+</pre></div>
+</div>
+<p>Then, to launch a local version of Salmon you’ll need <a class="reference external" href="https://docs.docker.com/compose/install/">Docker Compose</a>.
+After that dependency is intalled, run the following code:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> salmon
+$ docker-compose build
+$ docker-compose up
+$ <span class="c1"># visit http://localhost:8421/init or http://localhost:8421/docs</span>
+</pre></div>
+</div>
+<p>If you make changes to this code, run these commands:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ docker-compose stop
+$ docker-compose build
+$ docker-compose up
+</pre></div>
+</div>
+<p>If you want to log into the Docker container, execute these commands:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ docker ps  <span class="c1"># to get list of running conatiners</span>
+CONTAINER ID   IMAGE             ... <span class="o">[</span>more info<span class="o">]</span>  ...  NAMES
+08b96fbcc4c3   salmon_server     ... <span class="o">[</span>more info<span class="o">]</span>  ...  salmon_server_1
+57cb3b7652d9   redislabs/rejson  ... <span class="o">[</span>more info<span class="o">]</span>  ...  salmon_redis_1
+$ docker <span class="nb">exec</span> -it 08b96fbcc4c3 /bin/bash
+<span class="o">(</span>base<span class="o">)</span> root@08b96fbcc4c3:/salmon# conda activate salmon
+<span class="o">(</span>salmon<span class="o">)</span> root@08b96fbcc4c3:/salmon#
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This is an alternative way to install Salmon’s dependencies. If you create a
+file in the Docker container in <code class="docutils literal notranslate"><span class="pre">/salmon</span></code>, it will also be written to
+<code class="docutils literal notranslate"><span class="pre">/path/to/salmon</span></code> on your local machine.</p>
+</div>
+<p>If you run the command <code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">SALMON_DEBUG=1</span></code>, the Salmon server will watch
+for changes in the source and re-launch as necessary. This won’t be perfect,
+but it will reduce the number of times required to run <code class="docutils literal notranslate"><span class="pre">docker-compose</span> <span class="pre">{stop,</span>
+<span class="pre">build,</span> <span class="pre">up}</span></code>.</p>
+<p>If you run the command <code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">SALMON_NO_AUTH=1</span></code>, the Salmon server will
+not require a username/password.</p>
+</section>
 <section id="basics">
 <h2>Basics<a class="headerlink" href="#basics" title="Permalink to this heading"></a></h2>
 <p>First, write an algorithm on your machine. The basic interface requires two
@@ -180,7 +226,7 @@ working properly.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="adaptive.html" class="btn btn-neutral float-left" title="Adaptive algorithms" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="adaptive.html" class="btn btn-neutral float-left" title="Adaptive algorithm primer" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="deps.html" class="btn btn-neutral float-right" title="Dependencies" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

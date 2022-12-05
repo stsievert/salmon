@@ -67,13 +67,26 @@ Louisiana State University and Canada's Western University.
    benchmarks/active
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Algorithm Developers
 
    adaptive
    developers
    deps
 
+Other sources
+-------------
+
+This documentation is available at these locations:
+
+* `https://docs.stsievert.com/salmon/ <https://docs.stsievert.com/salmon/>`_.
+* On GitHub `as a raw PDF <https://github.com/stsievert/salmon/raw/gh-pages/salmon.pdf>`_  (`alternate link <https://github.com/stsievert/salmon/blob/gh-pages/salmon.pdf>`_).
+* On GitHub as
+  `a zipped HTML directory <https://github.com/stsievert/salmon/archive/refs/heads/gh-pages.zip>`_,
+  which requires unzipping the directory then opening up ``index.html``.
+
+Please `file an issue <https://github.com/stsievert/salmon/issues/new>`_ if you
+can not access the documentation above.
 
 Indices and tables
 ==================

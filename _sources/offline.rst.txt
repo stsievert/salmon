@@ -20,50 +20,32 @@ Downloading responses
 Download the responses, either by visiting ``http://[url]:8421/responses`` or
 clicking the link on the dashboard (as mentioned in :ref:`exp-monitoring`).
 
+.. _offlineinstall:
+
 Install Salmon
 --------------
 
-There are two options to install Salmon for offline embeddings.
+There are two options to install Salmon for offline embeddings. **Using
+``conda`` is preferred** because it installs all the requirements (including
+Python 3.8, which might not be installed) and has more sophisticated conflict
+resolution than ``pip``.
 
-Option 1: Using pip
-^^^^^^^^^^^^^^^^^^^
-
-This option is recommended to generate embeddings offline.  This option
-requires ``pip``, a Python package manager. It's available through `Anaconda`_
-and `Miniconda`_.
-
-
-1. Run the command ``pip install salmon-triplets``.
-2. Run the command below in Python to verify that the installation worked successfully:
-
-.. code-block:: python
-
-   from salmon.triplets.offline import OfflineEmbedding
-
-.. note::
-
-   This package named "salmon-triplets" on PyPI installs a Python package
-   named ``salmon``.
-
-Option 2: Using conda
-^^^^^^^^^^^^^^^^^^^^^
+Using conda
+^^^^^^^^^^^
 
 This option is required for a complete installation.  This option requires
 ``conda``, a Anaconda's Python package manager. It's available through
 `Anaconda`_ and `Miniconda`_.
 
-1. Download `the latest release of Salmon`_, and unpack the `.zip` or `.tar.gz`
-   file.
-2. Navigate to the directory in the shell/terminal and run these commands:
+1. Download `the latest release of Salmon`_.
+2. Unzip/unpack the `.zip` or `.tar.gz` file.
+3. Navigate to the directory in the shell/terminal and run these commands:
+4. Then run these commands:
 
 .. code-block:: shell
 
-   $ # download salmon-X.Y.Z.zip into ~/Downloads
-   $ # unzip/untar into directory `salmon`
-   $ # then navigate there in your shell/Terminal
-   $ cd ~/Downloads/salmon
-   $ conda env create -f salmon.yml
-   $ # conda env create -f salmon.yml.lock  # if the above gives you trouble
+   $ cd ~/Downloads/salmon  # directory just downloaded and unzipped
+   $ conda env create -f salmon.lock.yml
    $ conda activate salmon
    (salmon) $ pip install .
 
@@ -79,6 +61,27 @@ be Terminal.app.
    The commands above are (\*nix) shell commands. The ``$`` is intended to
    be your terminal prompt; leave it out when copy and pasting into the
    terminal.
+
+Using pip
+^^^^^^^^^
+
+This option is recommended to generate embeddings offline.  This option
+requires ``pip``, a Python package manager. It's available through `Anaconda`_
+and `Miniconda`_.
+
+After you have the Python package manager ``pip``, run these commands:
+
+.. code-block:: shell
+
+   $ pip install "salmon-triplets"
+   $ python -c "from salmon.triplets.offline import OfflineEmbedding"
+
+You have successfully installed Salmon if these commands complete successfully.
+
+.. note::
+
+   This package named "salmon-triplets" on PyPI installs a Python package
+   named ``salmon``.
 
 Generate embeddings
 -------------------
