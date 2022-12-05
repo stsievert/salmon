@@ -1,4 +1,4 @@
-name: Tests (complete w/ pip)
+name: Tests (install w/ pip)
 
 on:
   push:

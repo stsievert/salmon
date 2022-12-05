@@ -1,4 +1,4 @@
-name: Test (offline)
+name: Offline tests (install w/ pip)
 
 on:
   push:
