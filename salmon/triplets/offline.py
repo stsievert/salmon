@@ -13,7 +13,7 @@ from sklearn.exceptions import NotFittedError
 from sklearn.model_selection import train_test_split
 
 import salmon.triplets.samplers.adaptive as adaptive
-from salmon.triplets.samplers.adaptive import CKL, GD, OGD
+from salmon.triplets.samplers.adaptive import OGD
 
 
 def _get_params(opt_):
