@@ -56,5 +56,3 @@ jobs:
           python -c "import salmon; print(salmon.__file__)"
     - name: Run offline tests
       run: sudo /usr/share/miniconda/bin/pytest /home/runner/work/salmon/salmon/tests/test_offline.py
-    - name: Run tests in salmon/salmon/
-      run: sudo /usr/share/miniconda/bin/pytest /home/runner/work/salmon/salmon/salmon
