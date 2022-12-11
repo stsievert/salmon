@@ -33,7 +33,8 @@ jobs:
       run: |
         conda env update --file salmon.lock.yml --name base
     - name: Install Salmon
-      run: pip install -e .
+      run: |
+        pip install -e ".[dev,server]"
     - name: Build docs
       run: |
         cd docs

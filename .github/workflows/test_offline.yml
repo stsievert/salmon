@@ -45,7 +45,9 @@ jobs:
           sudo chown -R -H -L $USER:$USER .
           sudo chown -R -H -L $USER:$USER salmon docs tests
     - name: Install Salmon
-      run: pip install .  # install w/ pip
+      run:
+        pip install .
+        pip install pytest
     - name: change directories
       run: cd /
     - name: Debug info (salmon.__file__)
