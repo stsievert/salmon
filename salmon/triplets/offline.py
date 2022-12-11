@@ -122,7 +122,7 @@ class OfflineEmbedding(BaseEstimator):
             If specified, initialize the embedding with the given values.
 
         """
-        if self.opt is None:
+        if self.opt is None:  # default
             assert self.n is not None and self.d is not None, "Specify n and d"
             noise_model = getattr(adaptive, self.noise_model)
             kwargs = dict(

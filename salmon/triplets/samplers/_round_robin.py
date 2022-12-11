@@ -5,7 +5,7 @@ from typing import List, Tuple
 
 import numpy as np
 
-from salmon.backend.sampler import Path, Sampler
+from salmon.backend.sampler import Sampler
 from salmon.triplets.samplers.utils import Answer, Query
 
 logger = logging.getLogger(__name__)
@@ -89,6 +89,9 @@ class _RoundRobin(Sampler):
         return self, False
 
     def run(self, *args, **kwargs):
+        from rejson import Path
+        root = Path.rootPath()
+
         rj = self.redis_client()
         rj.jsonset(f"stopped-{self.ident}", Path("."), True)
         return None

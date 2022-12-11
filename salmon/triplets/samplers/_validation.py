@@ -3,9 +3,9 @@ import random
 
 import numpy as np
 
-from salmon.backend.sampler import Path
-from salmon.triplets.samplers._round_robin import (RoundRobin, _get_query,
-                                                   _score_query)
+from salmon.triplets.samplers._round_robin import (
+    RoundRobin, _get_query, _score_query
+)
 from salmon.triplets.samplers.utils import Answer, Query
 
 logger = logging.getLogger(__name__)
