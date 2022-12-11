@@ -12,7 +12,7 @@ VOLUME /data
 COPY *.py *.cfg *.yml *.txt *.sh /salmon/
 COPY ./salmon/ /salmon/salmon/
 RUN ls /salmon
-RUN conda run -n salmon pip install -e /salmon
+RUN conda run -n salmon pip install -e /salmon[server]
 
 RUN chmod +x /salmon/launch.sh
 RUN chmod +rw /salmon

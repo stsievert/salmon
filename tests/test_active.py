@@ -133,7 +133,7 @@ def test_active_basics(server, logs):
     with logs:
         server.authorize()
         server.post("/init_exp", data={"exp": exp.read_text()})
-        for k in range(len(samplers) * 2):
+        for k in range(len(samplers) * 3):
             print(k)
             q = server.get("/query").json()
 
@@ -150,3 +150,4 @@ def test_active_basics(server, logs):
         assert (df["score"] <= 1).all()
         algs = df.sampler.unique()
         assert set(algs) == {"TSTE", "ARR", "CKL", "tste2", "GNMDS"}
+        assert True  # to see if a log error is caught in the traceback
