@@ -60,6 +60,8 @@ class Sampler:
         """
         import dask.distributed as distributed
         from redis.exceptions import ResponseError
+        from rejson import Path
+        root = Path.rootPath()
 
         rj = self.redis_client()
 

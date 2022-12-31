@@ -18,4 +18,4 @@ RUN chmod +x /salmon/launch.sh
 RUN chmod +rw /salmon
 # ENTRYPOINT bash launch.sh
 WORKDIR /salmon
-CMD ["conda", "run", "-n", "salmon", "/bin/bash", "launch.sh"]
+CMD ["conda", "run", "--no-capture-output", "-n", "salmon", "/bin/bash", "launch.sh"]

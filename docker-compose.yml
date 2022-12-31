@@ -12,6 +12,7 @@ services:
       - "8421:8421"
       - "8400:8400"
       - "8787:8787"
+    depends_on: [redis]
     expose:
       - 8421
       - 8400
@@ -30,6 +31,7 @@ services:
     volumes:
       - "./salmon/_out:/data:rw"
     command: /bin/sh -c "chmod -v 777 /data && redis-server --loadmodule /usr/lib/redis/modules/rejson.so"
+
     # redis-server command from https://hub.docker.com/r/redislabs/rejson/dockerfile
     #
     # https://github.com/docker/compose/issues/3270
@@ -47,6 +49,7 @@ services:
 
   prom:
     image: prom/prometheus
+    depends_on: [redis]
     expose:
       - 9090
     volumes:

@@ -10,7 +10,6 @@ from pathlib import Path
 from queue import SimpleQueue as Queue
 from typing import List
 
-
 def get_logger(name):
     # Config from https://docs.python-guide.org/writing/logging/ and
     # https://docs.python-guide.org/writing/logging/
