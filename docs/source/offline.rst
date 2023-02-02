@@ -90,14 +90,18 @@ This Python code will generate an embedding:
 
 .. code-block:: python
 
+   from pathlib import Path
+
    import pandas as pd
    from sklearn.model_selection import train_test_split
 
    from salmon.triplets.offline import OfflineEmbedding
+   import salmon.triplets.offline as offline
 
    # Read in data
    df = pd.read_csv("responses.csv")  # from dashboard
    em = pd.read_csv("embedding.csv")  # from dashboard; optional
+   config = yaml.loads(Path("config.yml").read_text())  # from dashboard
 
    X = df[["head", "winner", "loser"]].to_numpy()
    X_train, X_test = train_test_split(X, random_state=42, test_size=0.2)
@@ -114,6 +118,9 @@ This Python code will generate an embedding:
    # Inspect the model
    model.embedding_  # embedding
    model.history_  # to view information on how well train/test performed
+
+   df_em = offline.join(model.embedding_, config["targets"])
+   df_em.to_csv("final_embedding.csv")
 
 Some customization can be done with ``model.history_``; it may not be necessary
 to train for 500,000 epochs. ``model.history_`` will include validation and
