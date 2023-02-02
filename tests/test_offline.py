@@ -13,7 +13,7 @@ import salmon.triplets.offline
 
 
 def test_salmon_import():
-    """ This test makes sure that no errors are raised on import
+    """This test makes sure that no errors are raised on import
     (non-existant directories, etc)"""
     import salmon
 
@@ -51,7 +51,7 @@ def test_score_accurate():
     # Make sure the score has the expected value (winner has minimum distance)
     embed = alg.opt.embedding() * 1e3
     y_hat2 = []
-    for (head, left, right) in X:
+    for head, left, right in X:
         ldist = LA.norm(embed[head] - embed[left])
         rdist = LA.norm(embed[head] - embed[right])
 
@@ -122,6 +122,7 @@ def test_offline_names_correct():
     est.partial_fit(X)
 
     import salmon.triplets.offline as offline
+
     em = offline.join(est.embedding_, config["targets"])
     assert isinstance(em, pd.DataFrame)
     assert len(em) == len(config["targets"])

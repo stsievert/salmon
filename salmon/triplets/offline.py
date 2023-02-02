@@ -15,6 +15,7 @@ from sklearn.model_selection import train_test_split
 import salmon.triplets.samplers.adaptive as adaptive
 from salmon.triplets.samplers.adaptive import OGD
 
+
 def _get_params(opt_):
     return {
         k: v
@@ -32,12 +33,14 @@ def _print_fmt(v):
         return f"{v:0.3f}"
     return v
 
+
 def join(embedding: np.ndarray, targets: List[Any]) -> pd.DataFrame:
     em_final = pd.DataFrame(embedding)
     dims = {0: "x", 1: "y", 2: "z"}
     em_final.columns = [dims.get(c, f"dim{c + 1}") for c in em_final.columns]
     em_final["target"] = targets
     return em_final
+
 
 class OfflineEmbedding(BaseEstimator):
     """
@@ -113,7 +116,6 @@ class OfflineEmbedding(BaseEstimator):
         ``d`` dimensions, then ``embedding_.shape == (n, d)``.
         """
         return self.opt_.embedding_
-
 
     def initialize(self, X_train, embedding=None):
         """
