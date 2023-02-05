@@ -14,7 +14,7 @@ def test_targets(sampler, server):
     server.authorize()
     server.post("/init_exp", data={"exp": config})
 
-    for k in range(20):
+    for k in range(30):
         q = server.get("/query").json()
         ans = {"winner": random.choice([q["left"], q["right"]]), "puid": "foo", **q}
         server.post("/answer", json=ans)
