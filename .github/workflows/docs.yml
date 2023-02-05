@@ -24,6 +24,7 @@ jobs:
         python-version: 3.7
     - name: Install latex
       run: |
+        sudo apt-get update
         sudo apt-get install -y texmaker latexmk
     - name: Add conda to system path
       run: |
