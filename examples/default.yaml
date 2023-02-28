@@ -8,6 +8,11 @@ html:
   skip_button: false
   title: "Similarity judgements"
   query_params: ['puid']
+  element_top: ""
+  element_middle: ""
+  element_bottom: ""
+  element_standalone: ""
+  js: ""
 samplers:
   random:
     class: Random

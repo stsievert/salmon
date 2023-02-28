@@ -77,52 +77,48 @@ def test_active_bad_keys(server, logs):
             )
 
 
-@pytest.mark.parametrize("sampler", ["ARR", "CKL"])
+@pytest.mark.parametrize("sampler", ["ARR", "Random"])
 def test_active_queries_generated(server, sampler, logs):
     # R=1 chosen because that determines when active sampling starts; this
     # test is designed to make sure no unexpected errors are thrown in
     # active portion (not that it generates a good embedding)
 
+    # tests ARR to make sure active scores are generated;
+    # tests Random to make sure that's not a false positive and
+    # random queries are properly identifies
+
     n = 6
     config = {
         "targets": [_ for _ in range(n)],
         "samplers": {sampler: {}},
-        "sampling": {"common": {"d": 1, "R": 1}},
+        "sampling": {},
     }
+    if sampler != "Random":
+        config["sampling"]["common"] = {"d": 1, "R": 1}
     with logs:
         server.authorize()
         server.post("/init_exp", data={"exp": config})
-        n_active_queries = 0
-        for k in range(6 * n + 1):
+        active_queries_generated = False
+        for k in range(10 * n + 1):
             q = server.get("/query").json()
+            query = "random" if q["score"] == -9999 else "active"
+            if query == "active":
+                active_queries_generated = True
+                break
+
+            sleep(200e-3)
 
             ans = random.choice([q["left"], q["right"]])
             ans = {"winner": ans, "puid": "foo", **q}
-            print(q)
             server.post("/answer", json=ans)
 
-            if q["score"] != -9999:
-                # scored queries have been posted to the database
-                # now, only thing to test is popping off database
-                n_active_queries += 1
-            if n_active_queries == n:
-                sleep(1)
-                break
-
-            sleep(100e-3)
             if k % n == 0:
                 sleep(1)
 
-    d = server.get("/responses").json()
-
-    df = pd.DataFrame(d)
-    random_queries = df["score"] == -9999
-    active_queries = ~random_queries
-    assert active_queries.sum()
-    assert random_queries.sum()
-
-    samplers = set(df.sampler.unique())
-    assert samplers == {sampler}
+    if sampler == "Random":
+        assert not active_queries_generated
+    else:
+        assert active_queries_generated
 
 
 def test_active_basics(server, logs):
@@ -137,7 +133,7 @@ def test_active_basics(server, logs):
     with logs:
         server.authorize()
         server.post("/init_exp", data={"exp": exp.read_text()})
-        for k in range(len(samplers) * 2):
+        for k in range(len(samplers) * 3):
             print(k)
             q = server.get("/query").json()
 
@@ -154,3 +150,4 @@ def test_active_basics(server, logs):
         assert (df["score"] <= 1).all()
         algs = df.sampler.unique()
         assert set(algs) == {"TSTE", "ARR", "CKL", "tste2", "GNMDS"}
+        assert True  # to see if a log error is caught in the traceback

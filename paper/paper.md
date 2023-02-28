@@ -40,7 +40,7 @@ successfully to characterize human perceived similarity between faces
 Typically, experimentalists require an inordinate number of human responses (about
 10,000) to produce an accurate embedding when making a similarity map in
 $d=2$ dimensions of $n = 50$ chemistry molecules [@chem].
-The number of human responses required will change like scale like
+The number of human responses required will scale like
 $\mathcal{O}(nd\log n)$, which means that asking about $n=100$ molecules for $d=3$ dimensions will require about 35,000 responses.
 
 Many "active machine learning" methods have been proposed to reduce the number

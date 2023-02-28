@@ -191,7 +191,7 @@ async def _get_server_metrics():
     start = datetime.now() - timedelta(days=1)
     end = datetime.now()
     data = {
-        "query": "starlette_requests_processing_time_seconds_bucket",
+        "query": "starlette_request_duration_seconds_bucket",
         "start": start.isoformat(),
         "end": end.isoformat(),
         "step": 0.1,
@@ -210,13 +210,12 @@ async def _get_server_metrics():
     df["value"] = df["value"].astype(float)
     df["le"] = df["le"].astype(float)
 
-    cols = ["value", "le", "path_template"]
+    cols = ["value", "le", "path"]
     proc = df[cols]
     proc.columns = ["count", "le", "endpoint"]
 
     bad_endpoints = [
         "/favicon.ico",
-        "/metrics",
         "/metrics",
         "/api/v1/query",
         "/static",

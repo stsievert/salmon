@@ -189,14 +189,18 @@ async def get_model(sampler: str):
 async def get_timings(sampler: str):
     samplers = rj.jsonget("samplers")
     if sampler not in samplers:
-        raise ServerException(
+        msg = (
             f"Can't find key for sampler='{sampler}'. "
             f"Valid choices for sampler are {samplers}"
         )
+        logger.warning(msg)
+        raise ServerException(msg)
     keys = list(sorted(rj.keys()))
     if f"alg-perf-{sampler}" not in keys:
         logger.warning("rj.keys() = %s", keys)
-        raise ServerException(
+        msg = (
             f"Performance data has not been created for sampler='{sampler}'. Database has keys {keys}"
         )
+        logger.warning(msg)
+        raise ServerException(msg)
     return rj.jsonget(f"alg-perf-{sampler}")

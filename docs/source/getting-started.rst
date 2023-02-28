@@ -61,46 +61,33 @@ finished launching, you will see a couple links:
 * A link to the dashboard (``http://[url]:8421/dashboard``), an example of
   which is at ":ref:`exp-monitoring`."
 * A link to the query page to send to crowdsourcing users
-  (``http://[url]:8421/``). An (out-of-date) example:
+  (``http://[url]:8421/``).
 
 .. _YAML specification: https://yaml.org/
 
-.. image:: imgs/query_page.png
-   :align: center
-   :width: 500px
 
 Send the URL to participants
 ----------------------------
 
 The URL to send to the crowdsourcing participants is ``http://[url]:8421/``.
-For example, that may be
+Typically, paid services like Mechantical Turk are used to recruit
+crowdsourcing participants. Reddit and email have been used for unpaid
+recruitment. In either case, that may involve a URL of this form:
 
 .. code::
 
-   http://ec2-52-204-122-132.compute-1.amazonaws.com:8421/init
+   http://ec2-52-204-122-132.compute-1.amazonaws.com:8421/
 
-.. note::
+Opening this URL in the browser will show (a newer version) of this page:
 
-   Generally, I've found it useful to send out URLs I control to
-   crowdsourcing users via an `HTML redirect`_.  Using an HTML redirect
-   means that I have more flexibility around the URL, and can handle many
-   use cases: launching a new machine and replacing it, restarting it, or
-   the machine dies unexpectedly.
+.. image:: imgs/query_page.png
+   :align: center
+   :width: 500px
 
-   One method to do this is to use `GitHub Pages`_ (which allows creating a
-   URL like ``https://foo.github.io`` if your GitHub username is ``foo``)
-   then creating the HTML redirection file above (copy/pasting the shown
-   text into ``bar.html``). Then, users can visit
-   ``https://foo.github.io/bar.html`` to be redirected.
+A couple notes:
 
-   As an example, the URL https://nextml.org/captioncontest currently
-   redirects to
-   https://s3.us-west-2.amazonaws.com/mlnow-newyorker/captioncontest_s3.html.
-   I would send out the URL ``https://nextml.org/captioncontest`` to users
+* Customizing this page is possible and detailed in :ref:`frontendcustomization`.
+* Tips on deploying this experiments can be found at :ref:`deploying`.
 
 .. _HTML redirect: https://www.w3docs.com/snippets/html/how-to-redirect-a-web-page-in-html.html
 .. _GitHub Pages: https://pages.github.com/
-
-Typically, paid services like Mechantical Turk are used to recruit
-crowdsourcing participants. Reddit and email have been used for unpaid
-recruitment.

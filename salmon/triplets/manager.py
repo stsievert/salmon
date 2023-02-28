@@ -193,6 +193,30 @@ class HTML(BaseSettings):
         """,
     )
 
+    js: str = Field(
+        "",
+        description="JavaScript to include in standalone ``<script>`` tag"
+    )
+    element_top: str = Field(
+        "",
+        description="Custom HTML to include at top of page"
+    )
+    element_middle: str = Field(
+        "",
+        description="Custom HTML to include in middle of page (between target and comparisons)"
+    )
+    element_bottom: str = Field(
+        "",
+        description="Custom HTML to include at top of page (above footer)"
+    )
+    element_standalone: str = Field(
+        "",
+        description="""Custom HTML to include as a standalone element, only
+        encased in the ``head`` tag.
+        """
+    )
+
+
 
 class Config(BaseSettings):
     """

@@ -1,4 +1,4 @@
-name: Test (offline)
+name: Offline tests (install w/ pip)
 
 on:
   push:
@@ -45,7 +45,9 @@ jobs:
           sudo chown -R -H -L $USER:$USER .
           sudo chown -R -H -L $USER:$USER salmon docs tests
     - name: Install Salmon
-      run: pip install .
+      run:
+        pip install .
+        pip install pytest
     - name: change directories
       run: cd /
     - name: Debug info (salmon.__file__)
@@ -54,5 +56,3 @@ jobs:
           python -c "import salmon; print(salmon.__file__)"
     - name: Run offline tests
       run: sudo /usr/share/miniconda/bin/pytest /home/runner/work/salmon/salmon/tests/test_offline.py
-    - name: Run tests in salmon/salmon/
-      run: sudo /usr/share/miniconda/bin/pytest /home/runner/work/salmon/salmon/salmon

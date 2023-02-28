@@ -2,10 +2,7 @@ import logging
 import pickle
 from typing import Any, Dict, List, Tuple
 
-import cloudpickle
 from pydantic import BaseModel
-from rejson import Client as RedisClient
-from rejson import Path
 
 from salmon.utils import get_logger
 

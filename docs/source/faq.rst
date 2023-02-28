@@ -216,3 +216,13 @@ process is beyond scope for this project. [#f]_
    https://nowak.ece.wisc.edu/ordinal_embedding.pdf
 
 .. [#f] though the package `mkcert`_ might help.
+
+The Docker machines aren't launching
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Are you using the command ``docker-compose up`` to launch Salmon? The command
+``docker build .`` doesn't work.
+
+Salmon requires a Redis docker machine and certain directories/ports being
+available. Technically, it's possible to build all the Docker machines
+yourself (but it's not feasible).

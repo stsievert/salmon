@@ -5,13 +5,7 @@ from pprint import pprint
 from time import sleep, time
 from typing import Any, Dict, List, Optional, Tuple, TypeVar
 
-import cloudpickle
-import dask.distributed as distributed
 import numpy as np
-from dask.distributed import Client as DaskClient
-from redis.exceptions import ResponseError
-from rejson import Client as RedisClient
-from rejson import Path
 
 from salmon.utils import flush_logger, get_logger
 
@@ -19,7 +13,6 @@ logger = get_logger(__name__)
 
 Query = TypeVar("Query")
 Answer = TypeVar("Answer")
-root = Path.rootPath()
 
 
 class Sampler:
@@ -38,13 +31,16 @@ class Sampler:
         self.ident = ident
         self.meta_ = []
 
-    def redis_client(self, decode_responses=True) -> RedisClient:
+    def redis_client(self, decode_responses=True) -> "RedisClient":
         """
         Get the database (/Redis client)
         """
+        from rejson import Client as RedisClient
+
         return RedisClient(host="redis", port=6379, decode_responses=decode_responses)
 
-    def run(self, client: DaskClient):
+
+    def run(self, client: "DaskClient"):
         """
         Run the algorithm.
 
@@ -62,6 +58,11 @@ class Sampler:
         ``"reset" in rj.keys() and rj.jsonget("reset")``.
 
         """
+        import dask.distributed as distributed
+        from redis.exceptions import ResponseError
+        from rejson import Path
+        root = Path.rootPath()
+
         rj = self.redis_client()
 
         answers: List = []
@@ -241,6 +242,8 @@ class Sampler:
         """
         Save the sampler's state and current embedding to the database.
         """
+        import cloudpickle
+
         rj2 = self.redis_client(decode_responses=False)
 
         out = cloudpickle.dumps(self)
@@ -259,6 +262,10 @@ class Sampler:
         Stop the algorithm. The algorithm will be deleted shortly after
         this function is called.
         """
+        from rejson import Client as RedisClient
+        from rejson import Path
+        root = Path.rootPath()
+
         reset = rj.jsonget("reset", root)
         logger.warning("reset=%s for %s", reset, self.ident)
         if not reset:
@@ -367,7 +374,7 @@ class Sampler:
         """
         raise NotImplementedError
 
-    def clear_queries(self, rj: RedisClient) -> bool:
+    def clear_queries(self, rj: "RedisClient") -> bool:
         """
         Clear all queries that this sampler has posted from the database.
         """
@@ -378,7 +385,7 @@ class Sampler:
         self,
         queries: List[Query],
         scores: List[float],
-        rj: Optional[RedisClient] = None,
+        rj: Optional["RedisClient"] = None,
         done=None,
     ) -> int:
         """
@@ -449,10 +456,13 @@ class Sampler:
         h, a, b = q
         return f"{h}-{a}-{b}"
 
-    def get_answers(self, rj: RedisClient, clear: bool = True) -> List[Answer]:
+    def get_answers(self, rj: "RedisClient", clear: bool = True) -> List[Answer]:
         """
         Get all answers the frontend has received.
         """
+        from rejson import Path
+        root = Path.rootPath()
+
         if not clear:
             raise NotImplementedError
         key = f"alg-{self.ident}-answers"

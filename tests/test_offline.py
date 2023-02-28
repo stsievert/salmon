@@ -1,4 +1,5 @@
 from pathlib import Path
+import yaml
 
 import numpy as np
 import numpy.linalg as LA
@@ -8,10 +9,11 @@ from sklearn.model_selection import train_test_split
 
 from salmon.triplets.offline import OfflineEmbedding
 from salmon.triplets.samplers import TSTE
+import salmon.triplets.offline
 
 
 def test_salmon_import():
-    """ This test makes sure that no errors are raised on import
+    """This test makes sure that no errors are raised on import
     (non-existant directories, etc)"""
     import salmon
 
@@ -49,7 +51,7 @@ def test_score_accurate():
     # Make sure the score has the expected value (winner has minimum distance)
     embed = alg.opt.embedding() * 1e3
     y_hat2 = []
-    for (head, left, right) in X:
+    for head, left, right in X:
         ldist = LA.norm(embed[head] - embed[left])
         rdist = LA.norm(embed[head] - embed[right])
 
@@ -106,6 +108,26 @@ def test_offline_init():
     assert np.allclose(est.embedding_, em)
     est.partial_fit(X)
     assert not np.allclose(est.embedding_, em), "Embedding didn't change"
+
+
+def test_offline_names_correct():
+    DIR = Path(__file__).absolute().parent
+    _f = DIR / "data" / "active.yaml"
+    config = yaml.load(_f.read_text(), Loader=yaml.SafeLoader)
+    n = len(config["targets"])
+    d = config["sampling"]["common"]["d"]
+
+    X = np.random.choice(n, size=(100, 3))
+    est = OfflineEmbedding(n=n, d=d)
+    est.partial_fit(X)
+
+    import salmon.triplets.offline as offline
+
+    em = offline.join(est.embedding_, config["targets"])
+    assert isinstance(em, pd.DataFrame)
+    assert len(em) == len(config["targets"])
+    assert set(em.columns) == {"x", "y", "target"}
+    assert (em["target"] == config["targets"]).all()
 
 
 if __name__ == "__main__":

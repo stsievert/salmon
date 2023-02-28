@@ -1,6 +1,6 @@
 name: Documentation build
 
-# on: push
+  # on: push
 on:
   release:
     types: [published]
@@ -22,19 +22,30 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: 3.7
+    - name: Install latex
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y texmaker latexmk
     - name: Add conda to system path
       run: |
         # $CONDA is an environment variable pointing to the root of the miniconda directory
         echo $CONDA/bin >> $GITHUB_PATH
     - name: Install dependencies
       run: |
-        conda env update --file salmon.yml --name base
+        conda env update --file salmon.lock.yml --name base
     - name: Install Salmon
-      run: pip install -e .
+      run: |
+        pip install -e ".[dev,server]"
     - name: Build docs
       run: |
         cd docs
         make html
+    - name: Build backup docs
+      run: |
+        cd docs
+        sudo apt-get install -y texmaker latexmk
+        make latexpdf
+        mv build/latex/salmon.pdf build/html/salmon.pdf
     - name: Upload docs to gh-pages branch
       uses: peaceiris/actions-gh-pages@v3
       with:

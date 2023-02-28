@@ -3,6 +3,7 @@ channels:
   - conda-forge
   - defaults
   - anaconda
+  - bokeh
 dependencies:
   - python==3.8.*
   - pip
@@ -14,20 +15,15 @@ dependencies:
   - dask>=2021.02.0
   - distributed>=2021.02.0
   - click >= 6.6, <= 8.0.4  # https://github.com/dask/distributed/pull/6014
-  - lz4
-  - python-blosc
-  - cytoolz
+  - lz4  # for dask
+  - python-blosc  # for dask
   - ujson
-  - pyyaml
-  - ipykernel  # to run this environ in jupyter (required for viz)
-  - nb_conda_kernels
-  - altair
   - bokeh==2.0.1  # because templates/dashboard.html requires this version
   - jinja2<3.1.0
   - sphinx_rtd_theme
   - sphinx>=4.0.0
   - pip:
-    - seaborn
+    - pyyaml
     - fastapi[all]
     - rejson
     - httpx
@@ -41,9 +37,9 @@ dependencies:
     - matplotlib
     - gunicorn
     - python-multipart  # optional dep required by gunicorn
-    - starlette-prometheus
     - numpydoc
     - pytest
     - jupyter-server-proxy  # to view Dask dashboard
     - autodoc_pydantic  # to show config docs
     - torch --extra-index-url https://download.pytorch.org/whl/cpu
+    - starlette_exporter

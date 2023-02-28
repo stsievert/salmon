@@ -2,7 +2,7 @@ import itertools
 from copy import copy, deepcopy
 from numbers import Number
 from time import time
-from typing import Dict, Union
+from typing import Dict, Union, List, Any
 
 import numpy as np
 import pandas as pd
@@ -13,7 +13,7 @@ from sklearn.exceptions import NotFittedError
 from sklearn.model_selection import train_test_split
 
 import salmon.triplets.samplers.adaptive as adaptive
-from salmon.triplets.samplers.adaptive import CKL, GD, OGD
+from salmon.triplets.samplers.adaptive import OGD
 
 
 def _get_params(opt_):
@@ -32,6 +32,14 @@ def _print_fmt(v):
     if isinstance(v, (float, np.floating)):
         return f"{v:0.3f}"
     return v
+
+
+def join(embedding: np.ndarray, targets: List[Any]) -> pd.DataFrame:
+    em_final = pd.DataFrame(embedding)
+    dims = {0: "x", 1: "y", 2: "z"}
+    em_final.columns = [dims.get(c, f"dim{c + 1}") for c in em_final.columns]
+    em_final["target"] = targets
+    return em_final
 
 
 class OfflineEmbedding(BaseEstimator):
@@ -122,7 +130,7 @@ class OfflineEmbedding(BaseEstimator):
             If specified, initialize the embedding with the given values.
 
         """
-        if self.opt is None:
+        if self.opt is None:  # default
             assert self.n is not None and self.d is not None, "Specify n and d"
             noise_model = getattr(adaptive, self.noise_model)
             kwargs = dict(

@@ -38,6 +38,11 @@ def test_defaults():
             "max_queries": 50,
             "arrow_keys": True,
             "query_params": ["puid"],
+            "js": "",
+            "element_top": "",
+            "element_middle": "",
+            "element_bottom": "",
+            "element_standalone": "",
         },
         "samplers": {"random": {"class": "Random"}},
         "sampling": {

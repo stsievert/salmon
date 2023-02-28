@@ -47,9 +47,11 @@ following:
 * Ask 50 questions before showing the participant ID.
 * Embed into :math:`d=2` dimensions if active samplers are specified.
 
-The defaults for instructions/debrief can be found in
-:class:`~salmon.triplets.manager.HTML`. To do anything fancier, additional
-configuration is required. Here's a basic example:
+More documentation on customizing these fields can be found in
+:ref:`alg-config` and :ref:`frontendcustomization`, and the defaults for
+instructions/debrief can be found in :class:`~salmon.triplets.manager.HTML`. To
+do anything fancier, additional configuration is required. Here's a basic
+example:
 
 .. code-block:: yaml
 
@@ -67,7 +69,7 @@ configuration is required. Here's a basic example:
 
 The ``samplers`` controls which methods get to choose queries, and ``sampling``
 controls how multiple samplers interact (i.e., how should a sampler be chosen?)
-Some more details can be found at :ref:`alg-config`.
+More documentation can be found at :ref:`alg-config`.
 
 Complete details on the YAML file are at at
 :class:`~salmon.triplets.manager.Config`. Examples of these files are in
