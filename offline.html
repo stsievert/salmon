@@ -136,10 +136,10 @@ resolution than <code class="docutils literal notranslate"><span class="pre">pip
 <li><p>Navigate to the directory in the shell/terminal and run these commands:</p></li>
 <li><p>Then run these commands:</p></li>
 </ol>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> ~/Downloads/salmon  <span class="c1"># directory just downloaded and unzipped</span>
-$ conda env create -f salmon.lock.yml
-$ conda activate salmon
-<span class="o">(</span>salmon<span class="o">)</span> $ pip install .
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>~/Downloads/salmon<span class="w">  </span><span class="c1"># directory just downloaded and unzipped</span>
+$<span class="w"> </span>conda<span class="w"> </span>env<span class="w"> </span>create<span class="w"> </span>-f<span class="w"> </span>salmon.lock.yml
+$<span class="w"> </span>conda<span class="w"> </span>activate<span class="w"> </span>salmon
+<span class="o">(</span>salmon<span class="o">)</span><span class="w"> </span>$<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>.
 </pre></div>
 </div>
 <p>These commands should be run in your favorite terminal. On macOS, that might
@@ -157,8 +157,8 @@ terminal.</p>
 requires <code class="docutils literal notranslate"><span class="pre">pip</span></code>, a Python package manager. It’s available through <a class="reference external" href="https://www.anaconda.com/products/distribution#Downloads">Anaconda</a>
 and <a class="reference external" href="https://docs.conda.io/en/latest/miniconda.html">Miniconda</a>.</p>
 <p>After you have the Python package manager <code class="docutils literal notranslate"><span class="pre">pip</span></code>, run these commands:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ pip install <span class="s2">&quot;salmon-triplets&quot;</span>
-$ python -c <span class="s2">&quot;from salmon.triplets.offline import OfflineEmbedding&quot;</span>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;salmon-triplets&quot;</span>
+$<span class="w"> </span>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;from salmon.triplets.offline import OfflineEmbedding&quot;</span>
 </pre></div>
 </div>
 <p>You have successfully installed Salmon if these commands complete successfully.</p>
@@ -172,14 +172,18 @@ named <code class="docutils literal notranslate"><span class="pre">salmon</span>
 <section id="generate-embeddings">
 <h2>Generate embeddings<a class="headerlink" href="#generate-embeddings" title="Permalink to this heading"></a></h2>
 <p>This Python code will generate an embedding:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
 
 <span class="kn">from</span> <span class="nn">salmon.triplets.offline</span> <span class="kn">import</span> <span class="n">OfflineEmbedding</span>
+<span class="kn">import</span> <span class="nn">salmon.triplets.offline</span> <span class="k">as</span> <span class="nn">offline</span>
 
 <span class="c1"># Read in data</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;responses.csv&quot;</span><span class="p">)</span>  <span class="c1"># from dashboard</span>
 <span class="n">em</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;embedding.csv&quot;</span><span class="p">)</span>  <span class="c1"># from dashboard; optional</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;config.yml&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">())</span>  <span class="c1"># from dashboard</span>
 
 <span class="n">X</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s2">&quot;head&quot;</span><span class="p">,</span> <span class="s2">&quot;winner&quot;</span><span class="p">,</span> <span class="s2">&quot;loser&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
 <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
@@ -196,6 +200,9 @@ named <code class="docutils literal notranslate"><span class="pre">salmon</span>
 <span class="c1"># Inspect the model</span>
 <span class="n">model</span><span class="o">.</span><span class="n">embedding_</span>  <span class="c1"># embedding</span>
 <span class="n">model</span><span class="o">.</span><span class="n">history_</span>  <span class="c1"># to view information on how well train/test performed</span>
+
+<span class="n">df_em</span> <span class="o">=</span> <span class="n">offline</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">embedding_</span><span class="p">,</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;targets&quot;</span><span class="p">])</span>
+<span class="n">df_em</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">&quot;final_embedding.csv&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Some customization can be done with <code class="docutils literal notranslate"><span class="pre">model.history_</span></code>; it may not be necessary

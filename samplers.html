@@ -135,13 +135,13 @@ collecting responses?</strong> Use <code class="docutils literal notranslate"><s
 <section id="file-structure">
 <h2>File structure<a class="headerlink" href="#file-structure" title="Permalink to this heading"></a></h2>
 <p>Part of a <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code> configuration file might look like this:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: init.yaml</span><span class="w"></span>
-<span class="nt">samplers</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">ARR</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">random_state</span><span class="p">:</span><span class="w"> </span><span class="nv">42</span><span class="p p-Indicator">}</span><span class="w"></span>
-<span class="w">  </span><span class="nt">Random</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w"></span>
-<span class="nt">sampling</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">probs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="s">&quot;ARR&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">85</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;Random&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">15</span><span class="p p-Indicator">}</span><span class="w"></span>
-<span class="w">  </span><span class="nt">samplers_per_user</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span><span class="w">  </span><span class="c1"># use probability above</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: init.yaml</span>
+<span class="nt">samplers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">ARR</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">random_state</span><span class="p">:</span><span class="w"> </span><span class="nv">42</span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="nt">Random</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+<span class="nt">sampling</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">probs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="s">&quot;ARR&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">85</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;Random&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">15</span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="nt">samplers_per_user</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span><span class="w">  </span><span class="c1"># use probability above</span>
 </pre></div>
 </div>
 <p>This will create a versions of <a class="reference internal" href="generated/salmon.triplets.samplers.ARR.html#salmon.triplets.samplers.ARR" title="salmon.triplets.samplers.ARR"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARR</span></code></a> with
@@ -177,12 +177,12 @@ The defaults and complete details are in
 <h3>Multiple samplers of the same name<a class="headerlink" href="#multiple-samplers-of-the-same-name" title="Permalink to this heading"></a></h3>
 <p>If two samplers with different purposes want to be used, the key <code class="docutils literal notranslate"><span class="pre">class</span></code> is
 used to specify which type of sampler should be used:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: init.yaml</span><span class="w"></span>
-<span class="nt">samplers</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">testing</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Random</span><span class="w"></span>
-<span class="w">  </span><span class="nt">training</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Random</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: init.yaml</span>
+<span class="nt">samplers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">testing</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Random</span>
+<span class="w">  </span><span class="nt">training</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Random</span>
 </pre></div>
 </div>
 <p>This will generate queries from these two samplers with equal probability:</p>
@@ -195,13 +195,13 @@ used to specify which type of sampler should be used:</p>
 <section id="initialization-arguments">
 <h3>Initialization arguments<a class="headerlink" href="#initialization-arguments" title="Permalink to this heading"></a></h3>
 <p>Arguments inside each key are passed to the sampler. For example,</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: init.yaml</span><span class="w"></span>
-<span class="nt">samplers</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">ARR</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">random_state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">42</span><span class="w"></span>
-<span class="w">    </span><span class="nt">module</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CKL</span><span class="w"></span>
-<span class="w">    </span><span class="nt">d</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w"></span>
-<span class="w">    </span><span class="nt">scorer</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;uncertainty&quot;</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: init.yaml</span>
+<span class="nt">samplers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">ARR</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">random_state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">42</span>
+<span class="w">    </span><span class="nt">module</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CKL</span>
+<span class="w">    </span><span class="nt">d</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">    </span><span class="nt">scorer</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;uncertainty&quot;</span>
 </pre></div>
 </div>
 <p>would create an instance of <a class="reference internal" href="generated/salmon.triplets.samplers.ARR.html#salmon.triplets.samplers.ARR" title="salmon.triplets.samplers.ARR"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARR</span></code></a>:</p>
@@ -216,16 +216,16 @@ other are passed to <a class="reference internal" href="generated/salmon.triplet
 the docstring of <a class="reference internal" href="generated/salmon.triplets.samplers.ARR.html#salmon.triplets.samplers.ARR" title="salmon.triplets.samplers.ARR"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARR</span></code></a>.</p>
 <p>If you have multiple arguments for <em>every</em> sampler, you can specify that with the
 <code class="docutils literal notranslate"><span class="pre">common</span></code> key:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: init.yaml</span><span class="w"></span>
-<span class="nt">samplers</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">arr_tste</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">module</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TSTE</span><span class="w"></span>
-<span class="w">  </span><span class="nt">arr_ckl</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">module</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CKL</span><span class="w"></span>
-<span class="nt">sampling</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">common</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">d</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w"></span>
-<span class="w">    </span><span class="nt">random_state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">42</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># file: init.yaml</span>
+<span class="nt">samplers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">arr_tste</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">module</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TSTE</span>
+<span class="w">  </span><span class="nt">arr_ckl</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">module</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CKL</span>
+<span class="nt">sampling</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">common</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">d</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">    </span><span class="nt">random_state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">42</span>
 </pre></div>
 </div>
 <p>This would initialize these samplers:</p>
@@ -242,20 +242,20 @@ the docstring of <a class="reference internal" href="generated/salmon.triplets.s
 <h2>Example<a class="headerlink" href="#example" title="Permalink to this heading"></a></h2>
 <p>Let’s start out with a simple <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code> file, one suited for random
 sampling.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">targets</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;obj1&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;obj2&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;foo&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;bar&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;foobar!&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="nt">samplers</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">Random</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w"></span>
-<span class="w">  </span><span class="nt">Validation</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="s">&quot;n_queries&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">10</span><span class="p p-Indicator">}</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">targets</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;obj1&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;obj2&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;foo&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;bar&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;foobar!&quot;</span><span class="p p-Indicator">]</span>
+<span class="nt">samplers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">Random</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+<span class="w">  </span><span class="nt">Validation</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="s">&quot;n_queries&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">10</span><span class="p p-Indicator">}</span>
 </pre></div>
 </div>
 <p>By default, <code class="docutils literal notranslate"><span class="pre">samplers</span></code> defaults to <code class="docutils literal notranslate"><span class="pre">Random:</span> <span class="pre">{}</span></code>. We have to customize the <code class="docutils literal notranslate"><span class="pre">samplers</span></code> key use adaptive sampling algorithms:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">targets</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;obj1&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;obj2&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;foo&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;bar&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;foobar!&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="nt">samplers</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">ARR</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w"></span>
-<span class="w">  </span><span class="nt">Random</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w"></span>
-<span class="w">  </span><span class="nt">Validation</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="s">&quot;n_queries&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">10</span><span class="p p-Indicator">}</span><span class="w"></span>
-<span class="nt">sampling</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">probs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="s">&quot;ARR&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">70</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;Random&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">20</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;Validation&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">10</span><span class="p p-Indicator">}</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">targets</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;obj1&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;obj2&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;foo&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;bar&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;foobar!&quot;</span><span class="p p-Indicator">]</span>
+<span class="nt">samplers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">ARR</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+<span class="w">  </span><span class="nt">Random</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+<span class="w">  </span><span class="nt">Validation</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="s">&quot;n_queries&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">10</span><span class="p p-Indicator">}</span>
+<span class="nt">sampling</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">probs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="s">&quot;ARR&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">70</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;Random&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">20</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;Validation&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">10</span><span class="p p-Indicator">}</span>
 </pre></div>
 </div>
 <p>When <code class="docutils literal notranslate"><span class="pre">ARR</span></code> is specified as a key for <code class="docutils literal notranslate"><span class="pre">samplers</span></code>,
@@ -263,11 +263,11 @@ sampling.</p>
 Customization is possible by passing different keyword arguments to
 <a class="reference internal" href="generated/salmon.triplets.samplers.ARR.html#salmon.triplets.samplers.ARR" title="salmon.triplets.samplers.ARR"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARR</span></code></a>. For example, this could be a
 configuration:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">targets</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;obj1&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;obj2&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;foo&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;bar&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;foobar!&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="nt">samplers</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">Random</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w"></span>
-<span class="w">  </span><span class="nt">ARR</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">module</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;TSTE&quot;</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">targets</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;obj1&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;obj2&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;foo&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;bar&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;foobar!&quot;</span><span class="p p-Indicator">]</span>
+<span class="nt">samplers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">Random</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+<span class="w">  </span><span class="nt">ARR</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">module</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;TSTE&quot;</span>
 </pre></div>
 </div>
 <section id="validation-sampler">
@@ -302,13 +302,13 @@ generates the list:</p>
 </pre></div>
 </div>
 <p>If the YAML configuration file, indices are specified as below:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">samplers</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">Validation</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">queries</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">2</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">3</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">4</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">3</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="w">  </span><span class="c1"># (if asking the above query and</span><span class="w"></span>
-<span class="w">  </span><span class="c1"># a query with head &quot;skiing&quot; and feet &quot;soccer&quot; and &quot;skating&quot;.</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">samplers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">Validation</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">queries</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">2</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">3</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">4</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">3</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="c1"># (if asking the above query and</span>
+<span class="w">  </span><span class="c1"># a query with head &quot;skiing&quot; and feet &quot;soccer&quot; and &quot;skating&quot;.</span>
 </pre></div>
 </div>
 </section>
@@ -318,25 +318,25 @@ generates the list:</p>
 training, a random sampler for testing and a validation sampler to see measure
 each participant’s attention (e.g., “are they blindly clicking answers?”).</p>
 <p>That sampling is possible through this partial config:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">samplers</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">ARR</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w">  </span><span class="c1"># generating the embedding</span><span class="w"></span>
-<span class="w">  </span><span class="nt">Random</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w">  </span><span class="c1"># testing the embedding</span><span class="w"></span>
-<span class="w">  </span><span class="nt">Validation</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w">  </span><span class="c1"># measure of human quality</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">samplers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">ARR</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w">  </span><span class="c1"># generating the embedding</span>
+<span class="w">  </span><span class="nt">Random</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w">  </span><span class="c1"># testing the embedding</span>
+<span class="w">  </span><span class="nt">Validation</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w">  </span><span class="c1"># measure of human quality</span>
 
-<span class="nt">sampling</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">probs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">ARR</span><span class="p">:</span><span class="w"> </span><span class="nv">80</span><span class="p p-Indicator">,</span><span class="nt"> Random</span><span class="p">:</span><span class="w"> </span><span class="nv">20</span><span class="p p-Indicator">,</span><span class="nt"> Validation</span><span class="p">:</span><span class="w"> </span><span class="nv">0</span><span class="p p-Indicator">}</span><span class="w"></span>
+<span class="nt">sampling</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">probs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">ARR</span><span class="p">:</span><span class="w"> </span><span class="nv">80</span><span class="p p-Indicator">,</span><span class="nt"> Random</span><span class="p">:</span><span class="w"> </span><span class="nv">20</span><span class="p p-Indicator">,</span><span class="nt"> Validation</span><span class="p">:</span><span class="w"> </span><span class="nv">0</span><span class="p p-Indicator">}</span>
 
-<span class="w">  </span><span class="nt">details</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">1</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">sampler</span><span class="p">:</span><span class="w"> </span><span class="nv">Validation</span><span class="p p-Indicator">,</span><span class="nt"> query</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">2</span><span class="p p-Indicator">]}</span><span class="w"></span>
-<span class="w">    </span><span class="nt">10</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">sampler</span><span class="p">:</span><span class="w"> </span><span class="nv">Validation</span><span class="p p-Indicator">,</span><span class="nt"> query</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">2</span><span class="p p-Indicator">]}</span><span class="w"></span>
+<span class="w">  </span><span class="nt">details</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">1</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">sampler</span><span class="p">:</span><span class="w"> </span><span class="nv">Validation</span><span class="p p-Indicator">,</span><span class="nt"> query</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">2</span><span class="p p-Indicator">]}</span>
+<span class="w">    </span><span class="nt">10</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">sampler</span><span class="p">:</span><span class="w"> </span><span class="nv">Validation</span><span class="p p-Indicator">,</span><span class="nt"> query</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">2</span><span class="p p-Indicator">]}</span>
 
-<span class="nt">targets</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">zero</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">one</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">two</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">three</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">four</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="c1"># targets are indexed by Python. Each target above is a textual representation</span><span class="w"></span>
-<span class="c1"># of the index. For index 0 in sampling.details.query will</span><span class="w"></span>
-<span class="c1"># show the user ``targets[0] == &quot;zero&quot;``.</span><span class="w"></span>
+<span class="nt">targets</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">zero</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">one</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">two</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">three</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">four</span><span class="p p-Indicator">]</span>
+<span class="c1"># targets are indexed by Python. Each target above is a textual representation</span>
+<span class="c1"># of the index. For index 0 in sampling.details.query will</span>
+<span class="c1"># show the user ``targets[0] == &quot;zero&quot;``.</span>
 
-<span class="w"> </span><span class="nt">html</span><span class="p">:</span><span class="w"></span>
-<span class="w">   </span><span class="nt">max_queries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span><span class="w"></span>
+<span class="w"> </span><span class="nt">html</span><span class="p">:</span>
+<span class="w">   </span><span class="nt">max_queries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
 </pre></div>
 </div>
 <p>With this <code class="docutils literal notranslate"><span class="pre">init.yaml</span></code>, the crowdsourcing participant will see the same query

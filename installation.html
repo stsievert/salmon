@@ -275,23 +275,23 @@ correct), let’s launch the correct version of Salmon’s server on your machin
 </ol>
 <p>This process is basically “launch Salmon’s server on your machine.”
 First, let’s get the right version of Salmon:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ <span class="c1"># Get right version of Salmon</span>
-$ git clone https://github.com/stsievert/salmon.git
-$ <span class="nb">cd</span> salmon
-$ git checkout v0.7.0  <span class="c1"># from .rdb filename; will take the form &quot;vA.B.C&quot; or &quot;vA.B.CrcD&quot;</span>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="c1"># Get right version of Salmon</span>
+$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/stsievert/salmon.git
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>salmon
+$<span class="w"> </span>git<span class="w"> </span>checkout<span class="w"> </span>v0.7.0<span class="w">  </span><span class="c1"># from .rdb filename; will take the form &quot;vA.B.C&quot; or &quot;vA.B.CrcD&quot;</span>
 </pre></div>
 </div>
 <p>Second, let’s launch Salmon:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ docker-compose up  <span class="c1"># takes a while</span>
-$ <span class="c1"># visit http://localhost:8421/init</span>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>docker-compose<span class="w"> </span>up<span class="w">  </span><span class="c1"># takes a while</span>
+$<span class="w"> </span><span class="c1"># visit http://localhost:8421/init</span>
 </pre></div>
 </div>
 <p><strong>Now re-upload the file using the interface at the bottom of the screen.</strong></p>
 <p>Now Salmon will issue instructions to restart. Let’s do that:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ <span class="c1"># Now, let&#39;s follow the directions Salmon gave:</span>
-$ docker-compose stop<span class="p">;</span> docker-compose start
-$ docker-compose logs -f
-$ <span class="c1"># visit http://localhost:8421/dashboard</span>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="c1"># Now, let&#39;s follow the directions Salmon gave:</span>
+$<span class="w"> </span>docker-compose<span class="w"> </span>stop<span class="p">;</span><span class="w"> </span>docker-compose<span class="w"> </span>start
+$<span class="w"> </span>docker-compose<span class="w"> </span>logs<span class="w"> </span>-f
+$<span class="w"> </span><span class="c1"># visit http://localhost:8421/dashboard</span>
 </pre></div>
 </div>
 </section>

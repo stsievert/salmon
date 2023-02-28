@@ -106,17 +106,17 @@ at <a class="reference external" href="https://github.com/stsievert/salmon/blob/
 <p>For example, if you wanted to wanted to include a button with the showing “Skip
 this question” and didn’t want to set <code class="docutils literal notranslate"><span class="pre">html.skip_button</span> <span class="pre">=</span> <span class="pre">true</span></code>, you could
 follow this example:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">html</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="c1"># skip_button: true  # a much easier way to include the HTML code below!</span><span class="w"></span>
-<span class="w">  </span><span class="nt">element_bottom</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span><span class="w"></span>
-<span class="w">    </span><span class="no">&lt;div class=&quot;d-flex align-items-end flex-column&quot;&gt;</span><span class="w"></span>
-<span class="w">      </span><span class="no">&lt;div id=&quot;skip-button&quot; style=&quot;padding: 30px; padding-right: 60px;&quot;&gt;</span><span class="w"></span>
-<span class="w">        </span><span class="no">&lt;button type=&quot;button&quot; class=&quot;btn btn-outline-secondary btn-sm&quot; data-html=&quot;true&quot;</span><span class="w"></span>
-<span class="w">                </span><span class="no">onclick=&quot;getquery()&quot; data-toggle=&quot;tooltip&quot; data-placement=&quot;top&quot;</span><span class="w"></span>
-<span class="w">            </span><span class="no">title=&quot;Skip questions only if you know &lt;em&gt;nothing&lt;/em&gt; about the items shown.&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="no">&gt;Skip this question&lt;/button&gt;</span><span class="w"></span>
-<span class="w">      </span><span class="no">&lt;/div&gt;</span><span class="w"></span>
-<span class="w">    </span><span class="no">&lt;/div&gt;</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">html</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># skip_button: true  # a much easier way to include the HTML code below!</span>
+<span class="w">  </span><span class="nt">element_bottom</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span>
+<span class="w">    </span><span class="no">&lt;div class=&quot;d-flex align-items-end flex-column&quot;&gt;</span>
+<span class="w">      </span><span class="no">&lt;div id=&quot;skip-button&quot; style=&quot;padding: 30px; padding-right: 60px;&quot;&gt;</span>
+<span class="w">        </span><span class="no">&lt;button type=&quot;button&quot; class=&quot;btn btn-outline-secondary btn-sm&quot; data-html=&quot;true&quot;</span>
+<span class="w">                </span><span class="no">onclick=&quot;getquery()&quot; data-toggle=&quot;tooltip&quot; data-placement=&quot;top&quot;</span>
+<span class="w">            </span><span class="no">title=&quot;Skip questions only if you know &lt;em&gt;nothing&lt;/em&gt; about the items shown.&quot;</span>
+<span class="w">        </span><span class="no">&gt;Skip this question&lt;/button&gt;</span>
+<span class="w">      </span><span class="no">&lt;/div&gt;</span>
+<span class="w">    </span><span class="no">&lt;/div&gt;</span>
 </pre></div>
 </div>
 <p>A much easier way to get this is to set <code class="docutils literal notranslate"><span class="pre">html.skip_button</span> <span class="pre">=</span> <span class="pre">true</span></code> in
@@ -129,26 +129,26 @@ customize the CSS by including a CSS field in the YAML file. For example, let’
 say you were asking about the similarity of different colors, and wanted the
 background to be dark to provide better contrast. This YAML block in
 <code class="docutils literal notranslate"><span class="pre">init.yml</span></code> would implement that:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">html</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">instructions</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Which of the comparison colors is most similar to the target color?</span><span class="w"></span>
-<span class="w">  </span><span class="nt">debrief</span><span class="p">:</span><span class="w"> </span><span class="nt">Thanks! Please enter this participant ID in the assignment. max_queries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span><span class="w">  </span><span class="c1"># about 2.94 minutes for 100 queries</span><span class="w"></span>
-<span class="w">  </span><span class="nt">arrow_keys</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span><span class="w"></span>
-<span class="w">  </span><span class="nt">css</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span><span class="w"></span>
-<span class="w">    </span><span class="no">body {</span><span class="w"></span>
-<span class="w">      </span><span class="no">background-color: #414141;</span><span class="w"></span>
-<span class="w">      </span><span class="no">color: #ddd;</span><span class="w"></span>
-<span class="w">    </span><span class="no">}</span><span class="w"></span>
-<span class="w">    </span><span class="no">.answer {</span><span class="w"></span>
-<span class="w">      </span><span class="no">background-color: #595959;</span><span class="w"></span>
-<span class="w">      </span><span class="no">border-color: #bbb;</span><span class="w"></span>
-<span class="w">    </span><span class="no">}</span><span class="w"></span>
-<span class="w">    </span><span class="no">.head {</span><span class="w"></span>
-<span class="w">      </span><span class="no">background-color: #505050;</span><span class="w"></span>
-<span class="w">      </span><span class="no">border-color: #000;</span><span class="w"></span>
-<span class="w">    </span><span class="no">}</span><span class="w"></span>
-<span class="w">    </span><span class="no">.debrief {</span><span class="w"></span>
-<span class="w">      </span><span class="no">color: #000;</span><span class="w"></span>
-<span class="w">    </span><span class="no">}</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">html</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">instructions</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Which of the comparison colors is most similar to the target color?</span>
+<span class="w">  </span><span class="nt">debrief: Thanks! Please enter this participant ID in the assignment. max_queries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span><span class="w">  </span><span class="c1"># about 2.94 minutes for 100 queries</span>
+<span class="w">  </span><span class="nt">arrow_keys</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+<span class="w">  </span><span class="nt">css</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span>
+<span class="w">    </span><span class="no">body {</span>
+<span class="w">      </span><span class="no">background-color: #414141;</span>
+<span class="w">      </span><span class="no">color: #ddd;</span>
+<span class="w">    </span><span class="no">}</span>
+<span class="w">    </span><span class="no">.answer {</span>
+<span class="w">      </span><span class="no">background-color: #595959;</span>
+<span class="w">      </span><span class="no">border-color: #bbb;</span>
+<span class="w">    </span><span class="no">}</span>
+<span class="w">    </span><span class="no">.head {</span>
+<span class="w">      </span><span class="no">background-color: #505050;</span>
+<span class="w">      </span><span class="no">border-color: #000;</span>
+<span class="w">    </span><span class="no">}</span>
+<span class="w">    </span><span class="no">.debrief {</span>
+<span class="w">      </span><span class="no">color: #000;</span>
+<span class="w">    </span><span class="no">}</span>
 </pre></div>
 </div>
 </section>

@@ -103,31 +103,31 @@
 <p>This process is meant for developers. To launch, first download the code.  It’s
 possible to download <a class="reference external" href="https://github.com/stsievert/salmon/archive/refs/heads/master.zip">a ZIP file of Salmon’s source</a>, or if Git is installed,
 to run this command:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/stsievert/salmon.git
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/stsievert/salmon.git
 </pre></div>
 </div>
 <p>Then, to launch a local version of Salmon you’ll need <a class="reference external" href="https://docs.docker.com/compose/install/">Docker Compose</a>.
 After that dependency is intalled, run the following code:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> salmon
-$ docker-compose build
-$ docker-compose up
-$ <span class="c1"># visit http://localhost:8421/init or http://localhost:8421/docs</span>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>salmon
+$<span class="w"> </span>docker-compose<span class="w"> </span>build
+$<span class="w"> </span>docker-compose<span class="w"> </span>up
+$<span class="w"> </span><span class="c1"># visit http://localhost:8421/init or http://localhost:8421/docs</span>
 </pre></div>
 </div>
 <p>If you make changes to this code, run these commands:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ docker-compose stop
-$ docker-compose build
-$ docker-compose up
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>docker-compose<span class="w"> </span>stop
+$<span class="w"> </span>docker-compose<span class="w"> </span>build
+$<span class="w"> </span>docker-compose<span class="w"> </span>up
 </pre></div>
 </div>
 <p>If you want to log into the Docker container, execute these commands:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ docker ps  <span class="c1"># to get list of running conatiners</span>
-CONTAINER ID   IMAGE             ... <span class="o">[</span>more info<span class="o">]</span>  ...  NAMES
-08b96fbcc4c3   salmon_server     ... <span class="o">[</span>more info<span class="o">]</span>  ...  salmon_server_1
-57cb3b7652d9   redislabs/rejson  ... <span class="o">[</span>more info<span class="o">]</span>  ...  salmon_redis_1
-$ docker <span class="nb">exec</span> -it 08b96fbcc4c3 /bin/bash
-<span class="o">(</span>base<span class="o">)</span> root@08b96fbcc4c3:/salmon# conda activate salmon
-<span class="o">(</span>salmon<span class="o">)</span> root@08b96fbcc4c3:/salmon#
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>docker<span class="w"> </span>ps<span class="w">  </span><span class="c1"># to get list of running conatiners</span>
+CONTAINER<span class="w"> </span>ID<span class="w">   </span>IMAGE<span class="w">             </span>...<span class="w"> </span><span class="o">[</span>more<span class="w"> </span>info<span class="o">]</span><span class="w">  </span>...<span class="w">  </span>NAMES
+08b96fbcc4c3<span class="w">   </span>salmon_server<span class="w">     </span>...<span class="w"> </span><span class="o">[</span>more<span class="w"> </span>info<span class="o">]</span><span class="w">  </span>...<span class="w">  </span>salmon_server_1
+57cb3b7652d9<span class="w">   </span>redislabs/rejson<span class="w">  </span>...<span class="w"> </span><span class="o">[</span>more<span class="w"> </span>info<span class="o">]</span><span class="w">  </span>...<span class="w">  </span>salmon_redis_1
+$<span class="w"> </span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>08b96fbcc4c3<span class="w"> </span>/bin/bash
+<span class="o">(</span>base<span class="o">)</span><span class="w"> </span>root@08b96fbcc4c3:/salmon#<span class="w"> </span>conda<span class="w"> </span>activate<span class="w"> </span>salmon
+<span class="o">(</span>salmon<span class="o">)</span><span class="w"> </span>root@08b96fbcc4c3:/salmon#
 </pre></div>
 </div>
 <div class="admonition note">

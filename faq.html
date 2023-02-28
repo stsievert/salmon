@@ -174,11 +174,11 @@ possible values.</p>
 sampling is a lot better. Typically, between 10% and 20% of the sampling is
 used to monitor and report performance. That means I’d recommend this partial
 configuration:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">samplers</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">ARR</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w"></span>
-<span class="w">  </span><span class="nt">Random</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w"></span>
-<span class="nt">sampling</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">probs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="s">&quot;ARR&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">85</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;Random&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">15</span><span class="p p-Indicator">}</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">samplers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">ARR</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+<span class="w">  </span><span class="nt">Random</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+<span class="nt">sampling</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">probs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="s">&quot;ARR&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">85</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;Random&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">15</span><span class="p p-Indicator">}</span>
 </pre></div>
 </div>
 </section>
@@ -250,7 +250,7 @@ because the target indexing in “<a class="reference internal" href="samplers.h
 <h2>How do I see the Dask dashboard?<a class="headerlink" href="#how-do-i-see-the-dask-dashboard" title="Permalink to this heading"></a></h2>
 <p>Look at port 8787 if you want more information on how jobs are scheduled. If on
 EC2, this will require some port forwarding to your own machine:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ssh -i key.pem -L <span class="m">7787</span>:localhost:8787 ubuntu@<span class="o">[</span>EC2 public DNS or IP<span class="o">]</span>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ssh<span class="w"> </span>-i<span class="w"> </span>key.pem<span class="w"> </span>-L<span class="w"> </span><span class="m">7787</span>:localhost:8787<span class="w"> </span>ubuntu@<span class="o">[</span>EC2<span class="w"> </span>public<span class="w"> </span>DNS<span class="w"> </span>or<span class="w"> </span>IP<span class="o">]</span>
 <span class="c1"># visit http://localhost:7787 in the browser to see Salmon&#39;s Dask dashboard</span>
 </pre></div>
 </div>
