@@ -27,7 +27,7 @@ choices on query selection (aka active machine learning or adaptive sampling) wh
 collecting relative
 similarity judgments from crowdsourcing participants. Salmon is usable by experimentalists
 because it requires little to no programming experience and only requires an
-Amazon AWS account for launching. Extensive simulations and experiments suggest
+Amazon AWS account for launching (though a local install is available). Extensive simulations and experiments suggest
 that Salmon requires 2 to 3 times fewer response than random sampling.
 
 # Statement of need
@@ -91,7 +91,7 @@ framework, PyTorch [@pytorch]. This allows for easy customization of the
 underlying optimization method during both online and offline computation, including by the experimentalist managing
 Salmon if so desired.
 
-Goal (3) is enabled by a relatively simple launch through Amazon AWS using Amazon Machine Images (AMIs). The AMI for Salmon[^ami] 
+Goal (3) is enabled by a relatively simple launch through Amazon AWS using Amazon Machine Images (AMIs).[^local] The AMI for Salmon[^ami]
 pulls the latest release of Salmon from GitHub and then launches Salmon. After some other tasks (e.g., opening ports, etc), Salmon is ready be launched. Salmon requires fairly minimal computational resources; all the experiments and simulation were performed with `t3.xlarge` Amazon EC2 instance, which has 4 cores, 16GB of memory and costs about $3.98 per day.
 
 After launch, Salmon can start an experiment with stimuli consisting of text, images, video or HTML strings. It provides a mechanism to monitor an ongoing experiment, which includes the following information:
@@ -105,6 +105,7 @@ After launch, Salmon can start an experiment with stimuli consisting of text, im
 In addition, Salmon provides links to download the responses and configuration. Salmon also supports experiment persistence through downloading and uploading experiments.
 The embedding that Salmon generates can be downloaded, at least if active samplers are used. Regardless of the sampler used, Salmon can be used to generate the embeddings offline from the downloaded responses.
 
+[^local]:A local install is available, and only requires Docker. However, use with crowdsourcing participants will require running a web server (or in-person responses).
 [^ami]:Details are at [https://docs.stsievert.com/salmon/installation][in]
 
 [in]:https://docs.stsievert.com/salmon/installation
