@@ -9,11 +9,17 @@ authors:
   - name: Scott Sievert
     orcid: 0000-0002-4275-3452
     affiliation: 1
+  - name: Robert Nowak
+    affiliation: 1
+  - name: Timothy Rogers
+    orcid: 0000-0001-6304-755X
+    affiliation: 1
 affiliations:
  - name: University of Wisconsin--Madison
    index: 1
-date: 09 April 2022
+date: 11 March 2023
 bibliography: paper.bib
+draft: true
 ---
 
 # Summary
@@ -41,7 +47,7 @@ Typically, experimentalists require an inordinate number of human responses (abo
 10,000) to produce an accurate embedding when making a similarity map in
 $d=2$ dimensions of $n = 50$ chemistry molecules [@chem].
 The number of human responses required will scale like
-$\mathcal{O}(nd\log n)$, which means that asking about $n=100$ molecules for $d=3$ dimensions will require about 35,000 responses.
+$\mathcal{O}(nd\log n)$, which means that asking about $n=100$ molecules for $d=3$ dimensions will likely require about 35,000 responses.
 
 Many "active machine learning" methods have been proposed to reduce the number
 of queries required [@ckl; @ste]. These show gains, at least offline when
@@ -96,24 +102,25 @@ pulls the latest release of Salmon from GitHub and then launches Salmon. After s
 
 After launch, Salmon can start an experiment with stimuli consisting of text, images, video or HTML strings. It provides a mechanism to monitor an ongoing experiment, which includes the following information:
 
-* Basic experiment statistics (e.g., number of unique users, launch date)
-* Server performance (e.g., processing time for different endpoints, rate responses received)
-* Crowdsourcing participant experience (e.g., new query latency)
-* Embedding visualization
-* List of targets.
+* **Basic experiment statistics:** number of unique users, launch date, etc.
+* **Server performance:** processing time for different endpoints, rate responses received, etc.
+* **Client timings,** including response and new query latency.
+* **Embedding visualization** and a list of targets in the embedding.
 
 In addition, Salmon provides links to download the responses and configuration. Salmon also supports experiment persistence through downloading and uploading experiments.
 The embedding that Salmon generates can be downloaded, at least if active samplers are used. Regardless of the sampler used, Salmon can be used to generate the embeddings offline from the downloaded responses.
 
-[^local]:A local install is available, and only requires Docker. However, use with crowdsourcing participants will require running a web server (or in-person responses).
+[^local]:A local install is available, and only requires Docker. Collection of crowdsourced responses will require running a web server or collecting in-person responses (though a local install may be useful for development).
 [^ami]:Details are at [https://docs.stsievert.com/salmon/installation][in]
 
 [in]:https://docs.stsievert.com/salmon/installation
 
 # Uses
 
-Salmon has been used by several groups, including psychologists at UW--Madison,
-and Louisiana State University.
+Salmon has been used by several groups, including psychologists at the
+University of Wisconsin--Madison and the Louisiana State University.
+Additionally, it has received significant interest from the United States Air
+Force Research Laboratory.
 
 # Acknowledgments
 
