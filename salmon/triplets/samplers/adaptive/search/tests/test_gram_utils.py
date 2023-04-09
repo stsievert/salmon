@@ -54,7 +54,7 @@ def test_project_changes_torch():
     lamduhs[0] = -1
     G = vecs.T @ np.diag(lamduhs) @ vecs
     G = torch.from_numpy(G)
-    e, v = torch.symeig(G)
+    e, v = torch.linalg.symeig(G)
     assert e.min().item() < -0.5
 
     before = G.numpy().copy()
