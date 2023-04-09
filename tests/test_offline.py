@@ -156,10 +156,10 @@ def test_offline_adaptive(n=10, d=2):
     X_hatm1 = sampler.search.embedding
     val_queries = np.asarray([np.random.choice(n, size=3, replace=False) for _ in range(1000)])
     ans = np.asarray([0 if LA.norm(X[h] - X[l]) < LA.norm(X[h] - X[r]) else 1 for h, l, r in val_queries])
-    score0 = sampler.score(queries, ans, embedding=X_hat0)
-    scorem1 = sampler.score(queries, ans, embedding=X_hatm1)
+    score0 = sampler.score(val_queries, ans, embedding=X_hat0)
+    scorem1 = sampler.score(val_queries, ans, embedding=X_hatm1)
 
-    assert score0 + 0.1 < scorem1
+    assert score0 + 0.1 < scorem1, "Improves by at least 10% (typical: 20%)"
 
 
 if __name__ == "__main__":
