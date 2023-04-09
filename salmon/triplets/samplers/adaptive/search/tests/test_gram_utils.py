@@ -46,7 +46,6 @@ def test_project_and_is_psd(n, d, seed=None):
 
 def test_project_changes_torch():
     n, d, seed = 20, 2, None
-    rng = check_random_state(seed)
     X = torch.randn(n, d)
 
     G = gram_utils.gram_matrix(X.numpy())
@@ -54,7 +53,7 @@ def test_project_changes_torch():
     lamduhs[0] = -1
     G = vecs.T @ np.diag(lamduhs) @ vecs
     G = torch.from_numpy(G)
-    e, v = torch.linalg.symeig(G)
+    e, v = torch.linalg.eigh(G, UPLO="U")
     assert e.min().item() < -0.5
 
     before = G.numpy().copy()
@@ -62,7 +61,7 @@ def test_project_changes_torch():
 
     assert not np.allclose(before, after)
     assert not torch.allclose(torch.from_numpy(before), G)
-    e, v = torch.symeig(G)
+    e, v = torch.linalg.eigh(G, UPLO="U")
     assert e.min() > -0.25
 
 
