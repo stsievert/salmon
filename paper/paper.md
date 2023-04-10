@@ -69,7 +69,7 @@ the underlying noise model. With a naive computation, scoring a single query req
 floating point operations (FLOPs), and the embedding typically requires significant
 computation [@soe; @ma2019fast], though some work has been done to reduce the amount of computation [@erkle].
 
-# Salmon
+# Design goals
 
 Salmon's main design goals are below:
 
