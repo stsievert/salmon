@@ -17,7 +17,8 @@ RUN ls /salmon
 RUN chmod +x /salmon/launch.sh
 RUN chmod +rw /salmon
 
-RUN micromamba run -n base pip install --no-deps -e /salmon[server]
+ARG MAMBA_DOCKERFILE_ACTIVATE=1
+RUN pip install --no-deps -e /salmon[server]
 
 WORKDIR /salmon
-CMD ["micromamba", "run", "-n", "base", "/bin/bash", "launch.sh"]
+CMD bash launch.sh
