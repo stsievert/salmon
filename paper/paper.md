@@ -119,8 +119,6 @@ The embedding that Salmon generates can be downloaded, at least if active sample
 
 Salmon has been used by several groups, including psychologists at the
 University of Wisconsin--Madison and the Louisiana State University.
-Additionally, it has received significant interest from the United States Air
-Force Research Laboratory.
 
 # Acknowledgments
 
