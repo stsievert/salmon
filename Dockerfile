@@ -1,21 +1,23 @@
-FROM continuumio/miniconda3:4.10.3
-
-RUN apt-get update
-RUN apt-get install -y gcc cmake g++
-RUN conda -V
-
-COPY salmon.lock.yml /salmon/salmon.lock.yml
-RUN conda env create -f /salmon/salmon.lock.yml
+FROM mambaorg/micromamba:1.4.2-bionic
 
 VOLUME /salmon
 VOLUME /data
-COPY *.py *.cfg *.yml *.txt *.sh /salmon/
-COPY ./salmon/ /salmon/salmon/
+
+RUN micromamba --version
+COPY --chown=$MAMBA_USER:$MAMBA_USER salmon.lock.yml /salmon/salmon.lock.yml
+RUN micromamba install -y -n base -f /salmon/salmon.lock.yml && micromamba clean --all --yes
+
+# RUN apt-get update
+# RUN apt-get install -y gcc cmake g++
+
+COPY --chown=$MAMBA_USER:$MAMBA_USER *.py *.cfg *.yml *.txt *.sh /salmon/
+COPY --chown=$MAMBA_USER:$MAMBA_USER ./salmon/ /salmon/salmon/
 RUN ls /salmon
-RUN conda run -n salmon pip install -e /salmon[server]
 
 RUN chmod +x /salmon/launch.sh
 RUN chmod +rw /salmon
-# ENTRYPOINT bash launch.sh
+
+RUN micromamba run -n base pip install --no-deps -e /salmon[server]
+
 WORKDIR /salmon
-CMD ["conda", "run", "--no-capture-output", "-n", "salmon", "/bin/bash", "launch.sh"]
+CMD ["micromamba", "run", "-n", "base", "/bin/bash", "launch.sh"]
