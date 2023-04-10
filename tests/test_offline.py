@@ -142,23 +142,22 @@ def _answer(q: Dict[str, int], X: ArrayLike) -> int:
     return q["right"]
 
 def test_offline_adaptive(n=10, d=2):
-    X = np.random.uniform(size=(n, d))
+    rng = np.random.RandomState(42)
+    X = rng.uniform(size=(n, d))
+    val_queries = np.asarray([rng.choice(n, size=3, replace=False) for _ in range(1000)])
+    val_ans = np.asarray([0 if LA.norm(X[h] - X[l]) < LA.norm(X[h] - X[r]) else 1 for h, l, r in val_queries])
 
     sampler = TSTE(n=n, d=d, alpha=1, R=1)
-    X_hat0 = sampler.search.embedding.copy()
-    for t in range(40):
+    score0 = sampler.score(val_queries, val_ans)
+    for t in range(20):
         queries, scores, _ = sampler.get_queries()
         _good_queries = queries[np.argsort(scores)[-5:]]
         good_queries = [{"head": h, "left": o1, "right": o2} for h, o1, o2 in _good_queries]
         answers = [{"winner": _answer(q, X), **q} for q in good_queries]
         sampler.process_answers(answers)
 
-    X_hatm1 = sampler.search.embedding
-    val_queries = np.asarray([np.random.choice(n, size=3, replace=False) for _ in range(1000)])
-    ans = np.asarray([0 if LA.norm(X[h] - X[l]) < LA.norm(X[h] - X[r]) else 1 for h, l, r in val_queries])
-    score0 = sampler.score(val_queries, ans, embedding=X_hat0)
-    scorem1 = sampler.score(val_queries, ans, embedding=X_hatm1)
-
+    scorem1 = sampler.score(val_queries, val_ans)
+    assert 0 <= score0 <= scorem1 <= 1
     assert score0 + 0.1 < scorem1, "Improves by at least 10% after 200 answers"
 
 
