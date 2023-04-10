@@ -19,28 +19,28 @@ jobs:
     - name: Debug info
       shell: bash -l {0}
       run: |
-          echo "which {python, pip, pytest}"
-          which python
-          which pip
-          which pytest
-          echo "Running pwd..."
-          pwd
-          echo "\nRunning echo $USER..."
-          echo $USER
-          echo "\nRunning chown..."
-          sudo chown -R -H -L $USER:$USER  /home/runner/work/salmon/
-          chown -R -H -L $USER:$USER /home/runner/work/salmon/
-          echo "\nRunning chmod..."
-          sudo chmod -R 777 /home/runner/work/salmon/
-          echo "\nRunning `ls`..."
-          ls
+        echo "which {python, pip, pytest}"
+        which python
+        which pip
+        which pytest
+        echo "Running pwd..."
+        pwd
+        echo "\nRunning echo $USER..."
+        echo $USER
+        echo "\nRunning chown..."
+        sudo chown -R -H -L $USER:$USER  /home/runner/work/salmon/
+        chown -R -H -L $USER:$USER /home/runner/work/salmon/
+        echo "\nRunning chmod..."
+        sudo chmod -R 777 /home/runner/work/salmon/
+        echo "\nRunning `ls`..."
+        ls
     - name: Prepare for docker build...
       shell: bash -l {0}
       run: |
-          chmod +x launch.sh
-          # chown -R -H -L $USER:$USER .
-          sudo chown -R -H -L $USER:$USER .
-          sudo chown -R -H -L $USER:$USER salmon docs tests
+        chmod +x launch.sh
+        # chown -R -H -L $USER:$USER .
+        sudo chown -R -H -L $USER:$USER .
+        sudo chown -R -H -L $USER:$USER salmon docs tests
     - name: Install Salmon
       shell: bash -l {0}
       run: |
@@ -56,11 +56,11 @@ jobs:
       env:
         SALMON_NO_AUTH: 1
       run: |
-          sudo --preserve-env=SALMON_NO_AUTH docker-compose up &
-          until curl 127.0.0.1:8421 > /dev/null 2>&1; do :; done  # wait for container to start
-          sudo docker ps
+        sudo --preserve-env=SALMON_NO_AUTH docker-compose up &
+        until curl 127.0.0.1:8421 > /dev/null 2>&1; do :; done  # wait for container to start
+        sudo docker ps
     - name: Run all tests
       shell: bash -l {0}
       run: |
-          # sudo docker-compose logs -f &  # if debugging; shows logs
-          pytest
+        # sudo docker-compose logs -f &  # if debugging; shows logs
+        pytest
