@@ -13,16 +13,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Setup Python 3.7
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.7
-    - name: Add conda to system path
-      run: |
-        # $CONDA is an environment variable pointing to the root of the miniconda directory
-        echo $CONDA/bin >> $GITHUB_PATH
+    - name: Install micromamba
+      uses: mamba-org/provision-with-micromamba@main
+      environment-file: salmon.lock.yml
     - name: Debug info
+      shell: bash -l {0}
       run: |
+          echo "which {python, pip, pytest}"
+          which python
+          which pip
+          which pytest
           echo "Running pwd..."
           pwd
           echo "\nRunning echo $USER..."
@@ -35,21 +35,20 @@ jobs:
           echo "\nRunning `ls`..."
           ls
     - name: Prepare for docker build...
+      shell: bash -l {0}
       run: |
           chmod +x launch.sh
           # chown -R -H -L $USER:$USER .
           sudo chown -R -H -L $USER:$USER .
           sudo chown -R -H -L $USER:$USER salmon docs tests
-    - name: Install dependencies
-      run: |
-        conda install mamba -c conda-forge
-        mamba env create -p ./myenv --file salmon.lock.yml
     - name: Install Salmon
+      shell: bash -l {0}
       run: |
-        mamba run -p ./myenv pip install .
-        mamba run -p ./myenv pip install pytest
+        pip install .
+        pip install pytest
     - name: Run tests in salmon/salmon/
-      run: mamba run -p ./myenv pytest salmon/
+      shell: bash -l {0}
+      run: pytest salmon/
     - uses: docker/setup-buildx-action@v1
       with:
         driver: docker
@@ -61,7 +60,7 @@ jobs:
           until curl 127.0.0.1:8421 > /dev/null 2>&1; do :; done  # wait for container to start
           sudo docker ps
     - name: Run all tests
+      shell: bash -l {0}
       run: |
           # sudo docker-compose logs -f &  # if debugging; shows logs
-          # sudo /usr/share/miniconda/bin/pytest -s
-          mamba run -p ./myenv pytest
+          pytest
