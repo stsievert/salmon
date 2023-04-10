@@ -42,7 +42,8 @@ jobs:
           sudo chown -R -H -L $USER:$USER salmon docs tests
     - name: Install dependencies
       run: |
-        conda env update --file salmon.lock.yml --name base
+        conda install mamba -c conda-forge
+        mamba env create -p ./myenv --file salmon.lock.yml
     - name: Install Salmon
       run: |
         pip install .
