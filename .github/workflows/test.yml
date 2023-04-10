@@ -15,7 +15,8 @@ jobs:
     - uses: actions/checkout@v2
     - name: Install micromamba
       uses: mamba-org/provision-with-micromamba@main
-      environment-file: salmon.lock.yml
+      with:
+        environment-file: salmon.lock.yml
     - name: Debug info
       shell: bash -l {0}
       run: |
