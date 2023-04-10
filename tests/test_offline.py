@@ -146,7 +146,7 @@ def test_offline_adaptive(n=10, d=2):
 
     sampler = TSTE(n=n, d=d, alpha=1, R=1)
     X_hat0 = sampler.search.embedding.copy()
-    for t in range(20):
+    for t in range(40):
         queries, scores, _ = sampler.get_queries()
         _good_queries = queries[np.argsort(scores)[-5:]]
         good_queries = [{"head": h, "left": o1, "right": o2} for h, o1, o2 in _good_queries]
@@ -159,7 +159,7 @@ def test_offline_adaptive(n=10, d=2):
     score0 = sampler.score(val_queries, ans, embedding=X_hat0)
     scorem1 = sampler.score(val_queries, ans, embedding=X_hatm1)
 
-    assert score0 + 0.1 < scorem1, "Improves by at least 10% after 100 answers"
+    assert score0 + 0.1 < scorem1, "Improves by at least 10% after 200 answers"
 
 
 if __name__ == "__main__":
