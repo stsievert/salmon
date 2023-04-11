@@ -23,7 +23,7 @@ jobs:
         echo "    which {python, pip, pytest}"
         which python
         which pip
-        echo "    sudo '$' which {python, pip, pytest}"
+        echo "    sudo dollar sigh which {python, pip, pytest}"
         sudo $(which python)
         sudo $(which pip)
         sudo $(which pytest)
