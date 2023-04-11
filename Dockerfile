@@ -5,7 +5,7 @@ VOLUME /data
 
 RUN micromamba --version
 COPY --chown=$MAMBA_USER:$MAMBA_USER salmon.lock.yml /salmon/salmon.lock.yml
-RUN sudo $(which micromamba) install -y -n base -f /salmon/salmon.lock.yml && sudo $(which micromamba) clean --all --yes
+RUN micromamba install -y -n salmon -f /salmon/salmon.lock.yml && sudo $(which micromamba) clean --all --yes
 
 # RUN apt-get update
 # RUN apt-get install -y gcc cmake g++
@@ -17,7 +17,7 @@ RUN ls /salmon
 RUN chmod +x /salmon/launch.sh
 RUN chmod +rw /salmon
 
-RUN sudo $(which micromamba) run -n base pip install -e /salmon[server]
+RUN micromamba run -n salmon pip install -e /salmon[server]
 
 WORKDIR /salmon
-CMD ["micromamba", "run", "-n", "base", "/bin/bash", "launch.sh"]
+CMD ["micromamba", "run", "-n", "salmon", "/bin/bash", "launch.sh"]
