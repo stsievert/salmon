@@ -30,7 +30,6 @@ jobs:
         echo "    sudo which {python, pip, pytest}"
         sudo which python
         sudo which pip
-        sudo which pytest
         echo "    Running pwd..."
         pwd
         echo "    Running echo $USER..."
