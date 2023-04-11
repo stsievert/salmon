@@ -18,11 +18,14 @@ jobs:
       with:
         environment-file: salmon.lock.yml
     - name: Debug info
-      shell: bash -l {0}
+      shell: sudo bash -l {0}
       run: |
         echo "which {python, pip, pytest}"
         which python
         which pip
+        echo "sudo which {python, pip, pytest}"
+        sudo which python
+        sudo which pip
         which pytest
         echo "Running pwd..."
         pwd
@@ -36,20 +39,21 @@ jobs:
         echo "\nRunning `ls`..."
         ls
     - name: Prepare for docker build...
-      shell: bash -l {0}
+      shell: sudo bash -l {0}
       run: |
         chmod +x launch.sh
         # chown -R -H -L $USER:$USER .
         sudo chown -R -H -L $USER:$USER .
         sudo chown -R -H -L $USER:$USER salmon docs tests
     - name: Install Salmon
-      shell: bash -l {0}
+      shell: sudo bash -l {0}
       run: |
-        sudo pip install .
-        sudo pip install pytest
+        sudo $(which pip) install .
+        sudo $(which pip) install pytest
     - name: Run tests in salmon/salmon/
-      shell: bash -l {0}
-      run: sudo pytest salmon/
+      shell: sudo bash -l {0}
+      run: |
+        sudo $(which pytest) salmon/
     - uses: docker/setup-buildx-action@v1
       with:
         driver: docker
@@ -61,7 +65,7 @@ jobs:
         until curl 127.0.0.1:8421 > /dev/null 2>&1; do :; done  # wait for container to start
         sudo docker ps
     - name: Run all tests
-      shell: bash -l {0}
+      shell: sudo bash -l {0}
       run: |
         # sudo docker-compose logs -f &  # if debugging; shows logs
-        sudo pytest
+        sudo $(which pytest)
