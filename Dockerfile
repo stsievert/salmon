@@ -5,6 +5,7 @@ VOLUME /data
 
 RUN micromamba --version
 COPY --chown=$MAMBA_USER:$MAMBA_USER salmon.lock.yml /salmon/salmon.lock.yml
+RUN micromamba create -n salmon
 RUN micromamba install -y -n salmon -f /salmon/salmon.lock.yml && sudo $(which micromamba) clean --all --yes
 
 # RUN apt-get update
