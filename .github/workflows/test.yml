@@ -18,25 +18,25 @@ jobs:
       with:
         environment-file: salmon.lock.yml
     - name: Debug info
-      shell: sudo bash -l {0}
+      shell: bash -l {0}
       run: |
-        echo "which {python, pip, pytest}"
+        echo "    which {python, pip, pytest}"
         which python
         which pip
-        echo "sudo which {python, pip, pytest}"
+        echo "    sudo which {python, pip, pytest}"
         sudo which python
         sudo which pip
         which pytest
-        echo "Running pwd..."
+        echo "    Running pwd..."
         pwd
-        echo "\nRunning echo $USER..."
+        echo "    Running echo $USER..."
         echo $USER
-        echo "\nRunning chown..."
+        echo "    Running chown..."
         sudo chown -R -H -L $USER:$USER  /home/runner/work/salmon/
         chown -R -H -L $USER:$USER /home/runner/work/salmon/
-        echo "\nRunning chmod..."
+        echo "    Running chmod..."
         sudo chmod -R 777 /home/runner/work/salmon/
-        echo "\nRunning `ls`..."
+        echo "    Running `ls`..."
         ls
     - name: Prepare for docker build...
       shell: sudo bash -l {0}
