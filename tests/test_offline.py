@@ -149,9 +149,9 @@ def test_offline_adaptive(n=10, d=2):
 
     sampler = TSTE(n=n, d=d, alpha=1, R=1)
     score0 = sampler.score(val_queries, val_ans)
-    for t in range(20):
+    for t in range(30):
         queries, scores, _ = sampler.get_queries()
-        _good_queries = queries[np.argsort(scores)[-5:]]
+        _good_queries = queries[np.argsort(scores)[-4:]]
         good_queries = [{"head": h, "left": o1, "right": o2} for h, o1, o2 in _good_queries]
         answers = [{"winner": _answer(q, X), **q} for q in good_queries]
         sampler.process_answers(answers)
