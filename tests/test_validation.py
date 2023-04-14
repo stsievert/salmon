@@ -28,7 +28,7 @@ def test_validation_sampling(server, logs):
     data = []
     puid = "adsfjkl4awjklra"
 
-    n_repeat = 3
+    n_repeat = 4
     server.authorize()
     server.post("/init_exp", data={"exp": exp})
     Q = []

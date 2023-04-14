@@ -293,6 +293,8 @@ class Adaptive(Sampler):
 
         """
         y_hat = self.predict(X, embedding=embedding)
+        y = np.asarray(y)
+        y_hat = np.asarray(y_hat)
         return (y_hat == y).mean()
 
 

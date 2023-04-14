@@ -9,11 +9,17 @@ authors:
   - name: Scott Sievert
     orcid: 0000-0002-4275-3452
     affiliation: 1
+  - name: Robert Nowak
+    affiliation: 1
+  - name: Timothy Rogers
+    orcid: 0000-0001-6304-755X
+    affiliation: 1
 affiliations:
  - name: University of Wisconsin--Madison
    index: 1
-date: 09 April 2022
+date: 11 March 2023
 bibliography: paper.bib
+draft: true
 ---
 
 # Summary
@@ -27,7 +33,7 @@ choices on query selection (aka active machine learning or adaptive sampling) wh
 collecting relative
 similarity judgments from crowdsourcing participants. Salmon is usable by experimentalists
 because it requires little to no programming experience and only requires an
-Amazon AWS account for launching. Extensive simulations and experiments suggest
+Amazon AWS account for launching (though a local install is available). Extensive simulations and experiments suggest
 that Salmon requires 2 to 3 times fewer response than random sampling.
 
 # Statement of need
@@ -41,7 +47,7 @@ Typically, experimentalists require an inordinate number of human responses (abo
 10,000) to produce an accurate embedding when making a similarity map in
 $d=2$ dimensions of $n = 50$ chemistry molecules [@chem].
 The number of human responses required will scale like
-$\mathcal{O}(nd\log n)$, which means that asking about $n=100$ molecules for $d=3$ dimensions will require about 35,000 responses.
+$\mathcal{O}(nd\log n)$, which means that asking about $n=100$ molecules for $d=3$ dimensions will likely require about 35,000 responses.
 
 Many "active machine learning" methods have been proposed to reduce the number
 of queries required [@ckl; @ste]. These show gains, at least offline when
@@ -63,7 +69,7 @@ the underlying noise model. With a naive computation, scoring a single query req
 floating point operations (FLOPs), and the embedding typically requires significant
 computation [@soe; @ma2019fast], though some work has been done to reduce the amount of computation [@erkle].
 
-# Salmon
+# Design goals
 
 Salmon's main design goals are below:
 
@@ -91,28 +97,28 @@ framework, PyTorch [@pytorch]. This allows for easy customization of the
 underlying optimization method during both online and offline computation, including by the experimentalist managing
 Salmon if so desired.
 
-Goal (3) is enabled by a relatively simple launch through Amazon AWS using Amazon Machine Images (AMIs). The AMI for Salmon[^ami] 
+Goal (3) is enabled by a relatively simple launch through Amazon AWS using Amazon Machine Images (AMIs).[^local] The AMI for Salmon[^ami]
 pulls the latest release of Salmon from GitHub and then launches Salmon. After some other tasks (e.g., opening ports, etc), Salmon is ready be launched. Salmon requires fairly minimal computational resources; all the experiments and simulation were performed with `t3.xlarge` Amazon EC2 instance, which has 4 cores, 16GB of memory and costs about $3.98 per day.
 
 After launch, Salmon can start an experiment with stimuli consisting of text, images, video or HTML strings. It provides a mechanism to monitor an ongoing experiment, which includes the following information:
 
-* Basic experiment statistics (e.g., number of unique users, launch date)
-* Server performance (e.g., processing time for different endpoints, rate responses received)
-* Crowdsourcing participant experience (e.g., new query latency)
-* Embedding visualization
-* List of targets.
+* **Basic experiment statistics:** number of unique users, launch date, etc.
+* **Server performance:** processing time for different endpoints, rate responses received, etc.
+* **Client timings,** including response and new query latency.
+* **Embedding visualization** and a list of targets in the embedding.
 
 In addition, Salmon provides links to download the responses and configuration. Salmon also supports experiment persistence through downloading and uploading experiments.
 The embedding that Salmon generates can be downloaded, at least if active samplers are used. Regardless of the sampler used, Salmon can be used to generate the embeddings offline from the downloaded responses.
 
+[^local]:A local install is available, and only requires Docker. Collection of crowdsourced responses will require running a web server or collecting in-person responses (though a local install may be useful for development).
 [^ami]:Details are at [https://docs.stsievert.com/salmon/installation][in]
 
 [in]:https://docs.stsievert.com/salmon/installation
 
 # Uses
 
-Salmon has been used by several groups, including psychologists at UW--Madison,
-and Louisiana State University.
+Salmon has been used by several groups, including psychologists at the
+University of Wisconsin--Madison and the Louisiana State University.
 
 # Acknowledgments
 
