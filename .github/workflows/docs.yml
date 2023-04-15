@@ -1,9 +1,9 @@
 name: Documentation build
 
-  # on: push
-on:
-  release:
-    types: [published]
+on: push
+  # on:
+  #   release:
+  #     types: [published]
 
 # Only run when release published (not created or edited, etc)
 # https://docs.github.com/en/actions/reference/events-that-trigger-workflows#release
@@ -13,34 +13,30 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
       with:
         fetch-depth: 0
-    - name: Setup Python 3.7
-      uses: actions/setup-python@v2
+    - name: Install micromamba
+      uses: mamba-org/provision-with-micromamba@main
       with:
-        python-version: 3.7
+        environment-file: salmon.lock.yml
     - name: Install latex
+      shell: bash -l {0}
       run: |
         sudo apt-get update
         sudo apt-get install -y texmaker latexmk
-    - name: Add conda to system path
-      run: |
-        # $CONDA is an environment variable pointing to the root of the miniconda directory
-        echo $CONDA/bin >> $GITHUB_PATH
-    - name: Install dependencies
-      run: |
-        conda env update --file salmon.lock.yml --name base
     - name: Install Salmon
+      shell: bash -l {0}
       run: |
         pip install -e ".[dev,server]"
     - name: Build docs
+      shell: bash -l {0}
       run: |
         cd docs
         make html
     - name: Build backup docs
+      shell: bash -l {0}
       run: |
         cd docs
         sudo apt-get install -y texmaker latexmk
