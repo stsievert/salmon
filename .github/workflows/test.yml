@@ -1,4 +1,4 @@
-name: Tests (install w/ pinned conda)
+name: Tests (install w/ pinned env)
 
 on:
   push:
