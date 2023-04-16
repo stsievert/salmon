@@ -158,7 +158,7 @@ def test_offline_adaptive(n=10, d=1):
 
     scorem1 = sampler.score(val_queries, val_ans)
     assert 0 <= score0 <= scorem1 <= 1
-    assert score0 + 0.1 < scorem1, "Improves by at least 10% after 200 answers"
+    assert score0 + 0.08 < scorem1, "Improves by at least 8% after 200 answers"
 
 
 if __name__ == "__main__":

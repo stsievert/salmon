@@ -20,9 +20,9 @@ humans to answer.
 
 This documentation is available at these locations:
 
-* **Primary source**: https://docs.stsievert.com/salmon/
-* Secondary source: as [a raw PDF][pdf] (and as a [slower loading PDF][blobpdf]).
-* Secondary source: as [zipped HTML directory][ziphtml], which requires unzipping the directory
+- **Primary source**: https://docs.stsievert.com/salmon/
+- Secondary source: as [a raw PDF][pdf] (and as a [slower loading PDF][blobpdf]).
+- Secondary source: as [zipped HTML directory][ziphtml], which requires unzipping the directory
   then opening up `index.html`.
 
 [pdf]:https://github.com/stsievert/salmon/raw/gh-pages/salmon.pdf
