@@ -1,4 +1,8 @@
 ## Salmon
+<a style="border-width:0" href="https://doi.org/10.21105/joss.04517">
+  <img src="https://joss.theoj.org/papers/10.21105/joss.04517/status.svg" alt="DOI badge" >
+</a>
+
 <a href="https://github.com/stsievert/salmon/actions/workflows/test.yml">
  <img src="https://github.com/stsievert/salmon/actions/workflows/test.yml/badge.svg?branch=master" />
 </a>
@@ -8,9 +12,7 @@
 <a href="https://github.com/stsievert/salmon/actions/workflows/test_offline.yml">
   <img src="https://github.com/stsievert/salmon/actions/workflows/test_offline.yml/badge.svg?branch=master" />
 </a>
-<a href="https://github.com/stsievert/salmon/actions/workflows/docs.yml">
-  <img src="https://github.com/stsievert/salmon/actions/workflows/docs.yml/badge.svg?branch=master" />
-</a>
+
 
 Salmon is a tool for efficiently generating ordinal embeddings. It relies on
 "active" machine learning algorithms to choose the most informative queries for
