@@ -1,0 +1,38 @@
+cff-version: "1.2.0"
+authors:
+- family-names: Sievert
+  given-names: Scott
+  orcid: "https://orcid.org/0000-0002-4275-3452"
+- family-names: Nowak
+  given-names: Robert
+- family-names: Rogers
+  given-names: Timothy
+  orcid: "https://orcid.org/0000-0001-6304-755X"
+doi: 10.5281/zenodo.7832431
+message: If you use this software, please cite our article in the
+  Journal of Open Source Software.
+preferred-citation:
+  authors:
+  - family-names: Sievert
+    given-names: Scott
+    orcid: "https://orcid.org/0000-0002-4275-3452"
+  - family-names: Nowak
+    given-names: Robert
+  - family-names: Rogers
+    given-names: Timothy
+    orcid: "https://orcid.org/0000-0001-6304-755X"
+  date-published: 2023-04-17
+  doi: 10.21105/joss.04517
+  issn: 2475-9066
+  issue: 84
+  journal: Journal of Open Source Software
+  publisher:
+    name: Open Journals
+  start: 4517
+  title: Efficiently Learning Relative Similarity Embeddings with
+    Crowdsourcing
+  type: article
+  url: "https://joss.theoj.org/papers/10.21105/joss.04517"
+  volume: 8
+title: Efficiently Learning Relative Similarity Embeddings with
+  Crowdsourcing
