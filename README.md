@@ -2,6 +2,7 @@
 <a style="border-width:0" href="https://doi.org/10.21105/joss.04517">
   <img src="https://joss.theoj.org/papers/10.21105/joss.04517/status.svg" alt="DOI badge" >
 </a>
+<br>
 
 <a href="https://github.com/stsievert/salmon/actions/workflows/test.yml">
  <img src="https://github.com/stsievert/salmon/actions/workflows/test.yml/badge.svg?branch=master" />
