@@ -14,6 +14,20 @@ difficulties while launching.
    ``http://[url]:8421/download`` which has a filename like
    ``exp-2021-05-20T07:31-salmon-v0.4.1.rdb``).
 
+How do I cite Salmon?
+---------------------
+
+See the :ref:`users` section to for the specific BibTex citation for the
+relevant paper, "`Efficiently Learning Relative Similarity Embeddings with
+Crowdsourcing <https://doi.org/10.21105/joss.04517>`_".
+
+.. raw:: html
+
+   <a style="border-width:0" href="https://doi.org/10.21105/joss.04517">
+     <img src="https://joss.theoj.org/papers/10.21105/joss.04517/status.svg" alt="DOI badge" >
+   </a>
+   <br>
+
 .. _random_vs_active:
 
 When should I use random/active sampling?
