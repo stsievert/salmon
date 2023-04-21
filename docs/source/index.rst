@@ -38,12 +38,46 @@ at :ref:`deps`. Salmon is licensed under the BSD License. Details are at
 
 .. _Salmon's contribution guide: https://github.com/stsievert/salmon/blob/master/CONTRIBUTING.md
 
+.. _users:
+
 Users
 =====
 
 Salmon is currently being actively used by pyschologists from the University
 of Wisconsin--Madison, and has seen some user from pyschologists at the
 Louisiana State University and Canada's Western University.
+
+If you use Salmon, please cite "`Efficiently Learning Relative Similarity
+Embeddings with Crowdsourcing <https://doi.org/10.21105/joss.04517>`_", which
+mentions this specific BibTex:
+
+.. code-block:: none
+
+   @article{Sievert2023,
+     author = {Scott Sievert and Robert Nowak and Timothy Rogers},
+     title = {Efficiently Learning Relative Similarity Embeddings with Crowdsourcing},
+     journal = {Journal of Open Source Software}
+     doi = {10.21105/joss.04517},
+     url = {https://doi.org/10.21105/joss.04517},
+     year = {2023},
+     publisher = {The Open Journal},
+     volume = {8},
+     number = {84},
+     pages = {4517},
+   }
+
+
+Salmon also has a `citation file <https://citation-file-format.github.io/>`_
+file at `salmon/CITATION.cff
+<https://github.com/stsievert/salmon/blob/master/CITATION.cff>`_.
+
+.. raw:: html
+
+   <a style="border-width:0" href="https://doi.org/10.21105/joss.04517">
+     <img src="https://joss.theoj.org/papers/10.21105/joss.04517/status.svg" alt="DOI badge" >
+   </a>
+   <br>
+
 
 .. toctree::
    :maxdepth: 2
@@ -75,8 +109,8 @@ Louisiana State University and Canada's Western University.
    developers
    deps
 
-Other sources
--------------
+Other sources of this documentation
+-----------------------------------
 
 This documentation is available at these locations:
 
