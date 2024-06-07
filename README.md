@@ -14,7 +14,6 @@
   <img src="https://github.com/stsievert/salmon/actions/workflows/test_offline.yml/badge.svg?branch=master" />
 </a>
 
-
 Salmon is a tool for efficiently generating ordinal embeddings. It relies on
 "active" machine learning algorithms to choose the most informative queries for
 humans to answer.
